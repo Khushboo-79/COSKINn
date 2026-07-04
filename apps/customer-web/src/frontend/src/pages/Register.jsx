@@ -69,7 +69,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#e8eff3] via-[#f1e6e8] to-[#e6d0d5] flex items-center justify-center pt-32 pb-20 px-6">
+    <div className="min-h-screen w-full bg-gradient-to-br from-theme-surface via-theme-surface to-theme-background flex items-center justify-center pt-32 pb-20 px-6">
 
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -81,7 +81,7 @@ export default function Register() {
         <motion.div
           animate={{ y: [0, 40, 0], opacity: [0.4, 0.8, 0.4] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[10%] left-[10%] w-[400px] h-[400px] bg-[#97b5c2]/20 rounded-full blur-[120px]"
+          className="absolute bottom-[10%] left-[10%] w-[400px] h-[400px] bg-theme-primary/20 rounded-full blur-[120px]"
         />
       </div>
 
@@ -95,7 +95,7 @@ export default function Register() {
           <h1 className="text-[32px] md:text-[36px] font-heading font-semibold text-theme-dark tracking-tight leading-tight mb-3">
             Create an Account
           </h1>
-          <p className="text-[15px] text-[#4b6a78] font-body font-medium">
+          <p className="text-[15px] text-theme-dark/80 font-body font-medium">
             Join COSKINn to unlock exclusive premium skincare benefits.
           </p>
         </div>
@@ -127,14 +127,14 @@ export default function Register() {
             <div className="space-y-1.5">
               <label className="text-[12px] font-bold text-theme-dark uppercase tracking-wider pl-1">Full Name</label>
               <div className="relative">
-                <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-[#97b5c2]" size={18} />
+                <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-primary" size={18} />
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Jane Doe"
-                  className="w-full bg-white/70 border border-[#D1D5DB] hover:border-[#9CA3AF] focus:border-[#97b5c2] focus:ring-2 focus:ring-[#97b5c2]/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-[#97b5c2]/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
+                  className="w-full bg-white/70 border border-gray-300 hover:border-gray-400 focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-theme-primary/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
                 />
               </div>
             </div>
@@ -142,14 +142,14 @@ export default function Register() {
             <div className="space-y-1.5">
               <label className="text-[12px] font-bold text-theme-dark uppercase tracking-wider pl-1">Mobile Number</label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-[#97b5c2]" size={10} />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-primary" size={10} />
                 <input
                   type="tel"
                   name="mobile"
                   value={formData.mobile}
                   onChange={handleChange}
                   placeholder="+91 9876543210"
-                  className="w-full bg-white/70 border border-[#D1D5DB] hover:border-[#9CA3AF] focus:border-[#97b5c2] focus:ring-2 focus:ring-[#97b5c2]/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-[#97b5c2]/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
+                  className="w-full bg-white/70 border border-gray-300 hover:border-gray-400 focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-theme-primary/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
                 />
               </div>
             </div>
@@ -158,14 +158,14 @@ export default function Register() {
           <div className="space-y-1.5">
             <label className="text-[12px] font-bold text-theme-dark uppercase tracking-wider pl-1">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#97b5c2]" size={18} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-primary" size={18} />
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full bg-white/70 border border-[#D1D5DB] hover:border-[#9CA3AF] focus:border-[#97b5c2] focus:ring-2 focus:ring-[#97b5c2]/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-[#97b5c2]/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
+                className="w-full bg-white/70 border border-gray-300 hover:border-gray-400 focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-theme-primary/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
               />
             </div>
           </div>
@@ -174,14 +174,14 @@ export default function Register() {
             <div className="space-y-1.5">
               <label className="text-[12px] font-bold text-theme-dark uppercase tracking-wider pl-1">Password</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#97b5c2]" size={18} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-primary" size={18} />
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Create password"
-                  className="w-full bg-white/70 border border-[#D1D5DB] hover:border-[#9CA3AF] focus:border-[#97b5c2] focus:ring-2 focus:ring-[#97b5c2]/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-[#97b5c2]/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
+                  className="w-full bg-white/70 border border-gray-300 hover:border-gray-400 focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-theme-primary/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
                 />
               </div>
             </div>
@@ -189,14 +189,14 @@ export default function Register() {
             <div className="space-y-1.5">
               <label className="text-[12px] font-bold text-theme-dark uppercase tracking-wider pl-1">Confirm Password</label>
               <div className="relative">
-                <CheckCircle2 className={`absolute left-4 top-1/2 -translate-y-1/2 ${formData.confirmPassword && formData.password === formData.confirmPassword ? 'text-green-500' : 'text-[#97b5c2]'}`} size={18} />
+                <CheckCircle2 className={`absolute left-4 top-1/2 -translate-y-1/2 ${formData.confirmPassword && formData.password === formData.confirmPassword ? 'text-green-500' : 'text-theme-primary'}`} size={18} />
                 <input
                   type="password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm password"
-                  className="w-full bg-white/70 border border-[#D1D5DB] hover:border-[#9CA3AF] focus:border-[#97b5c2] focus:ring-2 focus:ring-[#97b5c2]/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-[#97b5c2]/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
+                  className="w-full bg-white/70 border border-gray-300 hover:border-gray-400 focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 focus:bg-white rounded-2xl py-3.5 pl-11 pr-4 text-[14.5px] font-medium text-theme-dark placeholder:text-theme-primary/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
                 />
               </div>
             </div>
@@ -210,14 +210,14 @@ export default function Register() {
                   name="agreed"
                   checked={formData.agreed}
                   onChange={handleChange}
-                  className="peer appearance-none w-5 h-5 border-2 border-[#cf9096]/40 rounded-md checked:bg-[#cf9096] checked:border-[#cf9096] transition-colors cursor-pointer"
+                  className="peer appearance-none w-5 h-5 border-2 border-theme-accent/40 rounded-md checked:bg-theme-accent checked:border-theme-accent transition-colors cursor-pointer"
                 />
                 <svg className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span className="text-[13px] leading-relaxed font-medium text-[#4b6a78] group-hover:text-theme-dark transition-colors">
-                I agree to the <a href="#" className="font-bold text-[#cf9096] hover:underline">Terms & Conditions</a> and <a href="#" className="font-bold text-[#cf9096] hover:underline">Privacy Policy</a>.
+              <span className="text-[13px] leading-relaxed font-medium text-theme-dark/80 group-hover:text-theme-dark transition-colors">
+                I agree to the <a href="#" className="font-bold text-theme-accent hover:underline">Terms & Conditions</a> and <a href="#" className="font-bold text-theme-accent hover:underline">Privacy Policy</a>.
               </span>
             </label>
           </div>
@@ -240,10 +240,10 @@ export default function Register() {
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-[#97b5c2]/20 text-center">
-          <p className="text-[14px] text-[#4b6a78] font-medium">
+        <div className="mt-8 pt-6 border-t border-theme-primary/20 text-center">
+          <p className="text-[14px] text-theme-dark/80 font-medium">
             Already have an account?{' '}
-            <Link to="/login" className="text-theme-dark font-bold hover:text-[#cf9096] transition-colors inline-block relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-[#cf9096] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left">
+            <Link to="/login" className="text-theme-dark font-bold hover:text-theme-accent transition-colors inline-block relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-theme-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left">
               Sign in here
             </Link>
           </p>
