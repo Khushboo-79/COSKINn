@@ -1,0 +1,10 @@
+node_modules
+.next
+.turbo
+dist
+build
+.env
+coverage
+.DS_Store
+backend-temp
+*.log
