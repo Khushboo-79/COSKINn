@@ -29,7 +29,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       await login(formData.email, formData.password);
-      navigate('/');
+      navigate(`/${theme}`);
     } catch (err) {
       setError(err.message);
     } finally {
