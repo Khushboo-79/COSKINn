@@ -118,12 +118,12 @@ export default function Hero() {
   const bubbleFastY = useTransform(smoothY, [-1, 1], ['6%', '-6%']);
 
   return (
-    <section className="relative w-[100vw] ml-[calc(50%-50vw)] min-h-[100svh] lg:min-h-[100vh] overflow-hidden bg-gradient-to-br from-[#e8eff3] via-[#f1e6e8] to-[#e6d0d5] flex items-center">
+    <section className="relative w-[100vw] ml-[calc(50%-50vw)] min-h-[100svh] lg:min-h-[100vh] overflow-hidden bg-gradient-to-br from-theme-surface via-theme-surface to-theme-background flex items-center">
 
       {/* Layer 1: Parallax Animated Background Carousel */}
       <div className="absolute inset-0 z-0 pointer-events-none flex justify-end overflow-hidden">
         {/* Soft gradient to fade image into left content */}
-        <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#eef2f5] via-[#eef2f5]/80 to-transparent z-10 w-full lg:w-[75%]"></div>
+        <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-theme-surface via-theme-surface/80 to-transparent z-10 w-full lg:w-[75%]"></div>
         
         <motion.div style={{ x: bgX, y: bgY, scale: 1.05 }} className="w-full h-[110%] absolute inset-0">
           <AnimatePresence mode="popLayout">
@@ -214,8 +214,8 @@ export default function Hero() {
             className="w-full lg:w-[48%] flex flex-col items-start z-20"
           >
             
-            <motion.div variants={itemVariants} className="bg-[#f0dee0] px-4 py-1.5 rounded-full mb-8 lg:mb-10">
-              <span className="text-[11px] font-bold font-body tracking-wider text-[#cf9096] uppercase">Science-Backed Skincare</span>
+            <motion.div variants={itemVariants} className="bg-theme-secondary px-4 py-1.5 rounded-full mb-8 lg:mb-10">
+              <span className="text-[11px] font-bold font-body tracking-wider text-theme-accent uppercase">Science-Backed Skincare</span>
             </motion.div>
 
             {/* Dynamic Animated Heading */}
@@ -230,7 +230,7 @@ export default function Hero() {
                   className="absolute inset-0 text-[3.5rem] sm:text-[4.5rem] lg:text-[5.5rem] font-heading leading-[1.05] tracking-tight"
                 >
                   <span className="text-theme-dark block font-semibold">{activeTheme.heading.split(' ').slice(0, 2).join(' ')}</span>
-                  <span className="text-[#e2a8af] block font-medium">{activeTheme.heading.split(' ').slice(2).join(' ')}</span>
+                  <span className="text-theme-accent block font-medium">{activeTheme.heading.split(' ').slice(2).join(' ')}</span>
                 </motion.h1>
               </AnimatePresence>
             </motion.div>
@@ -244,7 +244,7 @@ export default function Hero() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.6, ease: "easeInOut" }}
-                  className="absolute inset-0 text-[17px] sm:text-[19px] text-[#4b6a78] leading-relaxed font-body font-medium"
+                  className="absolute inset-0 text-[17px] sm:text-[19px] text-theme-dark/80 leading-relaxed font-body font-medium"
                 >
                   {activeTheme.subheading}
                 </motion.p>
@@ -258,7 +258,7 @@ export default function Hero() {
               </button>
               
               <button className="group flex items-center gap-4 hover:opacity-80 transition-opacity">
-                <div className="w-12 h-12 rounded-full bg-[#f3dfe1] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-theme-secondary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                   <Play size={16} className="text-theme-dark ml-1" fill="currentColor" />
                 </div>
                 <span className="text-[13px] font-body font-bold text-theme-dark">See How It Works</span>
@@ -267,23 +267,23 @@ export default function Hero() {
 
             <motion.div variants={containerVariants} className="flex items-center gap-6 lg:gap-8 pt-4 flex-wrap">
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <Leaf size={22} className="text-[#4b6a78]" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#4b6a78] leading-tight">Safe & Gentle<br/>for all skin types</span>
+                <Leaf size={22} className="text-theme-dark/80" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-theme-dark/80 leading-tight">Safe & Gentle<br/>for all skin types</span>
               </motion.div>
               <motion.div variants={itemVariants} className="w-[1px] h-8 bg-gray-300/50 hidden sm:block"></motion.div>
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <Droplets size={22} className="text-[#4b6a78]" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#4b6a78] leading-tight">Dermatologically<br/>Tested</span>
+                <Droplets size={22} className="text-theme-dark/80" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-theme-dark/80 leading-tight">Dermatologically<br/>Tested</span>
               </motion.div>
               <motion.div variants={itemVariants} className="w-[1px] h-8 bg-gray-300/50 hidden sm:block"></motion.div>
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <FlaskConical size={22} className="text-[#4b6a78]" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#4b6a78] leading-tight">Clean & Ethical<br/>Skincare</span>
+                <FlaskConical size={22} className="text-theme-dark/80" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-theme-dark/80 leading-tight">Clean & Ethical<br/>Skincare</span>
               </motion.div>
               <motion.div variants={itemVariants} className="w-[1px] h-8 bg-gray-300/50 hidden lg:block"></motion.div>
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <Rabbit size={22} className="text-[#4b6a78]" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#4b6a78] leading-tight">Cruelty Free<br/>Always</span>
+                <Rabbit size={22} className="text-theme-dark/80" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-theme-dark/80 leading-tight">Cruelty Free<br/>Always</span>
               </motion.div>
             </motion.div>
 

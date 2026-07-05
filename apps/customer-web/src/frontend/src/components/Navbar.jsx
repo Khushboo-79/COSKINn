@@ -9,8 +9,8 @@ const CoskinnLogo = () => (
   <svg className="h-[42px] lg:h-[48px] w-auto object-contain" viewBox="0 0 300 70" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="coskinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#ff0055" />
-        <stop offset="100%" stopColor="#ff9933" />
+        <stop offset="0%" stopColor="var(--color-logoStart)" />
+        <stop offset="100%" stopColor="var(--color-logoEnd)" />
       </linearGradient>
     </defs>
 
@@ -51,7 +51,7 @@ const CoskinnLogo = () => (
     </g>
 
     {/* OSKINn */}
-    <text x="70" y="58" fontFamily="'Expletus Sans', sans-serif" fontSize="50" fontWeight="700" letterSpacing="1.5" fill="#111">
+    <text x="70" y="58" fontFamily="var(--font-heading)" fontSize="50" fontWeight="700" letterSpacing="1.5" fill="var(--color-dark)">
       OSKIN<tspan fontSize="42" dy="-1">n</tspan>
     </text>
 
@@ -123,10 +123,10 @@ export default function Navbar() {
   return (
     <nav className="absolute top-0 left-0 w-full z-50">
       {/* Top Announcement Bar */}
-      <div className="w-full bg-[#a9c1ce]">
+      <div className="w-full bg-theme-announcementBg">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-2 flex items-center justify-between font-body text-[13px] text-white">
           <div className="flex items-center gap-2">
-            <span className="text-[#ecd3d5] text-sm">⭐</span>
+            <span className="text-theme-secondary text-sm">⭐</span>
             <span>Free Shipping on Orders Over ₹999 | 20% Off on Your First Order</span>
           </div>
 
@@ -183,7 +183,7 @@ export default function Navbar() {
               onClick={handleToggleClick}
               className={`hover:text-theme-dark transition p-1 rounded-full ${isDropdownOpen ? 'bg-white/20' : ''}`}
             >
-              <User size={24} strokeWidth={1.5} className={user ? 'text-[#2b5968] fill-[#2b5968]/10' : ''} />
+              <User size={24} strokeWidth={1.5} className={user ? 'text-theme-dark fill-theme-dark/10' : ''} />
             </button>
 
             <AnimatePresence>
@@ -197,24 +197,24 @@ export default function Navbar() {
                 >
                   {user ? (
                     <>
-                      <div className="px-5 py-3 border-b border-[#97b5c2]/20 mb-1">
+                      <div className="px-5 py-3 border-b border-theme-primary/20 mb-1">
                         <p className="text-[14px] font-bold text-theme-dark truncate">{user.name}</p>
-                        <p className="text-[12px] font-medium text-[#4b6a78] truncate">{user.email}</p>
+                        <p className="text-[12px] font-medium text-theme-dark/80 truncate">{user.email}</p>
                       </div>
                       <div className="flex flex-col">
-                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-[#4b6a78] hover:bg-[#97b5c2]/10 hover:text-theme-dark transition-colors">
+                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-theme-dark/80 hover:bg-theme-primary/10 hover:text-theme-dark transition-colors">
                           <User size={16} /> My Profile
                         </a>
-                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-[#4b6a78] hover:bg-[#97b5c2]/10 hover:text-theme-dark transition-colors">
+                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-theme-dark/80 hover:bg-theme-primary/10 hover:text-theme-dark transition-colors">
                           <Package size={16} /> My Orders
                         </a>
-                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-[#4b6a78] hover:bg-[#97b5c2]/10 hover:text-theme-dark transition-colors">
+                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-theme-dark/80 hover:bg-theme-primary/10 hover:text-theme-dark transition-colors">
                           <Heart size={16} /> Wishlist
                         </a>
-                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-[#4b6a78] hover:bg-[#97b5c2]/10 hover:text-theme-dark transition-colors">
+                        <a href="#" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-theme-dark/80 hover:bg-theme-primary/10 hover:text-theme-dark transition-colors">
                           <Settings size={16} /> Settings
                         </a>
-                        <button onClick={handleLogout} className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-bold text-[#cf9096] hover:bg-red-50/50 transition-colors w-full text-left mt-1 border-t border-[#97b5c2]/10">
+                        <button onClick={handleLogout} className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-bold text-theme-accent hover:bg-red-50/50 transition-colors w-full text-left mt-1 border-t border-theme-primary/10">
                           <LogOut size={16} /> Logout
                         </button>
                       </div>
@@ -231,7 +231,7 @@ export default function Navbar() {
                       <Link
                         to="/register"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="w-full text-center bg-white/50 text-theme-dark border border-[#97b5c2]/30 hover:bg-[#97b5c2]/10 py-2.5 rounded-xl text-[14px] font-bold transition-all"
+                        className="w-full text-center bg-white/50 text-theme-dark border border-theme-primary/30 hover:bg-theme-primary/10 py-2.5 rounded-xl text-[14px] font-bold transition-all"
                       >
                         Create Account
                       </Link>
