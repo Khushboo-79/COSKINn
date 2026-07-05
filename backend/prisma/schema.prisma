@@ -141,6 +141,7 @@ model CustomerProfile {
   userId                 String   @unique
   dateOfBirth            DateTime?
   gender                 String?
+  preferredMode          String?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
@@ -248,6 +249,7 @@ model Category {
   slug        String   @unique
   description String?
   imageUrl    String?
+  mode        String   @default("both")
   isActive    Boolean  @default(true)
   isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -265,6 +267,7 @@ model Subcategory {
   name        String
   slug        String   @unique
   description String?
+  mode        String   @default("both")
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -831,10 +834,28 @@ model RefundTransaction {
   amount    Float
   status    String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  refundObj Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
+  refund    Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
 
   @@map("refund_transactions")
+}
+
+// ==========================================
+// DAY 16: HOME & UI CONFIGURATION DOMAIN
+// ==========================================
+
+model HomeLayoutConfig {
+  id         String   @id @default(uuid())
+  mode       String   // 'skincare', 'makeup'
+  sectionKey String
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([mode, sectionKey])
+  @@map("home_layout_config")
 }
 
 model CodCollection {
