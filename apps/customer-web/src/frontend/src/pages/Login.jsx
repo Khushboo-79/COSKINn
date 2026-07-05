@@ -38,7 +38,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#e8eff3] via-[#f1e6e8] to-[#e6d0d5] flex items-center justify-center pt-32 pb-20 px-6">
+    <div className="min-h-screen w-full bg-gradient-to-br from-theme-surface via-theme-surface to-theme-background flex items-center justify-center pt-32 pb-20 px-6">
       
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -50,7 +50,7 @@ export default function Login() {
         <motion.div 
           animate={{ y: [0, 30, 0], opacity: [0.4, 0.7, 0.4] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[20%] right-[15%] w-80 h-80 bg-[#f7dce0]/40 rounded-full blur-[100px]"
+          className="absolute bottom-[20%] right-[15%] w-80 h-80 bg-theme-secondary/40 rounded-full blur-[100px]"
         />
       </div>
 
@@ -64,7 +64,7 @@ export default function Login() {
           <h1 className="text-[32px] md:text-[38px] font-heading font-semibold text-theme-dark tracking-tight leading-tight mb-3">
             Welcome Back
           </h1>
-          <p className="text-[16px] text-[#4b6a78] font-body font-medium">
+          <p className="text-[16px] text-theme-dark/80 font-body font-medium">
             Sign in to access your premium skincare experience.
           </p>
         </div>
@@ -84,14 +84,14 @@ export default function Login() {
           <div className="space-y-1.5">
             <label className="text-[13px] font-bold text-theme-dark uppercase tracking-wider pl-1">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#97b5c2]" size={20} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-primary" size={20} />
               <input 
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full bg-white/70 border border-[#D1D5DB] hover:border-[#9CA3AF] focus:border-[#97b5c2] focus:ring-2 focus:ring-[#97b5c2]/20 focus:bg-white rounded-2xl py-4 pl-12 pr-4 text-[15px] font-medium text-theme-dark placeholder:text-[#97b5c2]/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
+                className="w-full bg-white/70 border border-gray-300 hover:border-gray-400 focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 focus:bg-white rounded-2xl py-4 pl-12 pr-4 text-[15px] font-medium text-theme-dark placeholder:text-theme-primary/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
               />
             </div>
           </div>
@@ -99,14 +99,14 @@ export default function Login() {
           <div className="space-y-1.5">
             <label className="text-[13px] font-bold text-theme-dark uppercase tracking-wider pl-1">Password</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#97b5c2]" size={20} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-primary" size={20} />
               <input 
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
-                className="w-full bg-white/70 border border-[#D1D5DB] hover:border-[#9CA3AF] focus:border-[#97b5c2] focus:ring-2 focus:ring-[#97b5c2]/20 focus:bg-white rounded-2xl py-4 pl-12 pr-4 text-[15px] font-medium text-theme-dark placeholder:text-[#97b5c2]/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
+                className="w-full bg-white/70 border border-gray-300 hover:border-gray-400 focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20 focus:bg-white rounded-2xl py-4 pl-12 pr-4 text-[15px] font-medium text-theme-dark placeholder:text-theme-primary/60 outline-none transition-all duration-300 shadow-inner shadow-white/50"
               />
             </div>
           </div>
@@ -114,14 +114,14 @@ export default function Login() {
           <div className="flex items-center justify-between pt-2">
             <label className="flex items-center gap-2 cursor-pointer group">
               <div className="relative flex items-center justify-center">
-                <input type="checkbox" className="peer appearance-none w-5 h-5 border-2 border-[#cf9096]/40 rounded-md checked:bg-[#cf9096] checked:border-[#cf9096] transition-colors cursor-pointer" />
+                <input type="checkbox" className="peer appearance-none w-5 h-5 border-2 border-theme-accent/40 rounded-md checked:bg-theme-accent checked:border-theme-accent transition-colors cursor-pointer" />
                 <svg className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span className="text-[14px] font-medium text-[#4b6a78] group-hover:text-theme-dark transition-colors">Remember Me</span>
+              <span className="text-[14px] font-medium text-theme-dark/80 group-hover:text-theme-dark transition-colors">Remember Me</span>
             </label>
-            <a href="#" className="text-[14px] font-bold text-[#cf9096] hover:text-theme-dark transition-colors">Forgot Password?</a>
+            <a href="#" className="text-[14px] font-bold text-theme-accent hover:text-theme-dark transition-colors">Forgot Password?</a>
           </div>
 
           <button 
@@ -143,10 +143,10 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-10 pt-8 border-t border-[#97b5c2]/20 text-center">
-          <p className="text-[15px] text-[#4b6a78] font-medium">
+        <div className="mt-10 pt-8 border-t border-theme-primary/20 text-center">
+          <p className="text-[15px] text-theme-dark/80 font-medium">
             Don't have an account?{' '}
-            <Link to="/register" className="text-theme-dark font-bold hover:text-[#cf9096] transition-colors inline-block relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-[#cf9096] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left">
+            <Link to="/register" className="text-theme-dark font-bold hover:text-theme-accent transition-colors inline-block relative after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-theme-accent after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left">
               Register now
             </Link>
           </p>
