@@ -328,6 +328,9 @@ model ProductVariant {
   name       String   // e.g., "50ml", "Shade 01"
   mrp        Float
   price      Float
+  shadeCode  String?
+  fragrance  String?
+  flavor     String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

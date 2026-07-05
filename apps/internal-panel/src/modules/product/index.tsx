@@ -6,8 +6,7 @@ import { CategoryManager } from './CategoryManager';
 
 const queryClient = new QueryClient();
 
-// Placeholder screens (will be replaced shortly)
-const ProductCatalog = () => <div>Product Catalog coming soon...</div>;
+import ProductManager from './ProductManager';
 
 export const ProductModuleRoutes = () => {
   const location = useLocation();
@@ -49,7 +48,7 @@ export const ProductModuleRoutes = () => {
         {/* Sub-routes */}
         <div className="flex-1 p-6 overflow-y-auto bg-white/30 backdrop-blur-sm rounded-r-2xl border-y border-r border-rose-100">
           <Routes>
-            <Route path="/" element={<ProductCatalog />} />
+            <Route path="/" element={<ProductManager />} />
             <Route path="/brands" element={<BrandManager />} />
             <Route path="/categories" element={<CategoryManager />} />
             <Route path="*" element={<Navigate to="/product" replace />} />
