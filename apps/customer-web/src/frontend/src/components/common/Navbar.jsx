@@ -109,7 +109,7 @@ const NavItem = ({ title, to, children, isActive }) => {
         </Link>
       ) : (
         <button className="flex items-center gap-1 hover:text-theme-primary transition-colors cursor-pointer font-medium focus:outline-none">
-          {title} {children && <span className="text-[10px] ml-1 mt-0.5 opacity-60">▼</span>}
+          {title}
         </button>
       )}
 
