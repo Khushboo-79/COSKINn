@@ -3,6 +3,5 @@ export class UpdateCustomerProfileDto {
   gender?: string;
   skinType?: string;
   skinConcerns?: string[];
-  preferredBrands?: string[];
   makeupStyle?: string;
 }

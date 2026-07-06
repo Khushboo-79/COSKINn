@@ -1,0 +1,883 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// DAY 2: AUTH & CUSTOMER DOMAIN
+// ==========================================
+
+model User {
+  id           String    @id @default(uuid())
+  email        String?   @unique
+  phone        String?   @unique
+  passwordHash String?
+  firstName    String?
+  lastName     String?
+  isActive     Boolean   @default(true)
+  isDeleted    Boolean   @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  roles    UserRole[]
+  otpLogs  OtpLog[]
+  sessions LoginSession[]
+  devices  Device[]
+
+  customerProfile CustomerProfile?
+  addresses       CustomerAddress[]
+  orders          Order[]
+  wishlist        Wishlist?
+  reviews         ProductReview[]
+  questions       ProductQuestion[]
+  answers         ProductAnswer[]
+  cart            Cart?
+
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g., 'customer', 'admin', 'product-manager'
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  action      String // e.g., 'create', 'read', 'update', 'delete'
+  subject     String // e.g., 'Product', 'Order'
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model OtpLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  phone     String?
+  email     String?
+  otpHash   String
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("otp_logs")
+}
+
+model LoginSession {
+  id           String   @id @default(uuid())
+  userId       String
+  refreshToken String   @unique
+  deviceInfo   String?
+  ipAddress    String?
+  expiresAt    DateTime
+  isRevoked    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("login_sessions")
+}
+
+model Device {
+  id           String   @id @default(uuid())
+  userId       String
+  deviceToken  String   @unique // For Push Notifications (FCM)
+  deviceType   String? // 'android', 'ios', 'web'
+  appVersion   String?
+  lastActiveAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("devices")
+}
+
+model CustomerProfile {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  dateOfBirth   DateTime?
+  gender        String?
+  preferredMode String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user             User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skinProfile      CustomerSkinProfile?
+  makeupPreference CustomerMakeupPreference?
+
+  @@map("customer_profiles")
+}
+
+model CustomerAddress {
+  id           String   @id @default(uuid())
+  userId       String
+  type         String // 'home', 'work', 'other'
+  fullName     String
+  phone        String
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  pincode      String
+  country      String   @default("India")
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderAddresses OrderAddress[]
+
+  @@map("customer_addresses")
+}
+
+model CustomerSkinProfile {
+  id           String   @id @default(uuid())
+  profileId    String   @unique
+  skinType     String? // 'oily', 'dry', 'combination', 'sensitive', 'normal'
+  skinConcerns String[] // Array of concerns like 'acne', 'pigmentation'
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile CustomerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@map("customer_skin_profiles")
+}
+
+model CustomerMakeupPreference {
+  id              String   @id @default(uuid())
+  profileId       String   @unique
+  preferredBrands String[]
+  makeupStyle     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  profile CustomerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@map("customer_makeup_preferences")
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items WishlistItem[]
+
+  @@map("wishlists")
+}
+
+model WishlistItem {
+  id         String   @id @default(uuid())
+  wishlistId String
+  productId  String
+  createdAt  DateTime @default(now())
+
+  wishlist Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([wishlistId, productId])
+  @@map("wishlist_items")
+}
+
+// ==========================================
+// DAY 3: CATALOG & E-COMMERCE CORE
+// ==========================================
+
+model Brand {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  logoUrl     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+
+  @@map("brands")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  mode        String   @default("both")
+  isActive    Boolean  @default(true)
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subcategories Subcategory[]
+  products      Product[]
+
+  @@map("categories")
+}
+
+model Subcategory {
+  id          String   @id @default(uuid())
+  categoryId  String
+  name        String
+  slug        String   @unique
+  description String?
+  mode        String   @default("both")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@map("subcategories")
+}
+
+model Product {
+  id            String    @id @default(uuid())
+  brandId       String
+  categoryId    String
+  subcategoryId String?
+  name          String
+  slug          String    @unique
+  description   String?
+  howToUse      String?
+  warnings      String?
+  claims        String?
+  mrp           Float
+  discountPrice Float?
+  gstRate       Float     @default(18.0)
+  hsnCode       String?
+  isActive      Boolean   @default(true)
+  isDeleted     Boolean   @default(false)
+  deletedAt     DateTime?
+  seoTitle      String?
+  seoDesc       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  brand       Brand        @relation(fields: [brandId], references: [id])
+  category    Category     @relation(fields: [categoryId], references: [id])
+  subcategory Subcategory? @relation(fields: [subcategoryId], references: [id])
+
+  variants    ProductVariant[]
+  images      ProductImage[]
+  videos      ProductVideo[]
+  ingredients ProductIngredient[]
+  benefits    ProductBenefit[]
+  skinTypes   ProductSkinType[]
+  concerns    ProductConcern[]
+  reviews     ProductReview[]
+  questions   ProductQuestion[]
+
+  wishlistItems WishlistItem[]
+  cartItems     CartItem[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id        String   @id @default(uuid())
+  productId String
+  sku       String   @unique
+  name      String // e.g., "50ml", "Shade 01"
+  mrp       Float
+  price     Float
+  shadeCode String?
+  fragrance String?
+  flavor    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@map("product_variants")
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  url       String
+  altText   String?
+  isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+model ProductVideo {
+  id        String   @id @default(uuid())
+  productId String
+  url       String
+  title     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_videos")
+}
+
+model ProductIngredient {
+  id        String   @id @default(uuid())
+  productId String
+  name      String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_ingredients")
+}
+
+model ProductBenefit {
+  id        String   @id @default(uuid())
+  productId String
+  name      String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_benefits")
+}
+
+model ProductSkinType {
+  id        String   @id @default(uuid())
+  productId String
+  name      String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_skin_types")
+}
+
+model ProductConcern {
+  id        String   @id @default(uuid())
+  productId String
+  name      String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_concerns")
+}
+
+model ProductReview {
+  id         String   @id @default(uuid())
+  productId  String
+  userId     String
+  rating     Int // 1-5
+  title      String?
+  content    String?
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("product_reviews")
+}
+
+model ProductQuestion {
+  id         String   @id @default(uuid())
+  productId  String
+  userId     String
+  content    String
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  product Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers ProductAnswer[]
+
+  @@map("product_questions")
+}
+
+model ProductAnswer {
+  id         String   @id @default(uuid())
+  questionId String
+  userId     String
+  content    String
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  question ProductQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("product_answers")
+}
+
+// ==========================================
+// DAY 3: INVENTORY DOMAIN
+// ==========================================
+
+model Warehouse {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  address   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bins           WarehouseBin[]
+  stocks         InventoryStock[]
+  movements      StockMovement[]
+  adjustments    StockAdjustment[]
+  purchaseOrders PurchaseOrder[]
+
+  @@map("warehouses")
+}
+
+model WarehouseBin {
+  id          String   @id @default(uuid())
+  warehouseId String
+  code        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+
+  @@map("warehouse_bins")
+}
+
+model InventoryStock {
+  id          String   @id @default(uuid())
+  warehouseId String
+  sku         String
+  quantity    Int      @default(0)
+  reservedQty Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+
+  @@unique([warehouseId, sku])
+  @@map("inventory_stock")
+}
+
+model InventoryBatch {
+  id          String    @id @default(uuid())
+  sku         String
+  batchNumber String
+  mfgDate     DateTime?
+  expiryDate  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("inventory_batches")
+}
+
+model StockMovement {
+  id          String   @id @default(uuid())
+  warehouseId String
+  sku         String
+  type        String // 'IN', 'OUT'
+  quantity    Int
+  reference   String? // e.g., Order ID, GRN ID
+  createdAt   DateTime @default(now())
+
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+
+  @@map("stock_movements")
+}
+
+model StockAdjustment {
+  id          String   @id @default(uuid())
+  warehouseId String
+  sku         String
+  quantity    Int // Positive or negative
+  reason      String
+  createdAt   DateTime @default(now())
+
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+
+  @@map("stock_adjustments")
+}
+
+model DamagedStock {
+  id        String   @id @default(uuid())
+  sku       String
+  quantity  Int
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@map("damaged_stock")
+}
+
+model ExpiredStock {
+  id        String   @id @default(uuid())
+  sku       String
+  batchNo   String
+  quantity  Int
+  createdAt DateTime @default(now())
+
+  @@map("expired_stock")
+}
+
+model PurchaseOrder {
+  id          String   @id @default(uuid())
+  warehouseId String
+  vendorId    String?
+  status      String // 'DRAFT', 'ISSUED', 'PARTIAL', 'RECEIVED'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  warehouse Warehouse           @relation(fields: [warehouseId], references: [id])
+  grns      GoodsReceivedNote[]
+
+  @@map("purchase_orders")
+}
+
+model GoodsReceivedNote {
+  id              String   @id @default(uuid())
+  purchaseOrderId String
+  receivedDate    DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+
+  @@map("goods_received_notes")
+}
+
+// ==========================================
+// DAY 3: ORDER & CART DOMAIN
+// ==========================================
+
+model Cart {
+  id        String   @id @default(uuid())
+  userId    String?  @unique
+  sessionId String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  productId String
+  variantId String?
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("cart_items")
+}
+
+model Order {
+  id          String    @id @default(uuid())
+  userId      String
+  status      String // 'DRAFT', 'PLACED', 'PACKED', 'SHIPPED', 'DELIVERED', 'CANCELLED'
+  totalAmount Float
+  discountAmt Float     @default(0)
+  taxAmount   Float     @default(0)
+  shippingFee Float     @default(0)
+  finalAmount Float
+  paymentMode String // 'ONLINE', 'COD'
+  isDeleted   Boolean   @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user          User                 @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
+  address       OrderAddress?
+  payments      OrderPayment[]
+  shipments     OrderShipment[]
+  invoices      OrderInvoice[]
+  cancellations OrderCancellation[]
+  returns       Return[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  variantId String
+  sku       String
+  name      String
+  quantity  Int
+  price     Float
+  taxAmount Float    @default(0)
+  total     Float
+  createdAt DateTime @default(now())
+
+  order   Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@map("order_items")
+}
+
+model OrderStatusHistory {
+  id        String   @id @default(uuid())
+  orderId   String
+  status    String
+  notes     String?
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_status_history")
+}
+
+model OrderAddress {
+  id              String   @id @default(uuid())
+  orderId         String   @unique
+  sourceAddressId String?
+  fullName        String
+  phone           String
+  addressLine1    String
+  addressLine2    String?
+  city            String
+  state           String
+  pincode         String
+  country         String   @default("India")
+  createdAt       DateTime @default(now())
+
+  order         Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  sourceAddress CustomerAddress? @relation(fields: [sourceAddressId], references: [id], onDelete: SetNull)
+
+  @@map("order_addresses")
+}
+
+model OrderPayment {
+  id        String   @id @default(uuid())
+  orderId   String
+  status    String // 'PENDING', 'SUCCESS', 'FAILED'
+  amount    Float
+  method    String? // 'UPI', 'CREDIT_CARD'
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_payments")
+}
+
+model OrderShipment {
+  id             String    @id @default(uuid())
+  orderId        String
+  awbNumber      String?
+  courierPartner String?
+  status         String // 'MANIFESTED', 'IN_TRANSIT', 'DELIVERED'
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_shipments")
+}
+
+model OrderInvoice {
+  id         String   @id @default(uuid())
+  orderId    String
+  invoiceNum String   @unique
+  pdfUrl     String?
+  createdAt  DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_invoices")
+}
+
+model OrderCancellation {
+  id        String   @id @default(uuid())
+  orderId   String
+  reason    String
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_cancellations")
+}
+
+model Return {
+  id         String   @id @default(uuid())
+  orderId    String
+  status     String // 'REQUESTED', 'APPROVED', 'REJECTED', 'PICKED_UP', 'RECEIVED'
+  reason     String
+  refundType String // 'WALLET', 'ORIGINAL_SOURCE'
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  order   Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  items   ReturnItem[]
+  refunds Refund[]
+
+  @@map("returns")
+}
+
+model ReturnItem {
+  id        String   @id @default(uuid())
+  returnId  String
+  sku       String
+  quantity  Int
+  createdAt DateTime @default(now())
+
+  returnObj Return @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+  @@map("return_items")
+}
+
+model Refund {
+  id        String   @id @default(uuid())
+  returnId  String
+  amount    Float
+  status    String // 'INITIATED', 'SUCCESS', 'FAILED'
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  returnObj    Return              @relation(fields: [returnId], references: [id], onDelete: Cascade)
+  transactions RefundTransaction[]
+
+  @@map("refunds")
+}
+
+// ==========================================
+// DAY 3: PAYMENT & FINANCE DOMAIN
+// ==========================================
+
+model PaymentTransaction {
+  id              String   @id @default(uuid())
+  razorpayOrderId String?
+  amount          Float
+  status          String
+  createdAt       DateTime @default(now())
+
+  @@map("payment_transactions")
+}
+
+model RazorpayOrder {
+  id        String   @id @default(uuid())
+  rzpId     String   @unique
+  amount    Float
+  receipt   String?
+  status    String
+  createdAt DateTime @default(now())
+
+  @@map("razorpay_orders")
+}
+
+model RazorpayPaymentEvent {
+  id        String   @id @default(uuid())
+  eventId   String   @unique
+  event     String
+  payload   Json
+  createdAt DateTime @default(now())
+
+  @@map("razorpay_payment_events")
+}
+
+model RefundTransaction {
+  id        String   @id @default(uuid())
+  refundId  String
+  amount    Float
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refund Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
+
+  @@map("refund_transactions")
+}
+
+// ==========================================
+// DAY 16: HOME & UI CONFIGURATION DOMAIN
+// ==========================================
+
+model HomeLayoutConfig {
+  id         String   @id @default(uuid())
+  mode       String // 'skincare', 'makeup'
+  sectionKey String
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([mode, sectionKey])
+  @@map("home_layout_config")
+}
+
+model CodCollection {
+  id        String   @id @default(uuid())
+  awbNumber String
+  amount    Float
+  collected Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("cod_collections")
+}
+
+model Settlement {
+  id          String   @id @default(uuid())
+  utrNumber   String
+  amount      Float
+  settledDate DateTime
+  createdAt   DateTime @default(now())
+
+  @@map("settlements")
+}

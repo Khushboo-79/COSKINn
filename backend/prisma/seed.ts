@@ -1,40 +1,67 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
-const connectionString = `${process.env.DATABASE_URL}`;
-const pool = new Pool({ connectionString });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  console.log('Seeding database...');
+
+  // 1. Create Default Roles
   const roles = [
-    { name: 'customer', description: 'Standard e-commerce customer' },
-    { name: 'admin', description: 'Super administrator with full access' },
-    { name: 'product-manager', description: 'Manages catalog, categories, and products' },
-    { name: 'inventory-staff', description: 'Manages warehouse and stock updates' },
-    { name: 'order-manager', description: 'Manages order processing and fulfillment' },
-    { name: 'warehouse-staff', description: 'Fulfills and packs orders' },
-    { name: 'finance', description: 'Views ledgers, settlements, and tax reports' },
-    { name: 'hr', description: 'Manages employees and payroll' },
-    { name: 'auditor', description: 'Read-only access to audit logs' },
-    { name: 'support', description: 'Customer support ticketing and chat' },
-    { name: 'marketing', description: 'Manages banners, campaigns, and discounts' },
-    { name: 'content', description: 'Manages blog and legal pages' },
+    'SUPER_ADMIN',
+    'PRODUCT_MANAGER',
+    'AUDITOR',
+    'FINANCE_MANAGER',
+    'INVENTORY_MANAGER',
+    'ORDER_MANAGER',
+    'WAREHOUSE_MANAGER',
+    'SUPPORT_AGENT',
+    'MARKETING_MANAGER',
+    'CONTENT_MANAGER',
+    'HR_MANAGER'
   ];
 
-  console.log('Start seeding roles...');
-  for (const role of roles) {
-    const createdRole = await prisma.role.upsert({
-      where: { name: role.name },
+  for (const roleName of roles) {
+    await prisma.role.upsert({
+      where: { name: roleName },
       update: {},
-      create: role,
+      create: { name: roleName, description: `${roleName} role` },
     });
-    console.log(`Created or updated role: ${createdRole.name}`);
   }
-  console.log('Seeding finished.');
+  console.log('Roles created or already exist.');
+
+  // 2. Create Super Admin User
+  const adminEmail = 'admin@coskinn.com';
+  const superAdminRole = await prisma.role.findUnique({ where: { name: 'SUPER_ADMIN' } });
+
+  if (superAdminRole) {
+    const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
+    if (!existingAdmin) {
+      const passwordHash = await bcrypt.hash('admin123', 10);
+      const admin = await prisma.user.create({
+        data: {
+          email: adminEmail,
+          firstName: 'Super',
+          lastName: 'Admin',
+          passwordHash,
+          roles: {
+            create: {
+              roleId: superAdminRole.id
+            }
+          }
+        }
+      });
+      console.log('Super Admin user created:', admin.email);
+    } else {
+      console.log('Super Admin user already exists:', existingAdmin.email);
+    }
+  }
+
+  console.log('Seeding completed.');
 }
 
 main()
