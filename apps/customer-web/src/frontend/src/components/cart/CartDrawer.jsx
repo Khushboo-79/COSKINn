@@ -80,7 +80,7 @@ export default function CartDrawer() {
                       </button>
 
                       <div className="w-20 h-20 rounded-xl bg-theme-secondary/20 overflow-hidden flex-shrink-0">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover" />
                       </div>
 
                       <div className="flex flex-col flex-1">

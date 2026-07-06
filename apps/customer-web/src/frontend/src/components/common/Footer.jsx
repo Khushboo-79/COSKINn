@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 
 /* =========================================
@@ -45,7 +45,7 @@ const SocialIcon = ({ children }) => (
    2. MAIN COMPONENT
    ========================================= */
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className="relative w-full bg-[#FFD498] overflow-hidden font-body text-[#4a3b42] pt-20 lg:pt-28 pb-8 selection:bg-white selection:text-[#8B1C31]">
 
@@ -131,7 +131,7 @@ export default function Footer() {
               </div>
 
               <img
-                src="/mockup_product_1.png"
+                src="/mockup_product_1.webp"
                 alt="COSKINn Newsletter"
                 className="w-full h-full object-cover scale-[1.03] group-hover:scale-[1.08] transition-transform duration-[2.5s] ease-out opacity-[0.85]"
               />
@@ -262,3 +262,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default memo(Footer);

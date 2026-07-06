@@ -53,7 +53,7 @@ export default function AccountPage() {
               {/* User Mini Card */}
               <div className="flex items-center gap-4 p-4 border-b border-gray-100 mb-4">
                 {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="Avatar" className="w-14 h-14 rounded-full object-cover shadow-sm border border-gray-100" />
+                  <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-14 h-14 rounded-full object-cover shadow-sm border border-gray-100" />
                 ) : (
                   <div className={`w-14 h-14 rounded-full ${primaryClass} flex items-center justify-center text-xl font-bold shadow-sm`}>
                     {user.name.charAt(0).toUpperCase()}
@@ -199,7 +199,7 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
         <div className="relative group">
           {previewAvatar || user.avatarUrl ? (
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
-              <img src={previewAvatar || user.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+              <img loading="lazy" src={previewAvatar || user.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full ${primaryClass} flex items-center justify-center text-4xl font-bold shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-4 border-white`}>
@@ -586,8 +586,8 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
 // 3. Orders Tab
 function OrdersTab({ primaryClass }) {
   const dummyOrders = [
-    { id: 'ORD-839201', date: 'Oct 15, 2026', total: '₹2,450', status: 'Delivered', items: 2, image: '/mockup_product_1.png' },
-    { id: 'ORD-728194', date: 'Sep 28, 2026', total: '₹1,890', status: 'Processing', items: 1, image: '/mockup_product_1.png' }
+    { id: 'ORD-839201', date: 'Oct 15, 2026', total: '₹2,450', status: 'Delivered', items: 2, image: '/mockup_product_1.webp' },
+    { id: 'ORD-728194', date: 'Sep 28, 2026', total: '₹1,890', status: 'Processing', items: 1, image: '/mockup_product_1.webp' }
   ];
 
   return (
@@ -598,7 +598,7 @@ function OrdersTab({ primaryClass }) {
         {dummyOrders.map(order => (
           <div key={order.id} className="flex flex-col md:flex-row gap-6 p-6 border border-gray-100 rounded-2xl hover:border-gray-200 transition-colors">
             <div className="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
-              <img src={order.image} alt="Product" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
+              <img loading="lazy" src={order.image} alt="Product" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
             </div>
             <div className="flex-1 flex flex-col justify-between">
               <div>
@@ -626,9 +626,9 @@ function OrdersTab({ primaryClass }) {
 // 4. Wishlist Tab
 function WishlistTab({ primaryClass }) {
   const dummyWishlist = [
-    { id: 1, name: 'Radiance Glow Serum', price: '₹1,299', image: '/mockup_product_1.png' },
-    { id: 2, name: 'Velvet Matte Lipstick', price: '₹899', image: '/mockup_product_1.png' },
-    { id: 3, name: 'Hydrating Night Cream', price: '₹1,550', image: '/mockup_product_1.png' }
+    { id: 1, name: 'Radiance Glow Serum', price: '₹1,299', image: '/mockup_product_1.webp' },
+    { id: 2, name: 'Velvet Matte Lipstick', price: '₹899', image: '/mockup_product_1.webp' },
+    { id: 3, name: 'Hydrating Night Cream', price: '₹1,550', image: '/mockup_product_1.webp' }
   ];
 
   return (
@@ -642,7 +642,7 @@ function WishlistTab({ primaryClass }) {
               <Trash2 size={14} />
             </button>
             <div className="w-full h-48 bg-gray-50 rounded-xl overflow-hidden mb-4">
-              <img src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply opacity-80 group-hover:scale-105 transition-transform duration-500" />
+              <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply opacity-80 group-hover:scale-105 transition-transform duration-500" />
             </div>
             <h4 className="font-bold text-black text-sm truncate mb-1">{item.name}</h4>
             <p className="font-medium text-gray-500 text-sm mb-4">{item.price}</p>

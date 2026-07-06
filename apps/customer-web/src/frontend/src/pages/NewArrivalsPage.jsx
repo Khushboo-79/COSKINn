@@ -6,14 +6,14 @@ import { useWishlist } from '../context/WishlistContext';
 import Footer from '../components/common/Footer';
 import { Heart, ShoppingBag, Eye, Star, ArrowRight, CheckCircle, ShieldCheck, Leaf, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 
-import heroImg from '../assets/images/luxury_hero_banner.png';
-import launchImg from '../assets/images/featured_launch_banner.png';
-import cleanserImg from '../assets/images/strawberry_glow_cleanser.png';
-import sunscreenImg from '../assets/images/vitamin_c_sunscreen.png';
-import blushImg from '../assets/images/velvet_blush.png';
-import mascaraImg from '../assets/images/lift_curl_mascara.png';
-import lipstickImg from '../assets/images/new_product_lipstick.png';
-import holoImg from '../assets/images/holographic_collection.png';
+import heroImg from '../assets/images/luxury_hero_banner.webp';
+import launchImg from '../assets/images/featured_launch_banner.webp';
+import cleanserImg from '../assets/images/strawberry_glow_cleanser.webp';
+import sunscreenImg from '../assets/images/vitamin_c_sunscreen.webp';
+import blushImg from '../assets/images/velvet_blush.webp';
+import mascaraImg from '../assets/images/lift_curl_mascara.webp';
+import lipstickImg from '../assets/images/new_product_lipstick.webp';
+import holoImg from '../assets/images/holographic_collection.webp';
 
 export default function NewArrivalsPage() {
   const { theme } = useTheme();
@@ -59,7 +59,7 @@ export default function NewArrivalsPage() {
       {/* 1. Hero Section */}
       <div className="relative w-full h-[85vh] overflow-hidden flex items-center justify-center">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
-          <img src={heroImg} alt="Luxury Beauty" className="w-full h-full object-cover" />
+          <img loading="lazy" src={heroImg} alt="Luxury Beauty" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
         </motion.div>
         
@@ -140,7 +140,7 @@ export default function NewArrivalsPage() {
                 
                 {/* Image */}
                 <div className="relative w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-theme-secondary/20">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                  <img loading="lazy" src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                   
                   {/* Quick View */}
                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
@@ -203,7 +203,7 @@ export default function NewArrivalsPage() {
                 className="group w-[300px] md:w-[400px] bg-white rounded-[2rem] p-4 flex flex-col shadow-lg hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 flex-shrink-0"
               >
                 <div className="w-full h-[250px] md:h-[350px] rounded-3xl overflow-hidden mb-6 relative bg-theme-secondary/20">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 <div className="px-4 pb-4">
@@ -227,7 +227,7 @@ export default function NewArrivalsPage() {
       {/* 5. Featured Launch Banner */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="relative w-full rounded-[3rem] overflow-hidden group h-[500px] md:h-[600px] shadow-2xl">
-          <img src={launchImg} alt="Nature Meets Luxury" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-in-out" />
+          <img loading="lazy" src={launchImg} alt="Nature Meets Luxury" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-in-out" />
           <div className="absolute inset-0 bg-black/30"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
             <span className="text-white uppercase tracking-[0.3em] font-bold text-sm mb-4 drop-shadow-md">Introducing Our Latest Collection</span>
@@ -253,7 +253,7 @@ export default function NewArrivalsPage() {
               className="bg-white rounded-3xl p-6 shadow-md hover:shadow-xl border border-black/5 flex gap-6 items-center transition-shadow duration-300"
             >
               <div className="w-24 h-24 rounded-2xl bg-theme-secondary/20 flex-shrink-0 overflow-hidden relative">
-                <img src={idx === 1 ? lipstickImg : cleanserImg} alt="Product" className="w-full h-full object-cover" />
+                <img loading="lazy" src={idx === 1 ? lipstickImg : cleanserImg} alt="Product" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -281,7 +281,7 @@ export default function NewArrivalsPage() {
           
           {/* Coming Soon Showcase */}
           <div className="relative rounded-[3rem] overflow-hidden group h-[400px] shadow-2xl">
-            <img src={holoImg} alt="Holographic Collection" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <img loading="lazy" src={holoImg} alt="Holographic Collection" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/20"></div>
             <div className="absolute inset-0 p-12 flex flex-col justify-center">
               <span className="px-4 py-1.5 bg-white/20 backdrop-blur-md text-white text-xs font-bold tracking-widest uppercase rounded-full w-max mb-6 border border-white/30 shadow-lg">
@@ -329,7 +329,7 @@ export default function NewArrivalsPage() {
           {[1, 2, 3, 4, 5].map((item, idx) => (
             <div key={item} className="snap-center shrink-0 w-[280px] md:w-[320px] bg-white rounded-3xl p-6 shadow-sm border border-black/5 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center group">
               <div className="w-40 h-40 rounded-full bg-theme-secondary/20 overflow-hidden mb-6 p-4">
-                <img src={idx % 2 === 0 ? cleanserImg : lipstickImg} alt="Favorite" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                <img loading="lazy" src={idx % 2 === 0 ? cleanserImg : lipstickImg} alt="Favorite" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
               </div>
               <div className="flex gap-1 mb-3 text-yellow-400">
                 {[1, 2, 3, 4, 5].map((star) => <Star key={star} className="w-4 h-4 fill-current" />)}

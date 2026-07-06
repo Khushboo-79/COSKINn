@@ -264,7 +264,7 @@ export default function CheckoutPage() {
                       <div className="flex flex-col gap-4 mb-6">
                         {cart.map((item) => (
                           <div key={item.id} className="flex gap-4 p-4 border border-black/5 rounded-2xl items-center">
-                            <img src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover bg-black/5" />
+                            <img loading="lazy" src={item.image} alt={item.name} className="w-16 h-16 rounded-xl object-cover bg-black/5" />
                             <div className="flex-1">
                               <h4 className="font-bold text-sm">{item.name}</h4>
                               <p className="text-black/50 text-xs mt-1">Qty: {item.quantity}</p>

@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
-import mainImage from '../../assets/images/cosmetics_why_choose_main.png';
-import floatingImage from '../../assets/images/cosmetics_why_choose_floating.png';
+import mainImage from '../../assets/images/cosmetics_why_choose_main.webp';
+import floatingImage from '../../assets/images/cosmetics_why_choose_floating.webp';
 
 const trustPoints = [
   { id: 1, title: "Luxury Formula", desc: "Weightless feel, flawless finish.", stat: "24H" },
@@ -122,7 +122,7 @@ export default function WhyChooseUs() {
             style={{ y: yImage }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10 mix-blend-overlay pointer-events-none"></div>
-            <img 
+            <img loading="lazy" 
               src={mainImage} 
               alt="COSKINn Beauty Model" 
               className="w-full h-full object-cover"
