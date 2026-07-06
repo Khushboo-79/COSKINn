@@ -1,64 +1,77 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CoskinnLogo = () => (
-  <svg className="h-[42px] lg:h-[48px] w-auto object-contain" viewBox="0 0 300 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg className="h-[42px] lg:h-[48px] w-auto object-contain drop-shadow-sm" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="coskinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="var(--color-logoStart)" />
-        <stop offset="100%" stopColor="var(--color-logoEnd)" />
+      <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#FF0069" />  {/* Hot Pink */}
+        <stop offset="35%" stopColor="#FF6B6B" /> {/* Coral */}
+        <stop offset="70%" stopColor="#FFA07A" /> {/* Soft Orange */}
+        <stop offset="100%" stopColor="#FFD498" /> {/* Warm Peach */}
       </linearGradient>
     </defs>
 
-    <g transform="translate(-5, 0) scale(0.6)">
-      {/* 1:1 Pixel-Perfect Geometric Vector Trace of the C */}
-      <path 
-        d="M 60 0 
-           A 50 50 0 0 0 10 50 
-           A 50 50 0 0 0 60 100 
-           C 80 100, 90 90, 95 80
-           C 90 75, 85 75, 80 80
-           A 40 40 0 0 1 60 90
-           A 40 40 0 0 1 20 50
-           A 40 40 0 0 1 60 10
-           C 75 10, 80 20, 80 30
-           A 8 8 0 0 0 96 30
-           C 96 10, 75 0, 60 0 Z" 
-        fill="url(#coskinGrad)" 
-      />
-      
-      {/* 1:1 Precision Nested Calligraphy Heart */}
-      <g transform="rotate(-15 100 75)">
-        <path 
-          fillRule="evenodd" clipRule="evenodd"
-          d="M 100 95 
-             C 85 85, 80 70, 90 60 
-             C 95 55, 100 60, 100 65 
-             C 100 60, 105 55, 110 60 
-             C 120 70, 115 85, 100 95 
-             M 100 88 
-             C 110 80, 112 70, 107 65 
-             C 104 62, 100 65, 100 68 
-             C 100 65, 96 62, 93 65 
-             C 88 70, 90 80, 100 88 Z" 
-          fill="url(#coskinGrad)" 
-        />
-      </g>
-    </g>
+    {/* The elegant script 'C' matching the reference */}
+    <path 
+      d="
+        M 72 20
+        A 8 8 0 1 1 62 30
+        C 52 20, 35 30, 30 55
+        C 25 80, 40 95, 60 95
+        C 70 95, 85 82, 85 82
+        C 85 82, 95 92, 75 105
+        C 45 118, 10 105, 8 60
+        C 5 15, 45 2, 72 20
+        Z
+      " 
+      fill="url(#coskinn-logo-grad)" 
+    />
 
-    {/* OSKINn */}
-    <text x="70" y="58" fontFamily="var(--font-heading)" fontSize="50" fontWeight="700" letterSpacing="1.5" fill="var(--color-dark)">
-      OSKIN<tspan fontSize="42" dy="-1">n</tspan>
+    {/* The small outlined heart nestled inside the C */}
+    <path 
+      d="
+        M 75 92
+        C 75 92, 65 82, 65 74
+        A 6 6 0 0 1 75 70
+        A 6 6 0 0 1 85 74
+        C 85 82, 75 92, 75 92
+        Z
+      " 
+      stroke="url(#coskinn-logo-grad)" 
+      strokeWidth="3.5" 
+      fill="none" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+    />
+
+    {/* The text OSKINn */}
+    <text 
+      x="105" 
+      y="95" 
+      fontFamily="var(--font-heading)" 
+      fill="var(--color-dark)"
+    >
+      <tspan fontSize="85" fontWeight="600" letterSpacing="2">OSKIN</tspan>
+      <tspan fontSize="65" fontWeight="600">n</tspan>
     </text>
 
-    {/* Solid Heart over the I */}
-    <g transform="translate(184, 6) scale(0.6)">
-      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#coskinGrad)" />
-    </g>
+    {/* The solid heart replacing the 'I' dot */}
+    <path 
+      d="
+        M 280 40
+        C 280 40, 266 28, 266 18
+        A 7 7 0 0 1 280 15
+        A 7 7 0 0 1 294 18
+        C 294 28, 280 40, 280 40
+        Z
+      " 
+      fill="url(#coskinn-logo-grad)" 
+    />
   </svg>
 );
 
@@ -66,6 +79,11 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const handleThemeSwitch = (newTheme) => {
+    toggleTheme(newTheme);
+    navigate(`/${newTheme}`);
+  };
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -133,13 +151,13 @@ export default function Navbar() {
           {/* Pill Theme Switcher */}
           <div className="flex bg-white/40 p-1 rounded-full text-xs font-semibold backdrop-blur-sm">
             <button
-              onClick={() => toggleTheme('skincare')}
+              onClick={() => handleThemeSwitch('skincare')}
               className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-theme-dark text-white shadow-sm' : 'text-theme-dark hover:bg-white/50'}`}
             >
               Skincare
             </button>
             <button
-              onClick={() => toggleTheme('cosmetics')}
+              onClick={() => handleThemeSwitch('cosmetics')}
               className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-theme-dark text-white shadow-sm' : 'text-theme-dark hover:bg-white/50'}`}
             >
               Cosmetics
@@ -151,7 +169,7 @@ export default function Navbar() {
       <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-12 pt-6 pb-4 flex items-center justify-between">
 
         {/* Logo */}
-        <Link to="/" className="flex flex-col items-start cursor-pointer group">
+        <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group">
           <CoskinnLogo />
           <span className="text-[11px] tracking-[0.35em] text-theme-dark font-semibold mt-[2px] ml-1 font-body">
             {theme === 'skincare' ? 'Skincare' : 'Cosmetics'}
@@ -160,7 +178,7 @@ export default function Navbar() {
 
         {/* Navigation Links */}
         <div className="hidden md:flex items-center justify-center gap-10 text-[15px] font-body font-medium text-theme-dark/90 flex-1 ml-10">
-          <Link to="/" className="text-theme-dark relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-full after:h-[2px] after:bg-theme-dark font-semibold">Home</Link>
+          <Link to={`/${theme}`} className="text-theme-dark relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-full after:h-[2px] after:bg-theme-dark font-semibold">Home</Link>
           <a href="#" className="flex items-center gap-1 hover:text-theme-dark transition-colors">Shop <span className="text-xs">▼</span></a>
           <a href="#" className="flex items-center gap-1 hover:text-theme-dark transition-colors">Categories <span className="text-xs">▼</span></a>
           <a href="#" className="hover:text-theme-dark transition-colors">About Us</a>
