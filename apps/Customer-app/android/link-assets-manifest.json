@@ -1,0 +1,25 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Afacad-Medium.ttf",
+      "sha1": "dd19a85ac90457c35c9f268857b9424c6e43dc1d"
+    },
+    {
+      "path": "src/assets/fonts/Afacad-Regular.ttf",
+      "sha1": "5b9d3eb4d01ee614ced21bfcaa7e499de745fd83"
+    },
+    {
+      "path": "src/assets/fonts/Afacad-SemiBold.ttf",
+      "sha1": "4a1e8be12686b6e97dd4e60d1d2302c3d37e7157"
+    },
+    {
+      "path": "src/assets/fonts/ExpletusSans-Regular.ttf",
+      "sha1": "28ef2a2bf3381c2d0944c1117a9037116711ff2f"
+    },
+    {
+      "path": "src/assets/fonts/ExpletusSans-SemiBold.ttf",
+      "sha1": "8872b24016ed4ae2fd1b18b29e3367166b51b9ab"
+    }
+  ]
+}
