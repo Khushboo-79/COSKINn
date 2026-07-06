@@ -4,8 +4,11 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/common/Navbar';
 import SkincarePage from './pages/SkincarePage';
 import CosmeticsPage from './pages/CosmeticsPage';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import RoutinePage from './pages/RoutinePage';
+import JournalPage from './pages/JournalPage';
+import AccountPage from './pages/AccountPage';
 
 export default function App() {
   return (
@@ -18,8 +21,11 @@ export default function App() {
               <Route path="/" element={<Navigate to="/skincare" replace />} />
               <Route path="/skincare" element={<SkincarePage />} />
               <Route path="/cosmetics" element={<CosmeticsPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/routine" element={<RoutinePage />} />
+              <Route path="/journal" element={<JournalPage />} />
+              <Route path="/account" element={<AccountPage />} />
             </Routes>
           </div>
         </div>

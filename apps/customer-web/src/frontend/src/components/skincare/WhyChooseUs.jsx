@@ -39,12 +39,12 @@ const GlassCard = ({ title, desc, icon: Icon, delay, className = "" }) => (
   >
     <div className="absolute inset-0 bg-gradient-to-br from-theme-secondary/20 to-theme-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0" />
     <div className="relative z-10 flex items-start gap-5">
-      <div className="w-12 h-12 rounded-full bg-theme-surface border border-white flex items-center justify-center shrink-0 text-theme-dark shadow-sm group-hover:scale-110 group-hover:rotate-[10deg] transition-all duration-700">
+      <div className="w-12 h-12 rounded-full bg-white border border-white flex items-center justify-center shrink-0 text-black shadow-sm group-hover:scale-110 group-hover:rotate-[10deg] transition-all duration-700">
         <Icon size={20} strokeWidth={1.5} />
       </div>
       <div className="flex flex-col justify-center pt-1">
-        <h4 className="text-[16px] font-heading font-semibold text-theme-dark tracking-wide mb-1 leading-tight">{title}</h4>
-        <p className="text-[13.5px] text-theme-dark/70 font-medium leading-[1.6]">{desc}</p>
+        <h4 className="text-[16px] font-heading font-semibold text-black tracking-wide mb-1 leading-tight">{title}</h4>
+        <p className="text-[13.5px] text-black/70 font-medium leading-[1.6]">{desc}</p>
       </div>
     </div>
   </motion.div>
@@ -56,11 +56,11 @@ const TypoCard = ({ title, desc, number, delay }) => (
     whileInView={{ opacity: 1, x: 0 }}
     viewport={{ once: true, margin: "-50px" }}
     transition={{ duration: 0.8, delay, ease: "easeOut" }}
-    className="relative flex flex-col gap-2 pl-6 border-l-2 border-theme-accent/40 group hover:border-theme-dark transition-colors duration-500 py-1"
+    className="relative flex flex-col gap-2 pl-6 border-l-2 border-theme-accent/40 group hover:border-black transition-colors duration-500 py-1"
   >
-    <span className="absolute -left-[1px] -translate-x-1/2 top-0 text-[10px] font-bold text-theme-accent group-hover:text-theme-dark transition-colors bg-[#f9f8f6] py-1">{number}</span>
-    <h4 className="text-[19px] lg:text-[20px] font-heading font-medium text-theme-dark">{title}</h4>
-    <p className="text-[14.5px] lg:text-[15.5px] text-theme-dark/60 font-medium leading-[1.7] max-w-[320px]">{desc}</p>
+    <span className="absolute -left-[1px] -translate-x-1/2 top-0 text-[10px] font-bold text-theme-accent group-hover:text-black transition-colors bg-white py-1">{number}</span>
+    <h4 className="text-[19px] lg:text-[20px] font-heading font-medium text-black">{title}</h4>
+    <p className="text-[14.5px] lg:text-[15.5px] text-black/60 font-medium leading-[1.7] max-w-[320px]">{desc}</p>
   </motion.div>
 );
 
@@ -75,7 +75,7 @@ const IngredientPill = ({ name, top, left, right, bottom, delay }) => (
     className="absolute z-30 flex items-center gap-2.5 bg-white/40 backdrop-blur-xl border border-white/60 py-2.5 px-5 rounded-full shadow-[0_15px_30px_rgba(43,89,104,0.08)] pointer-events-none"
   >
     <div className="w-1.5 h-1.5 rounded-full bg-theme-primary animate-pulse" />
-    <span className="text-[11px] font-bold text-theme-dark uppercase tracking-[0.2em] leading-none">{name}</span>
+    <span className="text-[11px] font-bold text-black uppercase tracking-[0.2em] leading-none">{name}</span>
   </motion.div>
 );
 
@@ -95,7 +95,7 @@ export default function WhyChooseUs() {
   return (
     <section 
       ref={containerRef} 
-      className="relative w-full bg-[#f9f8f6] py-24 lg:py-40 overflow-hidden font-body text-theme-dark selection:bg-theme-secondary selection:text-theme-dark"
+      className="relative w-full bg-white py-24 lg:py-40 overflow-hidden font-body text-black selection:bg-theme-secondary selection:text-black"
     >
       {/* LUXURY BACKGROUND */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -130,8 +130,8 @@ export default function WhyChooseUs() {
                 transition={{ duration: 0.8 }}
                 className="flex items-center gap-3 mb-5"
               >
-                <div className="h-[1px] w-8 bg-theme-dark/30"></div>
-                <span className="text-[10px] font-bold tracking-[0.3em] text-theme-dark/60 uppercase">
+                <div className="h-[1px] w-8 bg-black/30"></div>
+                <span className="text-[10px] font-bold tracking-[0.3em] text-black/60 uppercase">
                   Why COSKINn
                 </span>
               </motion.div>
@@ -141,7 +141,7 @@ export default function WhyChooseUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.1 }}
-                className="font-heading text-[3.5rem] lg:text-[4.5rem] leading-[1.05] text-theme-dark tracking-tight"
+                className="font-heading text-[3.5rem] lg:text-[4.5rem] leading-[1.05] text-black tracking-tight"
               >
                 Nature <br />
                 <span className="italic font-light text-theme-accent">Perfected.</span>
@@ -152,7 +152,7 @@ export default function WhyChooseUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-[16px] lg:text-[17px] text-theme-dark/70 font-medium leading-[1.9] mt-6 max-w-[380px]"
+                className="text-[16px] lg:text-[17px] text-black/70 font-medium leading-[1.9] mt-6 max-w-[380px]"
               >
                 Experience skincare crafted with uncompromising standards. A harmonious blend of potent botanical extracts and advanced science, designed to reveal your naturally radiant glow.
               </motion.p>
@@ -185,8 +185,8 @@ export default function WhyChooseUs() {
               </div>
 
               {/* Luxury Overlays for Depth and Contrast */}
-              <div className="absolute inset-0 bg-theme-dark/10 mix-blend-overlay pointer-events-none z-10" />
-              <div className="absolute inset-0 bg-gradient-to-t from-theme-surface/70 via-transparent to-transparent pointer-events-none z-10 opacity-80" />
+              <div className="absolute inset-0 bg-black/10 mix-blend-overlay pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-white/70 via-transparent to-transparent pointer-events-none z-10 opacity-80" />
               <div className="absolute inset-0 bg-gradient-to-tr from-theme-secondary/20 to-transparent pointer-events-none z-10 mix-blend-multiply" />
               
               {/* Soft Glass Reflection Sweep */}
@@ -207,8 +207,8 @@ export default function WhyChooseUs() {
                transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
                className="absolute bottom-[-5%] lg:bottom-12 left-[5%] lg:left-[-12%] w-[120px] lg:w-[180px] aspect-[3/4] z-50 rounded-[24px] lg:rounded-[32px] overflow-hidden shadow-[0_30px_60px_rgba(43,89,104,0.2)] border border-white/60 bg-white"
             >
-               <div className="absolute inset-0 bg-theme-dark/10 mix-blend-overlay z-10 pointer-events-none" />
-               <div className="absolute inset-0 flex items-center justify-center z-20 mix-blend-overlay opacity-80 pointer-events-none bg-theme-dark/5">
+               <div className="absolute inset-0 bg-black/10 mix-blend-overlay z-10 pointer-events-none" />
+               <div className="absolute inset-0 flex items-center justify-center z-20 mix-blend-overlay opacity-80 pointer-events-none bg-black/5">
                   <span className="font-heading text-white text-3xl lg:text-[2.5rem] font-light tracking-[0.3em] uppercase rotate-[-90deg]">COSKINn</span>
                </div>
                <img src="/mockup_product_1.png" className="w-full h-full object-cover" />
