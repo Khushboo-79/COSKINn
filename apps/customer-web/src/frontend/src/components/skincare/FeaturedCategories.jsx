@@ -15,7 +15,7 @@ const categories = [
     productImg: "/cleanser_bottle_coskin.png",
     bgImg: "/bg-greentea.webp",
     modelImg: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1200&auto=format&fit=crop",
-    gradient: "from-theme-neutral/50 to-theme-surface",
+    gradient: "from-gray-100/50 to-white",
   },
   {
     id: "cat2",
@@ -26,7 +26,7 @@ const categories = [
     productImg: "/mockup_product_2.png",
     bgImg: "/bg-mango.webp",
     modelImg: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=800&auto=format&fit=crop",
-    gradient: "from-theme-secondary/60 to-theme-surface",
+    gradient: "from-theme-secondary/60 to-white",
   },
   {
     id: "cat3",
@@ -37,7 +37,7 @@ const categories = [
     productImg: "/mockup_product_1.png",
     bgImg: "/bg-strawberry.webp",
     modelImg: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=1200&auto=format&fit=crop",
-    gradient: "from-theme-accent/50 to-theme-surface",
+    gradient: "from-theme-accent/50 to-white",
   },
   {
     id: "cat4",
@@ -48,7 +48,7 @@ const categories = [
     productImg: "/serum_bottle_coskin.png",
     bgImg: "/bg-blueberry.webp",
     modelImg: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=800&auto=format&fit=crop",
-    gradient: "from-theme-primary/40 to-theme-surface",
+    gradient: "from-theme-primary/40 to-white",
   }
 ];
 
@@ -79,7 +79,7 @@ const CategoryCard = ({ data, delay = 0 }) => {
             className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-[4s] ease-out" 
           />
           {/* Subtle gradient overlay to guarantee glassmorphism text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-t from-theme-surface/90 via-theme-surface/30 to-transparent opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/30 to-transparent opacity-90" />
        </div>
 
        {/* 3. The Product Composition (Moves, scales, and rotates aside on hover) */}
@@ -87,7 +87,7 @@ const CategoryCard = ({ data, delay = 0 }) => {
           
           {/* COSKINn Brand Overlay strictly locked to product */}
           <div className="absolute inset-0 flex items-center justify-center mix-blend-overlay opacity-60 z-30 transition-all duration-[1.2s] ease-out group-hover:opacity-50 group-hover:-translate-x-[20%] lg:group-hover:-translate-x-[25%] group-hover:scale-75 group-hover:rotate-[-5deg]">
-             <span className="font-heading text-theme-dark text-[4.5rem] lg:text-[7rem] tracking-[0.3em] font-light rotate-[-90deg]">COSKINn</span>
+             <span className="font-heading text-black text-[4.5rem] lg:text-[7rem] tracking-[0.3em] font-light rotate-[-90deg]">COSKINn</span>
           </div>
           
           <img 
@@ -101,7 +101,7 @@ const CategoryCard = ({ data, delay = 0 }) => {
        <div className="absolute top-0 bottom-0 -left-[100%] w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-[30deg] z-30 group-hover:left-[200%] transition-all duration-[2s] ease-in-out pointer-events-none" />
 
        {/* 5. Bottom Gradient Fade for Typography Legibility (Always present) */}
-       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-theme-surface/90 via-theme-surface/20 to-transparent z-30 pointer-events-none transition-opacity duration-700" />
+       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-30 pointer-events-none transition-opacity duration-700" />
 
        {/* 6. Glassmorphism Content Layer */}
        <div className="absolute bottom-5 left-5 right-5 lg:bottom-6 lg:left-6 lg:right-6 z-40">
@@ -112,17 +112,17 @@ const CategoryCard = ({ data, delay = 0 }) => {
                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-theme-accent mb-2 block">
                       {data.products}
                    </span>
-                   <h3 className="font-heading text-[22px] lg:text-[26px] font-medium text-theme-dark mb-1 leading-tight">
+                   <h3 className="font-heading text-[22px] lg:text-[26px] font-medium text-black mb-1 leading-tight">
                       {data.title}
                    </h3>
-                   <p className="text-[13px] text-theme-dark/70 font-medium max-w-[280px] leading-relaxed">
+                   <p className="text-[13px] text-black/70 font-medium max-w-[280px] leading-relaxed">
                       {data.description}
                    </p>
                 </div>
 
                 <div className="flex items-center gap-2 bg-white/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 shrink-0 shadow-sm self-start xl:self-end">
                    <div className="w-1.5 h-1.5 rounded-full bg-theme-primary animate-pulse" />
-                   <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-theme-dark/80 whitespace-nowrap">
+                   <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-black/80 whitespace-nowrap">
                       {data.ingredient}
                    </span>
                 </div>
@@ -141,7 +141,7 @@ const CategoryCard = ({ data, delay = 0 }) => {
 
 export default function FeaturedCategories() {
   return (
-    <section className="relative w-full bg-[#fcfaf9] pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden font-body text-theme-dark selection:bg-theme-secondary selection:text-theme-dark">
+    <section className="relative w-full bg-[#fcfaf9] pt-16 pb-24 lg:pt-20 lg:pb-32 overflow-hidden font-body text-black selection:bg-theme-secondary selection:text-black">
       
       {/* 
         =========================================
@@ -172,11 +172,11 @@ export default function FeaturedCategories() {
             transition={{ duration: 0.8 }}
             className="flex items-center gap-4 mb-6"
           >
-            <div className="h-[1px] w-12 bg-theme-dark/30" />
-            <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-theme-dark/70">
+            <div className="h-[1px] w-12 bg-black/30" />
+            <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-black/70">
               Curated Collections
             </span>
-            <div className="h-[1px] w-12 bg-theme-dark/30" />
+            <div className="h-[1px] w-12 bg-black/30" />
           </motion.div>
 
           <motion.h2 
@@ -184,7 +184,7 @@ export default function FeaturedCategories() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-heading text-[3.2rem] sm:text-[4rem] lg:text-[4.5rem] leading-[1.05] tracking-tight text-theme-dark mb-5"
+            className="font-heading text-[3.2rem] sm:text-[4rem] lg:text-[4.5rem] leading-[1.05] tracking-tight text-black mb-5"
           >
             Featured <span className="italic font-light text-theme-primary">Rituals</span>.
           </motion.h2>
@@ -194,7 +194,7 @@ export default function FeaturedCategories() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-[15px] lg:text-[16px] text-theme-dark/70 font-medium leading-[1.9] max-w-[500px]"
+            className="text-[15px] lg:text-[16px] text-black/70 font-medium leading-[1.9] max-w-[500px]"
           >
             Discover our signature botanical formulations. Hover over each collection to explore the luxury skincare experience.
           </motion.p>

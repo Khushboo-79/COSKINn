@@ -34,7 +34,7 @@ export default function About() {
   return (
     <section 
       ref={containerRef} 
-      className="relative w-full bg-[#fcfaf9] py-32 lg:py-48 overflow-hidden font-body text-theme-dark selection:bg-theme-secondary selection:text-theme-dark"
+      className="relative w-full bg-[#fcfaf9] py-32 lg:py-48 overflow-hidden font-body text-black selection:bg-theme-secondary selection:text-black"
     >
       {/* 
         =========================================
@@ -82,8 +82,8 @@ export default function About() {
               transition={{ duration: 0.8 }}
               className="flex items-center gap-4 mb-8 lg:mb-12"
             >
-              <div className="h-[1px] w-12 bg-theme-dark/40" />
-              <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-theme-dark/60">Our Story</span>
+              <div className="h-[1px] w-12 bg-black/40" />
+              <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-black/60">Our Story</span>
             </motion.div>
 
             <motion.h2 
@@ -91,7 +91,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-heading text-[3.8rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[1.05] tracking-tight text-theme-dark"
+              className="font-heading text-[3.8rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[1.05] tracking-tight text-black"
             >
               Nature <br/>
               <span className="italic font-light text-theme-accent">inspires</span>.<br/>
@@ -104,7 +104,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-12 text-[17px] sm:text-[18px] text-theme-dark/75 font-medium leading-[2] max-w-[450px]"
+              className="mt-12 text-[17px] sm:text-[18px] text-black/75 font-medium leading-[2] max-w-[450px]"
             >
               COSKINn believes skincare should feel luxurious, gentle and effective. Every product is carefully designed for healthy glowing skin.
             </motion.p>
@@ -116,7 +116,7 @@ export default function About() {
               style={{ y: window.innerWidth >= 1024 ? yImage1 : 0 }}
               className="relative w-full aspect-[3/4] lg:aspect-[4/5] rounded-[40px] lg:rounded-[60px] overflow-hidden shadow-[0_40px_100px_rgba(43,89,104,0.15)] bg-white/10 backdrop-blur-sm border border-white/60 group"
             >
-              <div className="absolute inset-0 bg-theme-dark/5 mix-blend-overlay z-10 pointer-events-none" />
+              <div className="absolute inset-0 bg-black/5 mix-blend-overlay z-10 pointer-events-none" />
               
               {/* Product Branding Requirement Guarantee */}
               <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none opacity-80 mix-blend-overlay">
@@ -130,7 +130,7 @@ export default function About() {
               />
               
               {/* Luxury Lighting Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-theme-surface/60 via-transparent to-transparent z-10 opacity-70 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-transparent z-10 opacity-70 pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-br from-theme-secondary/20 to-transparent z-10 mix-blend-multiply pointer-events-none" />
             </motion.div>
 
@@ -153,7 +153,7 @@ export default function About() {
               style={{ y: window.innerWidth >= 1024 ? yImage2 : 0 }}
               className="relative w-[85%] lg:w-full aspect-square rounded-[40px] overflow-hidden shadow-[0_30px_80px_rgba(43,89,104,0.1)] border border-white/50 group"
             >
-              <div className="absolute inset-0 bg-theme-dark/10 mix-blend-overlay z-10 pointer-events-none" />
+              <div className="absolute inset-0 bg-black/10 mix-blend-overlay z-10 pointer-events-none" />
               
               {/* Product Branding Requirement Guarantee */}
               <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none opacity-70 mix-blend-overlay">
@@ -181,7 +181,7 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none z-0" />
               
               <div className="relative z-10">
-                <h3 className="font-heading text-[26px] lg:text-[32px] font-medium text-theme-dark mb-10 leading-tight">
+                <h3 className="font-heading text-[26px] lg:text-[32px] font-medium text-black mb-10 leading-tight">
                   Six Signature Botanicals.<br/>
                   <span className="italic font-light text-theme-accent">One Harmonious Blend.</span>
                 </h3>
@@ -196,16 +196,16 @@ export default function About() {
                       transition={{ duration: 0.5, delay: i * 0.1 }}
                       className="flex items-center gap-6 group cursor-default"
                     >
-                      <div className="w-2 h-2 rounded-full bg-theme-dark/10 group-hover:bg-theme-accent transition-colors duration-500 shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-black/10 group-hover:bg-theme-accent transition-colors duration-500 shrink-0" />
                       
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 w-full">
-                        <span className="text-[14px] lg:text-[15px] font-bold tracking-[0.2em] uppercase text-theme-dark/70 group-hover:text-theme-dark transition-colors duration-500 min-w-[140px]">
+                        <span className="text-[14px] lg:text-[15px] font-bold tracking-[0.2em] uppercase text-black/70 group-hover:text-black transition-colors duration-500 min-w-[140px]">
                           {ing.name}
                         </span>
                         
-                        <div className="hidden sm:block flex-1 h-[1px] bg-theme-dark/5 group-hover:bg-theme-dark/15 transition-colors duration-500" />
+                        <div className="hidden sm:block flex-1 h-[1px] bg-black/5 group-hover:bg-black/15 transition-colors duration-500" />
                         
-                        <span className="text-[14px] lg:text-[15px] font-medium text-theme-dark/50 group-hover:text-theme-dark/80 transition-colors duration-500">
+                        <span className="text-[14px] lg:text-[15px] font-medium text-black/50 group-hover:text-black/80 transition-colors duration-500">
                           {ing.benefit}
                         </span>
                       </div>

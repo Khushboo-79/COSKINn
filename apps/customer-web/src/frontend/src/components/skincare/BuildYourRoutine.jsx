@@ -17,7 +17,7 @@ const routines = {
       image: "/cleanser_bottle_coskin.png",
       bgImg: "/bg-greentea.webp",
       modelImg: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1200&auto=format&fit=crop",
-      gradient: "from-theme-neutral/40 to-theme-surface"
+      gradient: "from-gray-100/40 to-white"
     },
     {
       id: "m2",
@@ -29,7 +29,7 @@ const routines = {
       image: "/mockup_product_1.png",
       bgImg: "/bg-strawberry.webp",
       modelImg: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=1200&auto=format&fit=crop",
-      gradient: "from-theme-accent/40 to-theme-surface"
+      gradient: "from-theme-accent/40 to-white"
     },
     {
       id: "m3",
@@ -41,7 +41,7 @@ const routines = {
       image: "/mockup_product_2.png",
       bgImg: "/bg-mango.webp",
       modelImg: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=1200&auto=format&fit=crop",
-      gradient: "from-theme-secondary/50 to-theme-surface"
+      gradient: "from-theme-secondary/50 to-white"
     }
   ],
   night: [
@@ -55,7 +55,7 @@ const routines = {
       image: "/cleanser_bottle_coskin.png",
       bgImg: "/bg-pomegranate.webp",
       modelImg: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1200&auto=format&fit=crop",
-      gradient: "from-theme-accent/30 to-theme-surface" 
+      gradient: "from-theme-accent/30 to-white" 
     },
     {
       id: "n2",
@@ -67,7 +67,7 @@ const routines = {
       image: "/serum_bottle_coskin.png",
       bgImg: "/bg-blueberry.webp",
       modelImg: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1200&auto=format&fit=crop",
-      gradient: "from-theme-primary/40 to-theme-surface"
+      gradient: "from-theme-primary/40 to-white"
     },
     {
       id: "n3",
@@ -79,7 +79,7 @@ const routines = {
       image: "/mockup_product_3.png",
       bgImg: "/bg-mango.webp",
       modelImg: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?q=80&w=1200&auto=format&fit=crop",
-      gradient: "from-theme-neutral/50 to-theme-surface"
+      gradient: "from-gray-100/50 to-white"
     }
   ]
 };
@@ -116,8 +116,8 @@ const RoutineStep = ({ data, index }) => {
                className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-[4s] ease-out" 
                alt="Lifestyle usage"
              />
-             <div className="absolute inset-0 bg-theme-dark/10 mix-blend-overlay" />
-             <div className="absolute inset-0 bg-gradient-to-t from-theme-surface/80 via-transparent to-transparent opacity-80" />
+             <div className="absolute inset-0 bg-black/10 mix-blend-overlay" />
+             <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent opacity-80" />
           </div>
 
           {/* Product Composition & Brand Overlay */}
@@ -125,7 +125,7 @@ const RoutineStep = ({ data, index }) => {
              
              {/* Guaranteed Brand Presence */}
              <div className="absolute inset-0 flex items-center justify-center mix-blend-overlay opacity-50 z-30 transition-all duration-[1.2s] ease-out group-hover:opacity-40 group-hover:-translate-x-[25%] lg:group-hover:-translate-x-[35%] group-hover:scale-75 group-hover:rotate-[-5deg]">
-                <span className="font-heading text-theme-dark text-[4.5rem] lg:text-[7rem] tracking-[0.3em] font-light rotate-[-90deg]">COSKINn</span>
+                <span className="font-heading text-black text-[4.5rem] lg:text-[7rem] tracking-[0.3em] font-light rotate-[-90deg]">COSKINn</span>
              </div>
              
              <img 
@@ -140,7 +140,7 @@ const RoutineStep = ({ data, index }) => {
 
           {/* Step Marker Floating INSIDE the visual area */}
           <div className={`absolute top-6 ${isEven ? 'left-6' : 'right-6'} w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-white/40 backdrop-blur-xl border border-white/60 flex items-center justify-center shadow-lg z-40 transition-transform duration-700 group-hover:scale-110`}>
-             <span className="text-[12px] lg:text-[14px] font-bold text-theme-dark tracking-widest">{data.step}</span>
+             <span className="text-[12px] lg:text-[14px] font-bold text-black tracking-widest">{data.step}</span>
           </div>
           
           {/* Floating Glass Decorative Blob */}
@@ -167,20 +167,20 @@ const RoutineStep = ({ data, index }) => {
              <span className="text-[10px] lg:text-[11px] font-bold tracking-[0.25em] uppercase text-theme-accent mb-3 lg:mb-4 block">
                {data.type}
              </span>
-             <h3 className="font-heading text-[24px] lg:text-[32px] xl:text-[36px] font-medium text-theme-dark mb-4 leading-tight">
+             <h3 className="font-heading text-[24px] lg:text-[32px] xl:text-[36px] font-medium text-black mb-4 leading-tight">
                {data.name}
              </h3>
              
-             <div className="w-12 h-[1px] bg-theme-dark/15 mb-5 lg:mb-6" />
+             <div className="w-12 h-[1px] bg-black/15 mb-5 lg:mb-6" />
 
              <div className="flex flex-col gap-2.5">
                 <div className="flex items-center gap-3">
                    <div className="w-1.5 h-1.5 rounded-full bg-theme-primary animate-pulse shadow-[0_0_10px_rgba(151,181,194,0.5)]" />
-                   <span className="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-theme-dark/80">
+                   <span className="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-black/80">
                      {data.ingredient}
                    </span>
                 </div>
-                <p className="text-[13.5px] lg:text-[15px] text-theme-dark/70 font-medium leading-[1.7] lg:leading-[1.8]">
+                <p className="text-[13.5px] lg:text-[15px] text-black/70 font-medium leading-[1.7] lg:leading-[1.8]">
                    {data.ingredientDetail}
                 </p>
              </div>
@@ -203,7 +203,7 @@ export default function Routine() {
   return (
     <section 
       ref={containerRef} 
-      className="relative w-full bg-[#fcfaf9] pt-16 pb-20 lg:pt-24 lg:pb-28 overflow-hidden font-body text-theme-dark transition-colors duration-[1.5s]"
+      className="relative w-full bg-[#fcfaf9] pt-16 pb-20 lg:pt-24 lg:pb-28 overflow-hidden font-body text-black transition-colors duration-[1.5s]"
       style={{ backgroundColor: activeRoutine === 'night' ? '#f4f6f7' : '#fcfaf9' }}
     >
       {/* 
@@ -236,7 +236,7 @@ export default function Routine() {
               className="absolute inset-0"
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(151,181,194,0.25)_0%,rgba(255,255,255,0)_60%)]" />
-              <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-theme-dark/10 blur-[150px] rounded-full mix-blend-multiply" />
+              <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-black/10 blur-[150px] rounded-full mix-blend-multiply" />
               <div className="absolute bottom-[20%] left-[-10%] w-[45vw] h-[45vw] bg-theme-primary/15 blur-[130px] rounded-full mix-blend-multiply" />
             </motion.div>
           )}
@@ -258,11 +258,11 @@ export default function Routine() {
             transition={{ duration: 0.8 }}
             className="flex items-center gap-4 mb-6 lg:mb-8"
           >
-            <div className="h-[1px] w-12 bg-theme-dark/30" />
-            <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-theme-dark/70">
+            <div className="h-[1px] w-12 bg-black/30" />
+            <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-black/70">
               The Ritual
             </span>
-            <div className="h-[1px] w-12 bg-theme-dark/30" />
+            <div className="h-[1px] w-12 bg-black/30" />
           </motion.div>
 
           <motion.h2 
@@ -270,7 +270,7 @@ export default function Routine() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-heading text-[3.2rem] lg:text-[4.5rem] leading-[1.05] tracking-tight text-theme-dark mb-8 lg:mb-10"
+            className="font-heading text-[3.2rem] lg:text-[4.5rem] leading-[1.05] tracking-tight text-black mb-8 lg:mb-10"
           >
             Build Your <br/>
             <span className="italic font-light text-theme-primary">Routine</span>.
@@ -293,14 +293,14 @@ export default function Routine() {
             
             <button 
               onClick={() => setActiveRoutine('morning')} 
-              className={`relative z-10 px-8 lg:px-12 py-3 lg:py-3.5 rounded-full text-[11px] lg:text-[12px] font-bold tracking-[0.2em] uppercase transition-colors duration-500 flex items-center gap-2 ${activeRoutine === 'morning' ? 'text-theme-dark' : 'text-theme-dark/50 hover:text-theme-dark/80'}`}
+              className={`relative z-10 px-8 lg:px-12 py-3 lg:py-3.5 rounded-full text-[11px] lg:text-[12px] font-bold tracking-[0.2em] uppercase transition-colors duration-500 flex items-center gap-2 ${activeRoutine === 'morning' ? 'text-black' : 'text-black/50 hover:text-black/80'}`}
             >
               <span>Morning</span>
               <span className="text-[14px]">☀️</span>
             </button>
             <button 
               onClick={() => setActiveRoutine('night')} 
-              className={`relative z-10 px-8 lg:px-12 py-3 lg:py-3.5 rounded-full text-[11px] lg:text-[12px] font-bold tracking-[0.2em] uppercase transition-colors duration-500 flex items-center gap-2 ${activeRoutine === 'night' ? 'text-theme-dark' : 'text-theme-dark/50 hover:text-theme-dark/80'}`}
+              className={`relative z-10 px-8 lg:px-12 py-3 lg:py-3.5 rounded-full text-[11px] lg:text-[12px] font-bold tracking-[0.2em] uppercase transition-colors duration-500 flex items-center gap-2 ${activeRoutine === 'night' ? 'text-black' : 'text-black/50 hover:text-black/80'}`}
             >
               <span>Night</span>
               <span className="text-[14px]">🌙</span>

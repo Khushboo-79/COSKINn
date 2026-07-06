@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 
 // Import Models
@@ -81,79 +81,120 @@ const slides = [
   }
 ];
 
+// Ultra-premium Apple-style easing
+const cinematicEase = [0.22, 1, 0.36, 1];
+const premiumSpring = { type: "spring", stiffness: 60, damping: 20, mass: 1 };
+const transitionDuration = 1.8; // Slow luxury timing
+
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4500); // Slightly longer than 3s to allow 1.5s transitions to breathe and users to read
+    }, 6000); // 6 seconds auto-change
     return () => clearInterval(timer);
   }, []);
 
-  const slide = slides[currentSlide];
+  // Memoize particles to avoid re-renders and stabilize random values so they don't stutter on slide change
+  const particles = useMemo(() => {
+    return [...Array(20)].map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: Math.random() * 5,
+      duration: Math.random() * 6 + 6,
+      scale: Math.random() * 1.5 + 0.5,
+      yDest: Math.random() * -150 - 50,
+      opacityMax: Math.random() * 0.6 + 0.2
+    }));
+  }, []);
+
+  // Collect all unique images for preloading
+  const allImages = useMemo(() => {
+    const models = slides.map(s => s.model);
+    const products = slides.flatMap(s => s.products.map(p => p.img));
+    return [...new Set([...models, ...products])];
+  }, []);
 
   return (
-    <section className="relative w-full h-screen min-h-[800px] bg-white overflow-hidden select-none">
+    <section className="relative w-full h-screen min-h-[800px] bg-black overflow-hidden select-none" style={{ transform: "translate3d(0,0,0)", backfaceVisibility: "hidden" }}>
       
-      {/* Preload images to avoid flashing */}
-      <div className="hidden">
-        {slides.map(s => <img key={s.id} src={s.model} alt="preload" />)}
+      {/* True Preload without display:none to guarantee browser fetches them instantly on mount */}
+      <div className="absolute opacity-0 pointer-events-none w-[1px] h-[1px] overflow-hidden -z-10">
+        {allImages.map((src, i) => <img key={i} src={src} alt="" />)}
       </div>
 
-      {/* Background Slides Transitions (Overlapping Crossfade) */}
-      <AnimatePresence>
-        <motion.div
-          key={slide.id}
-          className="absolute inset-0 w-full h-full"
-          initial={{ opacity: 0, filter: "blur(20px)", scale: 1.05 }}
-          animate={{ opacity: 1, filter: "blur(0px)", scale: 1, zIndex: 10 }}
-          exit={{ opacity: 0, filter: "blur(10px)", scale: 0.95, zIndex: 0 }}
-          transition={{ duration: 1.8, ease: "easeInOut" }} // Smooth overlap without wait
-        >
-          {/* Main Background Model - Seamlessly integrated */}
-          <motion.img 
-            src={slide.model} 
-            alt={slide.title}
-            className="w-full h-full object-cover object-[center_20%]"
-            animate={{ scale: [1, 1.05] }} // Slow continuous zoom
-            transition={{ duration: 10, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
-          />
+      {/* Dynamic Theme Color Overlays for Bloom Effect (Constant continuous motion without jumps) */}
+      <div className="absolute inset-0 z-[12] pointer-events-none overflow-hidden" style={{ transform: "translate3d(0,0,0)" }}>
+        <motion.div 
+          className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full opacity-40"
+          style={{ backgroundColor: cosmeticColors.primary, mixBlendMode: 'screen', filter: 'blur(150px)', willChange: "transform" }}
+          animate={{ x: [-30, 30, -30], y: [-30, 30, -30] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] rounded-full opacity-30"
+          style={{ backgroundColor: cosmeticColors.secondary, mixBlendMode: 'screen', filter: 'blur(150px)', willChange: "transform" }}
+          animate={{ x: [30, -30, 30], y: [30, -30, 30] }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
 
-          {/* Luxury Soft Frosted Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-white/10 z-10 pointer-events-none mix-blend-overlay"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40 z-10 pointer-events-none"></div>
-          
-          {/* Dynamic Theme Color Overlays for Bloom Effect */}
-          <motion.div 
-            className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full filter blur-[150px] opacity-40 z-10 pointer-events-none"
-            style={{ backgroundColor: cosmeticColors.primary, mixBlendMode: 'screen' }}
-            animate={{ x: [-50, 50, -50], y: [-50, 50, -50] }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div 
-            className="absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] rounded-full filter blur-[150px] opacity-30 z-10 pointer-events-none"
-            style={{ backgroundColor: cosmeticColors.secondary, mixBlendMode: 'screen' }}
-            animate={{ x: [50, -50, 50], y: [50, -50, 50] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </motion.div>
-      </AnimatePresence>
+      {/* Background Slides Transitions (All mounted in DOM, purely fading opacity for zero-lag crossfade) */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-10" style={{ transform: "translate3d(0,0,0)", backfaceVisibility: "hidden" }}>
+        {slides.map((slide, index) => (
+          <motion.div
+            key={slide.id}
+            className="absolute inset-0 w-full h-full"
+            initial={false}
+            animate={{ 
+              opacity: currentSlide === index ? 1 : 0, 
+              scale: currentSlide === index ? 1 : 1.02,
+              filter: currentSlide === index ? "blur(0px)" : "blur(4px)",
+              zIndex: currentSlide === index ? 10 : 0
+            }}
+            transition={{ duration: transitionDuration, ease: cinematicEase }} // Smooth overlap
+            style={{ willChange: "transform, opacity, filter" }}
+          >
+            {/* Main Background Model - Seamlessly integrated */}
+            <motion.img 
+              src={slide.model} 
+              alt={slide.title}
+              className="w-full h-full object-cover object-[center_20%]"
+              animate={{ scale: [1, 1.05] }} // Slow continuous zoom
+              transition={{ duration: 15, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
+              style={{ willChange: "transform" }}
+            />
+
+            {/* Luxury Soft Frosted Vignette */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-white/10 z-10 pointer-events-none mix-blend-overlay"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40 z-10 pointer-events-none"></div>
+          </motion.div>
+        ))}
+      </div>
 
       {/* Foreground Content */}
-      <div className="relative z-30 container mx-auto px-6 md:px-12 lg:px-16 min-h-screen py-32 md:py-40 pointer-events-none grid items-center">
-        
-        <AnimatePresence>
+      <div className="relative z-30 container mx-auto px-6 md:px-12 lg:px-16 min-h-screen py-32 md:py-40 pointer-events-none grid items-center" style={{ transform: "translate3d(0,0,0)", backfaceVisibility: "hidden" }}>
+        {slides.map((slide, index) => (
           <motion.div 
             key={slide.id}
-            className={`w-full max-w-4xl flex flex-col pointer-events-auto [grid-area:1/1] ${
+            className={`w-full max-w-4xl flex flex-col [grid-area:1/1] ${
               slide.alignment === 'right' ? 'justify-self-end items-end text-right' : 
               slide.alignment === 'center' ? 'justify-self-center items-center text-center' : 'justify-self-start items-start text-left'
             }`}
-            initial={{ opacity: 0, y: 30, filter: "blur(5px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)", zIndex: 10 }}
-            exit={{ opacity: 0, y: -30, filter: "blur(5px)", zIndex: 0 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
+            initial={false}
+            animate={{ 
+              opacity: currentSlide === index ? 1 : 0, 
+              y: currentSlide === index ? 0 : 10, // Tiny 10px Y movement for ultra luxury feel
+              filter: currentSlide === index ? "blur(0px)" : "blur(4px)",
+              zIndex: currentSlide === index ? 10 : 0
+            }}
+            transition={{ duration: transitionDuration, ease: cinematicEase }}
+            style={{ 
+              willChange: "transform, opacity, filter", 
+              pointerEvents: currentSlide === index ? "auto" : "none" 
+            }}
           >
             <motion.h4 
               className="text-white/80 font-bold tracking-[0.4em] uppercase mb-4 text-xs md:text-sm drop-shadow-md"
@@ -180,32 +221,35 @@ export default function Hero() {
               
               {/* Primary Button */}
               <motion.button 
-                whileHover={{ scale: 1.04, boxShadow: `0 25px 50px -12px ${cosmeticColors.primary}90` }}
-                whileTap={{ scale: 0.97 }}
-                className="w-full sm:w-auto px-10 md:px-12 py-5 md:py-6 rounded-full text-white tracking-widest transition-all shadow-[0_15px_35px_rgba(255,0,105,0.5)] border border-white/30 group overflow-hidden relative flex items-center justify-center gap-3 backdrop-blur-xl"
+                whileHover={{ scale: 1.03, boxShadow: `0 20px 40px -10px ${cosmeticColors.primary}80` }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.4, ease: cinematicEase }}
+                className="w-full sm:w-auto px-10 md:px-12 py-5 md:py-6 rounded-full text-white tracking-widest shadow-[0_15px_35px_rgba(255,0,105,0.4)] border border-white/30 group overflow-hidden relative flex items-center justify-center gap-3 backdrop-blur-xl pointer-events-auto"
                 style={{ background: `linear-gradient(135deg, ${cosmeticColors.primary} 0%, #ff4d94 100%)` }}
               >
                 {/* Continuous Shimmer Animation inside Button */}
                 <motion.div 
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 w-1/2"
                   animate={{ x: ['-200%', '300%'] }}
-                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+                  style={{ willChange: "transform" }}
                 />
                 
                 <span className="relative z-10 font-bold uppercase text-sm md:text-base drop-shadow-md" style={{ fontFamily: fonts.cosmetics.heading }}>
                   Shop Collection
                 </span>
                 
-                <svg className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300 drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-500 ease-out drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </motion.button>
 
               {/* Secondary Button */}
               <motion.button 
-                whileHover={{ scale: 1.04, backgroundColor: 'rgba(255,255,255,1)', color: '#000', borderColor: 'rgba(255,255,255,1)' }}
-                whileTap={{ scale: 0.97 }}
-                className="w-full sm:w-auto px-10 md:px-12 py-5 md:py-6 rounded-full text-white tracking-widest transition-colors duration-500 border border-white/50 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.3)] group overflow-hidden relative flex items-center justify-center bg-black/10"
+                whileHover={{ scale: 1.03, backgroundColor: 'rgba(255,255,255,1)', color: '#000', borderColor: 'rgba(255,255,255,1)' }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.4, ease: cinematicEase }}
+                className="w-full sm:w-auto px-10 md:px-12 py-5 md:py-6 rounded-full text-white tracking-widest border border-white/50 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.3)] group overflow-hidden relative flex items-center justify-center bg-black/10 transition-colors duration-500 pointer-events-auto"
               >
                 {/* Hover Glass Wipe */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full group-hover:translate-x-full transition-all duration-700 ease-in-out z-0"></div>
@@ -217,65 +261,73 @@ export default function Hero() {
               
             </motion.div>
           </motion.div>
-        </AnimatePresence>
+        ))}
       </div>
 
-      {/* Floating Animated Products Layer */}
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        <AnimatePresence>
-          {slides.map((s, index) => 
-            currentSlide === index && s.products.map((prod, pIndex) => (
+      {/* Floating Animated Products Layer (All mounted, fading opacity) */}
+      <div className="absolute inset-0 z-20 pointer-events-none" style={{ transform: "translate3d(0,0,0)", backfaceVisibility: "hidden" }}>
+        {slides.map((slide, index) => 
+          slide.products.map((prod, pIndex) => (
+            <motion.div
+              key={`${slide.id}-${pIndex}`}
+              className={`absolute ${prod.style}`}
+              initial={false}
+              animate={{ 
+                opacity: currentSlide === index ? 1 : 0,
+                scale: currentSlide === index ? 1 : 0.95, // Tiny scale reduction (1 -> 0.95)
+                y: currentSlide === index ? 0 : 10,       // Tiny Y movement
+                filter: currentSlide === index ? "blur(0px)" : "blur(4px)",
+                zIndex: currentSlide === index ? 10 : 0
+              }}
+              transition={{ 
+                duration: transitionDuration, 
+                delay: currentSlide === index ? prod.delay : 0, // Delay only on enter
+                ease: cinematicEase 
+              }}
+              style={{ willChange: "transform, opacity, filter" }}
+            >
               <motion.img 
-                key={`${s.id}-${pIndex}`}
                 src={prod.img}
-                className={`absolute object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)] ${prod.style}`}
-                initial={{ opacity: 0, scale: 0.5, y: 100, rotate: -20 }}
+                className="w-full h-full object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)]"
                 animate={{ 
-                  opacity: 1, 
-                  scale: 1, 
-                  y: [0, -15, 0], 
-                  rotate: [0, 5, -5, 0] // Gentle natural floating
+                  y: [0, -12, 0], 
+                  rotate: [0, 3, -3, 0] 
                 }}
-                exit={{ opacity: 0, scale: 1.2, y: -100, filter: "blur(10px)" }}
                 transition={{ 
-                  opacity: { duration: 1.2, delay: prod.delay },
-                  scale: { duration: 1.5, delay: prod.delay, ease: [0.16, 1, 0.3, 1] },
-                  y: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: prod.delay },
-                  rotate: { duration: 8, repeat: Infinity, ease: "easeInOut", delay: prod.delay },
-                  exit: { duration: 1, ease: "easeIn" }
+                  y: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 10, repeat: Infinity, ease: "easeInOut" }
                 }}
+                style={{ willChange: "transform" }}
               />
-            ))
-          )}
-        </AnimatePresence>
+            </motion.div>
+          ))
+        )}
       </div>
 
       {/* Ambient Floating Sparkles/Particles */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+      <div className="absolute inset-0 z-10 pointer-events-none" style={{ transform: "translate3d(0,0,0)", backfaceVisibility: "hidden" }}>
+        {particles.map((p) => (
           <motion.div
-            key={i}
+            key={p.id}
             className="absolute w-1 h-1 rounded-full bg-white shadow-[0_0_15px_#ffffff]"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
+            style={{ left: p.left, top: p.top, willChange: "transform, opacity" }}
             animate={{ 
-              opacity: [0, Math.random() * 0.8 + 0.2, 0], 
-              scale: [0, Math.random() * 2 + 1, 0], 
-              y: [0, Math.random() * -100 - 50] 
+              opacity: [0, p.opacityMax, 0], 
+              scale: [0, p.scale, 0], 
+              y: [0, p.yDest] 
             }}
             transition={{ 
-              duration: Math.random() * 5 + 4, 
+              duration: p.duration, 
               repeat: Infinity, 
-              delay: Math.random() * 5 
+              delay: p.delay,
+              ease: "easeInOut"
             }}
           />
         ))}
       </div>
 
       {/* Slide Indicators / Navigation */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40 flex gap-4">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40 flex gap-4 pointer-events-auto">
         {slides.map((_, i) => (
           <button 
             key={i} 
@@ -288,7 +340,7 @@ export default function Hero() {
                 className="absolute inset-0 bg-white"
                 layoutId="activeIndicator"
                 initial={false}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                transition={premiumSpring}
               />
             )}
           </button>

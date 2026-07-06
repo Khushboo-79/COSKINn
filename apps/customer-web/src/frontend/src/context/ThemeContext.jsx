@@ -5,12 +5,25 @@ const ThemeContext = createContext();
 
 export const useTheme = () => useContext(ThemeContext);
 
+const getInitialTheme = () => {
+  if (typeof window !== 'undefined') {
+    const path = window.location.pathname.split('/')[1];
+    if (path === 'skincare' || path === 'cosmetics') {
+      return path;
+    }
+    return localStorage.getItem('theme') || 'skincare';
+  }
+  return 'skincare';
+};
+
 export const ThemeProvider = ({ children }) => {
-  const [themeName, setThemeName] = useState('skincare');
+  const [themeName, setThemeName] = useState(getInitialTheme);
 
   useLayoutEffect(() => {
     const root = document.documentElement;
     const currentTheme = themes[themeName];
+
+    if (!currentTheme) return;
 
     // Dynamically inject CSS variables based on the active theme
     Object.entries(currentTheme.colors).forEach(([key, value]) => {
@@ -22,6 +35,7 @@ export const ThemeProvider = ({ children }) => {
     });
 
     root.className = `theme-${themeName}`;
+    localStorage.setItem('theme', themeName);
   }, [themeName]);
 
   const toggleTheme = (name) => {
