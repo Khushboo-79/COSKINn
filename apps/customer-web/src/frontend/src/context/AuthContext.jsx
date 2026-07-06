@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
         const existingUser = users.find(u => u.email === email && u.password === password);
         
         if (existingUser) {
-          const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile };
+          const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile, avatarUrl: existingUser.avatarUrl };
           setUser(sessionUser);
           localStorage.setItem('coskinn_session', JSON.stringify(sessionUser));
           resolve(sessionUser);
@@ -63,7 +63,7 @@ export function AuthProvider({ children }) {
         const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
         let existingUserIndex = users.findIndex(u => u.mobile === userData.mobile);
         
-        let sessionUser = { name: userData.name, email: userData.email, mobile: userData.mobile };
+        let sessionUser = { name: userData.name, email: userData.email, mobile: userData.mobile, avatarUrl: userData.avatarUrl };
         
         if (existingUserIndex >= 0) {
           // Update existing user with new details if provided
@@ -96,7 +96,7 @@ export function AuthProvider({ children }) {
     const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
     const existingUser = users.find(u => u.mobile === mobile);
     if (existingUser) {
-      const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile };
+      const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile, avatarUrl: existingUser.avatarUrl };
       setUser(sessionUser);
       localStorage.setItem('coskinn_session', JSON.stringify(sessionUser));
       return sessionUser;
@@ -108,12 +108,26 @@ export function AuthProvider({ children }) {
     const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
     const existingUser = users.find(u => u.email === email);
     if (existingUser) {
-      const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile };
+      const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile, avatarUrl: existingUser.avatarUrl };
       setUser(sessionUser);
       localStorage.setItem('coskinn_session', JSON.stringify(sessionUser));
       return sessionUser;
     }
     throw new Error("User not found.");
+  };
+
+  const updateUserProfile = (updatedData) => {
+    const newSessionUser = { ...user, ...updatedData };
+    setUser(newSessionUser);
+    localStorage.setItem('coskinn_session', JSON.stringify(newSessionUser));
+    
+    // Also update in the users array
+    const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
+    const userIndex = users.findIndex(u => u.mobile === user.mobile);
+    if (userIndex >= 0) {
+      users[userIndex] = { ...users[userIndex], ...updatedData };
+      localStorage.setItem('coskinn_users', JSON.stringify(users));
+    }
   };
 
   const logout = () => {
@@ -122,7 +136,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, authenticateOTPUser, checkMobileExists, checkEmailExists, loginWithMobile, loginWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, authenticateOTPUser, checkMobileExists, checkEmailExists, loginWithMobile, loginWithEmail, logout, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   );

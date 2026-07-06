@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Package, Heart, MapPin, Settings, Shield, LogOut, ChevronRight, Edit2, Plus, Trash2, CheckCircle2, Mail, X, AlertCircle } from 'lucide-react';
+import { User, Package, Heart, MapPin, Settings, Shield, LogOut, ChevronRight, Edit2, Plus, Trash2, CheckCircle2, Mail, X, AlertCircle, Camera } from 'lucide-react';
 
 export default function AccountPage() {
   const { user, logout } = useAuth();
@@ -52,11 +52,15 @@ export default function AccountPage() {
               
               {/* User Mini Card */}
               <div className="flex items-center gap-4 p-4 border-b border-gray-100 mb-4">
-                <div className={`w-14 h-14 rounded-full ${primaryClass} flex items-center justify-center text-xl font-bold shadow-sm`}>
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <h3 className="font-bold text-black text-lg leading-tight">{user.name}</h3>
+                {user.avatarUrl ? (
+                  <img src={user.avatarUrl} alt="Avatar" className="w-14 h-14 rounded-full object-cover shadow-sm border border-gray-100" />
+                ) : (
+                  <div className={`w-14 h-14 rounded-full ${primaryClass} flex items-center justify-center text-xl font-bold shadow-sm`}>
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-black text-lg leading-tight truncate">{user.name}</h3>
                   <p className="text-sm text-gray-500 truncate">{user.email || 'No email added'}</p>
                 </div>
               </div>
@@ -118,6 +122,7 @@ function SidebarItem({ icon: Icon, label, id, activeTab, onClick, themeClass, te
 
 // 1. Profile Tab
 function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
+  const { updateUserProfile } = useAuth();
   const [profile, setProfile] = useState({
     name: user.name || '',
     email: user.email || '',
@@ -127,20 +132,108 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
   });
   const [isEditing, setIsEditing] = useState(false);
 
+  // Avatar Upload State
+  const [previewAvatar, setPreviewAvatar] = useState(null);
+  const [uploadError, setUploadError] = useState('');
+  
   useEffect(() => {
     const saved = localStorage.getItem('coskinn_profile');
     if (saved) {
-      setProfile({ ...JSON.parse(saved), mobile: user.mobile }); // mobile stays locked to auth
+      const parsed = JSON.parse(saved);
+      setProfile({ ...parsed, name: user.name, email: user.email, mobile: user.mobile });
     }
-  }, [user.mobile]);
+  }, [user]);
 
-  const handleSave = () => {
-    localStorage.setItem('coskinn_profile', JSON.stringify(profile));
+  const handleSaveProfile = () => {
+    // Update local storage for non-global fields
+    localStorage.setItem('coskinn_profile', JSON.stringify({ dob: profile.dob, gender: profile.gender }));
+    
+    // Update global state for global fields
+    updateUserProfile({ name: profile.name, email: profile.email, mobile: profile.mobile });
+    
     setIsEditing(false);
+  };
+
+  const handleFileChange = (e) => {
+    setUploadError('');
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setUploadError('Unsupported file format. Use JPG, PNG, or WEBP.');
+      return;
+    }
+
+    // Validate size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('File size exceeds 5MB limit.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setPreviewAvatar(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveAvatar = () => {
+    if (previewAvatar) {
+      updateUserProfile({ avatarUrl: previewAvatar });
+      setPreviewAvatar(null);
+    }
+  };
+
+  const handleCancelAvatar = () => {
+    setPreviewAvatar(null);
+    setUploadError('');
   };
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+      
+      {/* Avatar Section */}
+      <div className="flex flex-col sm:flex-row items-center gap-6 mb-10 pb-8 border-b border-gray-100">
+        <div className="relative group">
+          {previewAvatar || user.avatarUrl ? (
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
+              <img src={previewAvatar || user.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full ${primaryClass} flex items-center justify-center text-4xl font-bold shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-4 border-white`}>
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+          
+          <label className="absolute bottom-0 right-0 w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors text-gray-700">
+            <Camera size={16} className="sm:w-5 sm:h-5" />
+            <input type="file" accept="image/png, image/jpeg, image/jpg, image/webp" className="hidden" onChange={handleFileChange} />
+          </label>
+        </div>
+
+        <div className="text-center sm:text-left flex-1">
+          <h3 className="text-xl font-heading font-medium text-black mb-1">Profile Photo</h3>
+          <p className="text-sm text-gray-500 mb-4 max-w-sm mx-auto sm:mx-0">Accepts JPG, PNG or WEBP. Max size 5MB.</p>
+          
+          {uploadError && (
+            <p className="text-xs font-medium text-red-500 mb-3">{uploadError}</p>
+          )}
+
+          {previewAvatar && (
+            <div className="flex gap-3 justify-center sm:justify-start">
+              <button onClick={handleSaveAvatar} className={`px-5 py-2 text-sm font-bold rounded-xl shadow-sm transition-all ${primaryClass}`}>
+                Save Photo
+              </button>
+              <button onClick={handleCancelAvatar} className="px-5 py-2 text-sm font-bold rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-heading font-medium text-black">Personal Information</h2>
         {!isEditing && (
@@ -160,8 +253,8 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
           <input type="email" disabled={!isEditing} value={profile.email} onChange={(e) => setProfile({...profile, email: e.target.value})} className={`w-full py-3 px-4 border rounded-xl outline-none font-medium bg-transparent ${isEditing ? `border-gray-300 focus:ring-1 ${ringPrimaryClass}` : 'border-transparent bg-gray-50'}`} />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-gray-500">Mobile Number (Verified)</label>
-          <input type="text" disabled value={profile.mobile} className="w-full py-3 px-4 border border-transparent rounded-xl outline-none font-medium bg-gray-50 text-gray-600" />
+          <label className="text-sm font-semibold text-gray-500">Mobile Number</label>
+          <input type="tel" disabled={!isEditing} value={profile.mobile} onChange={(e) => setProfile({...profile, mobile: e.target.value.replace(/\D/g, '')})} className={`w-full py-3 px-4 border rounded-xl outline-none font-medium bg-transparent ${isEditing ? `border-gray-300 focus:ring-1 ${ringPrimaryClass}` : 'border-transparent bg-gray-50'}`} />
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-gray-500">Date of Birth</label>
@@ -180,7 +273,7 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
       {isEditing && (
         <div className="mt-8 flex justify-end gap-4">
           <button onClick={() => setIsEditing(false)} className="px-6 py-3 font-bold text-gray-600 hover:text-black transition-colors">Cancel</button>
-          <button onClick={handleSave} className={`px-8 py-3 rounded-xl font-bold transition-all shadow-sm ${primaryClass}`}>Save Changes</button>
+          <button onClick={handleSaveProfile} className={`px-8 py-3 rounded-xl font-bold transition-all shadow-sm ${primaryClass}`}>Save Changes</button>
         </div>
       )}
     </motion.div>

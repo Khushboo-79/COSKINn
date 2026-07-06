@@ -339,9 +339,13 @@ export default function Navbar() {
             >
               {user ? (
                 <>
-                  <div className="w-8 h-8 rounded-full bg-theme-primary text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover shadow-sm border border-white" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-theme-primary text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <span className="text-[14px] font-bold text-black hidden sm:block">{user.name.split(' ')[0]}</span>
                 </>
               ) : (
