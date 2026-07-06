@@ -61,16 +61,14 @@ export class CustomerProfileService {
         });
       }
 
-      if (dto.preferredBrands || dto.makeupStyle) {
+      if (dto.makeupStyle) {
         await tx.customerMakeupPreference.upsert({
           where: { profileId: profile.id },
           update: {
-            ...(dto.preferredBrands && { preferredBrands: dto.preferredBrands }),
             ...(dto.makeupStyle && { makeupStyle: dto.makeupStyle }),
           },
           create: {
             profileId: profile.id,
-            preferredBrands: dto.preferredBrands || [],
             makeupStyle: dto.makeupStyle,
           },
         });

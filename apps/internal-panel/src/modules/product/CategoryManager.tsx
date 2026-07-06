@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '../../lib/axios';
 import { Plus, Edit2, Trash2, LayoutList, X, ChevronDown, ChevronRight, CornerDownRight } from 'lucide-react';
 
 const API_URL = 'http://localhost:3000/categories';
@@ -30,13 +30,13 @@ export const CategoryManager = () => {
   const { data: categories, isLoading } = useQuery<Category[]>({
     queryKey: ['categories'],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await api.get(API_URL);
       return data;
     },
   });
 
   const createCategory = useMutation({
-    mutationFn: (newCat: Partial<Category>) => axios.post(API_URL, newCat),
+    mutationFn: (newCat: Partial<Category>) => api.post(API_URL, newCat),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       setIsModalOpen(false);
@@ -44,7 +44,7 @@ export const CategoryManager = () => {
   });
 
   const deleteCategory = useMutation({
-    mutationFn: (id: string) => axios.delete(`${API_URL}/${id}`),
+    mutationFn: (id: string) => api.delete(`${API_URL}/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
   });
 

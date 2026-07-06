@@ -141,7 +141,6 @@ model CustomerProfile {
   userId                 String   @unique
   dateOfBirth            DateTime?
   gender                 String?
-  preferredMode          String?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
@@ -190,7 +189,6 @@ model CustomerSkinProfile {
 model CustomerMakeupPreference {
   id                 String   @id @default(uuid())
   profileId          String   @unique
-  preferredBrands    String[]
   makeupStyle        String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -229,18 +227,11 @@ model WishlistItem {
 // DAY 3: CATALOG & E-COMMERCE CORE
 // ==========================================
 
-model Brand {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String?
-  logoUrl     String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  products Product[]
-
-  @@map("brands")
+enum ProductStatus {
+  DRAFT
+  PENDING_APPROVAL
+  LIVE
+  REJECTED
 }
 
 model Category {
@@ -249,7 +240,6 @@ model Category {
   slug        String   @unique
   description String?
   imageUrl    String?
-  mode        String   @default("both")
   isActive    Boolean  @default(true)
   isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -267,7 +257,6 @@ model Subcategory {
   name        String
   slug        String   @unique
   description String?
-  mode        String   @default("both")
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -280,7 +269,6 @@ model Subcategory {
 
 model Product {
   id            String   @id @default(uuid())
-  brandId       String
   categoryId    String
   subcategoryId String?
   name          String
@@ -293,15 +281,24 @@ model Product {
   discountPrice Float?
   gstRate       Float    @default(18.0)
   hsnCode       String?
-  isActive      Boolean  @default(true)
+  manufacturerName    String?
+  manufacturerAddress String?
+  countryOfOrigin     String?
+  storageInstructions String?
+  isReturnable  Boolean  @default(false)
+  isCodAvailable Boolean  @default(true)
+  returnPolicy  String?
+  testReportRef String?
+  status        ProductStatus @default(DRAFT)
+  rejectionReason String?
   isDeleted     Boolean  @default(false)
   deletedAt     DateTime?
   seoTitle      String?
   seoDesc       String?
+  seoKeywords   String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  brand       Brand        @relation(fields: [brandId], references: [id])
   category    Category     @relation(fields: [categoryId], references: [id])
   subcategory Subcategory? @relation(fields: [subcategoryId], references: [id])
   
@@ -326,16 +323,15 @@ model ProductVariant {
   productId  String
   sku        String   @unique
   name       String   // e.g., "50ml", "Shade 01"
+  netQuantity String? // e.g., "50ml", "100g"
   mrp        Float
   price      Float
-  shadeCode  String?
-  fragrance  String?
-  flavor     String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
+
 
   @@map("product_variants")
 }
@@ -837,28 +833,10 @@ model RefundTransaction {
   amount    Float
   status    String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  refund    Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
+  refundObj Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
 
   @@map("refund_transactions")
-}
-
-// ==========================================
-// DAY 16: HOME & UI CONFIGURATION DOMAIN
-// ==========================================
-
-model HomeLayoutConfig {
-  id         String   @id @default(uuid())
-  mode       String   // 'skincare', 'makeup'
-  sectionKey String
-  sortOrder  Int      @default(0)
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@unique([mode, sectionKey])
-  @@map("home_layout_config")
 }
 
 model CodCollection {

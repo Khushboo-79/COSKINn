@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import axios from 'axios';
+import { api } from '../../lib/axios';
 import { Layers, Plus, Edit2, Trash2, X, ArrowLeft } from 'lucide-react';
 
 const variantSchema = z.object({
@@ -26,7 +26,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', productId],
     queryFn: async () => {
-      const { data } = await axios.get(`http://localhost:3000/api/product/${productId}`);
+      const { data } = await api.get(`http://localhost:3000/api/product/${productId}`);
       return data;
     },
   });
@@ -36,7 +36,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
   });
 
   const createMutation = useMutation({
-    mutationFn: (newVariant: VariantFormValues) => axios.post(`http://localhost:3000/api/product/${productId}/variant`, newVariant),
+    mutationFn: (newVariant: VariantFormValues) => api.post(`http://localhost:3000/api/product/${productId}/variant`, newVariant),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       setIsCreating(false);
@@ -45,7 +45,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (variantId: string) => axios.delete(`http://localhost:3000/api/product/${productId}/variant/${variantId}`),
+    mutationFn: (variantId: string) => api.delete(`http://localhost:3000/api/product/${productId}/variant/${variantId}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['product', productId] }),
   });
 

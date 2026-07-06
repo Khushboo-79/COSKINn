@@ -1,7 +1,6 @@
 import { Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
-import { Layers, Tags, PackageSearch } from 'lucide-react';
+import { Layers, PackageSearch } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrandManager } from './BrandManager';
 import { CategoryManager } from './CategoryManager';
 
 const queryClient = new QueryClient();
@@ -13,7 +12,6 @@ export const ProductModuleRoutes = () => {
 
   const navItems = [
     { name: 'Products', path: '/product', icon: PackageSearch },
-    { name: 'Brands', path: '/product/brands', icon: Tags },
     { name: 'Categories', path: '/product/categories', icon: Layers },
   ];
 
@@ -49,7 +47,6 @@ export const ProductModuleRoutes = () => {
         <div className="flex-1 p-6 overflow-y-auto bg-white/30 backdrop-blur-sm rounded-r-2xl border-y border-r border-rose-100">
           <Routes>
             <Route path="/" element={<ProductManager />} />
-            <Route path="/brands" element={<BrandManager />} />
             <Route path="/categories" element={<CategoryManager />} />
             <Route path="*" element={<Navigate to="/product" replace />} />
           </Routes>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '../../lib/axios';
 import { Tags, ArrowLeft, X } from 'lucide-react';
 
 interface TagInputProps {
@@ -66,7 +66,7 @@ export default function TagManager({ productId, onClose }: { productId: string, 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', productId],
     queryFn: async () => {
-      const { data } = await axios.get(`http://localhost:3000/api/product/${productId}`);
+      const { data } = await api.get(`http://localhost:3000/api/product/${productId}`);
       return data;
     },
   });
@@ -88,7 +88,7 @@ export default function TagManager({ productId, onClose }: { productId: string, 
 
 
   const updateMutation = useMutation({
-    mutationFn: (tagsData: any) => axios.patch(`http://localhost:3000/api/product/${productId}/tags`, tagsData),
+    mutationFn: (tagsData: any) => api.patch(`http://localhost:3000/api/product/${productId}/tags`, tagsData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
