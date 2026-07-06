@@ -30,7 +30,7 @@ export const ShopMegaMenu = () => (
       <div>
         <MenuSectionTitle>Trending</MenuSectionTitle>
         <div className="flex flex-col gap-1">
-          <MenuLink to="#">New Arrivals</MenuLink>
+          <MenuLink to="/new-arrivals">New Arrivals</MenuLink>
           <MenuLink to="#">Best Sellers</MenuLink>
           <MenuLink to="#">Limited Edition</MenuLink>
           <MenuLink to="#">Gift Sets</MenuLink>
@@ -39,26 +39,26 @@ export const ShopMegaMenu = () => (
       <div>
         <MenuSectionTitle>Skincare</MenuSectionTitle>
         <div className="flex flex-col gap-1">
-          <MenuLink to="#">Sunscreen</MenuLink>
-          <MenuLink to="#">Cleanser</MenuLink>
-          <MenuLink to="#">Cleansing Balm</MenuLink>
-          <MenuLink to="#">SPF Lip Balm</MenuLink>
-          <MenuLink to="#">Hand Cream</MenuLink>
-          <MenuLink to="#">Face Mist</MenuLink>
-          <MenuLink to="#">Overnight Mask</MenuLink>
-          <MenuLink to="#">Under Eye Patches</MenuLink>
+          <MenuLink to="#">COSKINn Sunscreen</MenuLink>
+          <MenuLink to="#">COSKINn Cleanser</MenuLink>
+          <MenuLink to="#">COSKINn Cleansing Balm</MenuLink>
+          <MenuLink to="#">COSKINn SPF Lip Balm</MenuLink>
+          <MenuLink to="#">COSKINn Hand Cream</MenuLink>
+          <MenuLink to="#">COSKINn Face Mist</MenuLink>
+          <MenuLink to="#">COSKINn Overnight Mask</MenuLink>
+          <MenuLink to="#">COSKINn Under Eye Patches</MenuLink>
         </div>
       </div>
       <div>
         <MenuSectionTitle>Cosmetics</MenuSectionTitle>
         <div className="flex flex-col gap-1">
-          <MenuLink to="#">Magnetic Lipstick</MenuLink>
-          <MenuLink to="#">Lip Liner</MenuLink>
-          <MenuLink to="#">Lip & Cheek Blur</MenuLink>
-          <MenuLink to="#">Blush</MenuLink>
-          <MenuLink to="#">Eyeshadow Palette</MenuLink>
-          <MenuLink to="#">Mascara</MenuLink>
-          <MenuLink to="#">Brushes</MenuLink>
+          <MenuLink to="#">COSKINn Magnetic Lipstick</MenuLink>
+          <MenuLink to="#">COSKINn Lip Liner</MenuLink>
+          <MenuLink to="#">COSKINn Lip & Cheek Blur</MenuLink>
+          <MenuLink to="#">COSKINn Blush</MenuLink>
+          <MenuLink to="#">COSKINn Eyeshadow Palette</MenuLink>
+          <MenuLink to="#">COSKINn Mascara</MenuLink>
+          <MenuLink to="#">COSKINn Brushes</MenuLink>
         </div>
       </div>
       <div className="bg-theme-bg/50 p-6 -m-4 rounded-2xl border border-white/50 flex flex-col justify-between">
@@ -66,9 +66,9 @@ export const ShopMegaMenu = () => (
           <h4 className="font-bold text-lg mb-2 text-black">Bundles</h4>
           <p className="text-sm opacity-70 mb-4">Complete routines at a premium value.</p>
           <div className="flex flex-col gap-1">
-            <MenuLink to="#">Glow Kit</MenuLink>
-            <MenuLink to="#">Daily Essentials</MenuLink>
-            <MenuLink to="#">Weekend Routine</MenuLink>
+            <MenuLink to="#">COSKINn Glow Kit</MenuLink>
+            <MenuLink to="#">COSKINn Daily Essentials</MenuLink>
+            <MenuLink to="#">COSKINn Weekend Routine</MenuLink>
           </div>
         </div>
         <Link to="#" className="text-theme-primary font-bold text-sm hover:underline mt-4">Shop All COSKINn →</Link>
@@ -85,31 +85,31 @@ export const CategoriesMegaMenu = ({ theme }) => {
           <div>
             <MenuSectionTitle>Face Care</MenuSectionTitle>
             <div className="flex flex-col gap-1">
-              <MenuLink to="#">Cleanser</MenuLink>
-              <MenuLink to="#">Cleansing Balm</MenuLink>
-              <MenuLink to="#">Sunscreen</MenuLink>
-              <MenuLink to="#">Face Mist</MenuLink>
-              <MenuLink to="#">Overnight Mask</MenuLink>
-              <MenuLink to="#">Eye Patches</MenuLink>
+              <MenuLink to="#">COSKINn Cleanser</MenuLink>
+              <MenuLink to="#">COSKINn Cleansing Balm</MenuLink>
+              <MenuLink to="#">COSKINn Sunscreen</MenuLink>
+              <MenuLink to="#">COSKINn Face Mist</MenuLink>
+              <MenuLink to="#">COSKINn Overnight Mask</MenuLink>
+              <MenuLink to="#">COSKINn Eye Patches</MenuLink>
             </div>
           </div>
           <div>
             <MenuSectionTitle>Body Care</MenuSectionTitle>
             <div className="flex flex-col gap-1">
-              <MenuLink to="#">Body Sunscreen</MenuLink>
-              <MenuLink to="#">Hand Cream</MenuLink>
+              <MenuLink to="#">COSKINn Body Sunscreen</MenuLink>
+              <MenuLink to="#">COSKINn Hand Cream</MenuLink>
             </div>
           </div>
           <div>
             <MenuSectionTitle>Lip Care</MenuSectionTitle>
             <div className="flex flex-col gap-1">
-              <MenuLink to="#">SPF Lip Balm</MenuLink>
+              <MenuLink to="#">COSKINn SPF Lip Balm</MenuLink>
             </div>
           </div>
           <div className="bg-theme-bg/50 p-6 -m-4 rounded-2xl border border-white/50">
             <MenuSectionTitle>Fragrance</MenuSectionTitle>
             <div className="flex flex-col gap-1">
-              <MenuLink to="#">Pocket Perfume</MenuLink>
+              <MenuLink to="#">COSKINn Pocket Perfume</MenuLink>
             </div>
           </div>
         </div>
@@ -124,30 +124,30 @@ export const CategoriesMegaMenu = ({ theme }) => {
         <div>
           <MenuSectionTitle>Face Makeup</MenuSectionTitle>
           <div className="flex flex-col gap-1">
-            <MenuLink to="#">Blush</MenuLink>
-            <MenuLink to="#">Lip & Cheek Blur</MenuLink>
+            <MenuLink to="#">COSKINn Blush</MenuLink>
+            <MenuLink to="#">COSKINn Lip & Cheek Blur</MenuLink>
           </div>
         </div>
         <div>
           <MenuSectionTitle>Eye Makeup</MenuSectionTitle>
           <div className="flex flex-col gap-1">
-            <MenuLink to="#">Mascara</MenuLink>
-            <MenuLink to="#">Eyeshadow Palette</MenuLink>
+            <MenuLink to="#">COSKINn Mascara</MenuLink>
+            <MenuLink to="#">COSKINn Eyeshadow Palette</MenuLink>
           </div>
         </div>
         <div>
           <MenuSectionTitle>Lip Makeup</MenuSectionTitle>
           <div className="flex flex-col gap-1">
-            <MenuLink to="#">Magnetic Lipstick</MenuLink>
-            <MenuLink to="#">Lip Liner</MenuLink>
+            <MenuLink to="#">COSKINn Magnetic Lipstick</MenuLink>
+            <MenuLink to="#">COSKINn Lip Liner</MenuLink>
           </div>
         </div>
         <div className="bg-theme-bg/50 p-6 -m-4 rounded-2xl border border-white/50 flex flex-col justify-between">
           <div>
             <MenuSectionTitle>Accessories</MenuSectionTitle>
             <div className="flex flex-col gap-1">
-              <MenuLink to="#">Makeup Brushes</MenuLink>
-              <MenuLink to="#">Brush Holder</MenuLink>
+              <MenuLink to="#">COSKINn Makeup Brushes</MenuLink>
+              <MenuLink to="#">COSKINn Brush Holder</MenuLink>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-black/10">
