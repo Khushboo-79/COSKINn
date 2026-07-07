@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
 import { Plus, Edit2, Trash2, LayoutList, X, ChevronDown, ChevronRight, CornerDownRight } from 'lucide-react';
-
-const API_URL = 'http://localhost:3000/categories';
-
+const API_URL = '/categories';
 type Subcategory = {
   id: string;
   name: string;

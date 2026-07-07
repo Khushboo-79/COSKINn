@@ -1,10 +1,11 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private prisma: PrismaService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -13,6 +14,44 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return { userId: payload.sub, email: payload.email, roles: payload.roles };
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+      include: {
+        roles: {
+          include: {
+            role: {
+              include: {
+                permissions: {
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found or token invalid');
+    }
+
+    if (!user.isActive || user.isDeleted) {
+      throw new UnauthorizedException('User account is deactivated');
+    }
+
+    // Flatten roles and permissions for easy access in guards
+    const roles = user.roles.map(ur => ur.role.name);
+    // Note: our permission model has 'action' and 'subject', not 'code'
+    const permissions = user.roles.flatMap(ur => ur.role.permissions.map(rp => rp.permission.action + ':' + rp.permission.subject));
+
+    return { 
+      id: user.id, 
+      email: user.email,
+      phone: user.phone,
+      roles,
+      permissions
+    };
   }
 }
