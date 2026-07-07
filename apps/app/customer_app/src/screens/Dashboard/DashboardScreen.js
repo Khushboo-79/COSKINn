@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, FlatList, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
 import BottomNavBar from '../../constants/BottomNavBar';
 import CustomToggle from '../../components/CustomToggle';
@@ -10,12 +11,44 @@ const { width } = Dimensions.get('window');
 const bannerWidth = width - scaleh(40); // Screen width minus padding
 
 const DashboardScreen = () => {
+  const navigation = useNavigation();
   const [isThemeDark, setIsThemeDark] = useState(false);
   const [activeMainBannerIndex, setActiveMainBannerIndex] = useState(0);
   const mainBannerData = [1, 2, 3, 4, 5, 6];
 
   const [activeComboBannerIndex, setActiveComboBannerIndex] = useState(0);
-  const comboBannerData = [1, 2, 3];
+  const comboBannerData = [
+    {
+      id: 1,
+      type: 'discount',
+      bgColor: '#FDECE2', // Light peach outer banner
+      innerColor: '#F1C9A9', // Darker peach inner text card
+      imageBase: require('../../images/bgImages/orange.webp'),
+      imageProduct: require('../../images/bgImages/productImg.webp'),
+      title: 'Flat 50% OFF',
+      subtitle: 'on combos',
+      btnText: 'Use Code: COMBO50',
+    },
+    {
+      id: 2,
+      type: 'freebie',
+      bgGradient: ['#FF0069', '#FFD498'],
+      imageProduct: require('../../images/bgImages/products.webp'),
+      title: 'Get FREEBIES',
+      subtitle: 'on order Rs. 1299+',
+    },
+    {
+      id: 3,
+      type: 'discount',
+      bgColor: '#FDECE2',
+      innerColor: '#F1C9A9',
+      imageBase: require('../../images/bgImages/orange.webp'),
+      imageProduct: require('../../images/bgImages/productImg.webp'),
+      title: 'Flat 50% OFF',
+      subtitle: 'on combos',
+      btnText: 'Use Code: COMBO50',
+    }
+  ];
 
   const categories = [
     { id: 1, title: 'Fresh', image: require('../../images/bgImages/Fresh.webp') },
@@ -91,19 +124,22 @@ const DashboardScreen = () => {
 
         {/* Search Bar Row */}
         <View style={styles.searchRow}>
-          <View style={styles.searchContainer}>
-            <Icon name="search" size={scaleh(18)} color="#666" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Type to search..."
-              placeholderTextColor="#999"
-            />
-            <Icon name="mic" size={scaleh(18)} color="#666" style={styles.micIcon} />
-          </View>
-          <TouchableOpacity style={styles.headerIconBtn}>
+          <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate('Search')} activeOpacity={0.9}>
+            <View pointerEvents="none" style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+              <Icon name="search" size={scaleh(18)} color="#666" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Type to search..."
+                placeholderTextColor="#999"
+                editable={false}
+              />
+              <Icon name="mic" size={scaleh(18)} color="#666" style={styles.micIcon} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerIconBtn} onPress={() => navigation.navigate('Wishlist')}>
             <Icon name="heart" size={scaleh(22)} color="#1a1a1a" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIconBtn}>
+          <TouchableOpacity style={styles.headerIconBtn} onPress={() => navigation.navigate('Cart')}>
             <Icon name="shopping-cart" size={scaleh(22)} color="#1a1a1a" />
           </TouchableOpacity>
         </View>
@@ -147,33 +183,39 @@ const DashboardScreen = () => {
 
           {/* 2. Product Banner Section */}
           <View style={{ paddingHorizontal: scaleh(20), width: '100%', marginBottom: scalev(40) }}>
-            <LinearGradient
-              colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={styles.productBanner}
-            >
-              <View style={styles.productImageContainer}>
-                <Image source={require('../../images/Logo/logo.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
+            <View style={[styles.productBanner, { overflow: 'hidden' }]}>
+              {/* Background gradient */}
+              <LinearGradient
+                colors={['#FFD1E3', '#FFF2E6']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+
+              {/* Orange slices background image */}
+              <Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '30%', height: '30%', left: '40%', top: '5%', opacity: 0.9 }]} resizeMode="cover" />
+
+              <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
+                <Image source={require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
               </View>
 
-              <Text style={styles.productTitle}>Vitamin C + E Moisturizer for</Text>
-              <Text style={styles.productTitleHighlight}>Glowing Skin</Text>
-              <Text style={styles.productSubtitle}>Normal, Oily 7 Combination Skin</Text>
+              <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]}>Vitamin C + E Moisturizer for</Text>
+              <Text style={[styles.productTitleHighlight, { fontSize: scaleh(18) }]}>Glowing Skin</Text>
+              <Text style={[styles.productSubtitle, { fontSize: scaleh(12), color: '#1a1a1a', fontWeight: '600', marginBottom: scalev(20) }]}>Normal, Oily 7 Combination Skin</Text>
 
-              <View style={styles.sizePill}>
-                <Text style={styles.sizePillText}>60ml</Text>
+              <View style={[styles.sizePill, { borderColor: '#FF0069', paddingVertical: scalev(6), paddingHorizontal: scaleh(20) }]}>
+                <Text style={[styles.sizePillText, { fontSize: scaleh(14), fontWeight: '700' }]}>60ml</Text>
               </View>
 
-              <View style={styles.priceActionContainer}>
-                <View style={styles.priceSection}>
-                  <Text style={styles.priceText}>₹899</Text>
+              <View style={[styles.priceActionContainer, { borderColor: '#FF0069', height: scalev(50), width: scaleh(220), borderRadius: scaleh(15) }]}>
+                <View style={[styles.priceSection, { borderRightColor: '#FF0069' }]}>
+                  <Text style={[styles.priceText, { fontSize: scaleh(18) }]}>₹899</Text>
                 </View>
                 <View style={styles.addToCartSection}>
-                  <Text style={styles.addToCartText}>Add to Cart</Text>
+                  <Text style={[styles.addToCartText, { color: '#FF0069', fontWeight: '800', fontSize: scaleh(14) }]}>Add to Cart</Text>
                 </View>
               </View>
-            </LinearGradient>
+            </View>
           </View>
 
           {/* 3. Main Combo Banner Carousel */}
@@ -185,24 +227,58 @@ const DashboardScreen = () => {
               showsHorizontalScrollIndicator={false}
               onScroll={handleComboScroll}
               scrollEventThrottle={16}
-              keyExtractor={(item) => item.toString()}
-              renderItem={() => (
-                <View style={{ width: width, paddingHorizontal: scaleh(20) }}>
-                  <View style={styles.comboBanner}>
-                    <View style={styles.comboBannerLeft}>
-                      {/* Placeholder for bottle images */}
-                      <Image source={require('../../images/Logo/logo.webp')} style={styles.comboImage} resizeMode="contain" />
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => {
+                if (item.type === 'freebie') {
+                  return (
+                    <View style={{ width: width, paddingHorizontal: scaleh(20) }}>
+                      <View style={[styles.comboBanner, { backgroundColor: 'transparent' }]}>
+                        {/* Outer banner background as a horizontal band */}
+                        <LinearGradient colors={item.bgGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[StyleSheet.absoluteFill, { borderRadius: scaleh(20), top: scalev(25), bottom: scalev(10) }]} />
+                        <View style={[styles.comboBannerLeft, { zIndex: 10 }]}>
+                          <Image source={item.imageProduct} style={[styles.comboImage, { width: '150%', height: '150%', marginLeft: scaleh(-10), bottom: scalev(5) }]} resizeMode="contain" />
+                        </View>
+                        <View style={[styles.comboBannerRight, { alignItems: 'center', justifyContent: 'center', paddingLeft: scaleh(5), top: scalev(5) }]}>
+                          <View style={styles.freebieBtn}>
+                            <Text style={styles.freebieBtnText}>{item.title}</Text>
+                          </View>
+                          <Text style={[styles.comboSubtitle, { color: '#000000', fontWeight: '800', fontSize: scaleh(14), marginTop: scalev(5), marginBottom: scalev(8) }]}>{item.subtitle}</Text>
+                          <View style={styles.freebieIconWrapper}>
+                            <Icon name="chevron-right" size={scaleh(16)} color="#FFFFFF" />
+                          </View>
+                        </View>
+                      </View>
                     </View>
-                    <View style={styles.comboBannerRight}>
-                      <Text style={styles.comboTitle}>Flat 50% OFF</Text>
-                      <Text style={styles.comboSubtitle}>on combos</Text>
-                      <TouchableOpacity style={styles.comboCodeBtn}>
-                        <Text style={styles.comboCodeText}>Use Code: COMBO50 {'>'}</Text>
-                      </TouchableOpacity>
+                  );
+                } else {
+                  return (
+                    <View style={{ width: width, paddingHorizontal: scaleh(20) }}>
+                      <View style={[styles.comboBanner, { backgroundColor: 'transparent' }]}>
+                        {/* Outer banner background as a horizontal band */}
+                        <View style={[StyleSheet.absoluteFill, { backgroundColor: item.bgColor, borderRadius: scaleh(20), overflow: 'hidden', top: scalev(25), bottom: scalev(10) }]} />
+
+                        <View style={[styles.comboBannerLeft, { zIndex: 10 }]}>
+                          <Image source={item.imageBase} style={[StyleSheet.absoluteFill, { width: '130%', height: '130%', left: scaleh(-60), top: scalev(-10) }]} resizeMode="contain" />
+                          <Image source={item.imageProduct} style={[styles.comboImage, { width: '110%', height: '150%', marginLeft: scaleh(50), bottom: scalev(15) }]} resizeMode="contain" />
+                        </View>
+
+                        <View style={[styles.comboBannerRight, { alignItems: 'center', justifyContent: 'center' }]}>
+                          {/* Inner text bubble popping out of the top of the band */}
+                          <View style={{ backgroundColor: item.innerColor, borderRadius: scaleh(25), paddingVertical: scalev(12), paddingHorizontal: scaleh(15), top: scalev(-15), marginBottom: scalev(0), width: '100%', alignItems: 'center', zIndex: 10 }}>
+                            <Text style={[styles.comboTitle, { fontSize: scaleh(24), marginBottom: scalev(0) }]}>{item.title}</Text>
+                            <Text style={[styles.comboSubtitle, { fontSize: scaleh(20), marginBottom: scalev(0), fontWeight: '400' }]}>{item.subtitle}</Text>
+                          </View>
+
+                          {/* Button inside the band */}
+                          <TouchableOpacity style={[styles.comboCodeBtn, { borderRadius: 10, paddingVertical: scalev(8), paddingHorizontal: scaleh(15), borderWidth: 1, borderColor: '#F1C9A9', top: scalev(-5) }]}>
+                            <Text style={styles.comboCodeText}>{item.btnText}  <Icon name="chevron-right" size={scaleh(14)} color="#1a1a1a" /></Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                </View>
-              )}
+                  );
+                }
+              }}
             />
           </View>
 
@@ -378,6 +454,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingLeft: 1,
   },
   comboImage: {
     width: '100%',
@@ -406,11 +483,34 @@ const styles = StyleSheet.create({
     paddingVertical: scalev(8),
     paddingHorizontal: scaleh(12),
     borderRadius: scaleh(8),
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   comboCodeText: {
     fontSize: scaleh(12),
     fontWeight: '700',
     color: '#1a1a1a',
+  },
+  freebieBtn: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: scalev(6),
+    paddingHorizontal: scaleh(15),
+    borderRadius: scaleh(10),
+    borderWidth: 1.5,
+    borderColor: '#FF0069',
+  },
+  freebieBtnText: {
+    color: '#FF0069',
+    fontSize: scaleh(22),
+    fontWeight: '800',
+  },
+  freebieIconWrapper: {
+    backgroundColor: '#000000',
+    borderRadius: scaleh(14),
+    width: scaleh(28),
+    height: scaleh(28),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   dotsContainer: {
