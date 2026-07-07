@@ -2,14 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 
-import catMagneticLipstick from '../../assets/images/cat_magnetic_lipstick.png';
-import catMakeupBrushes from '../../assets/images/cat_makeup_brushes.png';
-import catEyeshadowPalette from '../../assets/images/cat_eyeshadow_palette.png';
-import catHolographic from '../../assets/images/cat_holographic.png';
-import catBlush from '../../assets/images/cat_blush.png';
-import catLipLiner from '../../assets/images/cat_lip_liner.png';
-import catBlur from '../../assets/images/cat_blur.png';
-import catMascara from '../../assets/images/cat_mascara.png';
+import catMagneticLipstick from '../../assets/images/cat_magnetic_lipstick.webp';
+import catMakeupBrushes from '../../assets/images/cat_makeup_brushes.webp';
+import catEyeshadowPalette from '../../assets/images/cat_eyeshadow_palette.webp';
+import catHolographic from '../../assets/images/cat_holographic.webp';
+import catBlush from '../../assets/images/cat_blush.webp';
+import catLipLiner from '../../assets/images/cat_lip_liner.webp';
+import catBlur from '../../assets/images/cat_blur.webp';
+import catMascara from '../../assets/images/cat_mascara.webp';
 
 const categories = [
   {

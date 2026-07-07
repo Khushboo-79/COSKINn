@@ -12,7 +12,7 @@ const categories = [
     description: "Melts away impurities while perfectly protecting your natural skin barrier.",
     products: "Cleanser & Balm",
     ingredient: "Green Tea Extract",
-    productImg: "/cleanser_bottle_coskin.png",
+    productImg: "/cleanser_bottle_coskin.webp",
     bgImg: "/bg-greentea.webp",
     modelImg: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1200&auto=format&fit=crop",
     gradient: "from-gray-100/50 to-white",
@@ -23,7 +23,7 @@ const categories = [
     description: "Invisible, weightless UV defense infused with deep, long-lasting hydration.",
     products: "Sunscreen & Lip SPF",
     ingredient: "Mango Butter",
-    productImg: "/mockup_product_2.png",
+    productImg: "/mockup_product_2.webp",
     bgImg: "/bg-mango.webp",
     modelImg: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=800&auto=format&fit=crop",
     gradient: "from-theme-secondary/60 to-white",
@@ -34,7 +34,7 @@ const categories = [
     description: "A burst of antioxidant hydration anywhere, anytime for a dewy finish.",
     products: "Face Mist & Perfume",
     ingredient: "Strawberry & Rose",
-    productImg: "/mockup_product_1.png",
+    productImg: "/mockup_product_1.webp",
     bgImg: "/bg-strawberry.webp",
     modelImg: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=1200&auto=format&fit=crop",
     gradient: "from-theme-accent/50 to-white",
@@ -45,7 +45,7 @@ const categories = [
     description: "Wake up to intensely hydrated, radiant, and fully repaired skin.",
     products: "Night Mask & Patches",
     ingredient: "Blueberry Complex",
-    productImg: "/serum_bottle_coskin.png",
+    productImg: "/serum_bottle_coskin.webp",
     bgImg: "/bg-blueberry.webp",
     modelImg: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=800&auto=format&fit=crop",
     gradient: "from-theme-primary/40 to-white",
@@ -68,12 +68,12 @@ const CategoryCard = ({ data, delay = 0 }) => {
        {/* 1. Base Gradient & Organic Botanical Background (Default State) */}
        <div className={`absolute inset-0 bg-gradient-to-br ${data.gradient} z-0 transition-opacity duration-[1.2s] group-hover:opacity-10`} />
        <div className="absolute inset-0 opacity-40 group-hover:opacity-0 transition-opacity duration-[1.2s] mix-blend-overlay z-0 pointer-events-none">
-          <img src={data.bgImg} alt={data.ingredient} className="w-full h-full object-cover blur-[3px]" />
+          <img loading="lazy" src={data.bgImg} alt={data.ingredient} className="w-full h-full object-cover blur-[3px]" />
        </div>
 
        {/* 2. The Premium Model Lifestyle Reveal (Fades in on hover) */}
        <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-[1.2s] ease-in-out overflow-hidden pointer-events-none">
-          <img 
+          <img loading="lazy" 
             src={data.modelImg} 
             alt={`${data.title} Lifestyle`} 
             className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-[4s] ease-out" 
@@ -90,7 +90,7 @@ const CategoryCard = ({ data, delay = 0 }) => {
              <span className="font-heading text-black text-[4.5rem] lg:text-[7rem] tracking-[0.3em] font-light rotate-[-90deg]">COSKINn</span>
           </div>
           
-          <img 
+          <img loading="lazy" 
             src={data.productImg} 
             alt={data.title} 
             className="w-full h-full object-cover lg:object-contain mix-blend-multiply drop-shadow-[0_30px_60px_rgba(0,0,0,0.1)] scale-[1.02] transition-all duration-[1.2s] ease-out group-hover:scale-75 group-hover:-translate-x-[20%] lg:group-hover:-translate-x-[25%] group-hover:translate-y-[10%] group-hover:rotate-[-5deg] group-hover:drop-shadow-[0_20px_30px_rgba(0,0,0,0.4)] z-20" 

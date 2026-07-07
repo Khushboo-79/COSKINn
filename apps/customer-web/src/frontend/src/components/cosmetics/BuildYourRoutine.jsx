@@ -3,17 +3,17 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 
 // Reusing generated images
-import beforeModel from '../../assets/images/cosmetics_before_model.png';
-import afterModel from '../../assets/images/cosmetics_after_model.png';
+import beforeModel from '../../assets/images/cosmetics_before_model.webp';
+import afterModel from '../../assets/images/cosmetics_after_model.webp';
 
-import brushImg from '../../assets/images/cat_makeup_brushes.png';
-import lipLinerImg from '../../assets/images/cat_lip_liner.png';
-import blushImg from '../../assets/images/cat_blush.png';
-import paletteImg from '../../assets/images/cat_eyeshadow_palette.png';
-import mascaraImg from '../../assets/images/cat_mascara.png';
-import lipstickImg from '../../assets/images/cosmetics_lipstick.png';
-import blurImg from '../../assets/images/cat_blur.png';
-import holoImg from '../../assets/images/cat_holographic.png';
+import brushImg from '../../assets/images/cat_makeup_brushes.webp';
+import lipLinerImg from '../../assets/images/cat_lip_liner.webp';
+import blushImg from '../../assets/images/cat_blush.webp';
+import paletteImg from '../../assets/images/cat_eyeshadow_palette.webp';
+import mascaraImg from '../../assets/images/cat_mascara.webp';
+import lipstickImg from '../../assets/images/cosmetics_lipstick.webp';
+import blurImg from '../../assets/images/cat_blur.webp';
+import holoImg from '../../assets/images/cat_holographic.webp';
 
 const routineSteps = [
   { 

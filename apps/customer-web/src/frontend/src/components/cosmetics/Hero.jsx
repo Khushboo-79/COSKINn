@@ -3,19 +3,19 @@ import { motion } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 
 // Import Models
-import modelLipstick from '../../assets/images/cosmetics_main_hero.png';
-import modelEye from '../../assets/images/cat_mascara_model.png';
-import modelBlush from '../../assets/images/cosmetics_why_choose_main.png';
-import modelSignature from '../../assets/images/cosmetics_after_model.png';
-import modelCollection from '../../assets/images/cat_lip_liner_model.png';
+import modelLipstick from '../../assets/images/cosmetics_main_hero.webp';
+import modelEye from '../../assets/images/cat_mascara_model.webp';
+import modelBlush from '../../assets/images/cosmetics_why_choose_main.webp';
+import modelSignature from '../../assets/images/cosmetics_after_model.webp';
+import modelCollection from '../../assets/images/cat_lip_liner_model.webp';
 
 // Import Products
-import imgLipstick from '../../assets/images/cosmetics_lipstick.png';
-import imgMascara from '../../assets/images/cat_mascara.png';
-import imgPalette from '../../assets/images/cat_eyeshadow_palette.png';
-import imgBlush from '../../assets/images/cat_blush.png';
-import imgBrushes from '../../assets/images/cat_makeup_brushes.png';
-import imgBlur from '../../assets/images/cat_blur.png';
+import imgLipstick from '../../assets/images/cosmetics_lipstick.webp';
+import imgMascara from '../../assets/images/cat_mascara.webp';
+import imgPalette from '../../assets/images/cat_eyeshadow_palette.webp';
+import imgBlush from '../../assets/images/cat_blush.webp';
+import imgBrushes from '../../assets/images/cat_makeup_brushes.webp';
+import imgBlur from '../../assets/images/cat_blur.webp';
 
 const slides = [
   {
@@ -130,13 +130,13 @@ export default function Hero() {
         <motion.div 
           className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full opacity-40"
           style={{ backgroundColor: cosmeticColors.primary, mixBlendMode: 'screen', filter: 'blur(150px)', willChange: "transform" }}
-          animate={{ x: [-30, 30, -30], y: [-30, 30, -30] }}
+          whileInView={{ x: [-30, 30, -30], y: [-30, 30, -30] }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div 
           className="absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] rounded-full opacity-30"
           style={{ backgroundColor: cosmeticColors.secondary, mixBlendMode: 'screen', filter: 'blur(150px)', willChange: "transform" }}
-          animate={{ x: [30, -30, 30], y: [30, -30, 30] }}
+          whileInView={{ x: [30, -30, 30], y: [30, -30, 30] }}
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
@@ -162,7 +162,7 @@ export default function Hero() {
               src={slide.model} 
               alt={slide.title}
               className="w-full h-full object-cover object-[center_20%]"
-              animate={{ scale: [1, 1.05] }} // Slow continuous zoom
+              whileInView={{ scale: [1, 1.05] }} // Slow continuous zoom
               transition={{ duration: 15, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
               style={{ willChange: "transform" }}
             />
@@ -230,7 +230,7 @@ export default function Hero() {
                 {/* Continuous Shimmer Animation inside Button */}
                 <motion.div 
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 w-1/2"
-                  animate={{ x: ['-200%', '300%'] }}
+                  whileInView={{ x: ['-200%', '300%'] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
                   style={{ willChange: "transform" }}
                 />
@@ -289,7 +289,7 @@ export default function Hero() {
               <motion.img 
                 src={prod.img}
                 className="w-full h-full object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.5)]"
-                animate={{ 
+                whileInView={{ 
                   y: [0, -12, 0], 
                   rotate: [0, 3, -3, 0] 
                 }}
@@ -311,7 +311,7 @@ export default function Hero() {
             key={p.id}
             className="absolute w-1 h-1 rounded-full bg-white shadow-[0_0_15px_#ffffff]"
             style={{ left: p.left, top: p.top, willChange: "transform, opacity" }}
-            animate={{ 
+            whileInView={{ 
               opacity: [0, p.opacityMax, 0], 
               scale: [0, p.scale, 0], 
               y: [0, p.yDest] 

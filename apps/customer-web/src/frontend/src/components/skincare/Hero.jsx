@@ -6,42 +6,42 @@ import { useTheme } from '../../context/ThemeContext';
 const themesData = [
   {
     id: 'orange',
-    bg: '/bg-orange.png',
+    bg: '/bg-orange.webp',
     heading: 'Brighten Your Skin Naturally',
     subheading: 'Vitamin C powered skincare for radiant, glowing skin.',
     filterStyle: 'hue-rotate(-160deg) saturate(1.8) brightness(1.2)'
   },
   {
     id: 'strawberry',
-    bg: '/bg-strawberry.png',
+    bg: '/bg-strawberry.webp',
     heading: 'Glow with Every Drop',
     subheading: 'Reveal naturally radiant and youthful-looking skin.',
     filterStyle: 'hue-rotate(130deg) saturate(1.3) brightness(1.1)'
   },
   {
     id: 'pomegranate',
-    bg: '/bg-pomegranate.png',
+    bg: '/bg-pomegranate.webp',
     heading: 'Powerful Antioxidant Care',
     subheading: 'Protect, repair and revive your skin every day.',
     filterStyle: 'hue-rotate(170deg) saturate(1.5) brightness(0.85)'
   },
   {
     id: 'blueberry',
-    bg: '/bg-blueberry.png',
+    bg: '/bg-blueberry.webp',
     heading: 'Deep Hydration Starts Here',
     subheading: 'Lock in moisture for soft and healthy skin.',
     filterStyle: 'hue-rotate(10deg) saturate(1.2)'
   },
   {
     id: 'greentea',
-    bg: '/bg-greentea.png',
+    bg: '/bg-greentea.webp',
     heading: 'Calm. Balance. Refresh.',
     subheading: 'Gentle skincare that soothes sensitive skin.',
     filterStyle: 'hue-rotate(-50deg) saturate(1.2) brightness(1.1)'
   },
   {
     id: 'mango',
-    bg: '/bg-mango.png',
+    bg: '/bg-mango.webp',
     heading: 'Nourish Your Natural Beauty',
     subheading: 'Rich hydration for soft and glowing skin.',
     filterStyle: 'hue-rotate(-200deg) saturate(2) brightness(1.15)'
@@ -147,7 +147,7 @@ export default function Hero() {
         {/* Continuous Floating Wrapper */}
         <motion.div
           style={{ x: productX, y: productY }}
-          animate={{ y: [0, -10, 0] }}
+          whileInView={{ y: [0, -10, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="relative w-[75%] lg:w-[50%] mt-32 lg:mt-24"
         >
@@ -171,7 +171,7 @@ export default function Hero() {
               </div>
 
               <img
-                src="/hero-products.png"
+                src="/hero-products.webp"
                 alt="COSKINn Premium Products"
                 style={{ filter: activeTheme.filterStyle }}
                 className="w-[85%] object-contain drop-shadow-[0_20px_40px_rgba(43,89,104,0.3)]"
@@ -185,21 +185,21 @@ export default function Hero() {
       <div className="absolute inset-0 z-10 pointer-events-none">
         <motion.div
           style={{ x: bubbleSlowX, y: bubbleSlowY }}
-          animate={{ y: [0, -20, 0] }}
+          whileInView={{ y: [0, -20, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[20%] right-[30%] w-16 h-16 rounded-full border border-white/40 bg-white/10 backdrop-blur-md shadow-[inset_0_4px_15px_rgba(255,255,255,0.6),0_10px_30px_rgba(0,0,0,0.05)]"
+          className="absolute top-[20%] right-[30%] w-16 h-16 rounded-full border border-white/40 bg-white/10 backdrop-blur-sm shadow-[inset_0_4px_15px_rgba(255,255,255,0.6),0_10px_30px_rgba(0,0,0,0.05)]"
         />
         <motion.div
           style={{ x: bubbleFastX, y: bubbleFastY }}
-          animate={{ y: [0, -30, 0] }}
+          whileInView={{ y: [0, -30, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           className="absolute top-[40%] right-[10%] w-24 h-24 rounded-full border border-white/30 bg-white/5 backdrop-blur-sm shadow-[inset_0_4px_20px_rgba(255,255,255,0.4),0_10px_40px_rgba(0,0,0,0.05)]"
         />
         <motion.div
           style={{ x: bubbleSlowX, y: bubbleSlowY }}
-          animate={{ y: [0, -15, 0] }}
+          whileInView={{ y: [0, -15, 0] }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-[25%] right-[40%] w-10 h-10 rounded-full border border-white/50 bg-white/20 backdrop-blur-lg shadow-[inset_0_4px_10px_rgba(255,255,255,0.7),0_10px_20px_rgba(0,0,0,0.05)]"
+          className="absolute bottom-[25%] right-[40%] w-10 h-10 rounded-full border border-white/50 bg-white/20 backdrop-blur-md shadow-[inset_0_4px_10px_rgba(255,255,255,0.7),0_10px_20px_rgba(0,0,0,0.05)]"
         />
       </div>
 

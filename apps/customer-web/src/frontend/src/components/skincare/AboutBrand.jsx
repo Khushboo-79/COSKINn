@@ -124,7 +124,7 @@ export default function About() {
               </div>
 
               <motion.img 
-                src="/premium_skincare_collection.png" 
+                src="/premium_skincare_collection.webp" 
                 alt="COSKINn Premium Skincare" 
                 className="w-full h-full object-cover scale-[1.05] group-hover:scale-[1.08] transition-transform duration-[2s] ease-out" 
               />
@@ -160,8 +160,8 @@ export default function About() {
                 <span className="font-heading text-white text-5xl font-light tracking-[0.3em] uppercase rotate-[90deg] -translate-x-4">COSKINn</span>
               </div>
 
-              <img 
-                src="/mockup_product_1.png" 
+              <img loading="lazy" 
+                src="/mockup_product_1.webp" 
                 alt="COSKINn Formula Details" 
                 className="w-full h-full object-cover scale-105 group-hover:scale-[1.08] transition-transform duration-[2s] ease-out" 
               />

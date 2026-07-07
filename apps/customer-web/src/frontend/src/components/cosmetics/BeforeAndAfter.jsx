@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
-import beforeImage from '../../assets/images/cosmetics_before_model.png';
-import afterImage from '../../assets/images/cosmetics_after_model.png';
-import paletteImage from '../../assets/images/cosmetics_floating_palette.png';
-import lipstickImage from '../../assets/images/cosmetics_lipstick.png'; // Reused from Hero assets
+import beforeImage from '../../assets/images/cosmetics_before_model.webp';
+import afterImage from '../../assets/images/cosmetics_after_model.webp';
+import paletteImage from '../../assets/images/cosmetics_floating_palette.webp';
+import lipstickImage from '../../assets/images/cosmetics_lipstick.webp'; // Reused from Hero assets
 
 export default function BeforeAndAfter() {
   const containerRef = useRef(null);
@@ -163,7 +163,7 @@ export default function BeforeAndAfter() {
           >
             {/* Base Image (Before) */}
             <div className="absolute inset-0 w-full h-full pointer-events-none">
-              <img 
+              <img loading="lazy" 
                 src={beforeImage} 
                 alt="Before COSKINn Makeup" 
                 className="absolute inset-0 w-full h-full object-cover"
@@ -178,7 +178,7 @@ export default function BeforeAndAfter() {
               className="absolute inset-0 w-full h-full pointer-events-none z-10"
               style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
             >
-              <img 
+              <img loading="lazy" 
                 src={afterImage} 
                 alt="After COSKINn Makeup" 
                 className="absolute inset-0 w-full h-full object-cover"

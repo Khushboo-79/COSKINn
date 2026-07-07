@@ -174,7 +174,7 @@ export default function WhyChooseUs() {
             <div className="relative w-full aspect-[4/5] lg:aspect-[4/4.5] rounded-[48px] lg:rounded-[64px] overflow-hidden shadow-[0_40px_100px_rgba(43,89,104,0.12)] bg-white border border-white/60 group">
               
               <motion.img 
-                src="/why-choose-us-model.png" 
+                src="/why-choose-us-model.webp" 
                 alt="Beautiful woman using COSKINn skincare"
                 className="w-full h-full object-cover object-center lg:object-[center_20%] scale-[1.02] transition-transform duration-[2.5s] ease-out group-hover:scale-[1.06]"
               />
@@ -211,7 +211,7 @@ export default function WhyChooseUs() {
                <div className="absolute inset-0 flex items-center justify-center z-20 mix-blend-overlay opacity-80 pointer-events-none bg-black/5">
                   <span className="font-heading text-white text-3xl lg:text-[2.5rem] font-light tracking-[0.3em] uppercase rotate-[-90deg]">COSKINn</span>
                </div>
-               <img src="/mockup_product_1.png" className="w-full h-full object-cover" />
+               <img loading="lazy" src="/mockup_product_1.webp" className="w-full h-full object-cover" />
                <div className="absolute inset-0 bg-gradient-to-tr from-theme-secondary/30 to-transparent mix-blend-multiply z-10 pointer-events-none" />
             </motion.div>
 

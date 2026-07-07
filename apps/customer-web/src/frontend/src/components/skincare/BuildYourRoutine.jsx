@@ -14,7 +14,7 @@ const routines = {
       type: "Cleanse",
       ingredient: "Green Tea Extract",
       ingredientDetail: "Calms inflammation and gently removes morning impurities without stripping the natural barrier.",
-      image: "/cleanser_bottle_coskin.png",
+      image: "/cleanser_bottle_coskin.webp",
       bgImg: "/bg-greentea.webp",
       modelImg: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1200&auto=format&fit=crop",
       gradient: "from-gray-100/40 to-white"
@@ -26,7 +26,7 @@ const routines = {
       type: "Tone & Prep",
       ingredient: "Strawberry & Rose",
       ingredientDetail: "Provides an instant burst of antioxidant hydration to awaken and plump the skin.",
-      image: "/mockup_product_1.png",
+      image: "/mockup_product_1.webp",
       bgImg: "/bg-strawberry.webp",
       modelImg: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=1200&auto=format&fit=crop",
       gradient: "from-theme-accent/40 to-white"
@@ -38,7 +38,7 @@ const routines = {
       type: "Protect",
       ingredient: "Mango Butter",
       ingredientDetail: "Deeply hydrates while offering invisible, weightless UV protection for a glowing finish.",
-      image: "/mockup_product_2.png",
+      image: "/mockup_product_2.webp",
       bgImg: "/bg-mango.webp",
       modelImg: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=1200&auto=format&fit=crop",
       gradient: "from-theme-secondary/50 to-white"
@@ -52,7 +52,7 @@ const routines = {
       type: "Deep Cleanse",
       ingredient: "Pomegranate Seed",
       ingredientDetail: "Melts away makeup, SPF, and urban pollution while promoting intense cellular renewal.",
-      image: "/cleanser_bottle_coskin.png",
+      image: "/cleanser_bottle_coskin.webp",
       bgImg: "/bg-pomegranate.webp",
       modelImg: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1200&auto=format&fit=crop",
       gradient: "from-theme-accent/30 to-white" 
@@ -64,7 +64,7 @@ const routines = {
       type: "Treat & Repair",
       ingredient: "Blueberry Complex",
       ingredientDetail: "A potent antioxidant shield that aggressively repairs environmental damage while you sleep.",
-      image: "/serum_bottle_coskin.png",
+      image: "/serum_bottle_coskin.webp",
       bgImg: "/bg-blueberry.webp",
       modelImg: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1200&auto=format&fit=crop",
       gradient: "from-theme-primary/40 to-white"
@@ -76,7 +76,7 @@ const routines = {
       type: "Nourish",
       ingredient: "Orange & Vitamin C",
       ingredientDetail: "Brightens and deeply conditions lips overnight for a soft, deeply nourished morning reveal.",
-      image: "/mockup_product_3.png",
+      image: "/mockup_product_3.webp",
       bgImg: "/bg-mango.webp",
       modelImg: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?q=80&w=1200&auto=format&fit=crop",
       gradient: "from-gray-100/50 to-white"
@@ -106,12 +106,12 @@ const RoutineStep = ({ data, index }) => {
           {/* Base Gradient & Organic Botanical Background */}
           <div className={`absolute inset-0 bg-gradient-to-br ${data.gradient} z-0 transition-opacity duration-[1.2s] group-hover:opacity-10`} />
           <div className="absolute inset-0 opacity-40 group-hover:opacity-0 transition-opacity duration-[1.2s] mix-blend-overlay z-0 pointer-events-none">
-             <img src={data.bgImg} alt={data.ingredient} className="w-full h-full object-cover blur-[3px]" />
+             <img loading="lazy" src={data.bgImg} alt={data.ingredient} className="w-full h-full object-cover blur-[3px]" />
           </div>
 
           {/* Premium Model Lifestyle Reveal (Fades in on hover) */}
           <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-[1.2s] ease-in-out overflow-hidden pointer-events-none">
-             <img 
+             <img loading="lazy" 
                src={data.modelImg} 
                className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-[4s] ease-out" 
                alt="Lifestyle usage"
@@ -128,7 +128,7 @@ const RoutineStep = ({ data, index }) => {
                 <span className="font-heading text-black text-[4.5rem] lg:text-[7rem] tracking-[0.3em] font-light rotate-[-90deg]">COSKINn</span>
              </div>
              
-             <img 
+             <img loading="lazy" 
                src={data.image} 
                alt={data.name} 
                className="w-full h-full object-cover lg:object-contain mix-blend-multiply drop-shadow-[0_40px_80px_rgba(0,0,0,0.1)] scale-[1.05] transition-all duration-[1.2s] ease-out group-hover:scale-[0.8] lg:group-hover:scale-[0.7] group-hover:-translate-x-[25%] lg:group-hover:-translate-x-[35%] group-hover:translate-y-[10%] group-hover:rotate-[-5deg] group-hover:drop-shadow-[0_20px_40px_rgba(0,0,0,0.4)] z-20" 

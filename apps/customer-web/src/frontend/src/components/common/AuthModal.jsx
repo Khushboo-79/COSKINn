@@ -274,7 +274,7 @@ export default function AuthModal({ isOpen, onClose }) {
         {/* Left Side: Banner */}
         <div className="hidden md:flex w-[45%] relative bg-gray-50 flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-theme-secondary/20 to-theme-primary/10 z-10" />
-          <img src="/mockup_product_1.png" alt="Coskinn Banner" className="absolute inset-0 w-full h-full object-cover opacity-90 scale-105" />
+          <img loading="lazy" src="/mockup_product_1.webp" alt="Coskinn Banner" className="absolute inset-0 w-full h-full object-cover opacity-90 scale-105" />
           <div className="absolute inset-0 bg-black/20 mix-blend-multiply z-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
           

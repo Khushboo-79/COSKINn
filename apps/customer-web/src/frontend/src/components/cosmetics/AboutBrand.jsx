@@ -2,10 +2,10 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 
-import mainModel from '../../assets/images/cosmetics_why_choose_main.png';
-import secondaryModel from '../../assets/images/cat_blur.png';
-import floatLipstick from '../../assets/images/cosmetics_lipstick.png';
-import floatBlush from '../../assets/images/cosmetics_blush.png';
+import mainModel from '../../assets/images/cosmetics_why_choose_main.webp';
+import secondaryModel from '../../assets/images/cat_blur.webp';
+import floatLipstick from '../../assets/images/cosmetics_lipstick.webp';
+import floatBlush from '../../assets/images/cosmetics_blush.webp';
 
 const features = [
   { id: 1, title: "Luxury Formula", desc: "Crafted for elegance.", delay: 0.2 },
@@ -140,7 +140,7 @@ export default function AboutBrand() {
               style={{ y: yParallaxSlow }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 pointer-events-none"></div>
-              <img src={mainModel} alt="COSKINn Beauty Model" className="w-full h-full object-cover" />
+              <img loading="lazy" src={mainModel} alt="COSKINn Beauty Model" className="w-full h-full object-cover" />
             </motion.div>
 
             {/* Overlapping Secondary Portrait */}
@@ -149,7 +149,7 @@ export default function AboutBrand() {
               style={{ y: yParallaxFast }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10 pointer-events-none"></div>
-              <img src={secondaryModel} alt="COSKINn Editorial" className="w-full h-full object-cover object-top" />
+              <img loading="lazy" src={secondaryModel} alt="COSKINn Editorial" className="w-full h-full object-cover object-top" />
             </motion.div>
 
             {/* Floating Product - Lipstick */}
@@ -172,7 +172,7 @@ export default function AboutBrand() {
               animate={{ y: [10, -10, 10], rotate: [10, -10, 10] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
             >
-              <img src={floatBlush} alt="COSKINn Blush" className="w-full h-auto object-contain" />
+              <img loading="lazy" src={floatBlush} alt="COSKINn Blush" className="w-full h-auto object-contain" />
             </motion.div>
 
             {/* Floating Glass Element */}

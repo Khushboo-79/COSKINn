@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 
@@ -108,7 +109,7 @@ const NavItem = ({ title, to, children, isActive }) => {
         </Link>
       ) : (
         <button className="flex items-center gap-1 hover:text-theme-primary transition-colors cursor-pointer font-medium focus:outline-none">
-          {title} {children && <span className="text-[10px] ml-1 mt-0.5 opacity-60">▼</span>}
+          {title}
         </button>
       )}
 
@@ -146,7 +147,8 @@ const AnimatedHamburger = ({ isOpen, toggle }) => (
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal } = useAuth();
+  const { cartCount, openCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -166,7 +168,6 @@ export default function Navbar() {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   let timeoutRef = useRef(null);
 
@@ -211,7 +212,7 @@ export default function Navbar() {
 
   const handleToggleClick = () => {
     if (!user) {
-      setIsAuthModalOpen(true);
+      openAuthModal();
     } else if (window.innerWidth < 1024) {
       setIsDropdownOpen(!isDropdownOpen);
     }
@@ -227,7 +228,7 @@ export default function Navbar() {
       if (event.key === 'Escape') {
         setIsDropdownOpen(false);
         setIsMobileMenuOpen(false);
-        setIsAuthModalOpen(false);
+        closeAuthModal();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -340,7 +341,7 @@ export default function Navbar() {
               {user ? (
                 <>
                   {user.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover shadow-sm border border-white" />
+                    <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover shadow-sm border border-white" />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-theme-primary text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
                       {user.name.charAt(0).toUpperCase()}
@@ -384,9 +385,9 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          <button className="relative hover:text-theme-primary transition flex items-center">
+          <button onClick={openCart} className="relative hover:text-theme-primary transition flex items-center">
             <ShoppingBag size={22} strokeWidth={1.5} />
-            <span className="absolute -top-1 -right-2 bg-theme-secondary text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">0</span>
+            <span className="absolute -top-1 -right-2 bg-theme-secondary text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
           </button>
 
           <AnimatedHamburger isOpen={isMobileMenuOpen} toggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
@@ -397,7 +398,7 @@ export default function Navbar() {
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} theme={theme} />
 
       {/* Authentication Modal */}
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
 
     </motion.nav>
   );
