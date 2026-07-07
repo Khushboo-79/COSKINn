@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UpdateCustomerProfileDto } from './dto/update-customer-profile.dto';
 
@@ -83,6 +84,85 @@ export class CustomerProfileService {
         }
       });
     });
+  }
+
+  async getAllCustomers(page: number, limit: number, search?: string) {
+    const skip = (page - 1) * limit;
+    const whereClause: Prisma.UserWhereInput = search ? {
+      OR: [
+        { email: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } }
+      ]
+    } : {};
+
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where: {
+          ...whereClause,
+          roles: {
+            some: {
+              role: { name: 'CUSTOMER' }
+            }
+          }
+        },
+        include: {
+          customerProfile: {
+            include: { skinProfile: true }
+          }
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' }
+      }),
+      this.prisma.user.count({
+        where: {
+          ...whereClause,
+          roles: {
+            some: {
+              role: { name: 'CUSTOMER' }
+            }
+          }
+        }
+      })
+    ]);
+
+    return {
+      data: users,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) }
+    };
+  }
+
+  async getCustomer360(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        customerProfile: {
+          include: {
+            skinProfile: true,
+            makeupPreference: true
+          }
+        },
+        wishlist: {
+          include: {
+            items: {
+              include: { product: true }
+            }
+          }
+        },
+        orders: {
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+          include: {
+            items: true
+          }
+        }
+      }
+    });
+
+    if (!user) throw new NotFoundException('Customer not found');
+    return user;
   }
 }
 

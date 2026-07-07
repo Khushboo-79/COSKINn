@@ -634,6 +634,9 @@ model Order {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  couponId      String?
+  coupon        Coupon?  @relation(fields: [couponId], references: [id])
+
   user          User                 @relation(fields: [userId], references: [id])
   items         OrderItem[]
   statusHistory OrderStatusHistory[]
@@ -857,4 +860,46 @@ model Settlement {
   createdAt     DateTime @default(now())
 
   @@map("settlements")
+}
+
+// ==========================================
+// DAY 10: MARKETING & PROMOTIONS
+// ==========================================
+
+model Banner {
+  id          String    @id @default(uuid())
+  title       String
+  imageUrl    String
+  linkUrl     String?
+  position    String    // 'hero', 'mid-page', 'footer'
+  isActive    Boolean   @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("banners")
+}
+
+model Coupon {
+  id              String    @id @default(uuid())
+  code            String    @unique
+  description     String?
+  discountType    String    // 'PERCENTAGE', 'FIXED_AMOUNT'
+  discountValue   Float
+  minPurchase     Float?
+  maxDiscount     Float?
+  usageLimit      Int?
+  usedCount       Int       @default(0)
+  perUserLimit    Int?
+  startDate       DateTime?
+  endDate         DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  orders          Order[]
+
+  @@map("coupons")
 }

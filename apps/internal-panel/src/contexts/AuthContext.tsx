@@ -24,8 +24,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('internal_panel_token'));
   const [user, setUser] = useState<UserProfile | null>(() => {
-    const savedUser = localStorage.getItem('internal_panel_user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('internal_panel_user');
+      return savedUser && savedUser !== 'undefined' ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      console.error("Failed to parse user from localStorage", e);
+      localStorage.removeItem('internal_panel_user');
+      return null;
+    }
   });
 
   const isAuthenticated = !!token && !!user;
