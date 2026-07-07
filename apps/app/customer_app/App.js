@@ -17,6 +17,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthScreen from './src/screens/Auth/AuthScreen';
 import OtpScreen from './src/screens/Auth/OtpScreen';
 import DashboardScreen from './src/screens/Dashboard/DashboardScreen';
+import SearchScreen from './src/screens/Dashboard/SearchScreen';
+import WishlistScreen from './src/screens/Dashboard/Wishlist/WishlistScreen';
+import CartScreen from './src/screens/Dashboard/Cart/CartScreen';
+import CouponsScreen from './src/screens/Dashboard/Cart/CouponsScreen';
+import GiftBoxScreen from './src/screens/Dashboard/Cart/GiftBoxScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +36,11 @@ function App() {
           <Stack.Screen name="Auth" component={AuthScreen} />
           <Stack.Screen name="Otp" component={OtpScreen} />
           <Stack.Screen name="Dashboard" component={DashboardScreen} />
+          <Stack.Screen name="Search" component={SearchScreen} />
+          <Stack.Screen name="Wishlist" component={WishlistScreen} />
+          <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="Coupons" component={CouponsScreen} />
+          <Stack.Screen name="GiftBox" component={GiftBoxScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

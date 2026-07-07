@@ -23,6 +23,15 @@ export const AppTheme = {
     cardBackground: 'rgba(255, 215, 225, 0.5)', // slightly transparent pinkish card background
     cardBorder: 'rgba(255, 0, 105, 0.4)', // pink border
     inputBackground: '#FFFFFF',
+    success: '#4CAF50',
+    discountBg: '#FFE4E1',
+    discountText: '#FF0069',
+    cashbackBg: '#FFF0D4',
+    cashbackText: '#F5A623',
+    wishlistGradientStart: '#FFD1E3',
+    wishlistGradientEnd: '#FFF2E6',
+    cartBottomGradientStart: '#FF0069',
+    cartBottomGradientEnd: '#FFCA7A',
   },
   fonts: {
     logo: 'Expletus Sans', // Used for OSKINn
