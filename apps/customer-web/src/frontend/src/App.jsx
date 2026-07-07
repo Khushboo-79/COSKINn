@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
@@ -16,7 +16,11 @@ const RoutinePage = React.lazy(() => import('./pages/RoutinePage'));
 const JournalPage = React.lazy(() => import('./pages/JournalPage'));
 const AccountPage = React.lazy(() => import('./pages/AccountPage'));
 const NewArrivalsPage = React.lazy(() => import('./pages/NewArrivalsPage'));
+const BestSellersPage = React.lazy(() => import('./pages/BestSellersPage'));
+const AwardWinnersPage = React.lazy(() => import('./pages/AwardWinnersPage'));
+const GiftSetsPage = React.lazy(() => import('./pages/GiftSetsPage'));
 const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
+const ProductDetailsPage = React.lazy(() => import('./pages/ProductDetailsPage'));
 
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
@@ -25,6 +29,38 @@ const GlobalLoader = () => (
   </div>
 );
 
+const MainLayout = () => {
+  const location = useLocation();
+  const isCheckout = location.pathname === '/checkout';
+
+  return (
+    <div className="relative min-h-screen flex flex-col">
+      {!isCheckout && <Navbar />}
+      {!isCheckout && <CartDrawer />}
+      <div className="flex-1">
+        <Suspense fallback={<GlobalLoader />}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/skincare" replace />} />
+            <Route path="/skincare" element={<SkincarePage />} />
+            <Route path="/cosmetics" element={<CosmeticsPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/routine" element={<RoutinePage />} />
+            <Route path="/journal" element={<JournalPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
+            <Route path="/best-sellers" element={<BestSellersPage />} />
+            <Route path="/award-winners" element={<AwardWinnersPage />} />
+            <Route path="/gift-sets" element={<GiftSetsPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/product/:id" element={<ProductDetailsPage />} />
+          </Routes>
+        </Suspense>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <AuthProvider>
@@ -32,26 +68,7 @@ export default function App() {
         <CartProvider>
           <WishlistProvider>
             <BrowserRouter>
-              <div className="relative min-h-screen flex flex-col">
-                <Navbar />
-                <CartDrawer />
-                <div className="flex-1">
-                  <Suspense fallback={<GlobalLoader />}>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/skincare" replace />} />
-                      <Route path="/skincare" element={<SkincarePage />} />
-                      <Route path="/cosmetics" element={<CosmeticsPage />} />
-                      <Route path="/about" element={<AboutPage />} />
-                      <Route path="/contact" element={<ContactPage />} />
-                      <Route path="/routine" element={<RoutinePage />} />
-                      <Route path="/journal" element={<JournalPage />} />
-                      <Route path="/account" element={<AccountPage />} />
-                      <Route path="/new-arrivals" element={<NewArrivalsPage />} />
-                      <Route path="/checkout" element={<CheckoutPage />} />
-                    </Routes>
-                  </Suspense>
-                </div>
-              </div>
+              <MainLayout />
             </BrowserRouter>
           </WishlistProvider>
         </CartProvider>

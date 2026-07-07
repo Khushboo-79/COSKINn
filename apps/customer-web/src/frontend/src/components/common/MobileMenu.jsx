@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
+import { skincareNavigation } from '../../constants/skincareNavigation';
+import { cosmeticsNavigation } from '../../constants/cosmeticsNavigation';
 
 const MobileAccordion = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +37,8 @@ const MobileAccordion = ({ title, children }) => {
 
 export default function MobileMenu({ isOpen, onClose, theme }) {
   const menuRef = React.useRef(null);
+  
+  const data = theme === 'skincare' ? skincareNavigation : cosmeticsNavigation;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -103,63 +107,61 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
                 <Link to={`/${theme}`} onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">Home</Link>
                 
                 <MobileAccordion title="Shop">
-                  <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">New Arrivals</Link>
-                  <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Best Sellers</Link>
-                  <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Skincare</Link>
-                  <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Cosmetics</Link>
-                  <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Bundles</Link>
-                  <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Limited Edition</Link>
-                  <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Gift Sets</Link>
-                  <Link to="#" onClick={onClose} className="text-theme-primary font-bold py-1">Shop All →</Link>
+                  {data.shop.map((section, idx) => (
+                    <React.Fragment key={`shop-${idx}`}>
+                      <div className={`text-xs font-bold text-theme-primary uppercase tracking-widest ${idx > 0 ? 'mt-4' : 'mt-2'} mb-1`}>{section.title}</div>
+                      {section.links.map((link, lIdx) => (
+                        <Link key={`shop-link-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                  
+                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">{data.bundles.title}</div>
+                  {data.bundles.links.map((link, lIdx) => (
+                    <Link key={`bundle-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
+                  ))}
+                  <Link to={data.bundles.shopAllHref} onClick={onClose} className="text-theme-primary font-bold py-1 mt-2">{data.bundles.shopAllText}</Link>
                 </MobileAccordion>
 
                 <MobileAccordion title="Categories">
-                  {theme === 'skincare' ? (
+                  {data.categories.map((section, idx) => (
+                    <React.Fragment key={`cat-${idx}`}>
+                      <div className={`text-xs font-bold text-theme-primary uppercase tracking-widest ${idx > 0 ? 'mt-4' : 'mt-2'} mb-1`}>{section.title}</div>
+                      {section.links.map((link, lIdx) => (
+                        <Link key={`cat-link-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
+                      ))}
+                    </React.Fragment>
+                  ))}
+
+                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">{data.categoryHighlight.title}</div>
+                  {data.categoryHighlight.links.map((link, lIdx) => (
+                    <Link key={`cathl-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
+                  ))}
+
+                  {data.categoryHighlight.highlightTag && (
                     <>
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-2 mb-1">Face Care</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Cleanser</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Cleansing Balm</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Sunscreen</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Face Mist</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Overnight Mask</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Under Eye Patches</Link>
-                      
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">Body Care</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Body Sunscreen</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Hand Cream</Link>
-
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">Lip Care</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">SPF Lip Balm</Link>
-
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">Fragrance</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Pocket Perfume</Link>
-                    </>
-                  ) : (
-                    <>
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-2 mb-1">Face Makeup</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Blush</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Lip & Cheek Blur</Link>
-                      
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">Eye Makeup</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Mascara</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Eyeshadow Palette</Link>
-
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">Lip Makeup</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Magnetic Lipstick</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Lip Liner</Link>
-
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">Accessories</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Makeup Brushes</Link>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Brush Holder</Link>
-
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">Coming Soon</div>
-                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">Holographic Edition</Link>
+                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">{data.categoryHighlight.highlightTag}</div>
+                      <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">{data.categoryHighlight.highlightText}</Link>
                     </>
                   )}
                 </MobileAccordion>
 
+                <MobileAccordion title="Routine">
+                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-2 mb-1">Select Routine</div>
+                  {data.routines.map((routine, idx) => (
+                    <Link key={`routine-${idx}`} to={routine.href} onClick={onClose} className="text-black/80 font-medium py-1">{routine.name}</Link>
+                  ))}
+                  <Link to="/routine" onClick={onClose} className="text-theme-primary font-bold py-1 mt-2">Complete Routine →</Link>
+                </MobileAccordion>
+
+                <MobileAccordion title="Journal">
+                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-2 mb-1">Discover</div>
+                  {data.journal.map((item, idx) => (
+                    <Link key={`journal-${idx}`} to={item.href} onClick={onClose} className="text-black/80 font-medium py-1">{item.name}</Link>
+                  ))}
+                </MobileAccordion>
+
                 <Link to="/about" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">About Us</Link>
-                <Link to="/journal" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">Journal</Link>
                 <Link to="/contact" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">Contact</Link>
               </div>
 
