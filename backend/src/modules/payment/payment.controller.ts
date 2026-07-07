@@ -1,17 +1,24 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, BadRequestException } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('payments')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Get('order/:orderId')
-  @Roles('SUPER_ADMIN', 'ORDER_MANAGER', 'FINANCE', 'CUSTOMER_SUPPORT')
-  getOrderPayments(@Param('orderId') orderId: string) {
-    return this.paymentService.getOrderPayments(orderId);
+  @UseGuards(JwtAuthGuard)
+  @Post('create-order')
+  async createRazorpayOrder(
+    @Request() req,
+    @Body('orderId') orderId: string
+  ) {
+    if (!orderId) throw new BadRequestException('orderId is required');
+    return this.paymentService.createRazorpayOrder(req.user.id, orderId);
+  }
+
+  @Post('webhook')
+  async razorpayWebhook(@Body() payload: any) {
+    // In production, you would verify the x-razorpay-signature header here
+    return this.paymentService.handleWebhook(payload);
   }
 }

@@ -5,37 +5,21 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 @Injectable()
-export class PrismaService implements OnModuleInit, OnModuleDestroy {
-  private _client: PrismaClient;
-
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
+    });
     const adapter = new PrismaPg(pool);
-    this._client = new PrismaClient({ adapter });
-    
-    return new Proxy(this, {
-      get: (target, prop) => {
-        if (prop in target) {
-          return target[prop as keyof PrismaService];
-        }
-        const clientProp = target._client[prop as keyof PrismaClient];
-        if (typeof clientProp === 'function') {
-          return clientProp.bind(target._client);
-        }
-        return clientProp;
-      },
-    }) as any;
+    super({ adapter, log: ['error'] });
   }
   
   async onModuleInit() {
-    await this._client.$connect();
+    await this.$connect();
   }
 
   async onModuleDestroy() {
-    await this._client.$disconnect();
+    await this.$disconnect();
   }
 }
-
-// This merges the PrismaClient types into PrismaService without extending the class!
-export interface PrismaService extends PrismaClient {}
-

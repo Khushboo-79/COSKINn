@@ -164,5 +164,58 @@ export class CustomerProfileService {
     if (!user) throw new NotFoundException('Customer not found');
     return user;
   }
-}
 
+  // --- Address Methods ---
+
+  async getAddresses(userId: string) {
+    return this.prisma.customerAddress.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async addAddress(userId: string, data: any) {
+    if (data.isDefault) {
+      await this.prisma.customerAddress.updateMany({
+        where: { userId },
+        data: { isDefault: false }
+      });
+    }
+
+    return this.prisma.customerAddress.create({
+      data: {
+        userId,
+        type: data.type || 'home',
+        fullName: data.fullName,
+        phone: data.phone,
+        addressLine1: data.addressLine1,
+        addressLine2: data.addressLine2,
+        city: data.city,
+        state: data.state,
+        pincode: data.pincode,
+        country: data.country || 'India',
+        isDefault: data.isDefault || false
+      }
+    });
+  }
+
+  async updateAddress(userId: string, id: string, data: any) {
+    if (data.isDefault) {
+      await this.prisma.customerAddress.updateMany({
+        where: { userId },
+        data: { isDefault: false }
+      });
+    }
+
+    return this.prisma.customerAddress.update({
+      where: { id, userId },
+      data
+    });
+  }
+
+  async deleteAddress(userId: string, id: string) {
+    return this.prisma.customerAddress.delete({
+      where: { id, userId }
+    });
+  }
+}

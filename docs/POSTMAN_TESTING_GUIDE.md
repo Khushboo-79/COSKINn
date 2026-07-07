@@ -114,3 +114,197 @@ Now that we have categories, tags, and image URLs, we can create the actual prod
   "price": 399.00
 }
 ```
+
+---
+
+## 5. Public Catalog & Search APIs (Phase 2)
+
+These endpoints do not require authentication (`Authorization: Bearer <token>` is not needed) and are used by the customer-facing frontend.
+
+### Step 5A: List All Products
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/products?page=1&limit=10`
+*(Returns paginated live products with basic details).*
+
+### Step 5B: Search Products (Typo-Tolerant)
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/products/search?q=cleanser`
+*(Tests PostgreSQL full-text search across name and description).*
+
+### Step 5C: Get Product by Fruit Ingredient
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/products/fruit/watermelon`
+
+### Step 5D: Get Single Product Details
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/products/<INSERT_PRODUCT_ID_HERE>`
+*(Returns full product data including reviews, questions, variants, ingredients).*
+
+### Step 5E: Filter & Sort Products
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/products?minPrice=500&maxPrice=1500&skinType=Oily&sortBy=price_asc`
+*(Tests the dynamic querying and sorting engine).*
+
+### Step 5F: SEO Data for Product
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/seo/product/hydrating-cleanser`
+*(Returns fast, lightweight SEO tags for Next.js SSG).*
+
+### Step 5G: SEO Data for Fruit Landing Page
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/seo/fruit/watermelon`
+
+### Step 5H: Home Dashboard API
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/home`
+*(Returns banners, categories, trending fruits, and new arrivals in one call).*
+
+### Step 5I: Post a Review (Requires Customer Login)
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/products/<INSERT_PRODUCT_ID_HERE>/reviews`
+- **Headers:** `Authorization: Bearer <CUSTOMER_JWT_TOKEN>`
+- **Body (JSON):**
+```json
+{
+  "rating": 5,
+  "title": "Amazing product!",
+  "content": "Loved it, my skin feels great."
+}
+```
+
+### Step 5J: Add to Wishlist (Requires Customer Login)
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/wishlist/<INSERT_PRODUCT_ID_HERE>`
+- **Headers:** `Authorization: Bearer <CUSTOMER_JWT_TOKEN>`
+
+---
+
+## 6. Customer Checkout Flow
+
+Once you have a product, you can test the complete customer checkout journey.
+
+### Step 6A: Add to Cart
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/cart/items`
+- **Body (JSON):**
+```json
+{
+  "productId": "<INSERT_PRODUCT_ID_HERE>",
+  "quantity": 1
+}
+```
+
+### Step 5B: Get Cart Totals
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/cart`
+*(This will return the cart items along with dynamic `totalMrp`, `totalDiscountPrice`, and `totalSavings`).*
+
+### Step 5C: Add Delivery Address
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/customer/addresses`
+- **Body (JSON):**
+```json
+{
+  "fullName": "Jane Doe",
+  "phone": "+919876543210",
+  "addressLine1": "123 Beauty Lane",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "pincode": "400001"
+}
+```
+*(Copy the generated address `id` from the response).*
+
+### Step 5D: Checkout (Create Order)
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/orders`
+- **Body (JSON):**
+```json
+{
+  "addressId": "<INSERT_ADDRESS_ID_HERE>",
+  "paymentMode": "ONLINE"
+}
+```
+*(This automatically clears your cart and creates an Order in DRAFT status. Copy the generated order `id`).*
+
+### Step 5E: Razorpay Create Order
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/payments/create-order`
+- **Body (JSON):**
+```json
+{
+  "orderId": "<INSERT_ORDER_ID_HERE>"
+}
+```
+*(This simulates generating a Razorpay Order ID for the frontend to open the payment modal).*
+
+---
+
+# AWS Deployment Guide
+
+If you are running the COSKINn backend on an AWS EC2 instance, follow these commands to get it up and running in production.
+
+### 1. Prerequisites
+Ensure your AWS EC2 instance has Node.js (v18+) and PM2 installed.
+```bash
+# Update server
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install PM2 globally (Process Manager to keep the app running)
+sudo npm install -g pm2
+```
+
+### 2. Setup the Project
+SSH into your AWS instance and clone your repository.
+```bash
+git clone <your-repo-url>
+cd COSKINn/backend
+
+# Install dependencies
+npm install
+```
+
+### 3. Environment Variables
+Create your `.env` file on the server.
+```bash
+nano .env
+```
+Ensure you have the production database URL and AWS S3 credentials:
+```env
+DATABASE_URL="postgresql://user:password@your-rds-endpoint.amazonaws.com:5432/coskinn?schema=public"
+JWT_SECRET="your_secure_production_secret"
+AWS_REGION="ap-south-1"
+AWS_ACCESS_KEY_ID="your_access_key"
+AWS_SECRET_ACCESS_KEY="your_secret_key"
+AWS_S3_BUCKET="coskinn-media-storage"
+```
+
+### 4. Build and Run
+First, generate the Prisma client and push the schema to your production database, then build the NestJS app.
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Push schema to production DB (or run migrations: npx prisma migrate deploy)
+npx prisma db push
+
+# Build the NestJS application
+npm run build
+
+# Start the application using PM2
+pm2 start dist/main.js --name "coskinn-backend"
+
+# Save the PM2 list so it restarts automatically on server reboot
+pm2 save
+pm2 startup
+```
+
+### 5. Viewing Logs
+To see real-time logs (e.g., to find the OTP if you are testing on the live server):
+```bash
+pm2 logs coskinn-backend
+```
