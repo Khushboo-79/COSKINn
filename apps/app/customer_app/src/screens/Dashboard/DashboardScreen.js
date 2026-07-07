@@ -18,18 +18,21 @@ const DashboardScreen = () => {
   const comboBannerData = [1, 2, 3];
 
   const categories = [
-    { id: 1, title: 'Fresh' },
-    { id: 2, title: 'Strawberry' },
-    { id: 3, title: 'Vitamin C' },
-    { id: 4, title: 'Combos' }
+    { id: 1, title: 'Fresh', image: require('../../images/bgImages/Fresh.webp') },
+    { id: 2, title: 'Strawberry', image: require('../../images/bgImages/Strawberry.webp') },
+    { id: 3, title: 'Vitamin C', image: require('../../images/bgImages/VitaminC.webp') },
+    { id: 4, title: 'Blueberry', image: require('../../images/bgImages/Bluberry.webp') },
+    { id: 5, title: 'Green Tea', image: require('../../images/bgImages/GreenTea.webp') },
+    { id: 6, title: 'Pomegranate', image: require('../../images/bgImages/Pomegranate.webp') }
   ];
 
   const skinTypes = [
-    { id: 1, title: 'Normal Skin' },
-    { id: 2, title: 'Oily Skin' },
-    { id: 3, title: 'Dry Skin' },
-    { id: 4, title: 'Combination Skin' },
-    { id: 5, title: 'Acne-prone Skin' }
+    { id: 1, title: 'Normal Skin', color: '#FF8FAB', image: require('../../images/skinTypeImages/normalSkin.webp') },
+    { id: 2, title: 'Oily Skin', color: '#EF839E', image: require('../../images/skinTypeImages/oilySkin.webp') },
+    { id: 3, title: 'Dry Skin', color: '#FFB3C6', image: require('../../images/skinTypeImages/drySkin.webp') },
+    { id: 4, title: 'Combination Skin', color: '#F3A4B9', image: require('../../images/skinTypeImages/combinationSkin.webp') },
+    { id: 5, title: 'Acne-prone Skin', color: '#FF8FAB', image: require('../../images/skinTypeImages/acneSkin.webp') },
+    { id: 6, title: 'Sensitive Skin', color: '#FB6F92', image: require('../../images/skinTypeImages/sensitiveSkin.webp') }
   ];
   const [activeSkinIndex, setActiveSkinIndex] = useState(0); // Normal Skin active
 
@@ -224,7 +227,7 @@ const DashboardScreen = () => {
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.categoryItem} activeOpacity={0.8}>
                   <View style={styles.categoryCircle}>
-                    <Image source={require('../../images/Logo/logo.webp')} style={styles.categoryImage} resizeMode="cover" />
+                    <Image source={item.image} style={styles.categoryImage} resizeMode="cover" />
                   </View>
                   <Text style={styles.categoryText}>{item.title}</Text>
                 </TouchableOpacity>
@@ -249,14 +252,16 @@ const DashboardScreen = () => {
               viewabilityConfig={skinViewabilityConfig}
               snapToInterval={scaleh(220)} // exact width of card + margins
               decelerationRate="fast"
-              renderItem={({ item }) => {
+              renderItem={({ item, index }) => {
+                const isActive = activeSkinIndex === index;
+                const displayColor = isActive ? '#FF0069' : item.color;
                 return (
-                  <View style={styles.skinTypeCard}>
-                    <Image source={require('../../images/Logo/logo.webp')} style={styles.skinTypeImage} resizeMode="cover" />
-                    <View style={styles.skinTypeBottomBar}>
+                  <TouchableOpacity activeOpacity={0.9} onPress={() => setActiveSkinIndex(index)} style={[styles.skinTypeCard, { borderColor: displayColor }]}>
+                    <Image source={item.image} style={styles.skinTypeImage} resizeMode="cover" />
+                    <View style={[styles.skinTypeBottomBar, { backgroundColor: displayColor }]}>
                       <Text style={styles.skinTypeBottomText}>{item.title}</Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 );
               }}
             />
@@ -573,17 +578,18 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginHorizontal: scaleh(10),
     borderWidth: 2,
-    borderColor: '#FF5C81',
   },
   skinTypeImage: {
     flex: 1,
     width: '100%',
   },
   skinTypeBottomBar: {
+    position: 'absolute',
+    bottom: -3,
+    width: '100%',
     height: '25%', // use percentage so it scales perfectly between active and inactive sizes
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF5C81',
   },
   skinTypeBottomText: {
     color: '#FFFFFF',
