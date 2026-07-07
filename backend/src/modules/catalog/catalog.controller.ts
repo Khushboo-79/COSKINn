@@ -1,0 +1,38 @@
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { CatalogService } from './catalog.service';
+
+@Controller('catalog')
+export class CatalogController {
+  constructor(private readonly catalogService: CatalogService) {}
+
+  @Get('home')
+  getHomeDashboard() {
+    return this.catalogService.getHomeDashboard();
+  }
+
+  @Get('search')
+  searchProducts(@Query('q') q: string) {
+    return this.catalogService.searchProducts(q);
+  }
+
+  @Get('products')
+  getProducts(
+    @Query('page') page?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('category') category?: string,
+    @Query('skinType') skinType?: string,
+  ) {
+    return this.catalogService.getProducts({ page, minPrice, maxPrice, category, skinType });
+  }
+
+  @Get('products/:slug')
+  getProductBySlug(@Param('slug') slug: string) {
+    return this.catalogService.getProductBySlug(slug);
+  }
+
+  @Get('categories/:slug')
+  getCategoryBySlug(@Param('slug') slug: string) {
+    return this.catalogService.getCategoryBySlug(slug);
+  }
+}

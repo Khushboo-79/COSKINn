@@ -14,6 +14,12 @@ import { CartModule } from './modules/cart/cart.module';
 import { ReturnModule } from './modules/return/return.module';
 import { MarketingModule } from './modules/marketing/marketing.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
+import { WishlistModule } from './modules/wishlist/wishlist.module';
+import { SeoModule } from './modules/seo/seo.module';
+import { HomeModule } from './modules/home/home.module';
+import { EngagementModule } from './modules/engagement/engagement.module';
+import { CouponModule } from './modules/coupon/coupon.module';
 
 @Module({
   imports: [
@@ -30,6 +36,12 @@ import { UploadModule } from './modules/upload/upload.module';
     ReturnModule,
     MarketingModule,
     UploadModule,
+    CatalogModule,
+    WishlistModule,
+    SeoModule,
+    HomeModule,
+    EngagementModule,
+    CouponModule
   ],
   controllers: [AppController],
   providers: [AppService],

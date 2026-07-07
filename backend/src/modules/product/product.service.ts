@@ -31,6 +31,171 @@ export class ProductService {
     });
   }
 
+  // --- Public Catalog Methods ---
+
+  async findAllPublic(
+    page: number, 
+    limit: number, 
+    filters?: { minPrice?: number, maxPrice?: number, skinType?: string, fruit?: string, concern?: string, sortBy?: string }
+  ) {
+    const skip = (page - 1) * limit;
+    
+    // Build dynamic where clause
+    const where: any = { isDeleted: false, status: 'LIVE' };
+    
+    if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
+      where.discountPrice = {};
+      if (filters.minPrice !== undefined) where.discountPrice.gte = filters.minPrice;
+      if (filters.maxPrice !== undefined) where.discountPrice.lte = filters.maxPrice;
+    }
+    if (filters?.skinType) {
+      where.skinTypes = { some: { name: { equals: filters.skinType, mode: 'insensitive' } } };
+    }
+    if (filters?.fruit) {
+      where.ingredients = { some: { name: { equals: filters.fruit, mode: 'insensitive' } } };
+    }
+    if (filters?.concern) {
+      where.concerns = { some: { name: { equals: filters.concern, mode: 'insensitive' } } };
+    }
+
+    // Build dynamic orderBy
+    let orderBy: any = { createdAt: 'desc' };
+    if (filters?.sortBy) {
+      switch (filters.sortBy) {
+        case 'price_asc': orderBy = { discountPrice: 'asc' }; break;
+        case 'price_desc': orderBy = { discountPrice: 'desc' }; break;
+        case 'newest': orderBy = { createdAt: 'desc' }; break;
+      }
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          category: true,
+          variants: true,
+          images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+        },
+        orderBy,
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) }
+    };
+  }
+
+  async search(query: string) {
+    // Uses PostgreSQL full text search natively through Prisma preview feature
+    const searchQuery = query.split(' ').map(term => `${term}:*`).join(' & ');
+    return this.prisma.product.findMany({
+      where: {
+        isDeleted: false,
+        status: 'LIVE',
+        OR: [
+          { name: { search: searchQuery } },
+          { description: { search: searchQuery } },
+        ],
+      },
+      include: {
+        variants: true,
+        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+      }
+    });
+  }
+
+  async findByCategory(categoryId: string) {
+    return this.prisma.product.findMany({
+      where: { categoryId, isDeleted: false, status: 'LIVE' },
+      include: {
+        variants: true,
+        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+      }
+    });
+  }
+
+  async findByConcern(concernId: string) {
+    return this.prisma.product.findMany({
+      where: {
+        isDeleted: false,
+        status: 'LIVE',
+        concerns: { some: { id: concernId } }
+      },
+      include: {
+        variants: true,
+        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+      }
+    });
+  }
+
+  async findByFruit(fruitName: string) {
+    return this.prisma.product.findMany({
+      where: {
+        isDeleted: false,
+        status: 'LIVE',
+        ingredients: { some: { name: { equals: fruitName, mode: 'insensitive' } } }
+      },
+      include: {
+        variants: true,
+        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+      }
+    });
+  }
+
+  async findOnePublic(id: string) {
+    const product = await this.prisma.product.findFirst({
+      where: { id, isDeleted: false, status: 'LIVE' },
+      include: {
+        category: true,
+        variants: true,
+        ingredients: true,
+        concerns: true,
+        skinTypes: true,
+        benefits: true,
+        images: { orderBy: { sortOrder: 'asc' } },
+        videos: { orderBy: { sortOrder: 'asc' } },
+        questions: { where: { isApproved: true }, take: 5 },
+        reviews: { where: { isApproved: true }, take: 5 },
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Published product #${id} not found`);
+    }
+
+    return product;
+  }
+
+  async getProductVariantsPublic(id: string) {
+    const product = await this.prisma.product.findFirst({
+      where: { id, isDeleted: false, status: 'LIVE' },
+      select: {
+        id: true,
+        name: true,
+        variants: {
+          select: {
+            id: true,
+            sku: true,
+            name: true,
+            netQuantity: true,
+            mrp: true,
+            price: true
+          }
+        }
+      }
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Published product #${id} not found`);
+    }
+
+    return product.variants;
+  }
+
   async findOne(id: string) {
     const product = await this.prisma.product.findUnique({
       where: { id, isDeleted: false },

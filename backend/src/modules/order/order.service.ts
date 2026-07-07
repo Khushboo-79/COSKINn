@@ -1,139 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateOrderDto, UpdateOrderStatusDto } from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(page: number, limit: number, search?: string, status?: string) {
-    const skip = (page - 1) * limit;
-    const where: any = { isDeleted: false };
-    
-    if (status) {
-      where.status = status;
-    }
-
-    if (search) {
-      where.OR = [
-        { id: { contains: search } },
-        { user: { email: { contains: search } } },
-        { user: { phone: { contains: search } } },
-      ];
-    }
-
-    return this.prisma.order.findMany({
-      where,
-      include: {
-        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-    });
-  }
-
-  async findOne(id: string) {
-    const order = await this.prisma.order.findUnique({
-      where: { id },
-      include: {
-        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
-        items: true,
-        address: true,
-        statusHistory: { orderBy: { createdAt: 'desc' } },
-        payments: { orderBy: { createdAt: 'desc' } },
-        shipments: { orderBy: { createdAt: 'desc' } },
-        invoices: { orderBy: { createdAt: 'desc' } },
-        cancellations: { orderBy: { createdAt: 'desc' } },
-      }
-    });
-
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
-    }
-
-    return order;
-  }
-
-  async updateStatus(id: string, dto: UpdateOrderStatusDto) {
-    const order = await this.prisma.order.findUnique({ where: { id } });
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
-    }
-
-    return this.prisma.$transaction(async (prisma) => {
-      // Create the ledger entry
-      await prisma.orderStatusHistory.create({
-        data: {
-          orderId: id,
-          status: dto.status,
-          notes: dto.notes,
-        },
-      });
-
-      // Update the main order record
-      return prisma.order.update({
-        where: { id },
-        data: { status: dto.status },
-        include: {
-          statusHistory: { orderBy: { createdAt: 'desc' } }
-        }
-      });
-    });
-  }
-
-  async cancelOrder(id: string, reason: string) {
-    const order = await this.prisma.order.findUnique({ where: { id } });
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
-    }
-
-    // Only allow cancellation if not shipped yet
-    if (['SHIPPED', 'DELIVERED', 'CANCELLED'].includes(order.status)) {
-      throw new Error(`Order cannot be cancelled in status: ${order.status}`);
-    }
-
-    return this.prisma.$transaction(async (prisma) => {
-      // Create cancellation record
-      await prisma.orderCancellation.create({
-        data: {
-          orderId: id,
-          reason,
-        }
-      });
-
-      // Create ledger entry
-      await prisma.orderStatusHistory.create({
-        data: {
-          orderId: id,
-          status: 'CANCELLED',
-          notes: `Cancelled: ${reason}`,
-        },
-      });
-
-      // Update main order
-      return prisma.order.update({
-        where: { id },
-        data: { status: 'CANCELLED' },
-      });
-    });
-  }
-
-  async getInvoice(id: string) {
-    const order = await this.prisma.order.findUnique({ where: { id } });
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
-    }
-
-    // For now, return a mock invoice payload. In production, this will generate or fetch a PDF.
-    return {
-      orderId: id,
-      invoiceNumber: `INV-${id.split('-')[0].toUpperCase()}`,
-      pdfUrl: null,
-      mockHtml: `<h1>Invoice for Order #${id.split('-')[0].toUpperCase()}</h1><p>Amount: ₹${order.finalAmount}</p>`
-    };
-  }
-
-  async checkout(userId: string, dto: CreateOrderDto) {
+  async createOrderFromCart(userId: string, addressId: string, paymentMode: string) {
+    // 1. Fetch the user's cart and address
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
       include: {
@@ -144,61 +17,47 @@ export class OrderService {
     });
 
     if (!cart || cart.items.length === 0) {
-      throw new Error('Cart is empty');
+      throw new BadRequestException('Cart is empty');
     }
 
     const address = await this.prisma.customerAddress.findUnique({
-      where: { id: dto.customerAddressId }
+      where: { id: addressId, userId }
     });
 
     if (!address) {
-      throw new Error('Customer address not found');
+      throw new NotFoundException('Delivery address not found');
     }
 
-    // Fetch variants separately
-    const variantIds = cart.items.map(i => i.variantId).filter(Boolean) as string[];
-    const variants = await this.prisma.productVariant.findMany({
-      where: { id: { in: variantIds } }
-    });
-    const variantMap = new Map(variants.map(v => [v.id, v]));
+    // 2. Calculate totals
+    let totalAmount = 0; // MRP sum
+    let finalAmount = 0; // Discounted sum
+    let taxAmount = 0; // Placeholder for now
+    let shippingFee = 0; // Placeholder for now
 
-    let subtotal = 0;
-    const orderItemsData = cart.items.map(item => {
-      const variant = item.variantId ? variantMap.get(item.variantId) : null;
-      if (!variant) throw new Error(`Product Variant missing for cart item: ${item.id}`);
-
-      const price = variant.price;
-      const total = price * item.quantity;
-      subtotal += total;
-
-      return {
-        variantId: variant.id,
-        sku: variant.sku,
-        name: `${item.product.name} - ${variant.name}`,
-        quantity: item.quantity,
-        price: price,
-        taxAmount: total * 0.18, // Mock 18% tax
-        total: total,
-      };
+    cart.items.forEach(item => {
+      const mrp = Number(item.product.mrp);
+      const discountPrice = Number(item.product.discountPrice || mrp);
+      
+      totalAmount += (mrp * item.quantity);
+      finalAmount += (discountPrice * item.quantity);
     });
 
-    const taxAmount = subtotal * 0.18;
-    const shippingFee = subtotal > 500 ? 0 : 50; // Free shipping over 500
-    const finalAmount = subtotal + taxAmount + shippingFee;
+    const discountAmt = totalAmount - finalAmount;
 
-    return this.prisma.$transaction(async (prisma) => {
-      const order = await prisma.order.create({
+    // 3. Create the order using a transaction
+    return this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.create({
         data: {
           userId,
-          status: 'PLACED',
-          totalAmount: subtotal,
+          status: paymentMode === 'ONLINE' ? 'DRAFT' : 'PLACED',
+          totalAmount,
+          discountAmt,
           taxAmount,
           shippingFee,
           finalAmount,
-          paymentMode: dto.paymentMode,
-          items: {
-            create: orderItemsData
-          },
+          paymentMode,
+          
+          // Create the order address snapshot
           address: {
             create: {
               sourceAddressId: address.id,
@@ -212,17 +71,45 @@ export class OrderService {
               country: address.country
             }
           },
-          statusHistory: {
-            create: {
-              status: 'PLACED',
-              notes: 'Order placed successfully'
-            }
+
+          // Create the order items
+          items: {
+            create: await Promise.all(cart.items.map(async (item) => {
+              const mrp = Number(item.product.mrp);
+              const discountPrice = Number(item.product.discountPrice || mrp);
+              let variantId = item.variantId;
+              let sku = 'UNKNOWN_SKU';
+              
+              if (!variantId) {
+                const firstVariant = await tx.productVariant.findFirst({
+                  where: { productId: item.productId }
+                });
+                if (firstVariant) {
+                  variantId = firstVariant.id;
+                  sku = firstVariant.sku;
+                }
+              }
+
+              return {
+                variantId: variantId as string, // Cast to string assuming we found one, otherwise it'll throw a db error
+                sku: sku,
+                name: item.product.name,
+                quantity: item.quantity,
+                price: discountPrice,
+                total: discountPrice * item.quantity,
+                taxAmount: 0
+              };
+            }))
           }
+        },
+        include: {
+          address: true,
+          items: true
         }
       });
 
-      // Clear the cart
-      await prisma.cartItem.deleteMany({
+      // 4. Clear the cart
+      await tx.cartItem.deleteMany({
         where: { cartId: cart.id }
       });
 
