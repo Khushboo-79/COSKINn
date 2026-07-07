@@ -1,0 +1,228 @@
+{
+  "info": {
+    "name": "COSKINn Platform API",
+    "description": "Complete collection for testing the COSKINn APIs from Auth to Product Creation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication (2FA)",
+      "item": [
+        {
+          "name": "1A. Admin Login (Trigger OTP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@coskinn.com\",\n  \"password\": \"your_secure_password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Send this request first. Check your backend terminal (where you ran `npm run dev`) to find the 6-digit mock OTP printed."
+          },
+          "response": []
+        },
+        {
+          "name": "1B. Verify OTP (Get Token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+919876543210\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-otp"
+              ]
+            },
+            "description": "Replace `123456` with the OTP from your terminal. After running this, copy the `access_token` and paste it into the Collection Variables."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Categories & Metadata",
+      "item": [
+        {
+          "name": "Create Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Skincare\",\n  \"slug\": \"skincare\",\n  \"description\": \"Premium skincare products\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            },
+            "description": "Creates a parent category. Copy the generated `id` to use when creating a product."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. AWS S3 Uploads",
+      "item": [
+        {
+          "name": "Get S3 Presigned URL",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileName\": \"product_image.jpg\",\n  \"contentType\": \"image/jpeg\",\n  \"folder\": \"products\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/upload/presigned-url",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "upload",
+                "presigned-url"
+              ]
+            },
+            "description": "Generates a URL to safely upload images to S3 directly."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Product Management",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hydrating Cleanser\",\n  \"slug\": \"hydrating-cleanser\",\n  \"description\": \"A gentle cleanser for all skin types.\",\n  \"categoryId\": \"PASTE_CATEGORY_ID_HERE\",\n  \"mrp\": 999.00,\n  \"discountPrice\": 799.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/product",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "product"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "PASTE_YOUR_JWT_TOKEN_HERE",
+      "type": "string"
+    }
+  ]
+}

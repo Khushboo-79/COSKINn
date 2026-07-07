@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { Mail, Lock, KeyRound, Loader2, ArrowLeft } from 'lucide-react';
 import { api } from '../../lib/axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,12 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+const otpSchema = z.object({
+  otp: z.string().min(4, 'OTP is required').max(6, 'Invalid OTP length'),
+});
+
 type LoginFormValues = z.infer<typeof loginSchema>;
+type OtpFormValues = z.infer<typeof otpSchema>;
 
 const Logo = () => (
   <div className="flex items-end justify-center relative px-4 mb-8">
@@ -31,27 +36,65 @@ const Logo = () => (
 export const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  
+  const [step, setStep] = useState<'login' | 'otp'>('login');
+  const [phone, setPhone] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
+    register: registerLogin,
+    handleSubmit: handleSubmitLogin,
+    formState: { errors: loginErrors, isSubmitting: isSubmittingLogin },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const {
+    register: registerOtp,
+    handleSubmit: handleSubmitOtp,
+    formState: { errors: otpErrors, isSubmitting: isSubmittingOtp },
+    reset: resetOtp
+  } = useForm<OtpFormValues>({
+    resolver: zodResolver(otpSchema),
+  });
+
+  const onLoginSubmit = async (data: LoginFormValues) => {
     try {
       setError(null);
+      // Step 1: Verify Email/Password, trigger OTP
       const response = await api.post('/auth/login', data);
+      
+      if (response.data.nextStep === 'verify-otp') {
+        setPhone(response.data.phone);
+        setStep('otp');
+      }
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        setError('Invalid email or password');
+      } else if (err.response?.status === 400) {
+        setError(err.response?.data?.message || 'Bad Request');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    }
+  };
+
+  const onOtpSubmit = async (data: OtpFormValues) => {
+    try {
+      setError(null);
+      // Step 2: Verify OTP
+      const response = await api.post('/auth/verify-otp', {
+        phone: phone,
+        otp: data.otp
+      });
+      
       const { access_token, user } = response.data;
       
       login(access_token, user);
       navigate('/admin'); // Redirect to dashboard
     } catch (err: any) {
-      if (err.response?.status === 401) {
-        setError('Invalid email or password');
+      if (err.response?.status === 400) {
+        setError('Invalid or expired OTP');
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -70,64 +113,130 @@ export const Login = () => {
           <Logo />
           
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
-            <p className="text-gray-500 text-sm mt-1">Please sign in to your internal account</p>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {step === 'login' ? 'Welcome Back' : 'Two-Factor Authentication'}
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              {step === 'login' 
+                ? 'Please sign in to your internal account' 
+                : `We've sent a 6-digit OTP to your phone ending in ${phone.slice(-4)}`
+              }
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+          {step === 'login' && (
+            <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    {...registerLogin('email')}
+                    className={`block w-full pl-10 pr-3 py-3 border ${loginErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-rose-500 focus:border-rose-500'} rounded-2xl bg-white/50 focus:bg-white transition-colors text-sm`}
+                    placeholder="admin@coskinn.com"
+                  />
                 </div>
-                <input
-                  type="email"
-                  {...register('email')}
-                  className={`block w-full pl-10 pr-3 py-3 border ${errors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-rose-500 focus:border-rose-500'} rounded-2xl bg-white/50 focus:bg-white transition-colors text-sm`}
-                  placeholder="admin@coskinn.com"
-                />
+                {loginErrors.email && <p className="mt-1 text-sm text-red-600">{loginErrors.email.message}</p>}
               </div>
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="password"
+                    {...registerLogin('password')}
+                    className={`block w-full pl-10 pr-3 py-3 border ${loginErrors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-rose-500 focus:border-rose-500'} rounded-2xl bg-white/50 focus:bg-white transition-colors text-sm`}
+                    placeholder="••••••••"
+                  />
                 </div>
-                <input
-                  type="password"
-                  {...register('password')}
-                  className={`block w-full pl-10 pr-3 py-3 border ${errors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-rose-500 focus:border-rose-500'} rounded-2xl bg-white/50 focus:bg-white transition-colors text-sm`}
-                  placeholder="••••••••"
-                />
+                {loginErrors.password && <p className="mt-1 text-sm text-red-600">{loginErrors.password.message}</p>}
               </div>
-              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
-            </div>
 
-            {error && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm text-center">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-lg shadow-rose-200 text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-orange-400 hover:from-rose-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign in'
+              {error && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm text-center">
+                  {error}
+                </div>
               )}
-            </button>
-          </form>
+
+              <button
+                type="submit"
+                disabled={isSubmittingLogin}
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-lg shadow-rose-200 text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-orange-400 hover:from-rose-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                {isSubmittingLogin ? (
+                  <>
+                    <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" />
+                    Authenticating...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </button>
+            </form>
+          )}
+
+          {step === 'otp' && (
+            <form onSubmit={handleSubmitOtp(onOtpSubmit)} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Enter OTP</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <KeyRound className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    {...registerOtp('otp')}
+                    className={`block w-full pl-10 pr-3 py-3 border ${otpErrors.otp ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-200 focus:ring-rose-500 focus:border-rose-500'} rounded-2xl bg-white/50 focus:bg-white transition-colors text-sm text-center tracking-widest font-semibold`}
+                    placeholder="------"
+                  />
+                </div>
+                {otpErrors.otp && <p className="mt-1 text-sm text-red-600 text-center">{otpErrors.otp.message}</p>}
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex flex-col space-y-3">
+                <button
+                  type="submit"
+                  disabled={isSubmittingOtp}
+                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-lg shadow-rose-200 text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-orange-400 hover:from-rose-600 hover:to-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  {isSubmittingOtp ? (
+                    <>
+                      <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" />
+                      Verifying...
+                    </>
+                  ) : (
+                    'Verify & Login'
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep('login');
+                    resetOtp();
+                    setError(null);
+                  }}
+                  className="w-full flex justify-center items-center py-3 px-4 border border-gray-200 rounded-2xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to email
+                </button>
+              </div>
+            </form>
+          )}
           
           <div className="mt-6 text-center text-xs text-gray-400">
             Secure connection for COSKINn employees only.

@@ -12,17 +12,33 @@ export default function MediaManager({ productId, onClose }: { productId: string
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', productId],
     queryFn: async () => {
-      const { data } = await api.get(`http://localhost:3000/api/product/${productId}`);
+      const { data } = await api.get(`/product/${productId}`);
       return data;
     },
   });
 
   const uploadImageMutation = useMutation({
     mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      return api.post(`http://localhost:3000/api/product/${productId}/media/image`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      // 1. Get Presigned URL from Backend
+      const { data: presignedData } = await api.post('/upload/presigned-url', {
+        fileName: file.name,
+        contentType: file.type,
+        folder: `products/${productId}`
+      });
+
+      // 2. Upload file directly to AWS S3 using PUT
+      await fetch(presignedData.presignedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type
+        }
+      });
+
+      // 3. Save the final URL to our database
+      return api.post(`/product/${productId}/media/image`, {
+        url: presignedData.finalUrl,
+        altText: file.name
       });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['product', productId] }),
@@ -30,7 +46,7 @@ export default function MediaManager({ productId, onClose }: { productId: string
 
   const addVideoMutation = useMutation({
     mutationFn: (data: { url: string, title?: string }) => 
-      api.post(`http://localhost:3000/api/product/${productId}/media/video`, data),
+      api.post(`/product/${productId}/media/video`, data),
     onSuccess: () => {
       setVideoUrl('');
       setVideoTitle('');
@@ -39,18 +55,18 @@ export default function MediaManager({ productId, onClose }: { productId: string
   });
 
   const removeImageMutation = useMutation({
-    mutationFn: (imageId: string) => api.delete(`http://localhost:3000/api/product/${productId}/media/image/${imageId}`),
+    mutationFn: (imageId: string) => api.delete(`/product/${productId}/media/image/${imageId}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['product', productId] }),
   });
 
   const removeVideoMutation = useMutation({
-    mutationFn: (videoId: string) => api.delete(`http://localhost:3000/api/product/${productId}/media/video/${videoId}`),
+    mutationFn: (videoId: string) => api.delete(`/product/${productId}/media/video/${videoId}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['product', productId] }),
   });
 
   const reorderMutation = useMutation({
     mutationFn: (data: { images?: any[], videos?: any[] }) => 
-      api.patch(`http://localhost:3000/api/product/${productId}/media/reorder`, data),
+      api.patch(`/product/${productId}/media/reorder`, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['product', productId] }),
   });
 

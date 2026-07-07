@@ -13,6 +13,7 @@ import { ShippingModule } from './modules/shipping/shipping.module';
 import { CartModule } from './modules/cart/cart.module';
 import { ReturnModule } from './modules/return/return.module';
 import { MarketingModule } from './modules/marketing/marketing.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MarketingModule } from './modules/marketing/marketing.module';
     CartModule,
     ReturnModule,
     MarketingModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
