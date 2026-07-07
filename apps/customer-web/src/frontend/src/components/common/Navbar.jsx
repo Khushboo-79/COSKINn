@@ -84,6 +84,12 @@ const CoskinnLogo = () => (
 const NavItem = ({ title, to, children, isActive }) => {
   const [isOpen, setIsOpen] = useState(false);
   let timeoutRef = useRef(null);
+  const location = useLocation();
+
+  // Close dropdown immediately when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
   const handleMouseEnter = () => {
     clearTimeout(timeoutRef.current);
@@ -170,6 +176,12 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
   let timeoutRef = useRef(null);
+
+  // Close menus on route change
+  useEffect(() => {
+    setIsDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   // Scroll Animation Logic
   const { scrollY } = useScroll();
@@ -300,7 +312,7 @@ export default function Navbar() {
           <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} />
 
           <NavItem title="Shop">
-            <ShopMegaMenu />
+            <ShopMegaMenu theme={theme} />
           </NavItem>
 
           <NavItem title="Categories">
@@ -308,13 +320,13 @@ export default function Navbar() {
           </NavItem>
 
           <NavItem title="Routine">
-            <RoutineMenu />
+            <RoutineMenu theme={theme} />
           </NavItem>
 
           <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} />
 
           <NavItem title="Journal">
-            <JournalMenu />
+            <JournalMenu theme={theme} />
           </NavItem>
 
           <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} />
