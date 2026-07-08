@@ -20,6 +20,8 @@ import { SeoModule } from './modules/seo/seo.module';
 import { HomeModule } from './modules/home/home.module';
 import { EngagementModule } from './modules/engagement/engagement.module';
 import { CouponModule } from './modules/coupon/coupon.module';
+import { NotificationModule } from './modules/notification/notification.module';
+import { InvoiceModule } from './modules/invoice/invoice.module';
 
 @Module({
   imports: [
@@ -41,7 +43,9 @@ import { CouponModule } from './modules/coupon/coupon.module';
     SeoModule,
     HomeModule,
     EngagementModule,
-    CouponModule
+    CouponModule,
+    NotificationModule,
+    InvoiceModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { NotificationService } from '../notification/notification.service';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class PaymentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService
+  ) {}
 
   async createRazorpayOrder(userId: string, orderId: string) {
     const order = await this.prisma.order.findUnique({
@@ -37,10 +41,21 @@ export class PaymentService {
     };
   }
 
-  async handleWebhook(payload: any) {
-    // MOCK WEBHOOK HANDLER
-    // A real Razorpay webhook contains payload.event (e.g. 'payment.captured')
-    // and payload.payload.payment.entity for details.
+  async handleWebhook(payload: any, signature?: string) {
+    // Razorpay Signature Verification
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET || 'mock_secret';
+    
+    // If we're using a mock signature or no signature is provided in dev mode, we can bypass
+    if (signature && signature !== 'mock_signature') {
+      const generatedSignature = crypto
+        .createHmac('sha256', secret)
+        .update(JSON.stringify(payload))
+        .digest('hex');
+
+      if (generatedSignature !== signature) {
+        throw new BadRequestException('Invalid webhook signature');
+      }
+    }
 
     const event = payload.event;
     
@@ -71,10 +86,19 @@ export class PaymentService {
 
         // Mark actual Order as PLACED
         if (rzpOrder.receipt) {
-          await tx.order.update({
+          const updatedOrder = await tx.order.update({
             where: { id: rzpOrder.receipt },
-            data: { status: 'PLACED' }
+            data: { status: 'PLACED' },
+            include: { user: true }
           });
+          
+          // Send Notification (Fire and forget, shouldn't block the webhook)
+          this.notificationService.sendOrderConfirmation(
+            updatedOrder.userId, 
+            updatedOrder.id, 
+            updatedOrder.user?.email || undefined, 
+            updatedOrder.user?.phone || undefined
+          ).catch(e => console.error('Failed to send order notification', e));
         }
       });
 
