@@ -79,6 +79,7 @@ This guide takes you through the entire eCommerce lifecycle.
 {
   "name": "Nourishing Hair Oil",
   "slug": "nourishing-hair-oil",
+  "sku": "HAIR-OIL-BASE",
   "description": "For strong, shiny hair.",
   "categoryId": "<CATEGORY_ID_FROM_STEP_3>",
   "mrp": 1499.00,
