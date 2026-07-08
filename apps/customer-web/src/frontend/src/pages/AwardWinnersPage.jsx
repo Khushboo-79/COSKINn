@@ -412,7 +412,7 @@ export default function AwardWinnersPage() {
                   <div className="font-bold text-[#FF0069] text-xl mt-auto mb-4">₹{product.price}</div>
                   <button 
                     onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                    className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-[#FF0069] transition-colors"
+                    className="w-full py-3 bg-theme-primary text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-pink-700 transition-colors"
                   >
                     Add to Cart
                   </button>

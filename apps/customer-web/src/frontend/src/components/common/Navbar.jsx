@@ -286,13 +286,13 @@ export default function Navbar() {
           <div className="flex bg-white/40 p-1 rounded-full text-xs font-semibold backdrop-blur-sm">
             <button
               onClick={() => handleThemeSwitch('skincare')}
-              className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-black text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+              className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
               Skincare
             </button>
             <button
               onClick={() => handleThemeSwitch('cosmetics')}
-              className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-black text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+              className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
               Cosmetics
             </button>

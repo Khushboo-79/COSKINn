@@ -223,7 +223,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                     </div>
                     {error && <p className="text-red-500 text-xs font-bold mt-2 ml-1">{error}</p>}
                   </div>
-                  <button type="submit" disabled={mobile.length !== 10} className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors disabled:opacity-50 mt-2">
+                  <button type="submit" disabled={mobile.length !== 10} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors disabled:opacity-50 mt-2">
                     Continue
                   </button>
                 </form>
@@ -267,7 +267,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                       <button type="button" onClick={() => setTimer(60)} className="text-theme-primary hover:underline">Resend OTP</button>
                     )}
                   </div>
-                  <button type="submit" disabled={otp.join('').length !== 6} className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors disabled:opacity-50">
+                  <button type="submit" disabled={otp.join('').length !== 6} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors disabled:opacity-50">
                     Verify OTP
                   </button>
                 </form>
@@ -361,7 +361,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                   
                   {error && <p className="text-red-500 text-xs font-bold mt-1 ml-1">{error}</p>}
                   
-                  <button type="submit" className="w-full py-4 mt-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors">
+                  <button type="submit" className="w-full py-4 mt-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors">
                     Continue
                   </button>
                 </form>
@@ -411,7 +411,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                   
                   {error && <p className="text-red-500 text-xs font-bold mt-1 text-center">{error}</p>}
                   
-                  <button type="submit" disabled={aadhaar.length !== 12 && aadhaar !== 'REJECT'} className="w-full py-4 mt-2 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors disabled:opacity-50">
+                  <button type="submit" disabled={aadhaar.length !== 12 && aadhaar !== 'REJECT'} className="w-full py-4 mt-2 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors disabled:opacity-50">
                     Send Aadhaar OTP
                   </button>
                 </form>
@@ -460,7 +460,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                       <button type="button" onClick={() => setAadhaarTimer(60)} className="text-theme-primary hover:underline">Resend OTP</button>
                     )}
                   </div>
-                  <button type="submit" disabled={aadhaarOtp.join('').length !== 6} className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors disabled:opacity-50">
+                  <button type="submit" disabled={aadhaarOtp.join('').length !== 6} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors disabled:opacity-50">
                     Verify OTP
                   </button>
                 </form>
@@ -516,7 +516,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                   You are currently not eligible for Buy Now Pay Later with {provider} based on the provided KYC details.
                 </p>
                 <div className="flex flex-col gap-3">
-                  <button onClick={onCancel} className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors">
+                  <button onClick={onCancel} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors">
                     Choose Another Payment Method
                   </button>
                   <button onClick={onCancel} className="w-full py-4 bg-white border border-black/10 text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#fafafa] transition-colors">
@@ -557,7 +557,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                   </div>
                 </div>
 
-                <button onClick={() => setStep('confirm')} className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors shadow-lg">
+                <button onClick={() => setStep('confirm')} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors shadow-lg">
                   Continue to Purchase
                 </button>
               </motion.div>
@@ -602,7 +602,7 @@ export default function BnplFlow({ provider, amount, onCancel, onSuccess }) {
                   } else {
                     alert("Please accept the terms and conditions to proceed.");
                   }
-                }} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl shadow-lg hover:bg-theme-primary/90 transition-colors">
+                }} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl shadow-lg hover:bg-pink-700/90 transition-colors">
                   Authorize Purchase
                 </button>
               </motion.div>

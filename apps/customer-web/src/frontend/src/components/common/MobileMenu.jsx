@@ -167,8 +167,8 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
 
               <div className="mt-8 pb-8">
                 <div className="flex bg-black/5 p-1 rounded-full text-sm font-bold">
-                  <button onClick={() => window.location.href='/skincare'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'skincare' ? 'bg-black text-white shadow-md' : 'text-black/70'}`}>Skincare</button>
-                  <button onClick={() => window.location.href='/cosmetics'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'cosmetics' ? 'bg-black text-white shadow-md' : 'text-black/70'}`}>Cosmetics</button>
+                  <button onClick={() => window.location.href='/skincare'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'skincare' ? 'bg-theme-primary text-white shadow-md' : 'text-black/70'}`}>Skincare</button>
+                  <button onClick={() => window.location.href='/cosmetics'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'cosmetics' ? 'bg-theme-primary text-white shadow-md' : 'text-black/70'}`}>Cosmetics</button>
                 </div>
               </div>
             </div>

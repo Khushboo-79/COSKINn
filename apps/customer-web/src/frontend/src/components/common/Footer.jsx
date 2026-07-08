@@ -34,7 +34,7 @@ const TikTokIcon = () => (
 );
 
 const SocialIcon = ({ children }) => (
-  <a href="#" className="w-10 h-10 rounded-full bg-white/30 border border-[#4a3b42]/10 flex items-center justify-center text-[#4a3b42] hover:text-white hover:bg-[#8B1C31] hover:border-[#8B1C31] shadow-sm hover:shadow-[0_8px_20px_rgba(139,28,49,0.25)] transition-all duration-500 group">
+  <a href="#" className="w-10 h-10 rounded-full bg-white/30 border border-[#4a3b42]/10 flex items-center justify-center text-[#4a3b42] hover:text-white hover:bg-theme-primary hover:border-theme-primary shadow-sm hover:shadow-[0_8px_20px_rgba(255,0,105,0.25)] transition-all duration-500 group">
     <div className="transform group-hover:scale-110 transition-transform duration-500">
       {children}
     </div>
@@ -109,7 +109,7 @@ function Footer() {
                 placeholder="Enter your email address"
                 className="relative w-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-full py-4 lg:py-5 pl-8 pr-[140px] text-[15px] lg:text-[16px] text-[#4A2536] placeholder-[#4a3b42]/60 focus:outline-none focus:border-white focus:bg-white/60 transition-all duration-500 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]"
               />
-              <button className="absolute right-2.5 top-2.5 bottom-2.5 bg-white text-[#8B1C31] px-6 lg:px-8 rounded-full text-[12px] lg:text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-[#8B1C31] hover:text-white transition-colors duration-500 shadow-sm">
+              <button className="absolute right-2.5 top-2.5 bottom-2.5 bg-white text-theme-primary px-6 lg:px-8 rounded-full text-[12px] lg:text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-theme-primary hover:text-white transition-colors duration-500 shadow-sm">
                 Subscribe
               </button>
             </div>

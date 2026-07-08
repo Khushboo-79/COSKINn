@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useOrders } from '../context/OrderContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, CreditCard, CheckCircle, Package, ArrowLeft, ShieldCheck, Lock, QrCode, Smartphone, RefreshCw, AlertCircle, Download, Truck, Building2, Wallet, Zap, Trash2, Plus, Minus, Tag } from 'lucide-react';
 import BnplFlow from '../components/checkout/BnplFlow';
@@ -10,6 +11,7 @@ import WalletFlow from '../components/checkout/WalletFlow';
 export default function CheckoutPage() {
   const { cart, cartSubtotal, clearCart, addToCart, removeFromCart } = useCart();
   const { user } = useAuth();
+  const { placeOrder } = useOrders();
   const navigate = useNavigate();
   
   // Steps: 1: Cart, 2: Address, 3: Review, 4: Payment, 5: Success/Failed
@@ -88,49 +90,97 @@ export default function CheckoutPage() {
   };
 
   const handleWalletSuccess = (walletDetails) => {
-    setOrderDetails({
-      orderId: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
+    const newOrder = {
+      id: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
       transactionId: walletDetails.transactionId,
-      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      amount: TOTAL.toFixed(2),
-      method: 'WALLET',
-      provider: walletDetails.provider,
+      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      totalAmount: TOTAL.toFixed(2),
+      subtotal: cartSubtotal.toFixed(2),
+      discount: discount.toFixed(2),
+      couponDiscount: appliedCoupon ? discount.toFixed(2) : 0,
+      shipping: SHIPPING_COST,
+      gst: TAX.toFixed(2),
+      paymentMethod: 'Wallet',
+      paymentDetails: walletDetails.provider,
       delivery: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' }),
-      status: 'Paid'
-    });
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        qty: item.quantity,
+        variant: item.variant || 'Standard',
+        price: item.price,
+        image: item.image
+      }))
+    };
+    setOrderDetails({...newOrder, orderId: newOrder.id, status: 'Paid'});
+    placeOrder(newOrder);
     setPaymentStatus('success');
     clearCart();
     setCurrentStep(5);
   };
 
   const handleBnplSuccess = (bnplDetails) => {
-    setOrderDetails({
-      orderId: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
+    const newOrder = {
+      id: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
       transactionId: `TXN${Date.now()}`,
-      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      amount: TOTAL.toFixed(2),
-      method: 'BNPL',
-      provider: bnplDetails.provider,
-      nextDueDate: bnplDetails.nextDueDate,
-      creditLimit: bnplDetails.creditLimit,
+      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      totalAmount: TOTAL.toFixed(2),
+      subtotal: cartSubtotal.toFixed(2),
+      discount: discount.toFixed(2),
+      couponDiscount: appliedCoupon ? discount.toFixed(2) : 0,
+      shipping: SHIPPING_COST,
+      gst: TAX.toFixed(2),
+      paymentMethod: 'BNPL',
+      paymentDetails: bnplDetails.provider,
       delivery: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' }),
-      status: 'Authorized'
-    });
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        qty: item.quantity,
+        variant: item.variant || 'Standard',
+        price: item.price,
+        image: item.image
+      }))
+    };
+    setOrderDetails({...newOrder, orderId: newOrder.id, status: 'Authorized'});
+    placeOrder(newOrder);
     setPaymentStatus('success');
     clearCart();
     setCurrentStep(5);
   };
 
   const completeOrder = () => {
-    setOrderDetails({
-      orderId: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
+    let methodDisplay = paymentMethod.toUpperCase();
+    if (paymentMethod === 'cod') methodDisplay = 'Cash On Delivery';
+    else if (paymentMethod === 'upi') methodDisplay = 'UPI';
+    else if (paymentMethod === 'card') methodDisplay = 'Credit Card';
+    else if (paymentMethod === 'netbanking') methodDisplay = 'Net Banking';
+
+    const newOrder = {
+      id: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
       transactionId: paymentMethod === 'cod' ? 'N/A' : `TXN${Date.now()}`,
-      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      amount: TOTAL.toFixed(2),
-      method: paymentMethod.toUpperCase(),
+      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      totalAmount: TOTAL.toFixed(2),
+      subtotal: cartSubtotal.toFixed(2),
+      discount: discount.toFixed(2),
+      couponDiscount: appliedCoupon ? discount.toFixed(2) : 0,
+      shipping: SHIPPING_COST,
+      gst: TAX.toFixed(2),
+      paymentMethod: methodDisplay,
+      paymentDetails: paymentMethod === 'cod' ? 'COD' : (paymentMethod === 'card' ? `Card Ending ${cardDetails.number.slice(-4) || '1234'}` : (paymentMethod === 'upi' ? 'PhonePe UPI' : methodDisplay)),
       delivery: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' }),
-      status: paymentMethod === 'cod' ? 'Payment Pending' : 'Paid'
-    });
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        qty: item.quantity,
+        variant: item.variant || 'Standard',
+        price: item.price,
+        image: item.image
+      }))
+    };
+    
+    setOrderDetails({...newOrder, orderId: newOrder.id, status: paymentMethod === 'cod' ? 'Payment Pending' : 'Paid'});
+    placeOrder(newOrder);
     setPaymentStatus('success');
     clearCart();
     setCurrentStep(5);
@@ -230,7 +280,7 @@ export default function CheckoutPage() {
             
             <button 
               onClick={() => setPaymentStatus('idle')}
-              className="px-8 py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-theme-primary transition-colors shadow-xl"
+              className="px-8 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-xl"
             >
               Retry Payment
             </button>
@@ -326,7 +376,7 @@ export default function CheckoutPage() {
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link to="/new-arrivals" className="px-8 py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-theme-primary transition-colors shadow-xl">
+              <Link to="/new-arrivals" className="px-8 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-xl">
                 Continue Shopping
               </Link>
               <button className="px-8 py-4 bg-white border border-black/10 text-black font-bold uppercase tracking-widest text-sm rounded-full hover:bg-black/5 transition-colors flex items-center gap-2">
@@ -370,7 +420,7 @@ export default function CheckoutPage() {
                         ))}
                       </div>
                       <div className="flex justify-end">
-                        <button onClick={() => setCurrentStep(2)} className="px-10 py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-theme-primary transition-colors shadow-lg">
+                        <button onClick={() => setCurrentStep(2)} className="px-10 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-lg">
                           Continue to Shipping
                         </button>
                       </div>
@@ -408,7 +458,7 @@ export default function CheckoutPage() {
                         <button 
                           disabled={!address.name || !address.street || !address.city || !address.pincode}
                           onClick={() => setCurrentStep(3)}
-                          className="px-10 py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-theme-primary disabled:opacity-50 disabled:hover:bg-black transition-colors shadow-lg"
+                          className="px-10 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 disabled:opacity-50 disabled:hover:bg-black transition-colors shadow-lg"
                         >
                           Deliver Here
                         </button>
@@ -438,7 +488,7 @@ export default function CheckoutPage() {
                       <p className="text-black/60 font-medium mb-6">Please review your final order amount and apply any coupons before proceeding to payment.</p>
                       
                       <div className="flex justify-end">
-                        <button onClick={() => setCurrentStep(4)} className="px-10 py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-theme-primary transition-colors shadow-lg">
+                        <button onClick={() => setCurrentStep(4)} className="px-10 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-lg">
                           Proceed to Payment
                         </button>
                       </div>
@@ -485,7 +535,7 @@ export default function CheckoutPage() {
                                     <p className="text-sm font-bold mb-4">Scan QR or enter UPI ID</p>
                                     <div className="flex gap-2 mb-4">
                                       <input type="text" placeholder="example@upi" className="flex-1 px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:border-theme-primary bg-[#fafafa]" />
-                                      <button className="px-6 py-3 bg-black text-white font-bold rounded-xl hover:bg-theme-primary transition-colors text-sm">Verify</button>
+                                      <button className="px-6 py-3 bg-theme-primary text-white font-bold rounded-xl hover:bg-pink-700 transition-colors text-sm">Verify</button>
                                     </div>
                                     <div className="flex gap-2 flex-wrap">
                                       <span className="px-4 py-2 border border-black/10 rounded-lg text-xs font-bold text-black/60 bg-[#fafafa]">GPay</span>
@@ -669,7 +719,7 @@ export default function CheckoutPage() {
                           (paymentMethod === 'bnpl' && !bnplProvider) ||
                           (paymentMethod === 'wallet' && !walletProvider)
                         }
-                        className="w-full py-5 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full shadow-lg shadow-theme-primary/30 hover:shadow-xl hover:bg-theme-primary/90 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-theme-primary disabled:shadow-none"
+                        className="w-full py-5 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full shadow-lg shadow-theme-primary/30 hover:shadow-xl hover:bg-pink-700/90 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-theme-primary disabled:shadow-none"
                       >
                         {paymentMethod === 'cod' 
                           ? 'Place Order' 
@@ -705,7 +755,7 @@ export default function CheckoutPage() {
                     </div>
                     <button 
                       onClick={handleApplyCoupon}
-                      className="px-6 py-3 bg-black text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-theme-primary transition-colors"
+                      className="px-6 py-3 bg-theme-primary text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-pink-700 transition-colors"
                     >
                       Apply
                     </button>

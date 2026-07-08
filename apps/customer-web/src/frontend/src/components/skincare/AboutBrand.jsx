@@ -94,7 +94,7 @@ export default function About() {
               className="font-heading text-[3.8rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[1.05] tracking-tight text-black"
             >
               Nature <br/>
-              <span className="italic font-light text-theme-accent">inspires</span>.<br/>
+              <span className="italic font-light text-[#FF0069]">inspires</span>.<br/>
               Science <br/>
               <span className="italic font-light text-theme-primary">perfects</span>.
             </motion.h2>
@@ -183,7 +183,7 @@ export default function About() {
               <div className="relative z-10">
                 <h3 className="font-heading text-[26px] lg:text-[32px] font-medium text-black mb-10 leading-tight">
                   Six Signature Botanicals.<br/>
-                  <span className="italic font-light text-theme-accent">One Harmonious Blend.</span>
+                  <span className="italic font-light text-[#FF0069]">One Harmonious Blend.</span>
                 </h3>
                 
                 <div className="flex flex-col gap-6">

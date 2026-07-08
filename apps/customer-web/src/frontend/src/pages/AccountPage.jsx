@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useOrders } from '../context/OrderContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { downloadInvoice } from '../utils/downloadInvoice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Package, Heart, MapPin, Settings, Shield, LogOut, ChevronRight, Edit2, Plus, Trash2, CheckCircle2, Mail, X, AlertCircle, Camera } from 'lucide-react';
+import CancelOrderModal from '../components/orders/CancelOrderModal';
+import NeedHelpModal from '../components/orders/NeedHelpModal';
+import ReturnReplaceModal from '../components/orders/ReturnReplaceModal';
 
 export default function AccountPage() {
   const { user, logout } = useAuth();
@@ -585,40 +590,179 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
 
 // 3. Orders Tab
 function OrdersTab({ primaryClass }) {
-  const dummyOrders = [
-    { id: 'ORD-839201', date: 'Oct 15, 2026', total: '₹2,450', status: 'Delivered', items: 2, image: '/mockup_product_1.webp' },
-    { id: 'ORD-728194', date: 'Sep 28, 2026', total: '₹1,890', status: 'Processing', items: 1, image: '/mockup_product_1.webp' }
-  ];
+  const navigate = useNavigate();
+  const { orders } = useOrders();
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [isReturnReplaceModalOpen, setIsReturnReplaceModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState('return'); // 'return' or 'replace'
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const handleCancelClick = (order) => {
+    setSelectedOrder(order);
+    setIsCancelModalOpen(true);
+  };
+
+  const handleCancelSuccess = (orderId) => {
+    setIsCancelModalOpen(false);
+  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
       <h2 className="text-2xl font-heading font-medium text-black mb-6">Order History</h2>
       
-      <div className="flex flex-col gap-6">
-        {dummyOrders.map(order => (
-          <div key={order.id} className="flex flex-col md:flex-row gap-6 p-6 border border-gray-100 rounded-2xl hover:border-gray-200 transition-colors">
-            <div className="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
-              <img loading="lazy" src={order.image} alt="Product" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
+      {orders.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-100">
+          <Package className="mx-auto w-16 h-16 text-gray-300 mb-4" />
+          <h3 className="text-xl font-heading font-medium text-black mb-2">No Orders Yet</h3>
+          <p className="text-gray-500 mb-6">You haven't placed any orders. Start exploring our collections!</p>
+          <button onClick={() => navigate('/skincare')} className={`px-8 py-3 rounded-xl font-bold ${primaryClass}`}>
+            Start Shopping
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-6">
+        {orders.map(order => (
+          <div key={order.id} className="flex flex-col xl:flex-row gap-6 p-6 border border-gray-100 rounded-2xl hover:border-gray-200 transition-colors">
+            
+            {/* Items Images Stack */}
+            <div className="flex gap-2 w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 hide-scrollbar shrink-0">
+              {order.items.map((item, idx) => (
+                <div key={idx} className="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden shrink-0 border border-gray-100 relative">
+                  <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply opacity-80" />
+                  <div className="absolute bottom-1 right-1 bg-white/90 text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm border border-gray-200">
+                    x{item.qty}
+                  </div>
+                </div>
+              ))}
             </div>
+
             <div className="flex-1 flex flex-col justify-between">
               <div>
-                <div className="flex justify-between items-start mb-1">
-                  <h4 className="font-bold text-black">Order {order.id}</h4>
-                  <span className={`px-3 py-1 text-xs font-bold rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                    {order.status}
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-bold text-black text-lg">Order {order.id}</h4>
+                  <span className={`px-3 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full 
+                    ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 
+                      order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                      order.status === 'Out For Delivery' || order.status === 'Shipped' ? 'bg-blue-100 text-blue-700' : 
+                      'bg-orange-100 text-orange-700'}`}>
+                    {order.status === 'Cancelled' ? 'Refund Processing' : order.status}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 mb-2">Placed on {order.date}</p>
-                <p className="text-sm font-medium text-gray-800">{order.items} Items • Total: {order.total}</p>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-sm text-gray-500 mb-4">
+                  <p><span className="font-medium text-gray-700">Placed:</span> {order.date}</p>
+                  <p><span className="font-medium text-gray-700">Total:</span> ₹{order.totalAmount} ({order.paymentMethod})</p>
+                </div>
+                {order.items.length === 1 && (
+                  <p className="text-sm font-medium text-gray-800 mb-4 truncate">{order.items[0].name} - {order.items[0].variant}</p>
+                )}
+                {order.items.length > 1 && (
+                  <p className="text-sm font-medium text-gray-800 mb-4">{order.items[0].name} and {order.items.length - 1} more item(s)</p>
+                )}
               </div>
-              <div className="flex gap-4 mt-4 md:mt-0 pt-4 md:pt-0 border-t border-gray-100 md:border-none">
-                <button className={`px-5 py-2 text-sm font-bold rounded-lg ${primaryClass}`}>Track Order</button>
-                <button className="px-5 py-2 text-sm font-bold rounded-lg bg-gray-100 text-black hover:bg-gray-200">Invoice</button>
+              
+              <div className="flex flex-wrap gap-3 mt-4 xl:mt-0 pt-4 xl:pt-0 border-t border-gray-100 xl:border-none">
+                {order.status === 'Cancelled' ? (
+                  <>
+                    <button 
+                      onClick={() => navigate(`/order/${order.id}`)}
+                      className={`px-5 py-2.5 text-sm font-bold rounded-xl ${primaryClass}`}
+                    >
+                      Track Refund
+                    </button>
+                    <button className="px-5 py-2.5 text-sm font-bold rounded-xl text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
+                      Download Invoice
+                    </button>
+                    <button className="px-5 py-2.5 text-sm font-bold rounded-xl text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
+                      Need Help
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button 
+                      onClick={() => navigate(`/order/${order.id}`)}
+                      className={`px-5 py-2.5 text-sm font-bold rounded-xl ${primaryClass}`}
+                    >
+                      Track Order
+                    </button>
+                    
+                    {['Order Placed', 'Order Confirmed', 'Packed', 'Ready to Ship'].includes(order.status) && (
+                      <button 
+                        onClick={() => handleCancelClick(order)}
+                        className="px-5 py-2.5 text-sm font-bold rounded-xl text-red-600 bg-red-50 border border-red-100 hover:bg-red-100 transition-colors"
+                      >
+                        Cancel Order
+                      </button>
+                    )}
+
+                    {['Shipped', 'Out For Delivery'].includes(order.status) && (
+                      <button 
+                        onClick={() => handleCancelClick(order)}
+                        className="px-5 py-2.5 text-sm font-bold rounded-xl text-gray-400 bg-gray-50 border border-gray-200 cursor-not-allowed"
+                        title="Cancellation not allowed after shipping"
+                      >
+                        Cancel Order
+                      </button>
+                    )}
+
+                    {order.status === 'Delivered' && (
+                      <div className="flex gap-3">
+                        <button 
+                          onClick={() => { setSelectedOrder(order); setModalMode('return'); setIsReturnReplaceModalOpen(true); }}
+                          className="px-5 py-2.5 text-sm font-bold rounded-xl text-[#FF0069] bg-pink-50 border border-pink-100 hover:bg-pink-100 transition-colors"
+                        >
+                          Return Product
+                        </button>
+                        <button 
+                          onClick={() => { setSelectedOrder(order); setModalMode('replace'); setIsReturnReplaceModalOpen(true); }}
+                          className="px-5 py-2.5 text-sm font-bold rounded-xl text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                        >
+                          Replace Product
+                        </button>
+                      </div>
+                    )}
+
+                    <button 
+                      onClick={() => downloadInvoice(order)}
+                      className="px-5 py-2.5 text-sm font-bold rounded-xl text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      Invoice
+                    </button>
+
+                    <button 
+                      onClick={() => { setSelectedOrder(order); setIsHelpModalOpen(true); }}
+                      className="px-5 py-2.5 text-sm font-bold rounded-xl text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      Need Help
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
         ))}
       </div>
+      )}
+
+      <CancelOrderModal 
+        isOpen={isCancelModalOpen} 
+        onClose={() => setIsCancelModalOpen(false)} 
+        order={selectedOrder}
+        onCancelSuccess={() => setIsCancelModalOpen(false)}
+      />
+
+      <NeedHelpModal 
+        isOpen={isHelpModalOpen} 
+        onClose={() => setIsHelpModalOpen(false)} 
+        order={selectedOrder}
+      />
+
+      <ReturnReplaceModal 
+        isOpen={isReturnReplaceModalOpen} 
+        onClose={() => setIsReturnReplaceModalOpen(false)} 
+        order={selectedOrder}
+        mode={modalMode}
+      />
     </motion.div>
   );
 }
