@@ -31,7 +31,7 @@ const StatCounter = ({ endValue, label, delay = 0 }) => {
         <motion.span className="font-heading text-[4rem] lg:text-[5rem] text-black leading-none font-medium">
           {rounded}
         </motion.span>
-        <span className="font-heading text-[2.5rem] lg:text-[3rem] text-theme-accent font-light ml-1">%</span>
+        <span className="font-heading text-[2.5rem] lg:text-[3rem] text-[#FF0069] font-light ml-1">%</span>
       </div>
       <p className="text-[14px] lg:text-[15px] text-black/70 font-medium mt-4 max-w-[160px] leading-[1.6] uppercase tracking-[0.15em]">
         {label}
@@ -206,7 +206,7 @@ export default function Results() {
                 <div className="flex flex-wrap gap-3">
                   {resultHighlights.map((highlight, idx) => (
                     <div key={idx} className="flex items-center gap-2 px-4 py-2 bg-white/80 rounded-full border border-black/5">
-                      <Sparkles size={12} className="text-theme-accent" />
+                      <Sparkles size={12} className="text-[#FF0069]" />
                       <span className="text-[13px] font-bold text-black/80 tracking-wide">{highlight}</span>
                     </div>
                   ))}

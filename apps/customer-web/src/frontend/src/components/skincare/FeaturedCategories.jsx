@@ -109,7 +109,7 @@ const CategoryCard = ({ data, delay = 0 }) => {
              
              <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-4">
                 <div>
-                   <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-theme-accent mb-2 block">
+                   <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#FF0069] mb-2 block">
                       {data.products}
                    </span>
                    <h3 className="font-heading text-[22px] lg:text-[26px] font-medium text-black mb-1 leading-tight">

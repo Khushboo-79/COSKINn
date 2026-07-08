@@ -104,7 +104,7 @@ export default function WalletFlow({ provider, amount, onCancel, onSuccess }) {
               <p className="text-black/60 text-lg mb-10 max-w-sm mx-auto">We couldn't process your payment with {provider}. Your account has not been charged.</p>
               
               <div className="flex flex-col gap-4">
-                <button onClick={() => { setFailed(false); setStepIndex(0); }} className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-theme-primary transition-colors">
+                <button onClick={() => { setFailed(false); setStepIndex(0); }} className="w-full py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-pink-700 transition-colors">
                   Retry Payment
                 </button>
                 <button onClick={onCancel} className="w-full py-4 bg-white border border-black/10 text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#fafafa] transition-colors">

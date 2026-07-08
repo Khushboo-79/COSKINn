@@ -235,7 +235,7 @@ export default function GiftSetsPage() {
                           </div>
                           <button 
                             onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                            className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center hover:bg-[#FF0069] transition-colors shadow-lg"
+                            className="w-10 h-10 bg-theme-primary text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors shadow-lg"
                           >
                             <ShoppingBag className="w-4 h-4" />
                           </button>
@@ -314,7 +314,7 @@ export default function GiftSetsPage() {
                       </button>
                       <button 
                         onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                        className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[#FF0069] transition-colors shadow-lg"
+                        className="w-12 h-12 bg-theme-primary text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors shadow-lg"
                       >
                         <ShoppingBag className="w-5 h-5" />
                       </button>

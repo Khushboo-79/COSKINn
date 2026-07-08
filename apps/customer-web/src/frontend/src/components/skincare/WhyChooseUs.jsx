@@ -58,7 +58,7 @@ const TypoCard = ({ title, desc, number, delay }) => (
     transition={{ duration: 0.8, delay, ease: "easeOut" }}
     className="relative flex flex-col gap-2 pl-6 border-l-2 border-theme-accent/40 group hover:border-black transition-colors duration-500 py-1"
   >
-    <span className="absolute -left-[1px] -translate-x-1/2 top-0 text-[10px] font-bold text-theme-accent group-hover:text-black transition-colors bg-white py-1">{number}</span>
+    <span className="absolute -left-[1px] -translate-x-1/2 top-0 text-[10px] font-bold text-[#FF0069] group-hover:text-black transition-colors bg-white py-1">{number}</span>
     <h4 className="text-[19px] lg:text-[20px] font-heading font-medium text-black">{title}</h4>
     <p className="text-[14.5px] lg:text-[15.5px] text-black/60 font-medium leading-[1.7] max-w-[320px]">{desc}</p>
   </motion.div>
@@ -144,7 +144,7 @@ export default function WhyChooseUs() {
                 className="font-heading text-[3.5rem] lg:text-[4.5rem] leading-[1.05] text-black tracking-tight"
               >
                 Nature <br />
-                <span className="italic font-light text-theme-accent">Perfected.</span>
+                <span className="italic font-light text-[#FF0069]">Perfected.</span>
               </motion.h2>
 
               <motion.p

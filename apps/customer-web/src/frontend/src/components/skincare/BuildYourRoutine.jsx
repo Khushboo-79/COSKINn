@@ -164,7 +164,7 @@ const RoutineStep = ({ data, index }) => {
        `}>
           <div className="bg-white/50 backdrop-blur-3xl border border-white/70 p-7 lg:p-10 xl:p-12 rounded-[28px] lg:rounded-[40px] shadow-[0_25px_60px_rgba(43,89,104,0.08)] transition-all duration-700 group-hover:shadow-[0_40px_80px_rgba(43,89,104,0.12)] group-hover:-translate-y-2 group-hover:bg-white/70">
              
-             <span className="text-[10px] lg:text-[11px] font-bold tracking-[0.25em] uppercase text-theme-accent mb-3 lg:mb-4 block">
+             <span className="text-[10px] lg:text-[11px] font-bold tracking-[0.25em] uppercase text-[#FF0069] mb-3 lg:mb-4 block">
                {data.type}
              </span>
              <h3 className="font-heading text-[24px] lg:text-[32px] xl:text-[36px] font-medium text-black mb-4 leading-tight">

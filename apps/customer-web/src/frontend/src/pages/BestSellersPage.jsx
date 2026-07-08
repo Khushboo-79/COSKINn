@@ -261,7 +261,7 @@ export default function BestSellersPage() {
         
         <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black text-white text-xs font-bold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-theme-primary text-white text-xs font-bold uppercase tracking-widest mb-6">
               <Star className="w-3 h-3 fill-current" />
               Customer Favorites
             </div>
@@ -272,7 +272,7 @@ export default function BestSellersPage() {
               Discover our most-loved skincare products trusted by thousands of customers for healthy, glowing skin.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button onClick={() => window.scrollTo({ top: document.getElementById('best-sellers-grid').offsetTop - 100, behavior: 'smooth' })} className="w-full sm:w-auto px-10 py-4 bg-black text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-theme-primary transition-colors shadow-lg">
+              <button onClick={() => window.scrollTo({ top: document.getElementById('best-sellers-grid').offsetTop - 100, behavior: 'smooth' })} className="w-full sm:w-auto px-10 py-4 bg-theme-primary text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-pink-700 transition-colors shadow-lg">
                 Shop Now
               </button>
               <button className="w-full sm:w-auto px-10 py-4 bg-white text-black border border-black/10 rounded-full font-bold uppercase tracking-widest text-sm hover:border-black/30 transition-colors">
@@ -295,7 +295,7 @@ export default function BestSellersPage() {
               <button 
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeCategory === cat ? 'bg-black text-white shadow-md' : 'bg-white border border-black/10 text-black/70 hover:border-theme-primary hover:text-theme-primary'}`}
+                className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeCategory === cat ? 'bg-theme-primary text-white shadow-md' : 'bg-white border border-black/10 text-black/70 hover:border-theme-primary hover:text-theme-primary'}`}
               >
                 {cat}
               </button>
@@ -369,7 +369,7 @@ export default function BestSellersPage() {
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
                     {product.badge && (
-                      <span className="bg-black/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                      <span className="bg-theme-primary backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
                         {product.badge}
                       </span>
                     )}
@@ -432,7 +432,7 @@ export default function BestSellersPage() {
           <div className="w-full py-20 text-center">
             <h3 className="text-2xl font-bold mb-2">No products found</h3>
             <p className="text-black/50">Try selecting a different category.</p>
-            <button onClick={() => setActiveCategory("All")} className="mt-6 px-6 py-3 bg-black text-white rounded-full font-bold text-sm">
+            <button onClick={() => setActiveCategory("All")} className="mt-6 px-6 py-3 bg-theme-primary text-white rounded-full font-bold text-sm">
               Clear Filters
             </button>
           </div>
@@ -480,7 +480,7 @@ export default function BestSellersPage() {
                   <div className="font-bold text-theme-primary text-xl mt-auto mb-4">₹{product.price}</div>
                   <button 
                     onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                    className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-theme-primary transition-colors"
+                    className="w-full py-3 bg-theme-primary text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-pink-700 transition-colors"
                   >
                     Add to Cart
                   </button>

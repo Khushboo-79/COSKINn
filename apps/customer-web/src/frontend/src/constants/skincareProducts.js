@@ -624,5 +624,307 @@ export const skincareProducts = [
     manufacturedBy: "COSKINn Labs",
     countryOfOrigin: "India",
     stock: 25
+  },
+  // --- NEW CLEANSERS WITH ADVANCED PDP DATA ---
+  {
+    id: 301,
+    name: "COSKINn Hydrating Cleanser",
+    originalPrice: 899,
+    price: 699,
+    discountBadge: "22% OFF",
+    rating: 4.9,
+    reviews: 1450,
+    category: "Face Care",
+    subcategory: "Cleanser",
+    skinTypes: ["Dry Skin", "Normal Skin", "Sensitive Skin"],
+    concerns: ["Dryness", "Dullness"],
+    image: gentleCleanserImg,
+    images: getGallery(gentleCleanserImg),
+    badge: "HYDRATION BOOST",
+    shortDescription: "A moisture-rich cleanser that melts away impurities without stripping your skin barrier.",
+    longDescription: "Formulated with 3 essential ceramides and hyaluronic acid, this non-foaming hydrating cleanser effectively removes dirt and makeup while reinforcing your skin's natural protective barrier.",
+    benefits: ["Deep Cleansing", "Hydration", "Maintains Skin Barrier", "Soap Free", "Paraben Free", "Cruelty Free"],
+    keyIngredients: ["Ceramides", "Hyaluronic Acid", "Vitamin B5"],
+    howToUse: [
+      { step: "Step 1", title: "Wet Face", desc: "Splash face with lukewarm water." },
+      { step: "Step 2", title: "Apply COSKINn Cleanser", desc: "Pump a coin-sized amount onto fingertips." },
+      { step: "Step 3", title: "Massage for 30-60 Seconds", desc: "Gently massage in circular motions." },
+      { step: "Step 4", title: "Rinse & Pat Dry", desc: "Rinse thoroughly and pat dry with a soft towel." }
+    ],
+    detailedIngredients: [
+      { name: "Hyaluronic Acid", benefit: "Retains 1000x its weight in water for plump skin", skinType: "All Skin Types" },
+      { name: "Ceramides", benefit: "Restores and maintains the skin's natural barrier", skinType: "Dry, Sensitive" },
+      { name: "Vitamin B5", benefit: "Soothes and heals compromised skin", skinType: "Sensitive" }
+    ],
+    beforeAfter: { before: gentleCleanserImg, after: gentleCleanserImg }, // Reusing images for mock
+    customerReviews: [
+      { user: "Priya S.", rating: 5, date: "12 June 2026", text: "Completely cured my dry patches! Will never use another cleanser.", helpful: 124 },
+      { user: "Aarti M.", rating: 4, date: "05 May 2026", text: "Very gentle, doesn't lather much but leaves skin soft.", helpful: 45 }
+    ],
+    faqs: [
+      { q: "Suitable for Sensitive Skin?", a: "Yes, it is dermatologically tested and fragrance-free." },
+      { q: "Can Teenagers Use It?", a: "Absolutely. It's gentle enough for daily teenage use." },
+      { q: "Does It Remove Sunscreen?", a: "Yes, it effectively removes daily sunscreen and light makeup." }
+    ],
+    routine: [
+      { step: "Cleanser", product: "COSKINn Hydrating Cleanser" },
+      { step: "Toner", product: "COSKINn Face Mist" },
+      { step: "Serum", product: "COSKINn Niacinamide Serum" },
+      { step: "Moisturiser", product: "COSKINn Daily Moisturiser" },
+      { step: "Sunscreen", product: "COSKINn Sunscreen SPF 50" }
+    ],
+    texture: "Creamy Lotion",
+    netQuantity: "150 ml",
+    shelfLife: "24 Months",
+    countryOfOrigin: "India",
+    manufacturedBy: "COSKINn Labs"
+  },
+  {
+    id: 302,
+    name: "COSKINn Foaming Cleanser",
+    originalPrice: 799,
+    price: 649,
+    discountBadge: "18% OFF",
+    rating: 4.8,
+    reviews: 980,
+    category: "Face Care",
+    subcategory: "Cleanser",
+    skinTypes: ["Oily Skin", "Combination Skin"],
+    concerns: ["Oil Control", "Large Pores", "Acne"],
+    image: gentleCleanserImg,
+    images: getGallery(gentleCleanserImg),
+    badge: "PORE CLEARING",
+    shortDescription: "A refreshing foaming gel that deeply cleanses pores and controls excess oil.",
+    longDescription: "This gel-to-foam cleanser deeply purifies without disrupting the skin barrier. Infused with Niacinamide to control sebum and tighten pores.",
+    benefits: ["Deep Cleansing", "Oil Control", "Dermatologically Tested", "Paraben Free", "Sulphate Free", "Cruelty Free"],
+    keyIngredients: ["Niacinamide", "Salicylic Acid", "Green Tea"],
+    howToUse: [
+      { step: "Step 1", title: "Wet Face", desc: "Splash face with lukewarm water." },
+      { step: "Step 2", title: "Apply COSKINn Cleanser", desc: "Pump a coin-sized amount onto fingertips." },
+      { step: "Step 3", title: "Massage for 30-60 Seconds", desc: "Gently massage in circular motions." },
+      { step: "Step 4", title: "Rinse & Pat Dry", desc: "Rinse thoroughly and pat dry with a soft towel." }
+    ],
+    detailedIngredients: [
+      { name: "Niacinamide", benefit: "Controls oil production and fades marks", skinType: "Oily, Combination" },
+      { name: "Green Tea", benefit: "Antioxidant protection and soothing properties", skinType: "Acne Prone" }
+    ],
+    beforeAfter: { before: gentleCleanserImg, after: gentleCleanserImg },
+    customerReviews: [
+      { user: "Karan V.", rating: 5, date: "22 May 2026", text: "Best foaming wash for my oily T-zone.", helpful: 89 }
+    ],
+    faqs: [
+      { q: "Can I Use It Daily?", a: "Yes, use twice a day for best results." },
+      { q: "Fragrance Free?", a: "Yes, it contains no artificial fragrances." }
+    ],
+    routine: [
+      { step: "Cleanser", product: "COSKINn Foaming Cleanser" },
+      { step: "Toner", product: "COSKINn Face Mist" },
+      { step: "Serum", product: "COSKINn Niacinamide Serum" },
+      { step: "Moisturiser", product: "COSKINn Daily Moisturiser" },
+      { step: "Sunscreen", product: "COSKINn Sunscreen SPF 50" }
+    ],
+    texture: "Gel to Foam",
+    netQuantity: "150 ml",
+    shelfLife: "24 Months",
+    countryOfOrigin: "India",
+    manufacturedBy: "COSKINn Labs"
+  },
+  {
+    id: 303,
+    name: "COSKINn Gel Cleanser",
+    originalPrice: 849,
+    price: 699,
+    discountBadge: "17% OFF",
+    rating: 4.7,
+    reviews: 650,
+    category: "Face Care",
+    subcategory: "Cleanser",
+    skinTypes: ["Normal Skin", "Combination Skin", "Sensitive Skin"],
+    concerns: ["Blackheads", "Whiteheads"],
+    image: gentleCleanserImg,
+    images: getGallery(gentleCleanserImg),
+    badge: "EVERYDAY GLOW",
+    shortDescription: "A mild, pH-balanced gel cleanser for everyday freshness.",
+    longDescription: "Formulated with Aloe Vera and Centella Asiatica, this soothing gel cleanser removes daily grime while keeping skin calm and balanced.",
+    benefits: ["Hydration", "Maintains Skin Barrier", "Dermatologically Tested", "Cruelty Free"],
+    keyIngredients: ["Aloe Vera", "Centella Asiatica"],
+    howToUse: [
+      { step: "Step 1", title: "Wet Face", desc: "Splash face with lukewarm water." },
+      { step: "Step 2", title: "Apply COSKINn Cleanser", desc: "Pump a coin-sized amount onto fingertips." },
+      { step: "Step 3", title: "Massage for 30-60 Seconds", desc: "Gently massage in circular motions." },
+      { step: "Step 4", title: "Rinse & Pat Dry", desc: "Rinse thoroughly and pat dry with a soft towel." }
+    ],
+    detailedIngredients: [
+      { name: "Aloe Vera", benefit: "Deeply hydrates and calms redness", skinType: "Sensitive" },
+      { name: "Centella Asiatica", benefit: "Heals skin barrier", skinType: "All Skin Types" }
+    ],
+    beforeAfter: { before: gentleCleanserImg, after: gentleCleanserImg },
+    customerReviews: [
+      { user: "Neha R.", rating: 4, date: "10 Apr 2026", text: "Very refreshing, lovely texture.", helpful: 30 }
+    ],
+    faqs: [
+      { q: "Does It Remove Makeup?", a: "It removes light makeup, but we recommend a double cleanse for heavy makeup." }
+    ],
+    routine: [
+      { step: "Cleanser", product: "COSKINn Gel Cleanser" },
+      { step: "Toner", product: "COSKINn Face Mist" },
+      { step: "Serum", product: "COSKINn Niacinamide Serum" },
+      { step: "Moisturiser", product: "COSKINn Daily Moisturiser" },
+      { step: "Sunscreen", product: "COSKINn Sunscreen SPF 50" }
+    ],
+    texture: "Clear Gel",
+    netQuantity: "150 ml",
+    shelfLife: "24 Months",
+    countryOfOrigin: "India",
+    manufacturedBy: "COSKINn Labs"
+  },
+  {
+    id: 304,
+    name: "COSKINn Brightening Cleanser",
+    originalPrice: 999,
+    price: 849,
+    discountBadge: "15% OFF",
+    rating: 4.8,
+    reviews: 880,
+    category: "Face Care",
+    subcategory: "Cleanser",
+    skinTypes: ["Normal Skin", "Dry Skin", "Oily Skin", "Combination Skin"],
+    concerns: ["Pigmentation", "Dullness"],
+    image: gentleCleanserImg,
+    images: getGallery(gentleCleanserImg),
+    badge: "RADIANCE",
+    shortDescription: "A Vitamin C infused cleanser to instantly brighten and even out skin tone.",
+    longDescription: "Wash away dullness and reveal a luminous complexion with this antioxidant-rich cleanser. Vitamin C works to fade dark spots over time.",
+    benefits: ["Brightening", "Deep Cleansing", "Sulphate Free", "Cruelty Free"],
+    keyIngredients: ["Vitamin C", "Licorice Extract"],
+    howToUse: [
+      { step: "Step 1", title: "Wet Face", desc: "Splash face with lukewarm water." },
+      { step: "Step 2", title: "Apply COSKINn Cleanser", desc: "Pump a coin-sized amount onto fingertips." },
+      { step: "Step 3", title: "Massage for 30-60 Seconds", desc: "Gently massage in circular motions." },
+      { step: "Step 4", title: "Rinse & Pat Dry", desc: "Rinse thoroughly and pat dry with a soft towel." }
+    ],
+    detailedIngredients: [
+      { name: "Vitamin C", benefit: "Brightens and evens skin tone", skinType: "All Skin Types" },
+      { name: "Licorice Extract", benefit: "Fades pigmentation", skinType: "Dull Skin" }
+    ],
+    beforeAfter: { before: gentleCleanserImg, after: gentleCleanserImg },
+    customerReviews: [
+      { user: "Rohan D.", rating: 5, date: "02 Mar 2026", text: "Gives an instant glow right after washing!", helpful: 156 }
+    ],
+    faqs: [
+      { q: "Can I Use It Daily?", a: "Yes, it is gentle enough for daily AM and PM use." }
+    ],
+    routine: [
+      { step: "Cleanser", product: "COSKINn Brightening Cleanser" },
+      { step: "Toner", product: "COSKINn Face Mist" },
+      { step: "Serum", product: "COSKINn Niacinamide Serum" },
+      { step: "Moisturiser", product: "COSKINn Daily Moisturiser" },
+      { step: "Sunscreen", product: "COSKINn Sunscreen SPF 50" }
+    ],
+    texture: "Creamy Gel",
+    netQuantity: "150 ml",
+    shelfLife: "24 Months",
+    countryOfOrigin: "India",
+    manufacturedBy: "COSKINn Labs"
+  },
+  {
+    id: 305,
+    name: "COSKINn Sensitive Cleanser",
+    originalPrice: 899,
+    price: 749,
+    discountBadge: "16% OFF",
+    rating: 4.9,
+    reviews: 1200,
+    category: "Face Care",
+    subcategory: "Cleanser",
+    skinTypes: ["Sensitive Skin", "Dry Skin"],
+    concerns: ["Sensitive Skin", "Dryness"],
+    image: gentleCleanserImg,
+    images: getGallery(gentleCleanserImg),
+    badge: "CALMING",
+    shortDescription: "An ultra-gentle, fragrance-free formula for the most reactive skin types.",
+    longDescription: "Formulated without essential oils or harsh surfactants, this cleanser purifies without triggering redness or irritation.",
+    benefits: ["Maintains Skin Barrier", "Dermatologically Tested", "Soap Free", "Paraben Free", "Sulphate Free", "Cruelty Free"],
+    keyIngredients: ["Colloidal Oatmeal", "Ceramides"],
+    howToUse: [
+      { step: "Step 1", title: "Wet Face", desc: "Splash face with lukewarm water." },
+      { step: "Step 2", title: "Apply COSKINn Cleanser", desc: "Pump a coin-sized amount onto fingertips." },
+      { step: "Step 3", title: "Massage for 30-60 Seconds", desc: "Gently massage in circular motions." },
+      { step: "Step 4", title: "Rinse & Pat Dry", desc: "Rinse thoroughly and pat dry with a soft towel." }
+    ],
+    detailedIngredients: [
+      { name: "Colloidal Oatmeal", benefit: "Clinically proven to soothe redness and itching", skinType: "Sensitive" },
+      { name: "Ceramides", benefit: "Restores the skin barrier", skinType: "Sensitive" }
+    ],
+    beforeAfter: { before: gentleCleanserImg, after: gentleCleanserImg },
+    customerReviews: [
+      { user: "Shreya P.", rating: 5, date: "14 Feb 2026", text: "The only cleanser that doesn't make my skin burn.", helpful: 210 }
+    ],
+    faqs: [
+      { q: "Suitable for Sensitive Skin?", a: "Yes, it is formulated specifically for hyper-sensitive skin." },
+      { q: "Fragrance Free?", a: "100% fragrance and essential oil free." }
+    ],
+    routine: [
+      { step: "Cleanser", product: "COSKINn Sensitive Cleanser" },
+      { step: "Toner", product: "COSKINn Face Mist" },
+      { step: "Serum", product: "COSKINn Niacinamide Serum" },
+      { step: "Moisturiser", product: "COSKINn Daily Moisturiser" },
+      { step: "Sunscreen", product: "COSKINn Sunscreen SPF 50" }
+    ],
+    texture: "Milky Lotion",
+    netQuantity: "150 ml",
+    shelfLife: "24 Months",
+    countryOfOrigin: "India",
+    manufacturedBy: "COSKINn Labs"
+  },
+  {
+    id: 306,
+    name: "COSKINn Acne Control Cleanser",
+    originalPrice: 949,
+    price: 799,
+    discountBadge: "15% OFF",
+    rating: 4.7,
+    reviews: 1800,
+    category: "Face Care",
+    subcategory: "Cleanser",
+    skinTypes: ["Oily Skin", "Acne Prone"],
+    concerns: ["Acne", "Large Pores", "Blackheads"],
+    image: gentleCleanserImg,
+    images: getGallery(gentleCleanserImg),
+    badge: "BHA POWER",
+    shortDescription: "A 2% Salicylic Acid cleanser to fight breakouts and unclog pores.",
+    longDescription: "Target active acne and prevent future breakouts with this BHA-infused cleanser. It gently exfoliates dead skin cells while deep-cleaning pores.",
+    benefits: ["Oil Control", "Deep Cleansing", "Dermatologically Tested", "Paraben Free", "Cruelty Free"],
+    keyIngredients: ["Salicylic Acid", "Tea Tree Extract"],
+    howToUse: [
+      { step: "Step 1", title: "Wet Face", desc: "Splash face with lukewarm water." },
+      { step: "Step 2", title: "Apply COSKINn Cleanser", desc: "Pump a coin-sized amount onto fingertips." },
+      { step: "Step 3", title: "Massage for 30-60 Seconds", desc: "Gently massage in circular motions." },
+      { step: "Step 4", title: "Rinse & Pat Dry", desc: "Rinse thoroughly and pat dry with a soft towel." }
+    ],
+    detailedIngredients: [
+      { name: "Salicylic Acid", benefit: "Unclogs pores and fights acne-causing bacteria", skinType: "Acne Prone" },
+      { name: "Tea Tree Extract", benefit: "Natural antibacterial properties", skinType: "Oily Skin" }
+    ],
+    beforeAfter: { before: gentleCleanserImg, after: gentleCleanserImg },
+    customerReviews: [
+      { user: "Amit K.", rating: 5, date: "30 Jan 2026", text: "Cleared my severe acne in just 3 weeks!", helpful: 320 }
+    ],
+    faqs: [
+      { q: "Can Teenagers Use It?", a: "Yes, it is very effective for teenage hormonal acne." },
+      { q: "Can I Use It Daily?", a: "Start with once a day, then increase to twice a day if your skin tolerates it well." }
+    ],
+    routine: [
+      { step: "Cleanser", product: "COSKINn Acne Control Cleanser" },
+      { step: "Toner", product: "COSKINn Face Mist" },
+      { step: "Serum", product: "COSKINn Niacinamide Serum" },
+      { step: "Moisturiser", product: "COSKINn Daily Moisturiser" },
+      { step: "Sunscreen", product: "COSKINn Sunscreen SPF 50" }
+    ],
+    texture: "Gel",
+    netQuantity: "150 ml",
+    shelfLife: "24 Months",
+    countryOfOrigin: "India",
+    manufacturedBy: "COSKINn Labs"
   }
 ];

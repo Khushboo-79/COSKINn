@@ -227,8 +227,8 @@ export default function Hero() {
                   transition={{ duration: 0.6, ease: "easeInOut" }}
                   className="absolute inset-0 text-[3.5rem] sm:text-[4.5rem] lg:text-[5.5rem] font-heading leading-[1.05] tracking-tight"
                 >
-                  <span className="text-black block font-semibold">{activeTheme.heading.split(' ').slice(0, 2).join(' ')}</span>
-                  <span className="text-theme-accent block font-medium">{activeTheme.heading.split(' ').slice(2).join(' ')}</span>
+                  <span className="text-[#1F1F1F] block font-semibold">{activeTheme.heading.split(' ').slice(0, 2).join(' ')}</span>
+                  <span className="text-[#FF0069] block font-medium">{activeTheme.heading.split(' ').slice(2).join(' ')}</span>
                 </motion.h1>
               </AnimatePresence>
             </motion.div>
@@ -242,7 +242,7 @@ export default function Hero() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.6, ease: "easeInOut" }}
-                  className="absolute inset-0 text-[17px] sm:text-[19px] text-black/80 leading-relaxed font-body font-medium"
+                  className="absolute inset-0 text-[17px] sm:text-[19px] text-[#555555] leading-relaxed font-body font-medium"
                 >
                   {activeTheme.subheading}
                 </motion.p>
@@ -250,38 +250,38 @@ export default function Hero() {
             </motion.div>
 
             <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-8 mb-16">
-              <button className="group flex items-center justify-center gap-2 bg-black text-white hover:bg-theme-primary hover:text-black px-8 py-4 rounded-full text-[14px] font-body font-semibold tracking-wide transition-all duration-300 shadow-[0_10px_30px_rgba(43,89,104,0.3)] hover:-translate-y-1 hover:scale-105">
+              <button className="group flex items-center justify-center gap-2 bg-[#FF0069] text-white hover:bg-pink-700 px-8 py-4 rounded-full text-[14px] font-body font-semibold tracking-wide transition-all duration-300 shadow-[0_10px_30px_rgba(43,89,104,0.3)] hover:-translate-y-1 hover:scale-105">
                 Shop Now
                 <ArrowRight size={18} strokeWidth={2} className="group-hover:translate-x-1 transition-transform ml-1" />
               </button>
 
               <button className="group flex items-center gap-4 hover:opacity-80 transition-opacity">
-                <div className="w-12 h-12 rounded-full bg-theme-secondary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                  <Play size={16} className="text-black ml-1" fill="currentColor" />
+                <div className="w-12 h-12 rounded-full bg-[#FFD498] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                  <Play size={16} className="text-[#1F1F1F] ml-1" fill="currentColor" />
                 </div>
-                <span className="text-[13px] font-body font-bold text-black">See How It Works</span>
+                <span className="text-[13px] font-body font-bold text-[#1F1F1F]">See How It Works</span>
               </button>
             </motion.div>
 
             <motion.div variants={containerVariants} className="flex items-center gap-6 lg:gap-8 pt-4 flex-wrap">
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <Leaf size={22} className="text-black/80" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-black/80 leading-tight">Safe & Gentle<br />for all skin types</span>
+                <Leaf size={22} className="text-[#FF0069]" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#555555] leading-tight">Safe & Gentle<br />for all skin types</span>
               </motion.div>
               <motion.div variants={itemVariants} className="w-[1px] h-8 bg-gray-300/50 hidden sm:block"></motion.div>
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <Droplets size={22} className="text-black/80" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-black/80 leading-tight">Dermatologically<br />Tested</span>
+                <Droplets size={22} className="text-[#FF0069]" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#555555] leading-tight">Dermatologically<br />Tested</span>
               </motion.div>
               <motion.div variants={itemVariants} className="w-[1px] h-8 bg-gray-300/50 hidden sm:block"></motion.div>
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <FlaskConical size={22} className="text-black/80" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-black/80 leading-tight">Clean & Ethical<br />Skincare</span>
+                <FlaskConical size={22} className="text-[#FF0069]" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#555555] leading-tight">Clean & Ethical<br />Skincare</span>
               </motion.div>
               <motion.div variants={itemVariants} className="w-[1px] h-8 bg-gray-300/50 hidden lg:block"></motion.div>
               <motion.div variants={itemVariants} className="flex items-center gap-3">
-                <Rabbit size={22} className="text-black/80" strokeWidth={1.5} />
-                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-black/80 leading-tight">Cruelty Free<br />Always</span>
+                <Rabbit size={22} className="text-[#FF0069]" strokeWidth={1.5} />
+                <span className="text-[10px] sm:text-[11px] font-body font-semibold text-[#555555] leading-tight">Cruelty Free<br />Always</span>
               </motion.div>
             </motion.div>
 

@@ -81,7 +81,7 @@ export default function NewArrivalsPage() {
       <div className="relative w-full h-[85vh] overflow-hidden flex items-center justify-center">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-0">
           <img loading="lazy" src={heroImg} alt="Luxury Beauty" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
         </motion.div>
         
         <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mt-16">
@@ -101,10 +101,10 @@ export default function NewArrivalsPage() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-6"
           >
-            <button className="px-10 py-4 bg-theme-primary text-white font-bold tracking-widest uppercase text-sm rounded-full shadow-[0_10px_30px_rgba(255,0,105,0.4)] hover:shadow-[0_15px_40px_rgba(255,0,105,0.6)] hover:-translate-y-1 transition-all duration-300 border border-theme-primary">
+            <button className="px-10 py-4 bg-[#FF0069] text-white font-bold tracking-widest uppercase text-sm rounded-full shadow-[0_10px_30px_rgba(255,0,105,0.4)] hover:shadow-[0_15px_40px_rgba(255,0,105,0.6)] hover:bg-[#D40057] hover:-translate-y-1 transition-all duration-300 border border-transparent">
               Shop Collection
             </button>
-            <button className="px-10 py-4 bg-white/20 backdrop-blur-md border border-white/60 text-white font-bold tracking-widest uppercase text-sm rounded-full hover:bg-white/30 hover:border-white transition-all duration-300">
+            <button className="px-10 py-4 bg-[#FFD498] text-[#1F1F1F] font-bold tracking-widest uppercase text-sm rounded-full hover:bg-[#EBC18A] transition-all duration-300">
               Explore New
             </button>
           </motion.div>
@@ -151,7 +151,7 @@ export default function NewArrivalsPage() {
                     {product.badge || "NEW"}
                   </span>
                   {product.discountBadge && (
-                    <span className="px-2 py-0.5 bg-black text-white text-[10px] font-bold tracking-widest uppercase rounded-full shadow-lg text-center w-max">
+                    <span className="px-2 py-0.5 bg-theme-primary text-white text-[10px] font-bold tracking-widest uppercase rounded-full shadow-lg text-center w-max">
                       {product.discountBadge}
                     </span>
                   )}
@@ -270,7 +270,7 @@ export default function NewArrivalsPage() {
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
             <span className="text-white uppercase tracking-[0.3em] font-bold text-sm mb-4 drop-shadow-md">Introducing Our Latest Collection</span>
             <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 drop-shadow-xl">Nature Meets Luxury</h2>
-            <button className="px-10 py-4 bg-white text-black font-bold uppercase tracking-widest text-sm rounded-full hover:bg-theme-primary hover:text-white transition-colors duration-300 shadow-xl border-none">
+            <button className="px-10 py-4 bg-[#FF0069] text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-[#D40057] transition-colors duration-300 shadow-[0_10px_30px_rgba(255,0,105,0.4)] border-none">
               Explore Collection
             </button>
           </div>
@@ -323,8 +323,8 @@ export default function NewArrivalsPage() {
                 Coming Soon
               </span>
               <h3 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4 drop-shadow-lg">COSKINn Holographic<br/>Collection</h3>
-              <button className="mt-8 px-8 py-3 bg-white text-black font-bold uppercase tracking-widest text-sm rounded-full w-max hover:bg-theme-primary hover:text-white transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                Notify Me
+              <button className="mt-8 px-8 py-3 bg-[#FF0069] text-white font-bold uppercase tracking-widest text-sm rounded-full w-max hover:bg-[#D40057] transition-colors shadow-[0_10px_30px_rgba(255,0,105,0.4)]">
+                Shop Holographic
               </button>
             </div>
           </div>
@@ -377,7 +377,7 @@ export default function NewArrivalsPage() {
               </div>
               <button 
                 onClick={(e) => { e.preventDefault(); addToCart(item); }}
-                className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-theme-primary transition-colors"
+                className="w-full py-3 bg-theme-primary text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-pink-700 transition-colors"
               >
                 Add To Cart
               </button>
@@ -434,9 +434,9 @@ export default function NewArrivalsPage() {
               />
               <button 
                 type="submit"
-                className="px-8 py-4 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-theme-primary transition-colors shadow-lg"
+                className="px-8 py-4 bg-[#FF0069] text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-[#D40057] transition-colors shadow-[0_10px_30px_rgba(255,0,105,0.4)]"
               >
-                Subscribe
+                Join the List
               </button>
             </form>
           </div>

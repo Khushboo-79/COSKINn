@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { OrderProvider } from './context/OrderContext';
 import Navbar from './components/common/Navbar';
 import CartDrawer from './components/cart/CartDrawer';
 
@@ -21,6 +22,8 @@ const AwardWinnersPage = React.lazy(() => import('./pages/AwardWinnersPage'));
 const GiftSetsPage = React.lazy(() => import('./pages/GiftSetsPage'));
 const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
 const ProductDetailsPage = React.lazy(() => import('./pages/ProductDetailsPage'));
+const OrderTrackingPage = React.lazy(() => import('./pages/OrderTrackingPage'));
+const CleanserPage = React.lazy(() => import('./pages/CleanserPage'));
 
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
@@ -54,6 +57,8 @@ const MainLayout = () => {
             <Route path="/gift-sets" element={<GiftSetsPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/product/:id" element={<ProductDetailsPage />} />
+            <Route path="/order/:orderId" element={<OrderTrackingPage />} />
+            <Route path="/skincare/cleansers" element={<CleanserPage />} />
           </Routes>
         </Suspense>
       </div>
@@ -67,9 +72,11 @@ export default function App() {
       <ToastProvider>
         <CartProvider>
           <WishlistProvider>
-            <BrowserRouter>
-              <MainLayout />
-            </BrowserRouter>
+            <OrderProvider>
+              <BrowserRouter>
+                <MainLayout />
+              </BrowserRouter>
+            </OrderProvider>
           </WishlistProvider>
         </CartProvider>
       </ToastProvider>
