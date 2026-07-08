@@ -209,7 +209,7 @@ This guide takes you through the entire eCommerce lifecycle.
 
 ### 11. Add Delivery Address (Customer)
 - **Method:** `POST`
-- **URL:** `http://localhost:3000/api/customer-profile/addresses`
+- **URL:** `http://localhost:3000/api/customer/addresses`
 - **Headers:** `Authorization: Bearer <CustomerToken>`
 - **Body (JSON):**
 ```json
