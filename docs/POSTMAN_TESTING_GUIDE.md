@@ -154,7 +154,40 @@ These endpoints do not require authentication (`Authorization: Bearer <token>` i
 - **Method:** `GET`
 - **URL:** `http://localhost:3000/api/seo/fruit/watermelon`
 
-### Step 5H: Home Dashboard API
+### Step 5H: Cart & Address
+1. **Add Item to Cart**: `POST http://localhost:3000/cart/items`
+   - Headers: `Authorization: Bearer <CustomerToken>`
+   - Body: `{"productId": "<id>", "variantId": "<id>", "quantity": 1}`
+2. **View Cart**: `GET http://localhost:3000/cart`
+3. **Save Address**: `POST http://localhost:3000/customer-profile/addresses`
+   - Body: `{"fullName": "John Doe", "addressLine1": "123 Street", "city": "Mumbai", "state": "MH", "pincode": "400001", "phone": "9999999999"}`
+4. **Serviceability Check**: `GET http://localhost:3000/customer-profile/addresses/serviceability?pincode=400001`
+
+### Step 5I: Coupons & Orders
+1. **Apply Coupon**: `POST http://localhost:3000/cart/coupon/apply`
+   - Body: `{"code": "WELCOME10"}`
+2. **Create Order (Draft)**: `POST http://localhost:3000/orders`
+   - Body: `{"addressId": "<saved_address_id>", "paymentMode": "ONLINE"}`
+
+### Step 5J: Razorpay Webhook & Notifications
+1. **Simulate Webhook**: `POST http://localhost:3000/payments/webhook`
+   - Headers: `x-razorpay-signature: mock_signature` (bypasses crypto check for local dev)
+   - Body: `{"event": "payment.captured", "payload": {"payment": {"entity": {"order_id": "<mock_rzp_id_returned_from_createOrder>"}}}}`
+   - Expected: Order status updates to `PLACED`, and an internal notification fires in server logs.
+
+### Step 5K: Invoices
+1. **Generate Invoice PDF**: `GET http://localhost:3000/orders/<order_id>/invoice`
+   - Headers: `Authorization: Bearer <CustomerToken>`
+   - Expected: Returns a JSON with `pdfUrl`. You can then view the PDF physically generated in the `backend/public/invoices/` folder.
+
+### Step 5L: Admin Order Management
+1. **List All Orders (Admin)**: `GET http://localhost:3000/admin/orders?status=PLACED`
+   - Headers: `Authorization: Bearer <AdminToken>`
+2. **Update Order Status (Admin)**: `PUT http://localhost:3000/admin/orders/<order_id>/status`
+   - Headers: `Authorization: Bearer <AdminToken>`
+   - Body: `{"status": "PACKED"}`
+
+### Step 5M: Home Dashboard API
 - **Method:** `GET`
 - **URL:** `http://localhost:3000/api/home`
 *(Returns banners, categories, trending fruits, and new arrivals in one call).*
