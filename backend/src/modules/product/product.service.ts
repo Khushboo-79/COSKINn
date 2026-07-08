@@ -245,6 +245,7 @@ export class ProductService {
           description: data.description,
           mrp: data.mrp,
           discountPrice: data.discountPrice,
+          status: 'LIVE', // Defaulting to LIVE for testing flow without approval steps
         },
       });
 

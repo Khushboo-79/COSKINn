@@ -1,11 +1,23 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { InventoryService } from '../inventory/inventory.service';
+import { RewardPointService } from '../reward-point/reward-point.service';
+import { BonusService } from '../bonus/bonus.service';
+import { ReferralService } from '../referral/referral.service';
+import { OfferService } from '../offer/offer.service';
 
 @Injectable()
 export class OrderService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private inventoryService: InventoryService,
+    private rewardPointService: RewardPointService,
+    private bonusService: BonusService,
+    private referralService: ReferralService,
+    private offerService: OfferService
+  ) {}
 
-  async createOrderFromCart(userId: string, addressId: string, paymentMode: string) {
+  async createOrderFromCart(userId: string, addressId: string, paymentMode: string, pointsToRedeem: number = 0) {
     // 1. Fetch the user's cart and address
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
@@ -42,10 +54,27 @@ export class OrderService {
       finalAmount += (discountPrice * item.quantity);
     });
 
+    const offerData = await this.offerService.evaluateBestOffer(cart.items, finalAmount);
+    
+    // Deduct offer discount
+    finalAmount -= offerData.discount;
+    if (finalAmount < 0) finalAmount = 0;
+
     const discountAmt = totalAmount - finalAmount;
 
+    // Validate points redemption
+    if (pointsToRedeem > 0) {
+      const balance = await this.rewardPointService.getBalance(userId);
+      if (balance < pointsToRedeem) {
+        throw new BadRequestException('Insufficient reward points');
+      }
+      // e.g. 1 point = 1 rupee discount
+      finalAmount -= pointsToRedeem;
+      if (finalAmount < 0) finalAmount = 0;
+    }
+
     // 3. Create the order using a transaction
-    return this.prisma.$transaction(async (tx) => {
+    const orderData = await this.prisma.$transaction(async (tx) => {
       const order = await tx.order.create({
         data: {
           userId,
@@ -113,8 +142,19 @@ export class OrderService {
         where: { cartId: cart.id }
       });
 
+      // 5. Reserve stock for all items
+      for (const item of order.items) {
+        await this.inventoryService.reserveStock(item.sku, item.quantity, tx);
+      }
+
       return order;
     });
+
+    if (pointsToRedeem > 0) {
+      await this.rewardPointService.redeemPoints(userId, pointsToRedeem, orderData.id);
+    }
+
+    return orderData;
   }
 
   // --- ADMIN METHODS ---
@@ -142,10 +182,13 @@ export class OrderService {
   }
 
   async updateOrderStatus(orderId: string, status: string, adminId: string, notes?: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    const order = await this.prisma.order.findUnique({ 
+      where: { id: orderId },
+      include: { items: true }
+    });
     if (!order) throw new NotFoundException('Order not found');
 
-    return this.prisma.$transaction(async (tx) => {
+    const res = await this.prisma.$transaction(async (tx) => {
       const updatedOrder = await tx.order.update({
         where: { id: orderId },
         data: { status }
@@ -158,6 +201,76 @@ export class OrderService {
           notes: notes || `Status updated by Admin ${adminId}`
         }
       });
+
+      // If status changes to SHIPPED, deduct reserved stock
+      if (status === 'SHIPPED' && order.status !== 'SHIPPED' && order.status !== 'DELIVERED') {
+        for (const item of order.items) {
+          await this.inventoryService.deductReservedStock(item.sku, item.quantity, tx);
+        }
+      }
+
+      return updatedOrder;
+    });
+
+    // Post-transaction triggers for DELIVERED
+    if (status === 'DELIVERED' && order.status !== 'DELIVERED') {
+      try {
+        await this.rewardPointService.earnPoints(order.userId, order.totalAmount, orderId);
+        await this.bonusService.awardFirstOrderBonus(order.userId);
+        
+        // Check if user was referred, and award bonus if this is their first order?
+        // For simplicity, we can trigger referral bonus on first delivered order
+        const referral = await this.prisma.referral.findUnique({
+          where: { refereeId: order.userId }
+        });
+        if (referral && !referral.bonusAwarded) {
+          await this.referralService.awardReferralBonus(referral.id);
+        }
+      } catch (error) {
+        // Log but don't fail the order status update
+        console.error('Error awarding bonuses on delivery:', error);
+      }
+    }
+
+    return res;
+  }
+
+  async cancelOrder(orderId: string, userId: string, reason: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.userId !== userId) throw new BadRequestException('Not authorized to cancel this order');
+
+    if (order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELLED') {
+      throw new BadRequestException(`Cannot cancel order in ${order.status} state`);
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Mark as cancelled
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status: 'CANCELLED' }
+      });
+
+      // 2. Add history and cancellation record
+      await tx.orderStatusHistory.create({
+        data: { orderId, status: 'CANCELLED', notes: `Cancelled by user: ${reason}` }
+      });
+
+      await tx.orderCancellation.create({
+        data: { orderId, reason }
+      });
+
+      // 3. Release reserved stock
+      for (const item of order.items) {
+        await this.inventoryService.releaseReservedStock(item.sku, item.quantity, tx);
+      }
+
+      // 4. (Optional) Trigger refund if payment was online & successful
+      // In a real system, we'd hit PaymentService/RefundService here
 
       return updatedOrder;
     });

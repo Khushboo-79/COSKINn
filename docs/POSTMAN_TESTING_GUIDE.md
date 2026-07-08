@@ -1,4 +1,4 @@
-# Complete API Testing Guide: COSKINn (Phases 1 & 2)
+# Complete API Testing Guide: COSKINn (Phases 1, 2 & 3)
 
 This guide takes you through the entire eCommerce lifecycle. 
 > **Note:** Ensure your backend is running locally (`npm run start:dev`). All endpoints are prefixed with `/api`.
@@ -323,3 +323,78 @@ This guide takes you through the entire eCommerce lifecycle.
   }
   ```
 *(You have now fully processed a customer's order from start to finish!)*
+---
+
+# Phase 4: Promotional & Monetary Ecosystem
+
+### 16. Get Wallet Balance
+Check your current wallet balance (this might include a Sign-Up Bonus if you created a new account after Phase 4!).
+- **Method:** GET
+- **URL:** http://localhost:3000/api/wallet
+- **Headers:** Authorization: Bearer <CustomerToken>
+
+**Expected Output:**
+`json
+{
+  "id": "...",
+  "userId": "...",
+  "balance": 100,
+  "transactions": [
+    {
+      "type": "CREDIT",
+      "amount": 100,
+      "reference": "Sign-up Bonus"
+    }
+  ]
+}
+`
+
+### 17. Generate Referral Code
+Generate a unique referral code to share with friends.
+- **Method:** POST
+- **URL:** http://localhost:3000/api/referral/generate
+- **Headers:** Authorization: Bearer <CustomerToken>
+
+**Expected Output:**
+`json
+{
+  "referralCode": "X1Y2Z3",
+  "referrerId": "..."
+}
+`
+
+### 18. Get Cart with Offers and Balances
+The Cart now automatically evaluates Best-Offers and returns your wallet and reward points balances.
+- **Method:** GET
+- **URL:** http://localhost:3000/api/cart
+- **Headers:** Authorization: Bearer <CustomerToken>
+
+**Expected Output:**
+`json
+{
+  "summary": {
+    "totalMrp": 5000,
+    "totalDiscountPrice": 4500,
+    "offerDiscount": 0,
+    "finalTotal": 4500,
+    "walletBalance": 100,
+    "rewardPointsBalance": 0
+  }
+}
+`
+
+### 19. Place Order using Reward Points
+You can now redeem reward points during checkout. (1 Point = ?1 Discount).
+- **Method:** POST
+- **URL:** http://localhost:3000/api/orders
+- **Headers:** Authorization: Bearer <CustomerToken>
+- **Body (JSON):**
+  `json
+  {
+    "addressId": "<ADDRESS_ID_FROM_STEP_7>",
+    "paymentMode": "ONLINE",
+    "pointsToRedeem": 50
+  }
+  `
+*(Note: Attempting to redeem more points than you own will throw an Insufficient Balance error).*
+

@@ -1,9 +1,17 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { OfferService } from '../offer/offer.service';
+import { WalletService } from '../wallet/wallet.service';
+import { RewardPointService } from '../reward-point/reward-point.service';
 
 @Injectable()
 export class CartService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private offerService: OfferService,
+    private walletService: WalletService,
+    private rewardPointService: RewardPointService
+  ) {}
 
   async getCart(userId: string) {
     let cart = await this.prisma.cart.findUnique({
@@ -40,13 +48,25 @@ export class CartService {
       totalDiscountPrice += price * item.quantity;
     }
 
+    const offerData = await this.offerService.evaluateBestOffer(cart.items, totalDiscountPrice);
+    
+    // Using getWallet returns { balance } object, we just want the balance number
+    const wallet = await this.walletService.getWallet(userId);
+    const rewardPoints = await this.rewardPointService.getBalance(userId);
+
+    const finalPayable = Math.max(0, totalDiscountPrice - offerData.discount);
+
     return {
       ...cart,
       summary: {
         totalMrp,
         totalDiscountPrice,
         totalSavings: totalMrp - totalDiscountPrice,
-        finalTotal: totalDiscountPrice // We can add shipping logic later
+        offerDiscount: offerData.discount,
+        appliedOffer: offerData.offer,
+        finalTotal: finalPayable, // Excludes shipping for now
+        walletBalance: wallet.balance,
+        rewardPointsBalance: rewardPoints
       }
     };
   }
