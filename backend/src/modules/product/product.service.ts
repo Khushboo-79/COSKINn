@@ -196,8 +196,8 @@ export class ProductService {
     return product.variants;
   }
 
-  async findOne(id: string) {
-    const product = await this.prisma.product.findUnique({
+  async findOne(id: string, tx: any = this.prisma) {
+    const product = await tx.product.findFirst({
       where: { id, isDeleted: false },
       include: {
         category: true,
@@ -220,14 +220,14 @@ export class ProductService {
 
   async create(data: CreateProductDto) {
     // Check if slug or SKU already exists
-    const existingSlug = await this.prisma.product.findUnique({
+    const existingSlug = await this.prisma.product.findFirst({
       where: { slug: data.slug },
     });
     if (existingSlug) {
       throw new ConflictException('Product slug already exists');
     }
 
-    const existingSku = await this.prisma.productVariant.findUnique({
+    const existingSku = await this.prisma.productVariant.findFirst({
       where: { sku: data.sku },
     });
     if (existingSku) {
@@ -258,7 +258,7 @@ export class ProductService {
         },
       });
 
-      return this.findOne(product.id);
+      return this.findOne(product.id, tx);
     });
   }
 
