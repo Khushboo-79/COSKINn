@@ -4,39 +4,47 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import { AppTheme, scaleh, scalev } from '../constants/AppTheme';
 
-const Header = ({ showHeart = false }) => {
+const Header = ({ showHeart = false, rightComponent, onBackPress, transparent = false, showLogo = true, backgroundColor = '#FFFFFF' }) => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Dashboard')} style={styles.iconButton}>
+    <View style={[styles.headerContainer, { backgroundColor: transparent ? 'transparent' : backgroundColor }]}>
+      <TouchableOpacity onPress={() => onBackPress ? onBackPress() : navigation.navigate('Dashboard')} style={styles.iconButton}>
         <Icon name="chevron-left" size={scaleh(28)} color="#000" />
       </TouchableOpacity>
 
-      <View style={styles.logoContainer}>
-        <View style={styles.logoRow}>
-          <Image
-            source={require('../images/Logo/logo.webp')}
-            style={styles.bigCLogo}
-            resizeMode="contain"
-          />
-          <Text style={styles.logoText}>OSKINn</Text>
-          <Image
-            source={require('../images/Logo/coskinLogo.webp')}
-            style={styles.smallHeartLogoTop}
-            resizeMode="contain"
-          />
+      {showLogo ? (
+        <View style={styles.logoContainer}>
+          <View style={styles.logoRow}>
+            <Image
+              source={require('../images/Logo/logo.webp')}
+              style={styles.bigCLogo}
+              resizeMode="contain"
+            />
+            <Text style={styles.logoText}>OSKINn</Text>
+            <Image
+              source={require('../images/Logo/coskinLogo.webp')}
+              style={styles.smallHeartLogoTop}
+              resizeMode="contain"
+            />
+          </View>
         </View>
-      </View>
+      ) : (
+        <View style={{ flex: 1 }} />
+      )}
 
-      <View style={styles.rightIcons}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name={showHeart ? "heart" : "shopping-cart"} size={scaleh(22)} color="#1a1a1a" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
-          <Icon name="search" size={scaleh(22)} color="#1a1a1a" />
-        </TouchableOpacity>
-      </View>
+      {rightComponent ? (
+        rightComponent
+      ) : (
+        <View style={styles.rightIcons}>
+          <TouchableOpacity style={styles.iconButton}>
+            <Icon name={showHeart ? "heart" : "shopping-cart"} size={scaleh(22)} color="#1a1a1a" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
+            <Icon name="search" size={scaleh(22)} color="#1a1a1a" />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -51,7 +59,7 @@ const styles = StyleSheet.create({
     paddingBottom: scalev(15),
     marginBottom: scalev(15),
     marginTop: scalev(35),
-    backgroundColor: '#FFFFFF',
+    // backgroundColor removed here to use dynamic style
   },
   iconButton: {
     padding: scaleh(5),

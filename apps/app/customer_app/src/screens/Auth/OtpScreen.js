@@ -4,8 +4,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
 
 const OtpScreen = ({ navigation }) => {
-  // Creating an array for the 6 OTP input refs
-  const inputs = Array(6).fill(0);
+  // Creating an array for the 4 OTP input refs
+  const inputs = Array(4).fill(0);
   const inputRefs = useRef([]);
 
   const focusNext = (index, value) => {
@@ -225,8 +225,8 @@ const styles = StyleSheet.create({
     marginBottom: scalev(30),
   },
   otpInputWrapper: {
-    width: scaleh(42),
-    height: scalev(55),
+    width: scaleh(55),
+    height: scalev(65),
     backgroundColor: AppTheme.colors.white,
     borderRadius: scaleh(10),
     borderWidth: 1.5,

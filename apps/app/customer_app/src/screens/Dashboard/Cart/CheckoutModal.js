@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback, TextInput, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
 const addresses = [
@@ -11,6 +12,7 @@ const addresses = [
 ];
 
 const CheckoutModal = ({ visible, onClose }) => {
+  const navigation = useNavigation();
   // 'summary' or 'address'
   const [viewState, setViewState] = useState('summary');
   const [selectedAddressId, setSelectedAddressId] = useState(2); // Match image showing middle one selected
@@ -62,12 +64,18 @@ const CheckoutModal = ({ visible, onClose }) => {
           <Text style={styles.cardSubtitle}>Paying via</Text>
           <Text style={styles.cardTitle}>Cash on Delivery</Text>
         </View>
-        <TouchableOpacity style={styles.changeBtnWrapper}>
+        <TouchableOpacity style={styles.changeBtnWrapper} onPress={() => {
+          handleClose();
+          setTimeout(() => navigation.navigate('PaymentMethods'), 300);
+        }}>
           <Text style={styles.changeBtnText}>Change {'>'}</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.payButton} onPress={handleClose}>
+      <TouchableOpacity style={styles.payButton} onPress={() => {
+        handleClose();
+        setTimeout(() => navigation.navigate('OrderConfirmed'), 300);
+      }}>
         <Text style={styles.payButtonText}>Pay ₹1,104</Text>
       </TouchableOpacity>
 

@@ -21,8 +21,8 @@ const DashboardScreen = () => {
     {
       id: 1,
       type: 'discount',
-      bgColor: '#FDECE2', // Light peach outer banner
-      innerColor: '#F1C9A9', // Darker peach inner text card
+      bgColor: '#FDECE2',
+      innerColor: '#F1C9A9',
       imageBase: require('../../images/bgImages/orange.webp'),
       imageProduct: require('../../images/bgImages/productImg.webp'),
       title: 'Flat 50% OFF',
@@ -69,6 +69,11 @@ const DashboardScreen = () => {
   ];
   const [activeSkinIndex, setActiveSkinIndex] = useState(0); // Normal Skin active
 
+  // Guides section state
+  const [activeGuideTab, setActiveGuideTab] = useState('Sunscreen');
+  const guideTabs = ['Sunscreen', 'Moisturizer', 'Skincare', 'Serum'];
+  const [activeGuideIndex, setActiveGuideIndex] = useState(0); // For the 3 dots
+
   const handleMainScroll = (event) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
@@ -79,6 +84,12 @@ const DashboardScreen = () => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
     if (index !== activeComboBannerIndex) setActiveComboBannerIndex(index);
+  };
+
+  const handleGuideScroll = (event) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const index = Math.round(scrollPosition / width);
+    if (index !== activeGuideIndex) setActiveGuideIndex(index);
   };
 
   const skinViewabilityConfig = useRef({
@@ -342,10 +353,103 @@ const DashboardScreen = () => {
               }}
             />
           </View>
+
+          {/* Skincare Features & Guides Section */}
+          <View style={styles.featuresSection}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.featuresScroll}>
+              <View style={styles.featureItem}>
+                <View style={styles.featureCircle}>
+                  <Icon name="activity" size={scaleh(24)} color="#FF9966" />
+                </View>
+                <Text style={styles.featureTextTop}>Clinically</Text>
+                <Text style={styles.featureTextBottom}>Proven Results</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <View style={styles.featureCircle}>
+                  <Icon name="heart" size={scaleh(24)} color="#FF9966" />
+                </View>
+                <Text style={styles.featureTextTop}>Cruelty</Text>
+                <Text style={styles.featureTextBottom}>Free</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <View style={styles.featureCircle}>
+                  <Icon name="feather" size={scaleh(24)} color="#FF9966" />
+                </View>
+                <Text style={styles.featureTextTop}>Vegan</Text>
+                <Text style={styles.featureTextBottom}>Friendly</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <View style={styles.featureCircle}>
+                  <Icon name="sun" size={scaleh(24)} color="#FF9966" />
+                </View>
+                <Text style={styles.featureTextTop}>Plant</Text>
+                <Text style={styles.featureTextBottom}>Bio Actives</Text>
+              </View>
+            </ScrollView>
+
+            <View style={styles.guidesHeader}>
+              <Text style={styles.guidesTitleBlack}>Skincare </Text>
+              <Text style={styles.guidesTitlePink}>Guides</Text>
+              <Icon name="chevron-right" size={scaleh(16)} color="#000" style={{ marginLeft: scaleh(5), marginTop: scalev(2) }} />
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.guideTabsScroll}>
+              {guideTabs.map((tab) => {
+                const isActive = activeGuideTab === tab;
+                return (
+                  <TouchableOpacity
+                    key={tab}
+                    style={[styles.guideTab, isActive && styles.guideTabActive]}
+                    onPress={() => setActiveGuideTab(tab)}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={[styles.guideTabText, isActive && styles.guideTabTextActive]}>{tab}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            {/* Swipable Pink Placeholder Cards */}
+            <View style={{ height: scalev(250), marginBottom: scalev(20) }}>
+              <FlatList
+                data={[1, 2, 3, 4]} // 4 cards to match the 4 tabs
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => index.toString()}
+                onScroll={handleGuideScroll}
+                scrollEventThrottle={16}
+                renderItem={() => (
+                  <View style={{ width: width }}>
+                    <LinearGradient
+                      colors={['#FFB6C1', '#FFE4E1']}
+                      style={styles.guideCard}
+                    />
+                  </View>
+                )}
+              />
+            </View>
+
+            {/* Pagination Dots */}
+            <View style={styles.guideDotsContainer}>
+              {[0, 1, 2, 3].map((idx) => (
+                <View key={idx} style={[styles.guideDot, activeGuideIndex === idx && styles.guideDotActive]} />
+              ))}
+            </View>
+
+          </View>
+
         </ScrollView>
       </SafeAreaView>
 
-      <BottomNavBar activeTab="home" />
+      <BottomNavBar 
+        activeTab="home" 
+        onTabPress={(tabId) => {
+          if (tabId === 'shop') {
+            navigation.navigate('Shop');
+          }
+        }} 
+      />
     </View>
   );
 };
@@ -695,6 +799,102 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: scaleh(14),
+  },
+  featuresSection: {
+    width: '100%',
+    paddingTop: scalev(40),
+    paddingBottom: scalev(60), // Space above nav bar
+  },
+  featuresScroll: {
+    paddingHorizontal: scaleh(20),
+    marginBottom: scalev(40),
+  },
+  featureItem: {
+    alignItems: 'center',
+    marginRight: scaleh(25),
+  },
+  featureCircle: {
+    width: scaleh(60),
+    height: scaleh(60),
+    borderRadius: scaleh(30),
+    borderWidth: 1,
+    borderColor: '#FFD1E3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: scalev(8),
+  },
+  featureTextTop: {
+    fontSize: scaleh(10),
+    color: AppTheme.colors.primary,
+    fontWeight: '700',
+    marginBottom: scalev(2),
+  },
+  featureTextBottom: {
+    fontSize: scaleh(10),
+    color: '#000',
+    fontWeight: '800',
+  },
+  guidesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: scalev(25),
+  },
+  guidesTitleBlack: {
+    fontSize: scaleh(20),
+    fontWeight: '400',
+    color: '#000',
+  },
+  guidesTitlePink: {
+    fontSize: scaleh(20),
+    fontWeight: '800',
+    color: '#FF88A7',
+  },
+  guideTabsScroll: {
+    paddingHorizontal: scaleh(20),
+    marginBottom: scalev(20),
+  },
+  guideTab: {
+    paddingHorizontal: scaleh(20),
+    paddingVertical: scalev(10),
+    borderRadius: scaleh(12),
+    borderWidth: 1,
+    borderColor: '#FFD1E3',
+    marginRight: scaleh(15),
+    backgroundColor: '#FFF',
+  },
+  guideTabActive: {
+    backgroundColor: AppTheme.colors.primary,
+    borderColor: AppTheme.colors.primary,
+  },
+  guideTabText: {
+    fontSize: scaleh(12),
+    color: '#000',
+    fontWeight: '600',
+  },
+  guideTabTextActive: {
+    color: '#FFF',
+  },
+  guideCard: {
+    height: scalev(250),
+    marginHorizontal: scaleh(20),
+    borderRadius: scaleh(15),
+  },
+  guideDotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: scalev(50)
+  },
+  guideDot: {
+    width: scaleh(8),
+    height: scaleh(8),
+    borderRadius: scaleh(4),
+    backgroundColor: '#EBEBEB',
+    marginHorizontal: scaleh(6),
+  },
+  guideDotActive: {
+    backgroundColor: AppTheme.colors.primary,
   }
 });
 

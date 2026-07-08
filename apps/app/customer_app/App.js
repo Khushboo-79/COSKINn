@@ -22,6 +22,14 @@ import WishlistScreen from './src/screens/Dashboard/Wishlist/WishlistScreen';
 import CartScreen from './src/screens/Dashboard/Cart/CartScreen';
 import CouponsScreen from './src/screens/Dashboard/Cart/CouponsScreen';
 import GiftBoxScreen from './src/screens/Dashboard/Cart/GiftBoxScreen';
+import PaymentMethodsScreen from './src/screens/Dashboard/Cart/PaymentMethodsScreen';
+import CardPaymentScreen from './src/screens/Dashboard/Cart/CardPaymentScreen';
+import WalletPaymentScreen from './src/screens/Dashboard/Cart/WalletPaymentScreen';
+import NetbankingScreen from './src/screens/Dashboard/Cart/NetbankingScreen';
+import OrderConfirmedScreen from './src/screens/Dashboard/Cart/OrderConfirmedScreen';
+import ShopScreen from './src/screens/Dashboard/BottomNav/Shop/ShopScreen';
+import CategoriesScreen from './src/screens/Dashboard/BottomNav/Shop/CategoriesScreen';
+import ViewAllCategoriesScreen from './src/screens/Dashboard/BottomNav/Shop/ViewAllCategoriesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +49,14 @@ function App() {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Coupons" component={CouponsScreen} />
           <Stack.Screen name="GiftBox" component={GiftBoxScreen} />
+          <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
+          <Stack.Screen name="CardPayment" component={CardPaymentScreen} />
+          <Stack.Screen name="WalletPayment" component={WalletPaymentScreen} />
+          <Stack.Screen name="Netbanking" component={NetbankingScreen} />
+          <Stack.Screen name="OrderConfirmed" component={OrderConfirmedScreen} />
+          <Stack.Screen name="Shop" component={ShopScreen} />
+          <Stack.Screen name="Categories" component={CategoriesScreen} />
+          <Stack.Screen name="ViewAllCategories" component={ViewAllCategoriesScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
