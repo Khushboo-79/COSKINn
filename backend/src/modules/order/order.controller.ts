@@ -13,7 +13,8 @@ export class OrderController {
   async createOrder(
     @Request() req,
     @Body('addressId') addressId: string,
-    @Body('paymentMode') paymentMode: string = 'ONLINE'
+    @Body('paymentMode') paymentMode: string = 'ONLINE',
+    @Body('pointsToRedeem') pointsToRedeem: number = 0
   ) {
     if (!addressId) {
       throw new BadRequestException('addressId is required to create an order');
@@ -23,7 +24,20 @@ export class OrderController {
       throw new BadRequestException('paymentMode must be ONLINE or COD');
     }
 
-    return this.orderService.createOrderFromCart(req.user.id, addressId, paymentMode);
+    return this.orderService.createOrderFromCart(req.user.id, addressId, paymentMode, pointsToRedeem);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('orders/:id/cancel')
+  async cancelOrder(
+    @Request() req,
+    @Param('id') id: string,
+    @Body('reason') reason: string
+  ) {
+    if (!reason) {
+      throw new BadRequestException('Cancellation reason is required');
+    }
+    return this.orderService.cancelOrder(id, req.user.id, reason);
   }
 
   // --- ADMIN ENDPOINTS ---

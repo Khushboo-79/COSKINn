@@ -1,343 +1,400 @@
-# Postman Testing Guide: COSKINn API (Auth to End)
+# Complete API Testing Guide: COSKINn (Phases 1, 2 & 3)
 
-This guide provides the exact requests you need to test the entire flow of the COSKINn platform, from logging in as an admin to creating a fully functional product.
-
-> [!NOTE] 
-> All requests assume your backend is running locally at `http://localhost:3000/api`.
-> 
-> **Want to test instantly?** We have generated a Postman Collection for you! Open Postman, click **Import**, and select the `docs/COSKINn_Postman_Collection.json` file in this repository. All the requests below are already pre-configured for you!
+This guide takes you through the entire eCommerce lifecycle. 
+> **Note:** Ensure your backend is running locally (`npm run start:dev`). All endpoints are prefixed with `/api`.
 
 ---
 
-## 1. Authentication (2FA Flow)
+## 🏗️ PART 1: Admin & Catalog Setup (Phase 1)
 
-Since we enforce 2FA for admins, you must first log in with your email/password to trigger the OTP, and then verify the OTP.
-
-### Step 1A: Login (Trigger OTP)
+### 1. Admin Login (Trigger OTP)
 - **Method:** `POST`
 - **URL:** `http://localhost:3000/api/auth/login`
 - **Body (JSON):**
 ```json
 {
   "email": "admin@coskinn.com",
-  "password": "your_secure_password"
+  "password": "admin123"
 }
 ```
-*Look at your terminal! (The exact terminal window where you ran `npm run start:dev` for the backend). The NestJS server will print a 6-digit mock OTP in the console logs.*
+**Expected Output:**
+```json
+{
+  "message": "Password accepted. OTP sent to registered phone number.",
+  "nextStep": "verify-otp",
+  "phone": "+919876543210"
+}
+```
+*(Check your terminal running the backend. The 6-digit OTP will be logged there!)*
 
-### Step 1B: Verify OTP
+### 2. Verify Admin OTP & Get Token
 - **Method:** `POST`
 - **URL:** `http://localhost:3000/api/auth/verify-otp`
 - **Body (JSON):**
 ```json
 {
-  "phone": "+919876543210", 
-  "otp": "123456" 
+  "phone": "<ADMIN_PHONE_FROM_PREVIOUS_RESPONSE>",
+  "otp": "<6_DIGIT_OTP_FROM_TERMINAL>",
+  "isAdminLogin": true
 }
 ```
-*(Use the phone number associated with the admin account, and the OTP printed in the terminal).*
-**Important:** Copy the `access_token` from the response.
+**Expected Output:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1...",
+  "refresh_token": "def456..."
+}
+```
+*(Copy the `access_token` from the response. You will use this in the `Authorization: Bearer <token>` header for all Admin requests).*
 
-### Step 1C: Set Authorization Header in Postman
-For all subsequent requests below, you must go to the **Authorization** tab in Postman, select **Bearer Token**, and paste your `access_token`.
-
----
-
-## 2. Product Metadata (Tags)
-
-Before creating a product, we need to create the tags associated with it.
-
-### Create Category
+### 3. Create a Category (Admin)
 - **Method:** `POST`
 - **URL:** `http://localhost:3000/api/categories`
+- **Headers:** `Authorization: Bearer <AdminToken>`
 - **Body (JSON):**
 ```json
 {
-  "name": "Skincare",
-  "slug": "skincare",
-  "description": "Premium skincare products"
+  "name": "Haircare",
+  "slug": "haircare",
+  "description": "Premium haircare products"
 }
 ```
-*(Copy the generated category `id` from the response for later).*
-
----
-
-## 3. Media Upload (S3 Presigned URL)
-
-Before saving a product, the frontend uploads the image to AWS S3. Here is how to test that API:
-
-### Get Presigned URL
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/upload/presigned-url`
-- **Body (JSON):**
+**Expected Output:**
 ```json
 {
-  "fileName": "cleanser.jpg",
-  "contentType": "image/jpeg",
-  "folder": "products"
+  "id": "e45b98...",
+  "name": "Haircare",
+  "slug": "haircare",
+  "createdAt": "2026-07-08T10:00:00.000Z"
 }
 ```
-*(This will return a `presignedUrl` which you would normally use to PUT the actual file, and a `finalUrl` which is what you save to the database).*
+*(Copy the generated `id` for the category).*
 
----
-
-## 4. Product Creation
-
-Now that we have categories, tags, and image URLs, we can create the actual product.
-
-### Create Product
+### 4. Create a Product (Admin)
 - **Method:** `POST`
 - **URL:** `http://localhost:3000/api/product`
+- **Headers:** `Authorization: Bearer <AdminToken>`
 - **Body (JSON):**
 ```json
 {
-  "name": "Hydrating Cleanser",
-  "slug": "hydrating-cleanser",
-  "description": "A gentle cleanser for all skin types.",
-  "categoryId": "<INSERT_CATEGORY_ID_HERE>",
-  "mrp": 999.00,
-  "discountPrice": 799.00
+  "name": "Nourishing Hair Oil",
+  "slug": "nourishing-hair-oil",
+  "sku": "HAIR-OIL-BASE",
+  "description": "For strong, shiny hair.",
+  "categoryId": "<CATEGORY_ID_FROM_STEP_3>",
+  "mrp": 1499.00,
+  "discountPrice": 1199.00
 }
 ```
-*(Copy the generated product `id`).*
+**Expected Output:**
+```json
+{
+  "id": "p789xyz...",
+  "name": "Nourishing Hair Oil",
+  "slug": "nourishing-hair-oil"
+}
+```
+*(Copy the generated `id` for the product).*
 
-### Add Product Variant
+### 5. Add a Product Variant (Admin)
 - **Method:** `POST`
-- **URL:** `http://localhost:3000/api/product/<INSERT_PRODUCT_ID_HERE>/variant`
+- **URL:** `http://localhost:3000/api/product/<PRODUCT_ID_FROM_STEP_4>/variant`
+- **Headers:** `Authorization: Bearer <AdminToken>`
 - **Body (JSON):**
 ```json
 {
-  "sku": "CLEANSER-50ML",
-  "name": "50ml Travel Size",
-  "netQuantity": "50ml",
-  "mrp": 499.00,
-  "price": 399.00
+  "sku": "HAIR-OIL-100ML",
+  "name": "100ml Bottle",
+  "netQuantity": "100ml",
+  "mrp": 1499.00,
+  "price": 1199.00
 }
 ```
+**Expected Output:**
+```json
+{
+  "id": "v123abc...",
+  "sku": "HAIR-OIL-100ML",
+  "price": 1199
+}
+```
+*(Copy the generated variant `id`).*
 
 ---
 
-## 5. Public Catalog & Search APIs (Phase 2)
+## 🛒 PART 2: Customer Shopping Flow (Phase 2)
 
-These endpoints do not require authentication (`Authorization: Bearer <token>` is not needed) and are used by the customer-facing frontend.
-
-### Step 5A: List All Products
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/products?page=1&limit=10`
-*(Returns paginated live products with basic details).*
-
-### Step 5B: Search Products (Typo-Tolerant)
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/products/search?q=cleanser`
-*(Tests PostgreSQL full-text search across name and description).*
-
-### Step 5C: Get Product by Fruit Ingredient
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/products/fruit/watermelon`
-
-### Step 5D: Get Single Product Details
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/products/<INSERT_PRODUCT_ID_HERE>`
-*(Returns full product data including reviews, questions, variants, ingredients).*
-
-### Step 5E: Filter & Sort Products
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/products?minPrice=500&maxPrice=1500&skinType=Oily&sortBy=price_asc`
-*(Tests the dynamic querying and sorting engine).*
-
-### Step 5F: SEO Data for Product
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/seo/product/hydrating-cleanser`
-*(Returns fast, lightweight SEO tags for Next.js SSG).*
-
-### Step 5G: SEO Data for Fruit Landing Page
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/seo/fruit/watermelon`
-
-### Step 5H: Cart & Address
-1. **Add Item to Cart**: `POST http://localhost:3000/cart/items`
-   - Headers: `Authorization: Bearer <CustomerToken>`
-   - Body: `{"productId": "<id>", "variantId": "<id>", "quantity": 1}`
-2. **View Cart**: `GET http://localhost:3000/cart`
-3. **Save Address**: `POST http://localhost:3000/customer-profile/addresses`
-   - Body: `{"fullName": "John Doe", "addressLine1": "123 Street", "city": "Mumbai", "state": "MH", "pincode": "400001", "phone": "9999999999"}`
-4. **Serviceability Check**: `GET http://localhost:3000/customer-profile/addresses/serviceability?pincode=400001`
-
-### Step 5I: Coupons & Orders
-1. **Apply Coupon**: `POST http://localhost:3000/cart/coupon/apply`
-   - Body: `{"code": "WELCOME10"}`
-2. **Create Order (Draft)**: `POST http://localhost:3000/orders`
-   - Body: `{"addressId": "<saved_address_id>", "paymentMode": "ONLINE"}`
-
-### Step 5J: Razorpay Webhook & Notifications
-1. **Simulate Webhook**: `POST http://localhost:3000/payments/webhook`
-   - Headers: `x-razorpay-signature: mock_signature` (bypasses crypto check for local dev)
-   - Body: `{"event": "payment.captured", "payload": {"payment": {"entity": {"order_id": "<mock_rzp_id_returned_from_createOrder>"}}}}`
-   - Expected: Order status updates to `PLACED`, and an internal notification fires in server logs.
-
-### Step 5K: Invoices
-1. **Generate Invoice PDF**: `GET http://localhost:3000/orders/<order_id>/invoice`
-   - Headers: `Authorization: Bearer <CustomerToken>`
-   - Expected: Returns a JSON with `pdfUrl`. You can then view the PDF physically generated in the `backend/public/invoices/` folder.
-
-### Step 5L: Admin Order Management
-1. **List All Orders (Admin)**: `GET http://localhost:3000/admin/orders?status=PLACED`
-   - Headers: `Authorization: Bearer <AdminToken>`
-2. **Update Order Status (Admin)**: `PUT http://localhost:3000/admin/orders/<order_id>/status`
-   - Headers: `Authorization: Bearer <AdminToken>`
-   - Body: `{"status": "PACKED"}`
-
-### Step 5M: Home Dashboard API
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/home`
-*(Returns banners, categories, trending fruits, and new arrivals in one call).*
-
-### Step 5I: Post a Review (Requires Customer Login)
+### 6. Customer Login (Send OTP)
 - **Method:** `POST`
-- **URL:** `http://localhost:3000/api/products/<INSERT_PRODUCT_ID_HERE>/reviews`
-- **Headers:** `Authorization: Bearer <CUSTOMER_JWT_TOKEN>`
+- **URL:** `http://localhost:3000/api/auth/send-otp`
 - **Body (JSON):**
 ```json
 {
-  "rating": 5,
-  "title": "Amazing product!",
-  "content": "Loved it, my skin feels great."
+  "phone": "+919876543210",
+  "isAdminLogin": false
 }
 ```
+**Expected Output:**
+```json
+{
+  "message": "OTP sent successfully"
+}
+```
+*(Check your terminal. A 4-digit OTP will be logged).*
 
-### Step 5J: Add to Wishlist (Requires Customer Login)
+### 7. Customer Verify OTP & Get Token
 - **Method:** `POST`
-- **URL:** `http://localhost:3000/api/wishlist/<INSERT_PRODUCT_ID_HERE>`
-- **Headers:** `Authorization: Bearer <CUSTOMER_JWT_TOKEN>`
+- **URL:** `http://localhost:3000/api/auth/verify-otp`
+- **Body (JSON):**
+```json
+{
+  "phone": "+919876543210",
+  "otp": "<4_DIGIT_OTP_FROM_TERMINAL>",
+  "isAdminLogin": false
+}
+```
+**Expected Output:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1...",
+  "refresh_token": "abc123..."
+}
+```
+*(Copy the `access_token`. This is your `CustomerToken` for the next steps).*
 
----
+### 8. View Home Dashboard & Search
+*(No Auth Required)*
+- **Home:** `GET http://localhost:3000/api/home`
+- **Search:** `GET http://localhost:3000/api/products/search?q=hair`
 
-## 6. Customer Checkout Flow
-
-Once you have a product, you can test the complete customer checkout journey.
-
-### Step 6A: Add to Cart
+### 9. Add Item to Cart (Customer)
 - **Method:** `POST`
 - **URL:** `http://localhost:3000/api/cart/items`
+- **Headers:** `Authorization: Bearer <CustomerToken>`
 - **Body (JSON):**
 ```json
 {
-  "productId": "<INSERT_PRODUCT_ID_HERE>",
-  "quantity": 1
+  "productId": "<PRODUCT_ID>",
+  "variantId": "<VARIANT_ID>",
+  "quantity": 2
+}
+```
+**Expected Output:**
+```json
+{
+  "id": "c123...",
+  "userId": "u123...",
+  "items": [
+    {
+      "productId": "p789xyz...",
+      "quantity": 2
+    }
+  ]
 }
 ```
 
-### Step 5B: Get Cart Totals
+### 10. View Cart Totals (Customer)
 - **Method:** `GET`
 - **URL:** `http://localhost:3000/api/cart`
-*(This will return the cart items along with dynamic `totalMrp`, `totalDiscountPrice`, and `totalSavings`).*
+- **Headers:** `Authorization: Bearer <CustomerToken>`
+**Expected Output:**
+```json
+{
+  "items": [...],
+  "totalMrp": 2998,
+  "totalDiscountPrice": 2398,
+  "totalSavings": 600
+}
+```
 
-### Step 5C: Add Delivery Address
+### 11. Add Delivery Address (Customer)
 - **Method:** `POST`
 - **URL:** `http://localhost:3000/api/customer/addresses`
+- **Headers:** `Authorization: Bearer <CustomerToken>`
 - **Body (JSON):**
 ```json
 {
   "fullName": "Jane Doe",
   "phone": "+919876543210",
-  "addressLine1": "123 Beauty Lane",
+  "addressLine1": "123 Coskinn Avenue",
   "city": "Mumbai",
   "state": "Maharashtra",
-  "pincode": "400001"
+  "pincode": "400001",
+  "isDefault": true
 }
 ```
-*(Copy the generated address `id` from the response).*
-
-### Step 5D: Checkout (Create Order)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/orders`
-- **Body (JSON):**
+**Expected Output:**
 ```json
 {
-  "addressId": "<INSERT_ADDRESS_ID_HERE>",
-  "paymentMode": "ONLINE"
+  "id": "addr999...",
+  "fullName": "Jane Doe",
+  "city": "Mumbai"
 }
 ```
-*(This automatically clears your cart and creates an Order in DRAFT status. Copy the generated order `id`).*
-
-### Step 5E: Razorpay Create Order
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/payments/create-order`
-- **Body (JSON):**
-```json
-{
-  "orderId": "<INSERT_ORDER_ID_HERE>"
-}
-```
-*(This simulates generating a Razorpay Order ID for the frontend to open the payment modal).*
+*(Copy the generated address `id`).*
 
 ---
 
-# AWS Deployment Guide
+## 💳 PART 3: Checkout, Payment & Fulfillment (Phase 2)
 
-If you are running the COSKINn backend on an AWS EC2 instance, follow these commands to get it up and running in production.
-
-### 1. Prerequisites
-Ensure your AWS EC2 instance has Node.js (v18+) and PM2 installed.
-```bash
-# Update server
-sudo apt update && sudo apt upgrade -y
-
-# Install Node.js
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Install PM2 globally (Process Manager to keep the app running)
-sudo npm install -g pm2
+### 12. Create Order / Checkout (Customer)
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/orders`
+- **Headers:** `Authorization: Bearer <CustomerToken>`
+- **Body (JSON):**
+```json
+{
+  "addressId": "<ADDRESS_ID_FROM_STEP_11>",
+  "paymentMode": "ONLINE"
+}
 ```
-
-### 2. Setup the Project
-SSH into your AWS instance and clone your repository.
-```bash
-git clone <your-repo-url>
-cd COSKINn/backend
-
-# Install dependencies
-npm install
+**Expected Output:**
+```json
+{
+  "id": "ord123...",
+  "status": "DRAFT",
+  "totalAmount": 2398,
+  "razorpayOrderId": "order_xyz123"
+}
 ```
+*(This clears your cart and creates an Order in `DRAFT` status. Copy the generated order `id`).*
 
-### 3. Environment Variables
-Create your `.env` file on the server.
-```bash
-nano .env
+### 13. Simulate Payment Success (Webhook bypass)
+*(This simulates Razorpay telling our server the payment was successful).*
+- **Method:** `POST`
+- **URL:** `http://localhost:3000/api/payments/webhook`
+- **Headers:** `x-razorpay-signature: mock_signature`
+- **Body (JSON):**
+```json
+{
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "order_id": "<RAZORPAY_ORDER_ID_FROM_STEP_12>",
+        "status": "captured"
+      }
+    }
+  }
+}
 ```
-Ensure you have the production database URL and AWS S3 credentials:
-```env
-DATABASE_URL="postgresql://user:password@your-rds-endpoint.amazonaws.com:5432/coskinn?schema=public"
-JWT_SECRET="your_secure_production_secret"
-AWS_REGION="ap-south-1"
-AWS_ACCESS_KEY_ID="your_access_key"
-AWS_SECRET_ACCESS_KEY="your_secret_key"
-AWS_S3_BUCKET="coskinn-media-storage"
+**Expected Output:**
+```json
+{
+  "received": true
+}
 ```
+*(If successful, you will see a notification trigger in the backend terminal, and the order status becomes `PLACED`).*
 
-### 4. Build and Run
-First, generate the Prisma client and push the schema to your production database, then build the NestJS app.
-```bash
-# Generate Prisma Client
-npx prisma generate
-
-# Push schema to production DB (or run migrations: npx prisma migrate deploy)
-npx prisma db push
-
-# Build the NestJS application
-npm run build
-
-# Start the application using PM2
-pm2 start dist/main.js --name "coskinn-backend"
-
-# Save the PM2 list so it restarts automatically on server reboot
-pm2 save
-pm2 startup
+### 14. Download PDF Invoice (Customer)
+- **Method:** `GET`
+- **URL:** `http://localhost:3000/api/orders/<ORDER_ID_FROM_STEP_12>/invoice`
+- **Headers:** `Authorization: Bearer <CustomerToken>`
+**Expected Output:**
+```json
+{
+  "pdfUrl": "/invoices/INV-ord123.pdf"
+}
 ```
+*(You can physically check the `backend/public/invoices/` folder for the newly generated PDF).*
 
-### 5. Viewing Logs
-To see real-time logs (e.g., to find the OTP if you are testing on the live server):
-```bash
-pm2 logs coskinn-backend
-```
+### 15. Manage Orders (Admin)
+*(Switch back to your `AdminToken` from Step 2).*
+- **List Placed Orders:** 
+  `GET http://localhost:3000/api/admin/orders?status=PLACED`
+  *(Headers: `Authorization: Bearer <AdminToken>`)*
+
+- **Mark Order as Shipped:**
+  - **Method:** `PUT`
+  - **URL:** `http://localhost:3000/api/admin/orders/<ORDER_ID_FROM_STEP_12>/status`
+  - **Headers:** `Authorization: Bearer <AdminToken>`
+  - **Body (JSON):**
+    ```json
+    {
+      "status": "SHIPPED"
+    }
+    ```
+  **Expected Output:**
+  ```json
+  {
+    "id": "ord123...",
+    "status": "SHIPPED",
+    "shippedAt": "2026-07-08T11:00:00.000Z"
+  }
+  ```
+*(You have now fully processed a customer's order from start to finish!)*
+---
+
+# Phase 4: Promotional & Monetary Ecosystem
+
+### 16. Get Wallet Balance
+Check your current wallet balance (this might include a Sign-Up Bonus if you created a new account after Phase 4!).
+- **Method:** GET
+- **URL:** http://localhost:3000/api/wallet
+- **Headers:** Authorization: Bearer <CustomerToken>
+
+**Expected Output:**
+`json
+{
+  "id": "...",
+  "userId": "...",
+  "balance": 100,
+  "transactions": [
+    {
+      "type": "CREDIT",
+      "amount": 100,
+      "reference": "Sign-up Bonus"
+    }
+  ]
+}
+`
+
+### 17. Generate Referral Code
+Generate a unique referral code to share with friends.
+- **Method:** POST
+- **URL:** http://localhost:3000/api/referral/generate
+- **Headers:** Authorization: Bearer <CustomerToken>
+
+**Expected Output:**
+`json
+{
+  "referralCode": "X1Y2Z3",
+  "referrerId": "..."
+}
+`
+
+### 18. Get Cart with Offers and Balances
+The Cart now automatically evaluates Best-Offers and returns your wallet and reward points balances.
+- **Method:** GET
+- **URL:** http://localhost:3000/api/cart
+- **Headers:** Authorization: Bearer <CustomerToken>
+
+**Expected Output:**
+`json
+{
+  "summary": {
+    "totalMrp": 5000,
+    "totalDiscountPrice": 4500,
+    "offerDiscount": 0,
+    "finalTotal": 4500,
+    "walletBalance": 100,
+    "rewardPointsBalance": 0
+  }
+}
+`
+
+### 19. Place Order using Reward Points
+You can now redeem reward points during checkout. (1 Point = ?1 Discount).
+- **Method:** POST
+- **URL:** http://localhost:3000/api/orders
+- **Headers:** Authorization: Bearer <CustomerToken>
+- **Body (JSON):**
+  `json
+  {
+    "addressId": "<ADDRESS_ID_FROM_STEP_7>",
+    "paymentMode": "ONLINE",
+    "pointsToRedeem": 50
+  }
+  `
+*(Note: Attempting to redeem more points than you own will throw an Insufficient Balance error).*
+

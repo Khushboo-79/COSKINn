@@ -6,13 +6,16 @@ import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { LoginDto } from './dto/login.dto';
 
+import { BonusService } from '../bonus/bonus.service';
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private bonusService: BonusService
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -177,6 +180,9 @@ export class AuthService {
         expiresAt: refreshExpiresAt,
       }
     });
+
+    // Trigger signup bonus check (only runs once if rule exists)
+    await this.bonusService.awardSignupBonus(user.id);
 
     return {
       access_token: this.jwtService.sign(payload),
