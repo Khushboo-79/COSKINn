@@ -116,4 +116,50 @@ export class OrderService {
       return order;
     });
   }
+
+  // --- ADMIN METHODS ---
+
+  async getAdminOrders(filters: { status?: string, paymentMode?: string, email?: string, mobile?: string }) {
+    const where: any = {};
+    
+    if (filters.status) where.status = filters.status;
+    if (filters.paymentMode) where.paymentMode = filters.paymentMode;
+    if (filters.email || filters.mobile) {
+      where.user = {};
+      if (filters.email) where.user.email = { contains: filters.email, mode: 'insensitive' };
+      if (filters.mobile) where.user.phone = { contains: filters.mobile };
+    }
+
+    return this.prisma.order.findMany({
+      where,
+      include: {
+        address: true,
+        user: { select: { id: true, email: true, phone: true } },
+        items: { include: { variant: { include: { product: true } } } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async updateOrderStatus(orderId: string, status: string, adminId: string, notes?: string) {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundException('Order not found');
+
+    return this.prisma.$transaction(async (tx) => {
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status }
+      });
+
+      await tx.orderStatusHistory.create({
+        data: {
+          orderId,
+          status,
+          notes: notes || `Status updated by Admin ${adminId}`
+        }
+      });
+
+      return updatedOrder;
+    });
+  }
 }

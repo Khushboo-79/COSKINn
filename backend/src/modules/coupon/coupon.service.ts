@@ -1,9 +1,9 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class CouponService {
-  private prisma = new PrismaClient({ log: ['error'] });
+  constructor(private prisma: PrismaService) {}
 
   async applyCoupon(userId: string, code: string) {
     const coupon = await this.prisma.coupon.findUnique({ where: { code } });

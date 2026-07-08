@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class SeoService {
-  private prisma = new PrismaClient({ log: ['error'] });
+  constructor(private prisma: PrismaService) {}
 
   async getProductSeo(slug: string) {
     const product = await this.prisma.product.findUnique({

@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class HomeService {
-  private prisma = new PrismaClient({ log: ['error'] });
+  constructor(private prisma: PrismaService) {}
 
   async getHomeDashboard() {
     // Parallelize the queries for maximum performance

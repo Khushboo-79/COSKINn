@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, BadRequestException, Headers } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -17,8 +17,7 @@ export class PaymentController {
   }
 
   @Post('webhook')
-  async razorpayWebhook(@Body() payload: any) {
-    // In production, you would verify the x-razorpay-signature header here
-    return this.paymentService.handleWebhook(payload);
+  async razorpayWebhook(@Body() payload: any, @Headers('x-razorpay-signature') signature: string) {
+    return this.paymentService.handleWebhook(payload, signature);
   }
 }
