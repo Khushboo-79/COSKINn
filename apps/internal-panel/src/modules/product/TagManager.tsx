@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
 import { Tags, ArrowLeft, X } from 'lucide-react';
@@ -31,16 +31,18 @@ function TagInput({ label, tags, onChange, placeholder }: TagInputProps) {
   };
 
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium text-slate-700">{label}</label>
-      <div className="flex flex-wrap items-center gap-2 p-2 min-h-[46px] bg-slate-50 border border-slate-200 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
+    <div className="space-y-2 w-full">
+      <label className="text-sm font-medium text-slate-700">
+        {label} <span className="text-xs text-slate-400 font-normal ml-2">(Press Enter to add)</span>
+      </label>
+      <div className="flex flex-wrap gap-2 p-2 min-h-[42px] bg-white border border-slate-200 rounded-lg focus-within:ring-2 focus-within:ring-rose-500/20 focus-within:border-rose-500 transition-shadow">
         {tags.map((tag, index) => (
-          <span key={index} className="flex items-center gap-1.5 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
+          <span key={index} className="flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">
             {tag}
             <button
               type="button"
               onClick={() => removeTag(index)}
-              className="text-indigo-400 hover:text-indigo-600 focus:outline-none"
+              className="text-rose-400 hover:text-rose-600 focus:outline-none"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -66,7 +68,7 @@ export default function TagManager({ productId, onClose }: { productId: string, 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', productId],
     queryFn: async () => {
-      const { data } = await api.get(`http://localhost:3000/api/product/${productId}`);
+      const { data } = await api.get(`/product/${productId}`);
       return data;
     },
   });
@@ -76,24 +78,26 @@ export default function TagManager({ productId, onClose }: { productId: string, 
   const [skinTypes, setSkinTypes] = useState<string[]>([]);
   const [benefits, setBenefits] = useState<string[]>([]);
 
-  // Initialize state when product data is loaded
-  useState(() => {
+  useEffect(() => {
     if (product) {
       setIngredients(product.ingredients?.map((i: any) => i.name) || []);
       setConcerns(product.concerns?.map((c: any) => c.name) || []);
       setSkinTypes(product.skinTypes?.map((s: any) => s.name) || []);
       setBenefits(product.benefits?.map((b: any) => b.name) || []);
     }
-  });
+  }, [product]);
 
 
   const updateMutation = useMutation({
-    mutationFn: (tagsData: any) => api.patch(`http://localhost:3000/api/product/${productId}/tags`, tagsData),
+    mutationFn: (tagsData: any) => api.patch(`/product/${productId}/tags`, tagsData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      onClose(); // Optional: close after saving, or keep open with a toast
+      onClose();
     },
+    onError: (error: any) => {
+      alert(error.response?.data?.message || 'Failed to update tags. Make sure you have entered valid values.');
+    }
   });
 
   const handleSave = () => {
@@ -109,14 +113,6 @@ export default function TagManager({ productId, onClose }: { productId: string, 
     return <div className="p-8 text-center text-slate-400">Loading tag data...</div>;
   }
 
-  // Effect to sync remote data initially
-  if (product && ingredients.length === 0 && product.ingredients?.length > 0 && !updateMutation.isPending) {
-    setIngredients(product.ingredients.map((i: any) => i.name));
-    setConcerns(product.concerns?.map((c: any) => c.name) || []);
-    setSkinTypes(product.skinTypes?.map((s: any) => s.name) || []);
-    setBenefits(product.benefits?.map((b: any) => b.name) || []);
-  }
-
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
       <div className="flex items-center gap-4">
@@ -125,7 +121,7 @@ export default function TagManager({ productId, onClose }: { productId: string, 
         </button>
         <div>
           <h2 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
-            <Tags className="w-6 h-6 text-fuchsia-500" />
+            <Tags className="w-6 h-6 text-rose-500" />
             Manage Tags
           </h2>
           <p className="text-slate-500 text-sm">{product?.name}</p>
@@ -165,7 +161,7 @@ export default function TagManager({ productId, onClose }: { productId: string, 
           <button 
             onClick={handleSave} 
             disabled={updateMutation.isPending} 
-            className="px-6 py-2.5 bg-fuchsia-500 text-white rounded-lg hover:bg-fuchsia-600 transition-colors font-medium disabled:opacity-50"
+            className="px-6 py-2.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium disabled:opacity-50"
           >
             {updateMutation.isPending ? 'Saving Tags...' : 'Save Tags'}
           </button>
