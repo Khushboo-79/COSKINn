@@ -23,6 +23,7 @@ type Category = {
 export const CategoryManager = () => {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [addingSubcategoryTo, setAddingSubcategoryTo] = useState<string | null>(null);
   const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
 
   const { data: categories, isLoading } = useQuery<Category[]>({
@@ -39,11 +40,32 @@ export const CategoryManager = () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       setIsModalOpen(false);
     },
+    onError: (error: any) => {
+      alert(error.response?.data?.message || 'Failed to create category');
+    }
+  });
+
+  const createSubcategory = useMutation({
+    mutationFn: (newSubcat: Partial<Subcategory> & { categoryId: string }) => api.post(`${API_URL}/subcategories`, newSubcat),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      setAddingSubcategoryTo(null);
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.message || 'Failed to create subcategory');
+    }
   });
 
   const deleteCategory = useMutation({
     mutationFn: (id: string) => api.delete(`${API_URL}/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+    onError: (error: any) => alert(error.response?.data?.message || 'Failed to delete category')
+  });
+
+  const deleteSubcategory = useMutation({
+    mutationFn: (id: string) => api.delete(`${API_URL}/subcategories/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+    onError: (error: any) => alert(error.response?.data?.message || 'Failed to delete subcategory')
   });
 
   const toggleExpand = (id: string) => {
@@ -123,14 +145,22 @@ export const CategoryManager = () => {
                           </div>
                           <div className="flex gap-2">
                              <button className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"><Edit2 size={14} /></button>
-                             <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"><Trash2 size={14} /></button>
+                             <button 
+                                 onClick={(e) => { e.stopPropagation(); deleteSubcategory.mutate(sub.id); }} 
+                                 className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                               >
+                                 <Trash2 size={14} />
+                               </button>
                           </div>
                         </div>
                       ))
                     ) : (
                       <div className="text-sm text-gray-500 py-2 italic pl-6">No subcategories yet.</div>
                     )}
-                    <button className="mt-2 ml-6 text-sm font-semibold text-rose-500 hover:text-rose-600 flex items-center gap-1 py-1 px-2 rounded-md hover:bg-rose-100/50 transition-colors">
+                    <button 
+                      onClick={() => setAddingSubcategoryTo(cat.id)}
+                      className="mt-2 ml-6 text-sm font-semibold text-rose-500 hover:text-rose-600 flex items-center gap-1 py-1 px-2 rounded-md hover:bg-rose-100/50 transition-colors"
+                    >
                       <Plus size={14} /> Add Subcategory
                     </button>
                   </div>
@@ -207,6 +237,63 @@ export const CategoryManager = () => {
                   className="flex-1 px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium shadow-md shadow-rose-200 transition-colors disabled:opacity-50"
                 >
                   {createCategory.isPending ? 'Saving...' : 'Save Category'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Subcategory Modal */}
+      {addingSubcategoryTo && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center animate-in fade-in duration-200 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="px-6 py-4 border-b border-rose-100 flex justify-between items-center bg-rose-50/50">
+              <h2 className="text-xl font-bold text-gray-800">Add Subcategory</h2>
+              <button onClick={() => setAddingSubcategoryTo(null)} className="text-gray-400 hover:text-gray-600 bg-white hover:bg-gray-100 p-2 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const name = formData.get('name') as string;
+                const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                
+                createSubcategory.mutate({
+                  name,
+                  slug,
+                  categoryId: addingSubcategoryTo,
+                  isActive: true,
+                });
+              }}
+              className="p-6 space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Subcategory Name *</label>
+                <input 
+                  name="name"
+                  required
+                  autoFocus
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-400/20 transition-all outline-none bg-gray-50/50 focus:bg-white"
+                  placeholder="e.g. Cleansers"
+                />
+              </div>
+              <div className="pt-4 flex gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setAddingSubcategoryTo(null)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={createSubcategory.isPending}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-medium shadow-md shadow-rose-200 transition-colors disabled:opacity-50"
+                >
+                  {createSubcategory.isPending ? 'Saving...' : 'Save Subcategory'}
                 </button>
               </div>
             </form>

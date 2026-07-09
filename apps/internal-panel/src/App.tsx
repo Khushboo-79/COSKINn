@@ -86,8 +86,8 @@ const AppContent = () => {
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
                   isActive 
-                    ? 'bg-rose-500 text-white shadow-md shadow-rose-200' 
-                    : 'text-gray-600 hover:bg-rose-50 hover:text-rose-600'
+                    ? 'bg-brand-gradient text-white shadow-md shadow-brand/30' 
+                    : 'text-gray-600 hover:bg-brand/10 hover:text-brand'
                 }`}
               >
                 <Icon size={20} className={isActive ? 'opacity-100' : 'opacity-70'} />
@@ -101,7 +101,7 @@ const AppContent = () => {
           <div className="px-4 mb-2">
             <p className="text-xs text-gray-400 font-medium">LOGGED IN AS</p>
             <p className="text-sm font-semibold text-gray-800 truncate">{user?.email}</p>
-            <p className="text-xs text-rose-500 font-semibold mt-0.5">{role.replace('_', ' ')}</p>
+            <p className="text-xs text-brand font-semibold mt-0.5">{role.replace('_', ' ')}</p>
           </div>
           <button 
             onClick={logout}

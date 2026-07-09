@@ -26,7 +26,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', productId],
     queryFn: async () => {
-      const { data } = await api.get(`http://localhost:3000/api/product/${productId}`);
+      const { data } = await api.get(`/product/${productId}`);
       return data;
     },
   });
@@ -36,17 +36,23 @@ export default function VariantManager({ productId, onClose }: { productId: stri
   });
 
   const createMutation = useMutation({
-    mutationFn: (newVariant: VariantFormValues) => api.post(`http://localhost:3000/api/product/${productId}/variant`, newVariant),
+    mutationFn: (newVariant: VariantFormValues) => api.post(`/product/${productId}/variant`, newVariant),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['product', productId] });
       setIsCreating(false);
       reset();
     },
+    onError: (error: any) => {
+      alert(error.response?.data?.message || 'Failed to create variant');
+    }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (variantId: string) => api.delete(`http://localhost:3000/api/product/${productId}/variant/${variantId}`),
+    mutationFn: (variantId: string) => api.delete(`/product/${productId}/variant/${variantId}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['product', productId] }),
+    onError: (error: any) => {
+      alert(error.response?.data?.message || 'Failed to delete variant');
+    }
   });
 
   const onSubmit = (data: VariantFormValues) => {
@@ -64,7 +70,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
         </button>
         <div>
           <h2 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
-            <Layers className="w-6 h-6 text-indigo-500" />
+            <Layers className="w-6 h-6 text-rose-500" />
             Manage Variants
           </h2>
           <p className="text-slate-500 text-sm">{product?.name}</p>
@@ -72,7 +78,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
         <div className="flex-1" />
         <button
           onClick={() => setIsCreating(true)}
-          className="flex items-center gap-2 bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors shadow-sm"
+          className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
           Add Variant
@@ -80,7 +86,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
       </div>
 
       {isCreating && (
-        <div className="bg-white rounded-xl shadow-sm border border-indigo-100 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-rose-100 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-medium text-slate-800">New Variant</h3>
             <button onClick={() => {setIsCreating(false); reset();}} className="text-slate-400 hover:text-slate-600 transition-colors">
@@ -92,22 +98,22 @@ export default function VariantManager({ productId, onClose }: { productId: stri
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="space-y-1.5 md:col-span-2">
                 <label className="text-sm font-medium text-slate-700">Variant Name</label>
-                <input {...register('name')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="e.g. 50ml, Ruby Red" />
+                <input {...register('name')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" placeholder="e.g. 50ml, Ruby Red" />
                 {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
               </div>
               <div className="space-y-1.5 md:col-span-2">
                 <label className="text-sm font-medium text-slate-700">SKU</label>
-                <input {...register('sku')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="e.g. SKU-123" />
+                <input {...register('sku')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" placeholder="e.g. SKU-123" />
                 {errors.sku && <p className="text-red-500 text-xs">{errors.sku.message}</p>}
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-slate-700">MRP (₹)</label>
-                <input type="number" {...register('mrp')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                <input type="number" {...register('mrp')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
                 {errors.mrp && <p className="text-red-500 text-xs">{errors.mrp.message}</p>}
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-slate-700">Selling Price (₹)</label>
-                <input type="number" {...register('price')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                <input type="number" {...register('price')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
                 {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
               </div>
 
@@ -120,7 +126,7 @@ export default function VariantManager({ productId, onClose }: { productId: stri
                   </label>
                   <div className="flex gap-2">
                     <input type="color" {...register('shadeCode')} className="w-10 h-10 rounded cursor-pointer border-0 p-0" />
-                    <input type="text" {...register('shadeCode')} className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 uppercase" placeholder="#FFFFFF" />
+                    <input type="text" {...register('shadeCode')} className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 uppercase" placeholder="#FFFFFF" />
                   </div>
                 </div>
               )}
@@ -129,18 +135,18 @@ export default function VariantManager({ productId, onClose }: { productId: stri
                 <>
                   <div className="space-y-1.5 md:col-span-2">
                     <label className="text-sm font-medium text-slate-700">Fragrance</label>
-                    <input {...register('fragrance')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="e.g. Lavender" />
+                    <input {...register('fragrance')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" placeholder="e.g. Lavender" />
                   </div>
                   <div className="space-y-1.5 md:col-span-2">
                     <label className="text-sm font-medium text-slate-700">Flavor (Lip Products)</label>
-                    <input {...register('flavor')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="e.g. Strawberry" />
+                    <input {...register('flavor')} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" placeholder="e.g. Strawberry" />
                   </div>
                 </>
               )}
             </div>
             
             <div className="flex justify-end pt-2">
-              <button type="submit" disabled={createMutation.isPending} className="px-5 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors font-medium disabled:opacity-50">
+              <button type="submit" disabled={createMutation.isPending} className="px-5 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium disabled:opacity-50">
                 {createMutation.isPending ? 'Saving...' : 'Save Variant'}
               </button>
             </div>

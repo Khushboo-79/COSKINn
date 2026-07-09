@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
@@ -15,7 +15,7 @@ export default function ComplianceManager({
 }) {
   const [activeTab, setActiveTab] = useState<'compliance' | 'stock'>('compliance');
 
-  const { register: registerCompliance, handleSubmit: handleSubmitCompliance } = useForm({
+  const { register: registerCompliance, handleSubmit: handleSubmitCompliance, reset: resetCompliance } = useForm({
     defaultValues: {
       gstRate: product.gstRate || 18,
       hsnCode: product.hsnCode || '',
@@ -25,6 +25,17 @@ export default function ComplianceManager({
       testReportRef: product.testReportRef || '',
     }
   });
+
+  useEffect(() => {
+    resetCompliance({
+      gstRate: product.gstRate || 18,
+      hsnCode: product.hsnCode || '',
+      manufacturerName: product.manufacturerName || '',
+      manufacturerAddress: product.manufacturerAddress || '',
+      countryOfOrigin: product.countryOfOrigin || 'India',
+      testReportRef: product.testReportRef || '',
+    });
+  }, [product, resetCompliance]);
 
   const complianceMutation = useMutation({
     mutationFn: (data: any) => api.patch(`/product/${product.id}/compliance`, {
@@ -74,7 +85,7 @@ export default function ComplianceManager({
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto flex flex-col">
         <div className="sticky top-0 bg-white border-b border-slate-100 p-6 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+            <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
               <Shield className="w-5 h-5" />
             </div>
             <div>
@@ -90,13 +101,13 @@ export default function ComplianceManager({
         <div className="flex border-b border-slate-100 px-6 pt-2">
           <button
             onClick={() => setActiveTab('compliance')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'compliance' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'compliance' ? 'border-amber-600 text-amber-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
           >
             Compliance & Commerce
           </button>
           <button
             onClick={() => setActiveTab('stock')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'stock' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'stock' ? 'border-amber-600 text-amber-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
           >
             Opening Stock Entry
           </button>
@@ -108,37 +119,37 @@ export default function ComplianceManager({
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-700">GST Rate (%)</label>
-                  <input type="number" {...registerCompliance('gstRate')} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                  <input type="number" {...registerCompliance('gstRate', { valueAsNumber: true })} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-700">HSN Code</label>
-                  <input type="text" {...registerCompliance('hsnCode')} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                  <input type="text" {...registerCompliance('hsnCode')} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" />
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-slate-700">Manufacturer Name</label>
-                <input type="text" {...registerCompliance('manufacturerName')} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                <input type="text" {...registerCompliance('manufacturerName')} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-slate-700">Manufacturer Address</label>
-                <textarea {...registerCompliance('manufacturerAddress')} rows={3} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                <textarea {...registerCompliance('manufacturerAddress')} rows={3} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" />
               </div>
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-700">Country of Origin</label>
-                  <input type="text" {...registerCompliance('countryOfOrigin')} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                  <input type="text" {...registerCompliance('countryOfOrigin')} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-slate-700">Test Report Reference</label>
-                  <input type="text" {...registerCompliance('testReportRef')} placeholder="e.g. TR-2023-XYZ" className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" />
+                  <input type="text" {...registerCompliance('testReportRef')} placeholder="e.g. TR-2023-XYZ" className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" />
                 </div>
               </div>
 
               <div className="pt-4 flex justify-end">
-                <button type="submit" disabled={complianceMutation.isPending} className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                <button type="submit" disabled={complianceMutation.isPending} className="flex items-center gap-2 bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition-colors">
                   <Save className="w-4 h-4" />
                   {complianceMutation.isPending ? 'Saving...' : 'Save Compliance Details'}
                 </button>
@@ -148,7 +159,7 @@ export default function ComplianceManager({
 
           {activeTab === 'stock' && (
             <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3 text-blue-800">
+              <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex gap-3 text-amber-800">
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                 <div className="text-sm">
                   <p className="font-semibold mb-1">Opening Stock Initialization</p>
@@ -163,7 +174,7 @@ export default function ComplianceManager({
                     <select 
                       value={selectedVariant} 
                       onChange={(e) => setSelectedVariant(e.target.value)}
-                      className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                      className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                     >
                       <option value="">-- Choose Variant --</option>
                       {product.variants?.map((v: any) => (
@@ -179,7 +190,7 @@ export default function ComplianceManager({
                       value={stockForm.netQuantity}
                       onChange={e => setStockForm({...stockForm, netQuantity: e.target.value})}
                       placeholder="Updates variant net quantity"
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" 
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" 
                     />
                   </div>
                 </div>
@@ -192,7 +203,7 @@ export default function ComplianceManager({
                       required
                       value={stockForm.batchNumber}
                       onChange={e => setStockForm({...stockForm, batchNumber: e.target.value})}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" 
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" 
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -203,7 +214,7 @@ export default function ComplianceManager({
                       min="0"
                       value={stockForm.quantity}
                       onChange={e => setStockForm({...stockForm, quantity: Number(e.target.value)})}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" 
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" 
                     />
                   </div>
                 </div>
@@ -215,7 +226,7 @@ export default function ComplianceManager({
                       type="date" 
                       value={stockForm.manufacturingDate}
                       onChange={e => setStockForm({...stockForm, manufacturingDate: e.target.value})}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" 
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" 
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -224,13 +235,13 @@ export default function ComplianceManager({
                       type="date" 
                       value={stockForm.expiryDate}
                       onChange={e => setStockForm({...stockForm, expiryDate: e.target.value})}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" 
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" 
                     />
                   </div>
                 </div>
 
                 <div className="pt-2 flex justify-end">
-                  <button type="submit" disabled={stockMutation.isPending} className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                  <button type="submit" disabled={stockMutation.isPending} className="flex items-center gap-2 bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition-colors">
                     <Plus className="w-4 h-4" />
                     {stockMutation.isPending ? 'Initializing...' : 'Initialize Stock Intake'}
                   </button>
