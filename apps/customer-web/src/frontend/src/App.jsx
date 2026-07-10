@@ -25,6 +25,8 @@ const ProductDetailsPage = React.lazy(() => import('./pages/ProductDetailsPage')
 const OrderTrackingPage = React.lazy(() => import('./pages/OrderTrackingPage'));
 const CleanserPage = React.lazy(() => import('./pages/CleanserPage'));
 const CleansingBalmPage = React.lazy(() => import('./pages/CleansingBalmPage'));
+const SunscreenPage = React.lazy(() => import('./pages/SunscreenPage'));
+const FaceMistPage = React.lazy(() => import('./pages/FaceMistPage'));
 
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
@@ -61,6 +63,8 @@ const MainLayout = () => {
             <Route path="/order/:orderId" element={<OrderTrackingPage />} />
             <Route path="/skincare/cleansers" element={<CleanserPage />} />
             <Route path="/skincare/cleansing-balms" element={<CleansingBalmPage />} />
+            <Route path="/skincare/sunscreens" element={<SunscreenPage />} />
+            <Route path="/skincare/face-mist" element={<FaceMistPage />} />
           </Routes>
         </Suspense>
       </div>

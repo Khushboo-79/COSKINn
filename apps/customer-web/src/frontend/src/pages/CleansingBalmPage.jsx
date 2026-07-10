@@ -8,6 +8,8 @@ import { useWishlist } from '../context/WishlistContext';
 import Footer from '../components/common/Footer';
 
 // Image imports matching available assets
+import premiumHeroModel from '../assets/images/premium_hero_model.webp';
+import premiumBalmJar from '../assets/images/premium_balm_jar.webp';
 import cleanserHeroImg from '../assets/images/cleanser_hero_lifestyle.webp';
 import cleansingBalmLifestyle from '../assets/images/cleansing_balm_lifestyle.webp';
 import cleansingBalmImg from '../assets/images/cleansing_balm.webp';
@@ -159,96 +161,181 @@ export default function CleansingBalmPage() {
         </div>
       </div>
 
-      {/* SECTION 1 — PREMIUM HERO */}
-      <section className="relative w-full py-16 md:py-24 bg-gradient-to-br from-pink-50/40 via-white to-pink-50/20 overflow-hidden border-b border-black/5">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+      {/* SECTION 1 — PREMIUM LUXURY HERO */}
+      <section className="relative w-full min-h-[90vh] flex items-center bg-[#FAFAFA] overflow-hidden pt-10 pb-20">
+        
+        {/* Abstract Luxury Background Elements */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          {/* Soft pink radial glow */}
+          <div className="absolute top-[-10%] right-[-5%] w-[60%] h-[70%] rounded-full bg-gradient-to-bl from-[#FF0069]/10 to-transparent blur-[120px]" />
           
-          {/* Left Side Content */}
+          {/* Peach highlight glow */}
+          <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[60%] rounded-full bg-gradient-to-tr from-[#FFD498]/20 to-transparent blur-[100px]" />
+          
+          {/* Glassmorphism abstract shape */}
           <motion.div 
-            initial={{ opacity: 0, x: -30 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ duration: 0.8 }}
-            className="flex flex-col items-start text-left"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 150, repeat: Infinity, ease: "linear" }}
+            className="absolute top-[20%] left-[40%] w-[40vw] h-[40vw] max-w-[600px] max-h-[600px] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border border-white/40 bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-3xl opacity-50"
+          />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10 h-full w-full">
+          
+          {/* LEFT SIDE CONTENT */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-start text-left pt-12 lg:pt-0"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#FF0069]/20 bg-pink-50/60 text-[#FF0069] text-xs font-bold tracking-widest uppercase mb-6 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5" /> Best Seller
-            </div>
+            {/* Badge */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/5 bg-white/80 backdrop-blur-sm shadow-[0_4px_20px_rgba(0,0,0,0.03)] text-xs font-bold tracking-[0.2em] uppercase mb-8"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#FF0069] shadow-[0_0_8px_rgba(255,0,105,0.6)] animate-pulse"></span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-black/70">New COSKINn Collection</span>
+            </motion.div>
             
-            <h1 className="text-4xl sm:text-6xl font-heading font-black text-black leading-tight tracking-tight mb-4">
-              COSKINn <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF0069] to-[#FF90B6]">Cleansing Balm</span>
+            {/* Heading */}
+            <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-heading font-black text-black leading-[1.05] tracking-tight mb-6">
+              COSKINn<br/>
+              <span className="font-light italic tracking-normal text-black/80 font-serif">Cleansing Balm</span>
             </h1>
             
-            <p className="text-lg text-black/70 mb-6 max-w-lg leading-relaxed font-medium">
-              Transform your double-cleanse routine. Melt away stubborn waterproof makeup, sunscreens, and pollution particles with a buttery solid balm that emulsifies into skin-softening milk.
+            {/* Tagline */}
+            <h2 className="text-xl sm:text-2xl font-body font-medium text-[#FF0069] leading-relaxed mb-6">
+              Melt Away Makeup.<br/>
+              Reveal Naturally Radiant Skin.
+            </h2>
+            
+            {/* Description */}
+            <p className="text-base sm:text-lg text-black/60 mb-8 max-w-[420px] leading-relaxed font-normal">
+              A transformative buttery formula that effortlessly dissolves impurities, SPF, and stubborn waterproof makeup while cocooning your skin in deep, barrier-restoring hydration.
             </p>
 
-            <div className="flex items-center gap-4 mb-8">
-              <div className="flex items-center text-yellow-400">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
+            {/* Rating */}
+            <div className="flex items-center gap-3 mb-8 bg-white/60 backdrop-blur-md py-2 px-4 rounded-full border border-white/80 shadow-sm">
+              <div className="flex items-center text-[#FFD498]">
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current drop-shadow-sm" />)}
               </div>
-              <span className="text-sm font-bold text-black/70">4.9 ★ <span className="text-black/40 font-medium">| 1,024+ Verified Reviews</span></span>
+              <span className="text-sm font-bold text-black/80">4.9 <span className="text-black/40 font-normal">| 8,500+ Reviews</span></span>
             </div>
 
-            <div className="text-3xl font-heading font-black text-black mb-8">
-              <span className="text-sm text-black/40 font-body font-medium block">Starting from</span>
-              ₹299
+            {/* Price */}
+            <div className="text-3xl font-heading font-black text-black mb-10 flex items-baseline gap-2">
+              <span className="text-xs tracking-widest text-black/40 font-body uppercase font-bold">Starting from</span>
+              ₹799
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
               <button 
                 onClick={() => document.getElementById('products-grid').scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30"
+                className="group relative w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-[0.15em] text-[11px] overflow-hidden shadow-[0_15px_30px_rgba(255,0,105,0.25)] hover:shadow-[0_20px_40px_rgba(255,0,105,0.35)] transition-all duration-300"
               >
-                Shop Now
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  Shop Collection
+                  <motion.span
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </motion.span>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
               </button>
+              
               <button 
                 onClick={() => document.getElementById('how-to-use').scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                className="w-full sm:w-auto px-10 py-4 bg-white text-black border-2 border-black/10 rounded-full font-bold uppercase tracking-widest text-xs hover:border-[#FF0069] transition-all shadow-sm"
+                className="w-full sm:w-auto px-10 py-4 bg-transparent text-black border border-black/20 rounded-full font-bold uppercase tracking-[0.15em] text-[11px] hover:border-black hover:bg-black/5 transition-all duration-300"
               >
-                Explore Ingredients
+                Learn More
               </button>
             </div>
           </motion.div>
 
-          {/* Right Side Campaign Graphics */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative flex items-center justify-center aspect-square md:aspect-[4/3] lg:aspect-square w-full"
-          >
-            {/* Ambient Background glows */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-gradient-to-r from-[#FF0069]/10 to-[#FFD498]/20 rounded-full blur-[100px] pointer-events-none" />
+          {/* RIGHT SIDE CAMPAIGN COMPOSITION */}
+          <div className="relative w-full h-[60vh] sm:h-[70vh] lg:h-full min-h-[500px] flex items-center justify-center lg:justify-end">
             
-            {/* Main campaign image */}
+            {/* Background glowing aura behind model */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#FFD498]/20 rounded-full blur-[100px] z-0" />
+            
+            {/* Main Model Image */}
             <motion.div 
-              animate={{ y: [-10, 10, -10] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative w-4/5 h-4/5 rounded-[3rem] overflow-hidden border-[8px] border-white shadow-2xl z-10"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+              className="relative w-[90%] sm:w-[80%] lg:w-[95%] h-[85%] lg:h-[90%] rounded-t-full rounded-b-[40px] overflow-hidden border-[6px] border-white/80 shadow-[0_30px_80px_rgba(0,0,0,0.1)] z-10 group"
             >
               <img 
-                loading="eager"
-                decoding="async"
-                src={cleansingBalmLifestyle} 
-                alt="COSKINn Cleansing Balm Model" 
-                className="w-full h-full object-cover"
+                src={premiumHeroModel} 
+                alt="Luxury Skincare Model" 
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-black/5 pointer-events-none z-10" />
-              
-              {/* Product insert overlay */}
-              <div className="absolute bottom-6 right-6 w-32 aspect-square rounded-2xl bg-white/80 backdrop-blur-md p-2 shadow-xl border border-white/60">
-                <img src={cleansingBalmImg} alt="Branded balm" className="w-full h-full object-cover rounded-lg" />
-              </div>
+              {/* Soft overlay gradient for premium feel */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
             </motion.div>
 
-            {/* Branded stamp */}
-            <div className="absolute top-4 left-4 z-20 backdrop-blur-md bg-white/40 border border-white/60 rounded-full px-5 py-2.5 shadow-md flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF0069] animate-pulse"></span>
-              <span className="font-heading text-xs font-bold text-black uppercase tracking-widest">COSKINn Brand</span>
-            </div>
-          </motion.div>
+            {/* Foreground Floating Product Jar */}
+            <motion.div
+              initial={{ opacity: 0, y: 50, x: -30 }}
+              animate={{ opacity: 1, y: 0, x: 0 }}
+              transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
+              className="absolute -bottom-10 -left-4 sm:left-4 lg:-left-12 z-30 w-48 sm:w-56 lg:w-72"
+            >
+              <motion.div
+                animate={{ y: [-8, 8, -8] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative"
+              >
+                {/* Glow behind product */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[60%] bg-[#FF0069]/20 rounded-full blur-2xl z-0" />
+                
+                {/* Glassmorphism pedestal */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[90%] h-16 bg-white/30 backdrop-blur-md rounded-[100%] border border-white/50 shadow-xl z-10" />
+                
+                <img 
+                  src={premiumBalmJar} 
+                  alt="COSKINn Premium Cleansing Balm Jar" 
+                  className="relative w-full object-contain z-20 drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
+                />
+              </motion.div>
+            </motion.div>
 
+            {/* Floating Luxury Elements */}
+            {/* Petal 1 */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 0.8, scale: 1 }}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="absolute top-1/4 -right-6 z-20 w-16 h-16 bg-gradient-to-br from-[#FF0069]/20 to-transparent backdrop-blur-sm rounded-[100%_0_100%_0] border border-white/40 rotate-12"
+            >
+              <motion.div 
+                animate={{ y: [-15, 15, -15], rotate: [12, -5, 12] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-full h-full"
+              />
+            </motion.div>
+
+            {/* Petal 2 */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 0.6, scale: 1 }}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="absolute bottom-1/4 right-8 z-20 w-10 h-10 bg-gradient-to-bl from-[#FFD498]/40 to-transparent backdrop-blur-md rounded-[0_100%_0_100%] border border-white/50 -rotate-45"
+            >
+              <motion.div 
+                animate={{ y: [10, -10, 10], rotate: [-45, -20, -45] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-full h-full"
+              />
+            </motion.div>
+
+          </div>
         </div>
       </section>
 

@@ -96,6 +96,10 @@ const prefetchPage = (pagePath) => {
     import('../../pages/CheckoutPage').catch(() => {});
   } else if (cleanPath === 'skincare/cleansing-balms') {
     import('../../pages/CleansingBalmPage').catch(() => {});
+  } else if (cleanPath === 'skincare/sunscreens') {
+    import('../../pages/SunscreenPage').catch(() => {});
+  } else if (cleanPath === 'skincare/face-mist') {
+    import('../../pages/FaceMistPage').catch(() => {});
   }
 };
 
