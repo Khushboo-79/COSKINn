@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, BadRequestException, Logger } from '
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { Twilio } from 'twilio';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { LoginDto } from './dto/login.dto';
@@ -11,12 +12,15 @@ import { BonusService } from '../bonus/bonus.service';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
+  private twilioClient: Twilio;
 
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
     private bonusService: BonusService
-  ) {}
+  ) {
+    this.twilioClient = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
+  }
 
   async login(loginDto: LoginDto) {
     const user = await this.prisma.user.findUnique({
@@ -70,17 +74,6 @@ export class AuthService {
       }
     }
 
-    // Determine OTP length (4 for customers, 6 for admins)
-    const otpLength = isAdminLogin ? 6 : 4;
-    const otp = this.generateOtp(otpLength);
-    
-    // Hash OTP before saving to DB
-    const salt = await bcrypt.genSalt(10);
-    const otpHash = await bcrypt.hash(otp, salt);
-    
-    // Set expiry to 5 minutes from now
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
     // If customer doesn't exist, create a stub user
     if (!user && !isAdminLogin) {
       user = await this.prisma.user.create({
@@ -101,60 +94,43 @@ export class AuthService {
       });
     }
 
-    // Invalidate previous active OTPs for this phone
-    await this.prisma.otpLog.updateMany({
-      where: { phone, isUsed: false, expiresAt: { gt: new Date() } },
-      data: { isUsed: true } // marking them used invalidates them
-    });
+    // Call Twilio Verify API
+    try {
+      await this.twilioClient.verify.v2
+        .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
+        .verifications.create({ to: phone, channel: 'sms' });
+      this.logger.debug(`[Twilio Verify] Sent OTP to ${phone}`);
+    } catch (error) {
+      this.logger.error(`Failed to send OTP via Twilio to ${phone}`, error);
+      throw new BadRequestException('Failed to send OTP via SMS. Please try again.');
+    }
 
-    // Save new OTP
-    await this.prisma.otpLog.create({
-      data: {
-        userId: user?.id,
-        phone,
-        otpHash,
-        expiresAt,
-      }
-    });
-
-    // MOCK DELIVERY - PRINT TO TERMINAL
-    this.logger.debug(`\n\n=========================================\n[MOCK SMS] OTP for ${phone} is: ${otp}\n=========================================\n`);
-
-    return { message: 'OTP sent successfully', expires_in_minutes: 5 };
+    return { message: 'OTP sent successfully', expires_in_minutes: 10 };
   }
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
     const { phone, otp } = verifyOtpDto;
 
-    // Find the latest valid OTP
-    const otpLog = await this.prisma.otpLog.findFirst({
-      where: {
-        phone,
-        isUsed: false,
-        expiresAt: { gt: new Date() }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
+    // Call Twilio Verify API to check the code
+    try {
+      const verificationCheck = await this.twilioClient.verify.v2
+        .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
+        .verificationChecks.create({ to: phone, code: otp });
 
-    if (!otpLog) {
+      if (verificationCheck.status !== 'approved') {
+        throw new BadRequestException('Invalid or expired OTP');
+      }
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      this.logger.error(`Failed to verify OTP with Twilio for ${phone}`, error);
       throw new BadRequestException('Invalid or expired OTP');
     }
 
-    // Compare hash
-    const isValid = await bcrypt.compare(otp, otpLog.otpHash);
-    if (!isValid) {
-      throw new BadRequestException('Incorrect OTP');
-    }
-
-    // Mark as used
-    await this.prisma.otpLog.update({
-      where: { id: otpLog.id },
-      data: { isUsed: true }
-    });
-
     // Fetch user
     const user = await this.prisma.user.findUnique({
-      where: { id: otpLog.userId! },
+      where: { phone },
       include: {
         roles: {
           include: { role: true }
@@ -196,13 +172,5 @@ export class AuthService {
         roles
       }
     };
-  }
-
-  private generateOtp(length: number): string {
-    let otp = '';
-    for (let i = 0; i < length; i++) {
-      otp += Math.floor(Math.random() * 10).toString();
-    }
-    return otp;
   }
 }
