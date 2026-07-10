@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 const AuthContext = createContext();
 
@@ -139,12 +139,26 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('coskinn_session');
   };
 
+  const memoizedContextValue = useMemo(() => ({
+    user,
+    loading,
+    login,
+    register,
+    authenticateOTPUser,
+    checkMobileExists,
+    checkEmailExists,
+    loginWithMobile,
+    loginWithEmail,
+    logout,
+    updateUserProfile,
+    isAuthModalOpen,
+    setIsAuthModalOpen,
+    openAuthModal,
+    closeAuthModal
+  }), [user, loading, isAuthModalOpen]);
+
   return (
-    <AuthContext.Provider value={{ 
-      user, loading, login, register, authenticateOTPUser, checkMobileExists, checkEmailExists, 
-      loginWithMobile, loginWithEmail, logout, updateUserProfile,
-      isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal
-    }}>
+    <AuthContext.Provider value={memoizedContextValue}>
       {children}
     </AuthContext.Provider>
   );

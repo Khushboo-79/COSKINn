@@ -13,7 +13,7 @@ export const skincareNavigation = {
       title: "Face Care",
       links: [
         { name: "COSKINn Cleanser", href: "/skincare/cleansers" },
-        { name: "COSKINn Cleansing Balm", href: "#" },
+        { name: "COSKINn Cleansing Balm", href: "/skincare/cleansing-balms" },
         { name: "COSKINn Sunscreen", href: "#" },
         { name: "COSKINn Face Mist", href: "#" },
         { name: "COSKINn Overnight Mask", href: "#" },
@@ -45,7 +45,7 @@ export const skincareNavigation = {
       title: "Face Care",
       links: [
         { name: "COSKINn Cleanser", href: "/skincare/cleansers" },
-        { name: "COSKINn Cleansing Balm", href: "#" },
+        { name: "COSKINn Cleansing Balm", href: "/skincare/cleansing-balms" },
         { name: "COSKINn Sunscreen", href: "#" },
         { name: "COSKINn Face Mist", href: "#" },
         { name: "COSKINn Overnight Mask", href: "#" },

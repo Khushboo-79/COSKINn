@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { skincareNavigation } from '../../constants/skincareNavigation';
 import { cosmeticsNavigation } from '../../constants/cosmeticsNavigation';
 
@@ -16,11 +16,27 @@ const MenuPanel = ({ children }) => (
   </motion.div>
 );
 
-const MenuLink = ({ to, children }) => (
-  <Link to={to} className="block text-black/80 hover:text-theme-primary font-medium text-[14px] transition-colors py-1.5">
-    {children}
-  </Link>
-);
+const MenuLink = ({ to, children }) => {
+  const navigate = useNavigate();
+  
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (to && to !== '#') {
+      navigate(to);
+    }
+  };
+
+  return (
+    <a
+      href={to}
+      onClick={handleClick}
+      className="block text-black/80 hover:text-theme-primary font-medium text-[14px] transition-colors py-1.5 cursor-pointer"
+    >
+      {children}
+    </a>
+  );
+};
 
 const MenuSectionTitle = ({ children }) => (
   <h4 className="text-[12px] font-bold uppercase tracking-widest text-black mb-4 border-b border-black/10 pb-2">{children}</h4>

@@ -150,7 +150,7 @@ export default function ProductDetailsPage() {
                   onClick={() => setMainImage(img)}
                   className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden border-2 transition-all duration-300 shrink-0 ${mainImage === img ? 'border-[#FF0069] shadow-md' : 'border-black/5 hover:border-black/20'}`}
                 >
-                  <img src={img} alt={`${product.name} view ${idx + 1}`} className="w-full h-full object-cover bg-theme-secondary/10" />
+                  <img src={img} alt={`${product.name} view ${idx + 1}`} decoding="async" className="w-full h-full object-cover bg-theme-secondary/10" />
                 </button>
               ))}
             </div>
@@ -166,6 +166,9 @@ export default function ProductDetailsPage() {
                   transition={{ duration: 0.3 }}
                   src={mainImage}
                   alt={product.name}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 origin-center"
                 />
               </AnimatePresence>
@@ -607,7 +610,7 @@ export default function ProductDetailsPage() {
             {relatedProducts.map(item => (
               <Link to={`/product/${item.id}`} key={item.id} className="group bg-gray-50 rounded-3xl p-5 shadow-sm border border-black/5 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
                 <div className="w-full aspect-[4/5] rounded-2xl bg-white overflow-hidden mb-6 relative">
-                  <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img loading="lazy" decoding="async" src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
                 <div className="flex flex-col flex-1 text-center">
                   <h4 className="font-heading font-bold text-lg mb-2 group-hover:text-[#FF0069] transition-colors">{item.name}</h4>

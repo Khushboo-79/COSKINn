@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 
@@ -75,19 +75,21 @@ export function CartProvider({ children }) {
   const openCart = () => setIsCartDrawerOpen(true);
   const closeCart = () => setIsCartDrawerOpen(false);
 
+  const memoizedContextValue = useMemo(() => ({
+    cart, 
+    addToCart, 
+    removeFromCart, 
+    updateQuantity, 
+    clearCart, 
+    cartCount, 
+    cartSubtotal,
+    isCartDrawerOpen,
+    openCart,
+    closeCart
+  }), [cart, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartSubtotal, isCartDrawerOpen]);
+
   return (
-    <CartContext.Provider value={{ 
-      cart, 
-      addToCart, 
-      removeFromCart, 
-      updateQuantity, 
-      clearCart, 
-      cartCount, 
-      cartSubtotal,
-      isCartDrawerOpen,
-      openCart,
-      closeCart
-    }}>
+    <CartContext.Provider value={memoizedContextValue}>
       {children}
     </CartContext.Provider>
   );

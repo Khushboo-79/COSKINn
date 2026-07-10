@@ -123,6 +123,7 @@ export default function WhyChooseUs() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10 mix-blend-overlay pointer-events-none"></div>
             <img loading="lazy" 
+              decoding="async"
               src={mainImage} 
               alt="COSKINn Beauty Model" 
               className="w-full h-full object-cover"
@@ -137,6 +138,8 @@ export default function WhyChooseUs() {
             <motion.img 
               src={floatingImage} 
               alt="COSKINn Luxury Lipstick" 
+              loading="lazy"
+              decoding="async"
               className="w-full h-auto object-contain"
               animate={{ y: [-15, 15, -15], rotate: [-3, 3, -3] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
