@@ -33,6 +33,12 @@ import { ReferralModule } from './modules/referral/referral.module';
 import { RewardPointModule } from './modules/reward-point/reward-point.module';
 import { MembershipModule } from './modules/membership/membership.module';
 import { OfferModule } from './modules/offer/offer.module';
+import { TaxModule } from './modules/tax/tax.module';
+import { HrModule } from './modules/hr/hr.module';
+import { SupportModule } from './modules/support/support.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { FinanceReportModule } from './modules/finance-report/finance-report.module';
+import { ContentModule } from './modules/content/content.module';
 
 @Module({
   imports: [
@@ -66,7 +72,13 @@ import { OfferModule } from './modules/offer/offer.module';
     ReferralModule,
     RewardPointModule,
     MembershipModule,
-    OfferModule
+    OfferModule,
+    TaxModule,
+    HrModule,
+    SupportModule,
+    AuditModule,
+    FinanceReportModule,
+    ContentModule
   ],
   controllers: [AppController],
   providers: [AppService],

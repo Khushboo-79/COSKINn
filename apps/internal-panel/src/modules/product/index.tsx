@@ -1,4 +1,4 @@
-import { Routes, Route, NavLink, Navigate, useLocation, Link } from 'react-router-dom';
+import { Routes, Route, NavLink, Navigate, Link } from 'react-router-dom';
 import { Layers, PackageSearch, Home, Tags, FileText, Image as ImageIcon, BarChart2, Star, PieChart as PieChartIcon, Settings, Search, Bell } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CategoryManager } from './CategoryManager';

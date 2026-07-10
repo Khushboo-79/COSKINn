@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { MarketingService } from './marketing.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('marketing')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -58,4 +58,26 @@ export class MarketingController {
   deleteCoupon(@Param('id') id: string) {
     return this.marketingService.deleteCoupon(id);
   }
+
+  // --- CAMPAIGNS ---
+  @Get('campaigns')
+  @Roles('SUPER_ADMIN', 'MARKETING_MANAGER')
+  getCampaigns() {
+    return this.marketingService.getCampaigns();
+  }
+
+  @Post('campaigns')
+  @Roles('SUPER_ADMIN', 'MARKETING_MANAGER')
+  createCampaign(@Body() data: { name: string; type: string; audience?: string; scheduledAt?: Date }) {
+    return this.marketingService.createCampaign(data);
+  }
+
+  // --- ABANDONED CARTS ---
+  @Get('abandoned-carts')
+  @Roles('SUPER_ADMIN', 'MARKETING_MANAGER')
+  getAbandonedCarts(@Query('recovered') recovered?: string) {
+    const isRecovered = recovered ? recovered === 'true' : undefined;
+    return this.marketingService.getAbandonedCarts(isRecovered);
+  }
 }
+

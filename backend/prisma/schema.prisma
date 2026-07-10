@@ -46,6 +46,8 @@ model User {
   membershipHistory MembershipHistory[]
   membershipTier    MembershipTier?      @relation(fields: [membershipTierId], references: [id])
   membershipTierId  String?
+  supportTickets    SupportTicket[]
+  abandonedCartLogs AbandonedCartLog[]
 
   @@map("users")
 }
@@ -607,8 +609,9 @@ model Cart {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user  User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items CartItem[]
+  user              User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items             CartItem[]
+  abandonedCartLogs AbandonedCartLog[]
 
   @@map("carts")
 }
@@ -655,6 +658,7 @@ model Order {
   invoices      OrderInvoice[]
   cancellations OrderCancellation[]
   returns       Return[]
+  gstInvoice    GstInvoice?
 
   @@map("orders")
 }
@@ -1027,4 +1031,250 @@ model WalletTransaction {
   wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
 
   @@map("wallet_transactions")
+}
+
+// ==========================================
+// PHASE 5: Internal Panels & Content
+// ==========================================
+
+// --- Finance & Tax ---
+model HsnCode {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@map("hsn_codes")
+}
+
+model TaxRate {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g. "GST 18%"
+  cgst      Float
+  sgst      Float
+  igst      Float
+  createdAt DateTime @default(now())
+
+  @@map("tax_rates")
+}
+
+model GstInvoice {
+  id            String   @id @default(uuid())
+  invoiceNumber String   @unique
+  orderId       String   @unique
+  totalTax      Float
+  totalAmount   Float
+  pdfUrl        String?
+  createdAt     DateTime @default(now())
+
+  order       Order        @relation(fields: [orderId], references: [id])
+  creditNotes CreditNote[]
+  debitNotes  DebitNote[]
+
+  @@map("gst_invoices")
+}
+
+model CreditNote {
+  id         String   @id @default(uuid())
+  noteNumber String   @unique
+  invoiceId  String
+  amount     Float
+  reason     String
+  createdAt  DateTime @default(now())
+
+  invoice GstInvoice @relation(fields: [invoiceId], references: [id])
+
+  @@map("credit_notes")
+}
+
+model DebitNote {
+  id         String   @id @default(uuid())
+  noteNumber String   @unique
+  invoiceId  String
+  amount     Float
+  reason     String
+  createdAt  DateTime @default(now())
+
+  invoice GstInvoice @relation(fields: [invoiceId], references: [id])
+
+  @@map("debit_notes")
+}
+
+model Ledger {
+  id          String   @id @default(uuid())
+  accountName String   @unique
+  balance     Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entries JournalEntry[]
+
+  @@map("ledgers")
+}
+
+model JournalEntry {
+  id        String   @id @default(uuid())
+  ledgerId  String
+  type      String // 'CREDIT' or 'DEBIT'
+  amount    Float
+  reference String?
+  createdAt DateTime @default(now())
+
+  ledger Ledger @relation(fields: [ledgerId], references: [id])
+
+  @@map("journal_entries")
+}
+
+model RazorpaySettlement {
+  id           String   @id @default(uuid())
+  settlementId String   @unique
+  amount       Float
+  fees         Float
+  tax          Float
+  utr          String?
+  status       String
+  createdAt    DateTime @default(now())
+
+  @@map("razorpay_settlements")
+}
+
+// --- HR & Payroll ---
+model Employee {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  role       String
+  department String
+  salary     Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  attendance Attendance[]
+  payrolls   PayrollSlip[]
+
+  @@map("employees")
+}
+
+model Attendance {
+  id         String   @id @default(uuid())
+  employeeId String
+  date       DateTime
+  status     String // 'PRESENT', 'ABSENT', 'LEAVE'
+  createdAt  DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@map("attendance")
+}
+
+model PayrollSlip {
+  id         String   @id @default(uuid())
+  employeeId String
+  month      Int
+  year       Int
+  basic      Float
+  deductions Float
+  netPay     Float
+  pdfUrl     String?
+  createdAt  DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@map("payroll_slips")
+}
+
+// --- Audit System ---
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  entity    String
+  entityId  String
+  adminId   String? // Might be automated
+  oldData   String? // JSON stringified
+  newData   String? // JSON stringified
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+// --- CRM & Support ---
+model SupportTicket {
+  id        String   @id @default(uuid())
+  userId    String
+  subject   String
+  status    String   @default("OPEN") // 'OPEN', 'CLOSED'
+  priority  String   @default("NORMAL")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User            @relation(fields: [userId], references: [id])
+  messages TicketMessage[]
+
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id         String   @id @default(uuid())
+  ticketId   String
+  senderId   String // Can be User ID or Admin ID
+  senderRole String // 'USER', 'ADMIN'
+  message    String
+  createdAt  DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id])
+
+  @@map("ticket_messages")
+}
+
+model MarketingCampaign {
+  id          String    @id @default(uuid())
+  name        String
+  type        String // 'EMAIL', 'PUSH', 'SMS'
+  status      String    @default("DRAFT") // 'DRAFT', 'SCHEDULED', 'SENT'
+  audience    String? // Segment identifier
+  scheduledAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("marketing_campaigns")
+}
+
+model AbandonedCartLog {
+  id          String    @id @default(uuid())
+  userId      String
+  cartId      String
+  recovered   Boolean   @default(false)
+  emailSentAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  cart Cart @relation(fields: [cartId], references: [id])
+
+  @@map("abandoned_cart_logs")
+}
+
+// --- Content Management (CMS) ---
+model ContentArticle {
+  id           String   @id @default(uuid())
+  title        String
+  slug         String   @unique
+  type         String // 'BLOG', 'TIP'
+  contentJson  String // Structured JSON content
+  heroImageUrl String?
+  published    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("content_articles")
+}
+
+model Faq {
+  id         String   @id @default(uuid())
+  question   String
+  answer     String
+  category   String?
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("faqs")
 }

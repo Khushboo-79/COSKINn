@@ -398,3 +398,62 @@ You can now redeem reward points during checkout. (1 Point = ?1 Discount).
   `
 *(Note: Attempting to redeem more points than you own will throw an Insufficient Balance error).*
 
+
+---
+## PHASE 5: Internal Panels & Content (Admin / CRM / CMS)
+
+These endpoints generally require the **Admin Token** from Step 2 with roles like SUPER_ADMIN, HR, FINANCE, SUPPORT, or CONTENT_MANAGER.
+
+### 20. Tax & Finance
+- **Get HSN Codes** (GET /api/admin/tax/hsn)
+- **Get Tax Rates** (GET /api/admin/tax/rates)
+- **Get Finance Ledgers** (GET /api/admin/finance/ledgers)
+- **Create Journal Entry** (POST /api/admin/finance/journal-entries)
+  - **Body**: { "ledgerId": "LEDGER_ID", "type": "CREDIT", "amount": 1000 }
+
+### 21. GST Invoice & Credit Notes
+- **Download GST Invoice** (GET /api/orders/:id/invoice) - *Requires Auth*
+- **Create Credit Note** (POST /api/admin/invoices/:id/credit-note)
+  - **Body**: { "amount": 500, "reason": "Damaged goods return" }
+
+### 22. HR Module (Employees & Payroll)
+- **Get Employees** (GET /api/admin/hr/employees)
+- **Create Employee** (POST /api/admin/hr/employees)
+  - **Body**: { "name": "John Doe", "email": "john@example.com", "role": "MANAGER", "department": "SALES", "salary": 50000 }
+- **Mark Attendance** (POST /api/admin/hr/attendance)
+  - **Body**: { "employeeId": "EMP_ID", "status": "PRESENT" }
+- **Generate Payroll Slip** (POST /api/admin/hr/payroll)
+  - **Body**: { "employeeId": "EMP_ID", "month": 10, "year": 2023 }
+
+### 23. CRM & Support Tickets
+- **Create Ticket** (POST /api/support/tickets)
+  - **Body**: { "userId": "USER_ID", "subject": "Order delayed", "priority": "HIGH" }
+- **Get Ticket Messages** (GET /api/support/tickets/:id/messages)
+- **Admin: Close Ticket** (POST /api/admin/support/tickets/:id/close)
+
+### 24. Marketing Campaigns & Banners
+- **Create Campaign** (POST /api/marketing/campaigns)
+  - **Body**: { "name": "Diwali Sale", "type": "EMAIL" }
+- **Get Abandoned Carts** (GET /api/marketing/abandoned-carts?recovered=false)
+- **Get Banners** (GET /api/marketing/banners)
+
+### 25. CMS (Content / Blogs / FAQs)
+- **Create Article (Admin)** (POST /api/admin/content/articles)
+  - **Body**: { "title": "Top 10 Skincare Tips", "slug": "top-10-skincare", "type": "TIP", "contentJson": "{...}" }
+- **Get Published Articles (Public)** (GET /api/content/articles?type=TIP)
+- **Get FAQs (Public)** (GET /api/content/faqs)
+
+### 26. Product Manager Panel (Internal)
+- **Get Product Stats & Reports**
+  - **Method:** `GET`
+  - **URL:** `http://localhost:3000/api/product/stats/reports`
+  - **Headers:** `Authorization: Bearer <Admin Token>`
+- **Get All Reviews (Moderation)**
+  - **Method:** `GET`
+  - **URL:** `http://localhost:3000/api/product-review?status=PENDING`
+  - **Headers:** `Authorization: Bearer <Admin Token>`
+- **Approve Review**
+  - **Method:** `PATCH`
+  - **URL:** `http://localhost:3000/api/product-review/:reviewId/approve`
+  - **Headers:** `Authorization: Bearer <Admin Token>`
+

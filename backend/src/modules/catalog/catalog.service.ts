@@ -160,4 +160,40 @@ export class CatalogService {
 
     return { category, products };
   }
+
+  async getSimilarProducts(id: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      include: { category: true }
+    });
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    return this.prisma.product.findMany({
+      where: {
+        id: { not: id },
+        categoryId: product.categoryId,
+        status: 'LIVE'
+      },
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        category: true
+      },
+      take: 4
+    });
+  }
+
+  async getRecommendations(userId?: string) {
+    // Basic recommendation: just return best sellers for now,
+    // or personalized logic if userId is provided
+    return this.prisma.product.findMany({
+      where: { status: 'LIVE' },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        category: true
+      }
+    });
+  }
 }

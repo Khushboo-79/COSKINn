@@ -52,6 +52,13 @@ export class ProductController {
     return this.productService.importCsv(file.buffer);
   }
 
+  @Get('stats/reports')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  getReports() {
+    return this.productService.getReports();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(id);
