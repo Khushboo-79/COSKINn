@@ -27,6 +27,8 @@ const dummyProducts = Array(8).fill({
   image: require('../../../../images/bgImages/productImg.webp') // using available image
 }).map((item, index) => ({ ...item, id: index.toString() }));
 
+
+
 const ViewAllCategoriesScreen = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('All');
@@ -86,28 +88,37 @@ const ViewAllCategoriesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FF0069" />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
+      
+      <LinearGradient 
+        colors={['#FF0069', '#FF9999']} 
+        style={styles.headerGradient}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+      >
+        <SafeAreaView style={styles.headerSafeArea}>
+          <Header 
+            transparent={true}
+            showLogo={false}
+            onBackPress={() => navigation.goBack()}
+            rightComponent={
+              <View style={styles.headerRightIcons}>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Cart')}>
+                  <Icon name="shopping-cart" size={scaleh(22)} color="#000" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconBtn}>
+                  <Icon name="heart" size={scaleh(22)} color="#000" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconBtn}>
+                  <Icon name="search" size={scaleh(22)} color="#000" />
+                </TouchableOpacity>
+              </View>
+            }
+          />
+        </SafeAreaView>
+      </LinearGradient>
+      
       <SafeAreaView style={styles.safeArea}>
-        
-        <Header 
-          backgroundColor="#FF3366" // Hot pink header background
-          transparent={false}
-          showLogo={false}
-          onBackPress={() => navigation.goBack()}
-          rightComponent={
-            <View style={styles.headerRightIcons}>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Cart')}>
-                <Icon name="shopping-cart" size={scaleh(22)} color="#000" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn}>
-                <Icon name="heart" size={scaleh(22)} color="#000" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn}>
-                <Icon name="search" size={scaleh(22)} color="#000" />
-              </TouchableOpacity>
-            </View>
-          }
-        />
 
         {/* Horizontal Scrollable Tabs */}
         <View style={styles.tabsWrapper}>
@@ -148,11 +159,18 @@ const ViewAllCategoriesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FF3366', // Matches header background to hide margin gap
+    backgroundColor: '#FFFFFF',
+  },
+  headerGradient: {
+    width: '100%',
+    paddingTop: scalev(20), // Accounts for translucent status bar
+  },
+  headerSafeArea: {
+    width: '100%',
   },
   safeArea: {
     flex: 1,
-    // Transparent safe area so container background shows through top margin
+    backgroundColor: '#FFFFFF',
   },
   headerRightIcons: {
     flexDirection: 'row',
