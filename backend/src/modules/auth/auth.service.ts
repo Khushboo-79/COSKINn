@@ -12,14 +12,18 @@ import { BonusService } from '../bonus/bonus.service';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private twilioClient: Twilio;
+  private adminTwilioClient: Twilio;
+  private customerTwilioClient?: Twilio;
 
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
     private bonusService: BonusService
   ) {
-    this.twilioClient = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
+    this.adminTwilioClient = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
+    if (process.env.TWILIO_CUSTOMER_ACCOUNT_SID) {
+      this.customerTwilioClient = new Twilio(process.env.TWILIO_CUSTOMER_ACCOUNT_SID, process.env.TWILIO_CUSTOMER_AUTH_TOKEN!);
+    }
   }
 
   async login(loginDto: LoginDto) {
@@ -94,10 +98,15 @@ export class AuthService {
       });
     }
 
+    // Choose Twilio client based on role
+    const isCustomerAccount = !isAdminLogin;
+    const client = isCustomerAccount && this.customerTwilioClient ? this.customerTwilioClient : this.adminTwilioClient;
+    const serviceSid = isCustomerAccount && process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID : process.env.TWILIO_VERIFY_SERVICE_SID!;
+
     // Call Twilio Verify API
     try {
-      await this.twilioClient.verify.v2
-        .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
+      await client.verify.v2
+        .services(serviceSid)
         .verifications.create({ to: phone, channel: 'sms' });
       this.logger.debug(`[Twilio Verify] Sent OTP to ${phone}`);
     } catch (error) {
@@ -111,24 +120,7 @@ export class AuthService {
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
     const { phone, otp } = verifyOtpDto;
 
-    // Call Twilio Verify API to check the code
-    try {
-      const verificationCheck = await this.twilioClient.verify.v2
-        .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
-        .verificationChecks.create({ to: phone, code: otp });
-
-      if (verificationCheck.status !== 'approved') {
-        throw new BadRequestException('Invalid or expired OTP');
-      }
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      this.logger.error(`Failed to verify OTP with Twilio for ${phone}`, error);
-      throw new BadRequestException('Invalid or expired OTP');
-    }
-
-    // Fetch user
+    // Fetch user FIRST to determine which Twilio account to use
     const user = await this.prisma.user.findUnique({
       where: { phone },
       include: {
@@ -140,6 +132,28 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('User not found');
+    }
+
+    // Choose Twilio client based on role
+    const isAdmin = user.roles.some(ur => ur.role.name !== 'CUSTOMER');
+    const client = !isAdmin && this.customerTwilioClient ? this.customerTwilioClient : this.adminTwilioClient;
+    const serviceSid = !isAdmin && process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID : process.env.TWILIO_VERIFY_SERVICE_SID!;
+
+    // Call Twilio Verify API to check the code
+    try {
+      const verificationCheck = await client.verify.v2
+        .services(serviceSid)
+        .verificationChecks.create({ to: phone, code: otp });
+
+      if (verificationCheck.status !== 'approved') {
+        throw new BadRequestException('Invalid or expired OTP');
+      }
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      this.logger.error(`Failed to verify OTP with Twilio for ${phone}`, error);
+      throw new BadRequestException('Invalid or expired OTP');
     }
 
     const roles = user.roles.map(ur => ur.role.name);

@@ -109,14 +109,16 @@ export class OrderService {
               let variantId = item.variantId;
               let sku = 'UNKNOWN_SKU';
               
-              if (!variantId) {
-                const firstVariant = await tx.productVariant.findFirst({
-                  where: { productId: item.productId }
-                });
-                if (firstVariant) {
-                  variantId = firstVariant.id;
-                  sku = firstVariant.sku;
-                }
+              let variant: any = null;
+              if (variantId) {
+                variant = await tx.productVariant.findUnique({ where: { id: variantId } });
+              } else {
+                variant = await tx.productVariant.findFirst({ where: { productId: item.productId } });
+              }
+
+              if (variant) {
+                variantId = variant.id;
+                sku = variant.sku;
               }
 
               return {
