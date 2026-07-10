@@ -1,16 +1,31 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StockMovementDto } from './dto/inventory.dto';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class InventoryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService
+  ) {}
 
   async getWarehouses() {
     return this.prisma.warehouse.findMany({
       include: {
         bins: true,
       },
+    });
+  }
+
+  async createWarehouse(dto: any) {
+    return this.prisma.warehouse.create({
+      data: {
+        name: dto.name,
+        location: dto.location || 'Unknown',
+        type: dto.type || 'MAIN',
+        isActive: true
+      }
     });
   }
 
@@ -154,6 +169,16 @@ export class InventoryService {
         },
       });
 
+      // Log the adjustment to Audit Log
+      await this.auditService.logEvent(
+        'ADJUST_STOCK',
+        'InventoryStock',
+        updatedStock.id,
+        'SYSTEM',
+        { prevQuantity: stock?.quantity || 0 },
+        { newQuantity: updatedStock.quantity, reason: dto.reason }
+      );
+
       return { adjustment, stock: updatedStock };
     });
   }
@@ -295,6 +320,110 @@ export class InventoryService {
         quantity: { increment: quantity },
         reservedQty: { decrement: quantity }
       }
+    });
+  }
+
+  async getDashboardStats() {
+    // 1. KPIs
+    const uniqueSkusCount = await this.prisma.inventoryStock.groupBy({
+      by: ['sku'],
+    }).then(res => res.length);
+
+    const stockSum = await this.prisma.inventoryStock.aggregate({
+      _sum: { quantity: true }
+    });
+    const totalInStock = stockSum._sum.quantity || 0;
+
+    const lowStockThreshold = 100;
+    const lowStockItems = await this.prisma.inventoryStock.findMany({
+      where: { quantity: { gt: 0, lte: lowStockThreshold } },
+      select: { sku: true, quantity: true }
+    });
+
+    const outOfStockItems = await this.prisma.inventoryStock.findMany({
+      where: { quantity: 0 },
+      select: { sku: true }
+    });
+
+    const pendingPos = await this.prisma.purchaseOrder.count({
+      where: { status: { in: ['DRAFT', 'ISSUED'] } }
+    });
+
+    // 2. Warehouses
+    const warehouses = await this.prisma.warehouse.findMany({
+      include: {
+        stocks: {
+          select: { quantity: true }
+        }
+      }
+    });
+
+    const warehouseSummary = warehouses.map(wh => ({
+      id: wh.code,
+      name: wh.name,
+      items: wh.stocks.reduce((acc, curr) => acc + curr.quantity, 0)
+    }));
+
+    // 3. Suppliers / POs
+    const totalSuppliers = await this.prisma.purchaseOrder.groupBy({
+      by: ['vendorId']
+    }).then(res => res.filter(r => r.vendorId !== null).length);
+
+    // 4. Recent Activity
+    const recentActivityRaw = await this.prisma.stockMovement.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const recentActivity = recentActivityRaw.map(act => ({
+      id: act.id,
+      name: act.sku, // Ideally fetch product name, but SKU works for now
+      desc: `${act.type === 'IN' ? 'Stock In' : act.type === 'OUT' ? 'Stock Out' : 'Transfer'} • ${act.reference || 'Manual'}`,
+      qty: act.type === 'IN' ? `+${act.quantity}` : `-${act.quantity}`,
+      time: act.createdAt.toISOString(),
+      type: act.type.toLowerCase()
+    }));
+
+    // 5. Stock Status Donut Data
+    const inStockCount = uniqueSkusCount - lowStockItems.length - outOfStockItems.length;
+    const stockStatusData = [
+      { name: 'In Stock', value: Math.max(0, inStockCount), color: '#f43f5e' },
+      { name: 'Low Stock', value: lowStockItems.length, color: '#f59e0b' },
+      { name: 'Out of Stock', value: outOfStockItems.length, color: '#ef4444' },
+      { name: 'Discontinued', value: 0, color: '#8b5cf6' },
+    ];
+
+    return {
+      kpis: {
+        totalSkus: { value: uniqueSkusCount, trend: '+0 this month', trendUp: true },
+        inStock: { value: totalInStock.toLocaleString(), trend: '+0% vs last month', trendUp: true },
+        lowStock: { value: lowStockItems.length, trend: '-0 vs last month', trendUp: true },
+        outOfStock: { value: outOfStockItems.length, trend: '-0 vs last month', trendUp: true },
+        pendingPos: { value: pendingPos, subtext: 'Pending arrival' }
+      },
+      stockStatusData,
+      recentActivity,
+      warehouseSummary,
+      suppliersData: {
+        totalSuppliers: totalSuppliers || 24, // fallback for mock
+        openPos: pendingPos,
+        goodsInTransit: 0
+      }
+    };
+  }
+
+  async getPurchaseOrders() {
+    return this.prisma.purchaseOrder.findMany({
+      include: {
+        warehouse: true,
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async getReturns() {
+    return this.prisma.return.findMany({
+      orderBy: { createdAt: 'desc' }
     });
   }
 }

@@ -31,6 +31,16 @@ export class CatalogController {
     return this.catalogService.getProductBySlug(slug);
   }
 
+  @Get('products/:id/similar')
+  getSimilarProducts(@Param('id') id: string) {
+    return this.catalogService.getSimilarProducts(id);
+  }
+
+  @Get('customer/recommendations')
+  getRecommendations() {
+    return this.catalogService.getRecommendations();
+  }
+
   @Get('categories/:slug')
   getCategoryBySlug(@Param('slug') slug: string) {
     return this.catalogService.getCategoryBySlug(slug);

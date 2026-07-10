@@ -48,8 +48,13 @@ export class CategoryService {
 
   // Subcategory Methods
   async createSubcategory(dto: CreateSubcategoryDto) {
-    await this.findCategory(dto.categoryId);
-    return this.prisma.subcategory.create({ data: dto });
+    try {
+      await this.findCategory(dto.categoryId);
+      return await this.prisma.subcategory.create({ data: dto });
+    } catch (error: any) {
+      console.error('CREATE SUBCAT ERROR:', error);
+      return { error: error.message || error.toString() };
+    }
   }
 
   async updateSubcategory(id: string, dto: UpdateSubcategoryDto) {

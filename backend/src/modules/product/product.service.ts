@@ -245,7 +245,7 @@ export class ProductService {
           description: data.description,
           mrp: data.mrp,
           discountPrice: data.discountPrice,
-          status: 'LIVE', // Defaulting to LIVE for testing flow without approval steps
+          status: 'DRAFT',
         },
       });
 
@@ -268,7 +268,7 @@ export class ProductService {
 
     const updated = await this.prisma.product.update({
       where: { id },
-      data,
+      data: { ...data, status: data.status as any },
     });
     
     // Also update the default variant price if mrp/discountPrice changed
@@ -842,5 +842,55 @@ export class ProductService {
           reject(error);
         });
     });
+  }
+
+  async getReports() {
+    const products = await this.prisma.product.findMany({
+      include: {
+        category: true,
+        variants: true
+      }
+    });
+
+    let totalCatalogValue = 0;
+    let totalSellingPrice = 0;
+    let totalDiscountPercent = 0;
+    let totalVariants = 0;
+    let categoryMap: Record<string, number> = {};
+    let priceTiers = {
+      'Under ₹500': 0,
+      '₹500 - ₹1000': 0,
+      '₹1000 - ₹2000': 0,
+      'Above ₹2000': 0
+    };
+
+    products.forEach(p => {
+      const price = p.discountPrice || p.mrp;
+      totalSellingPrice += price;
+      totalVariants += p.variants.length;
+      totalCatalogValue += (price * p.variants.length); // rough estimate
+      
+      if (p.mrp > 0 && price < p.mrp) {
+        totalDiscountPercent += ((p.mrp - price) / p.mrp) * 100;
+      }
+
+      if (p.category) {
+        categoryMap[p.category.name] = (categoryMap[p.category.name] || 0) + 1;
+      }
+
+      if (price < 500) priceTiers['Under ₹500']++;
+      else if (price <= 1000) priceTiers['₹500 - ₹1000']++;
+      else if (price <= 2000) priceTiers['₹1000 - ₹2000']++;
+      else priceTiers['Above ₹2000']++;
+    });
+
+    return {
+      totalCatalogValue,
+      averageSellingPrice: products.length > 0 ? totalSellingPrice / products.length : 0,
+      averageDiscountPercentage: products.length > 0 ? totalDiscountPercent / products.length : 0,
+      totalVariants,
+      categoryDistribution: Object.entries(categoryMap).map(([name, value]) => ({ name, value })),
+      pricingTiers: Object.entries(priceTiers).map(([name, count]) => ({ name, count }))
+    };
   }
 }

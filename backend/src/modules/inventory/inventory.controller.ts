@@ -16,6 +16,20 @@ export class InventoryController {
     return this.inventoryService.getWarehouses();
   }
 
+  @Post('warehouses')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN')
+  createWarehouse(@Body() dto: any) {
+    return this.inventoryService.createWarehouse(dto);
+  }
+
+  @Get('dashboard-stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
+  getDashboardStats() {
+    return this.inventoryService.getDashboardStats();
+  }
+
   @Get('stock')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER')
@@ -84,5 +98,19 @@ export class InventoryController {
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
   getNearExpiry() {
     return this.inventoryService.getNearExpiry();
+  }
+
+  @Get('purchase-orders')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
+  getPurchaseOrders() {
+    return this.inventoryService.getPurchaseOrders();
+  }
+
+  @Get('returns')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
+  getReturns() {
+    return this.inventoryService.getReturns();
   }
 }

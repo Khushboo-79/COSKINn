@@ -95,6 +95,10 @@ export class UpdateProductDto {
   @IsOptional()
   @IsOptional()
   discountPrice?: number;
+
+  @IsString()
+  @IsOptional()
+  status?: string;
 }
 
 export class CreateVariantDto {
