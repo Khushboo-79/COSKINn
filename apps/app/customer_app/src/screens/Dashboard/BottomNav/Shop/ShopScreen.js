@@ -78,6 +78,12 @@ const ShopScreen = () => {
           if (tabId === 'home') {
             navigation.navigate('Dashboard');
           }
+          if (tabId === 'new') {
+            navigation.navigate('NewScreen');
+          }
+          if (tabId === 'rewards') {
+            navigation.navigate('RewardsScreen');
+          }
         }} 
       />
     </View>

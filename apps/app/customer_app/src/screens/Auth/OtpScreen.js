@@ -87,8 +87,8 @@ const OtpScreen = ({ navigation }) => {
                 ))}
               </View>
 
-              <TouchableOpacity 
-                activeOpacity={0.8} 
+              <TouchableOpacity
+                activeOpacity={0.8}
                 style={styles.verifyWrapper}
                 onPress={() => navigation.navigate('Dashboard')}
               >
