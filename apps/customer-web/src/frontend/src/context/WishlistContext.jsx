@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 
@@ -58,13 +58,15 @@ export function WishlistProvider({ children }) {
 
   const wishlistCount = wishlist.length;
 
+  const memoizedContextValue = useMemo(() => ({
+    wishlist, 
+    toggleWishlist, 
+    isInWishlist, 
+    wishlistCount 
+  }), [wishlist, toggleWishlist, isInWishlist, wishlistCount]);
+
   return (
-    <WishlistContext.Provider value={{ 
-      wishlist, 
-      toggleWishlist, 
-      isInWishlist, 
-      wishlistCount 
-    }}>
+    <WishlistContext.Provider value={memoizedContextValue}>
       {children}
     </WishlistContext.Provider>
   );

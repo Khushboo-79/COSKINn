@@ -7,8 +7,8 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import Footer from '../components/common/Footer';
 
-// Hero Image
-import gentleCleanserImg from '../assets/images/gentle_cleanser.webp';
+// Hero Images
+import cleanserHeroImg from '../assets/images/cleanser_hero_lifestyle.webp';
 
 const SKIN_TYPES = ["All", "Dry Skin", "Oily Skin", "Combination Skin", "Sensitive Skin", "Normal Skin", "Acne Prone"];
 const SKIN_CONCERNS = ["Acne", "Dryness", "Blackheads", "Whiteheads", "Pigmentation", "Dullness", "Oil Control", "Large Pores"];
@@ -62,64 +62,166 @@ export default function CleanserPage() {
         </div>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative w-full h-[500px] lg:h-[600px] bg-gradient-to-br from-[#FF0069] to-[#FFD498] overflow-hidden flex items-center">
-        {/* Floating elements animation */}
-        <motion.div 
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-10 right-10 w-32 h-32 bg-white/20 rounded-full blur-3xl"
-        />
-        <motion.div 
-          animate={{ y: [0, 30, 0], x: [0, -20, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-20 left-10 w-48 h-48 bg-[#FF0069]/30 rounded-full blur-3xl"
+      {/* Hero Section — Full Screen Background Image */}
+      <section className="relative w-full min-h-[600px] lg:min-h-[750px] xl:min-h-[85vh] overflow-hidden flex items-end md:items-center">
+
+        {/* Full-screen background image */}
+        <motion.img
+          initial={{ scale: 1.08, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.4, ease: 'easeOut' }}
+          src={cleanserHeroImg}
+          alt="COSKINn Gentle Daily Cleanser — lifestyle"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
 
-        <div className="max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row items-center justify-between relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="md:w-1/2 text-center md:text-left mb-10 md:mb-0"
-          >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-white leading-tight mb-6 drop-shadow-lg">
-              COSKINn <br />Gentle Daily <br />Cleanser
-            </h1>
-            <p className="text-lg md:text-xl text-white/90 font-medium mb-10 tracking-wide">
+        {/* Gradient overlays for luxury text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FF0069]/80 via-[#FF0069]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
+
+        {/* Glow Blobs on top of image */}
+        <motion.div
+          animate={{ scale: [1, 1.25, 1], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-[-10%] left-[-5%] w-[45vw] h-[45vw] max-w-xl bg-[#FF0069]/30 rounded-full blur-[100px] pointer-events-none"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.35, 0.1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+          className="absolute bottom-0 right-[10%] w-[35vw] h-[35vw] max-w-md bg-[#FFD498]/30 rounded-full blur-[80px] pointer-events-none"
+        />
+
+        {/* Floating Particles */}
+        {[...Array(14)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: [0, 0.9, 0],
+              y: [0, -(80 + i * 12)],
+              x: [(i % 2 === 0 ? 1 : -1) * (i * 4)]
+            }}
+            transition={{
+              duration: 5 + i * 0.4,
+              repeat: Infinity,
+              delay: i * 0.5,
+              ease: 'easeOut'
+            }}
+            className="absolute rounded-full bg-white/70 pointer-events-none"
+            style={{
+              width: `${3 + (i % 5) * 2}px`,
+              height: `${3 + (i % 5) * 2}px`,
+              bottom: `${5 + (i * 6) % 35}%`,
+              left: `${(i * 7) % 50}%`,
+            }}
+          />
+        ))}
+
+        {/* Content overlaid on full-screen image */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 py-16 lg:py-24">
+          <div className="max-w-xl">
+            {/* Premium Label Chip */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6"
+            >
+              <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+              Dermatologist Tested
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.5, ease: 'easeOut' }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-black text-white leading-[1.05] mb-6 drop-shadow-xl"
+            >
+              COSKINn<br />
+              <span className="italic font-light">Gentle Daily</span><br />
+              Cleanser
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="text-base md:text-xl text-white/90 font-medium mb-8 tracking-wide leading-relaxed drop-shadow"
+            >
               Cleanse • Hydrate • Protect Your Skin Barrier
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <button 
+            </motion.p>
+
+            {/* Trust Badges */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+              className="flex flex-wrap gap-3 mb-10"
+            >
+              {["Sulphate Free", "Paraben Free", "Cruelty Free"].map(badge => (
+                <span key={badge} className="text-xs font-bold text-white border border-white/30 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm">
+                  ✓ {badge}
+                </span>
+              ))}
+            </motion.div>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 1.1 }}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   document.getElementById('products-grid').scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="px-8 py-4 bg-white text-[#FF0069] font-bold rounded-full hover:bg-black hover:text-white transition-all shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_40px_rgba(255,0,105,0.4)]"
+                className="px-10 py-4 bg-white text-[#FF0069] font-bold rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.2)] text-sm uppercase tracking-widest"
               >
                 Shop Now
-              </button>
-              <button className="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-[#FF0069] transition-all">
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  const el = document.getElementById('ingredients-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-10 py-4 bg-white/10 backdrop-blur-md border-2 border-white text-white font-bold rounded-full text-sm uppercase tracking-widest"
+              >
                 Know Ingredients
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="md:w-1/2 flex justify-center lg:justify-end"
-          >
-            <div className="relative">
-              <div className="absolute inset-0 bg-white/30 blur-2xl rounded-full scale-110"></div>
-              <img 
-                src={gentleCleanserImg} 
-                alt="COSKINn Cleanser" 
-                className="w-64 md:w-80 lg:w-96 drop-shadow-2xl relative z-10 object-contain"
-              />
-            </div>
-          </motion.div>
+              </motion.button>
+            </motion.div>
+          </div>
         </div>
+
+        {/* Floating Info Badges */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.4, duration: 0.7 }}
+          className="absolute bottom-8 right-6 md:right-10 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-3 z-20"
+        >
+          <div className="w-10 h-10 bg-[#FF0069]/10 rounded-full flex items-center justify-center shrink-0">
+            <span className="text-[#FF0069] font-black">★</span>
+          </div>
+          <div>
+            <div className="text-black font-black text-sm">4.9 / 5</div>
+            <div className="text-gray-500 text-[11px] font-medium">1,450+ Reviews</div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.7, duration: 0.7 }}
+          className="absolute top-24 right-6 md:right-10 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl px-5 py-3 z-20"
+        >
+          <div className="text-[#FF0069] font-black text-xs uppercase tracking-widest">✦ New Formula</div>
+          <div className="text-black font-bold text-sm">With Ceramides</div>
+        </motion.div>
       </section>
 
       {/* Filters Section */}
@@ -191,7 +293,8 @@ export default function CleanserPage() {
                 key={product.id}
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
                 className="group relative bg-white rounded-3xl overflow-hidden border border-black/5 hover:border-[#FF0069]/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all flex flex-col"
@@ -219,6 +322,8 @@ export default function CleanserPage() {
                   <img 
                     src={product.image} 
                     alt={product.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   

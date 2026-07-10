@@ -270,7 +270,7 @@ export default function GiftSetsPage() {
                 
                 {/* Image */}
                 <div className="w-full md:w-2/5 aspect-square rounded-2xl bg-theme-secondary/20 overflow-hidden relative shrink-0">
-                  <img loading="lazy" src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img loading="lazy" decoding="async" src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
                     {product.badge && (
                       <span className="px-3 py-1.5 bg-[#FF0069] text-white text-[10px] font-bold tracking-widest uppercase rounded-full shadow-lg backdrop-blur-md">

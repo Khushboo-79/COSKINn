@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu } from 'lucide-react';
+import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -80,6 +80,25 @@ const CoskinnLogo = () => (
   </svg>
 );
 
+const prefetchPage = (pagePath) => {
+  const cleanPath = pagePath.replace('/', '');
+  if (cleanPath === 'skincare') {
+    import('../../pages/SkincarePage').catch(() => {});
+  } else if (cleanPath === 'cosmetics') {
+    import('../../pages/CosmeticsPage').catch(() => {});
+  } else if (cleanPath === 'about') {
+    import('../../pages/AboutPage').catch(() => {});
+  } else if (cleanPath === 'contact') {
+    import('../../pages/ContactPage').catch(() => {});
+  } else if (cleanPath.startsWith('account')) {
+    import('../../pages/AccountPage').catch(() => {});
+  } else if (cleanPath === 'checkout') {
+    import('../../pages/CheckoutPage').catch(() => {});
+  } else if (cleanPath === 'skincare/cleansing-balms') {
+    import('../../pages/CleansingBalmPage').catch(() => {});
+  }
+};
+
 // Desktop Navigation Item Wrapper
 const NavItem = ({ title, to, children, isActive }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -94,6 +113,9 @@ const NavItem = ({ title, to, children, isActive }) => {
   const handleMouseEnter = () => {
     clearTimeout(timeoutRef.current);
     setIsOpen(true);
+    if (to) {
+      prefetchPage(to);
+    }
   };
 
   const handleMouseLeave = () => {
@@ -151,6 +173,19 @@ const AnimatedHamburger = ({ isOpen, toggle }) => (
   </button>
 );
 
+const MobileProfileItem = ({ icon: Icon, label, onClick }) => (
+  <button
+    onClick={onClick}
+    className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl hover:bg-black/5 active:bg-black/5 transition-colors text-black font-semibold text-left"
+  >
+    <div className="flex items-center gap-4">
+      <Icon size={20} className="text-black/60" />
+      <span className="text-[15px]">{label}</span>
+    </div>
+    <ChevronRight size={16} className="text-black/30" />
+  </button>
+);
+
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal } = useAuth();
@@ -174,6 +209,8 @@ export default function Navbar() {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const dropdownRef = useRef(null);
   let timeoutRef = useRef(null);
 
@@ -211,6 +248,7 @@ export default function Navbar() {
     if (window.innerWidth >= 1024 && user) {
       clearTimeout(timeoutRef.current);
       setIsDropdownOpen(true);
+      prefetchPage('account');
     }
   };
 
@@ -226,7 +264,17 @@ export default function Navbar() {
     if (!user) {
       openAuthModal();
     } else if (window.innerWidth < 1024) {
+      setIsMobileProfileOpen(true);
+    } else {
       setIsDropdownOpen(!isDropdownOpen);
+    }
+  };
+
+  const handleWishlistClick = () => {
+    if (!user) {
+      openAuthModal();
+    } else {
+      navigate('/account/wishlist');
     }
   };
 
@@ -240,6 +288,8 @@ export default function Navbar() {
       if (event.key === 'Escape') {
         setIsDropdownOpen(false);
         setIsMobileMenuOpen(false);
+        setIsMobileProfileOpen(false);
+        setIsSearchOpen(false);
         closeAuthModal();
       }
     };
@@ -256,15 +306,15 @@ export default function Navbar() {
     setIsDropdownOpen(false);
   };
 
-  // Prevent scroll when mobile menu is open
+  // Prevent scroll when mobile menus are open
   useEffect(() => {
-    if (isMobileMenuOpen) {
+    if (isMobileMenuOpen || isMobileProfileOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
     return () => { document.body.style.overflow = 'auto'; };
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, isMobileProfileOpen]);
 
   return (
     <motion.nav
@@ -336,12 +386,26 @@ export default function Navbar() {
         <div className="flex-1 lg:hidden"></div>
 
         {/* Icons */}
-        <div className="flex items-center justify-end gap-5 lg:gap-6 text-black/80 relative flex-shrink-0 z-[130]">
-          <button className="hover:text-theme-primary transition hidden sm:block"><Search size={22} strokeWidth={1.5} /></button>
+        <div className="flex items-center justify-end gap-3 sm:gap-5 lg:gap-6 text-black/80 relative flex-shrink-0 z-[130]">
+          {/* Search Icon */}
+          <button
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            className="hover:text-theme-primary transition flex items-center justify-center p-1"
+          >
+            <Search size={22} strokeWidth={1.5} />
+          </button>
 
-          {/* User Profile Dropdown */}
+          {/* Wishlist Icon (Mobile only) */}
+          <button
+            onClick={handleWishlistClick}
+            className="hover:text-theme-primary transition flex items-center justify-center p-1 lg:hidden"
+          >
+            <Heart size={22} strokeWidth={1.5} />
+          </button>
+
+          {/* User Profile */}
           <div
-            className="relative hidden sm:flex items-center justify-center"
+            className="relative flex items-center justify-center"
             ref={dropdownRef}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -376,16 +440,16 @@ export default function Navbar() {
                   className="absolute top-[120%] right-0 lg:-right-4 w-64 bg-white/80 backdrop-blur-xl border border-white/60 rounded-[18px] shadow-[0_20px_50px_rgba(43,89,104,0.15)] overflow-hidden z-[100] py-2"
                 >
                   <div className="flex flex-col">
-                    <Link to="/account" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
-                      <User size={16} /> My Account
+                    <Link to="/account/profile" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
+                      <User size={16} /> My Profile
                     </Link>
-                    <Link to="/account?tab=orders" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
+                    <Link to="/account/orders" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
                       <Package size={16} /> My Orders
                     </Link>
-                    <Link to="/account?tab=wishlist" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
+                    <Link to="/account/wishlist" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
                       <Heart size={16} /> Wishlist
                     </Link>
-                    <Link to="/account?tab=settings" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
+                    <Link to="/account/settings" className="flex items-center gap-3 px-5 py-2.5 text-[14px] font-medium text-black/80 hover:bg-theme-primary/10 hover:text-black transition-colors">
                       <Settings size={16} /> Settings
                     </Link>
                     <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-5 py-2.5 mx-4 mb-3 mt-3 text-[14px] font-bold text-white bg-red-500 hover:bg-red-600 rounded-xl shadow-sm hover:shadow-md transition-all">
@@ -397,17 +461,197 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          <button onClick={openCart} className="relative hover:text-theme-primary transition flex items-center">
+          {/* Cart Icon */}
+          <button 
+            onClick={openCart} 
+            onMouseEnter={() => prefetchPage('checkout')}
+            className="relative hover:text-theme-primary transition flex items-center"
+          >
             <ShoppingBag size={22} strokeWidth={1.5} />
             <span className="absolute -top-1 -right-2 bg-theme-secondary text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
           </button>
 
+          {/* Hamburger Menu */}
           <AnimatedHamburger isOpen={isMobileMenuOpen} toggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
         </div>
       </div>
 
+      {/* Search sliding bar */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="w-full bg-white border-t border-black/5 px-6 lg:px-12 py-3 flex items-center gap-3"
+          >
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40" size={18} />
+              <input
+                type="text"
+                placeholder="Search for skincare, cosmetics, ingredients..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setIsSearchOpen(false);
+                    navigate(`/${theme}?search=${encodeURIComponent(e.target.value)}`);
+                  }
+                }}
+                className="w-full pl-12 pr-4 py-3 bg-black/5 border-none rounded-full outline-none font-medium text-sm text-black focus:ring-1 focus:ring-theme-primary transition-all"
+                autoFocus
+              />
+            </div>
+            <button
+              onClick={() => setIsSearchOpen(false)}
+              className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
+            >
+              Cancel
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Mobile Drawer Navigation */}
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} theme={theme} />
+
+      {/* Mobile Profile Menu Bottom Sheet */}
+      <AnimatePresence>
+        {isMobileProfileOpen && user && (
+          <div className="fixed inset-0 z-[200] lg:hidden flex items-end justify-center">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileProfileOpen(false)}
+              className="absolute inset-0 bg-black/45 backdrop-blur-[4px]"
+            />
+            
+            {/* Sheet */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-full max-h-[85vh] bg-white rounded-t-[32px] shadow-[0_-10px_30px_rgba(0,0,0,0.15)] flex flex-col z-10 overflow-hidden"
+            >
+              {/* Drag Indicator / Header */}
+              <div className="flex flex-col items-center pt-4 pb-6 border-b border-black/5 shrink-0 px-6">
+                <div className="w-12 h-1.5 bg-black/10 rounded-full mb-5" />
+                <div className="flex items-center gap-4 w-full">
+                  {user.avatarUrl ? (
+                    <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-14 h-14 rounded-full object-cover shadow-sm border border-white" />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-theme-primary text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-black text-lg truncate leading-tight">{user.name}</h3>
+                    <p className="text-sm text-gray-500 truncate">{user.email || 'No email added'}</p>
+                  </div>
+                  <button
+                    onClick={() => setIsMobileProfileOpen(false)}
+                    className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-black/60 hover:text-black transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Menu Options */}
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                <div className="flex flex-col gap-1 pb-8">
+                  <MobileProfileItem
+                    icon={User}
+                    label="My Profile"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/profile');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Package}
+                    label="My Orders"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/orders');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Heart}
+                    label="My Wishlist"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/wishlist');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={MapPin}
+                    label="My Addresses"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/addresses');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={MessageSquare}
+                    label="My Reviews"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/reviews');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Bell}
+                    label="Notifications"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/notifications');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Settings}
+                    label="Settings"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/settings');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={HelpCircle}
+                    label="Help & Support"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/contact');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={ShieldAlert}
+                    label="Privacy Policy"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/contact');
+                    }}
+                  />
+                  
+                  <div className="pt-4 mt-2 border-t border-black/5">
+                    <button
+                      onClick={() => {
+                        setIsMobileProfileOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-red-500 hover:bg-red-50 transition-colors font-bold text-left"
+                    >
+                      <LogOut size={20} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Authentication Modal */}
       <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />

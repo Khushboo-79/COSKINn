@@ -73,13 +73,14 @@ export default function Hero() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
+  // Preload next image dynamically to save bandwidth and boost LCP
   useEffect(() => {
-    // Preload all 6 images to prevent flickering
-    themesData.forEach((t) => {
-      const img = new Image();
-      img.src = t.bg;
-    });
+    const nextTheme = themesData[(bgIndex + 1) % themesData.length];
+    const img = new Image();
+    img.src = nextTheme.bg;
+  }, [bgIndex]);
 
+  useEffect(() => {
     const handleMouseMove = (e) => {
       // Normalize from -1 to 1
       const x = (e.clientX / window.innerWidth) * 2 - 1;

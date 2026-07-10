@@ -1,43 +1,19 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 const OrderContext = createContext();
 
 export function OrderProvider({ children }) {
-  const dummyDeliveredOrder = {
-    id: 'ORD-999999',
-    date: '1 Jul 2026',
-    status: 'Delivered',
-    paymentMethod: 'Cash On Delivery',
-    subtotal: 1299,
-    discount: 0,
-    shipping: 0,
-    gst: 233,
-    totalAmount: 1299,
-    items: [
-      { id: 1, name: 'Radiance Glow Serum', variant: 'Standard', qty: 1, price: 1299, image: '/mockup_product_1.webp' }
-    ],
-    timeline: [
-      { status: 'Order Placed', date: '1 Jul', time: '10:00 AM', desc: 'Order received.', done: true },
-      { status: 'Order Confirmed', date: '1 Jul', time: '10:30 AM', desc: 'Order confirmed.', done: true },
-      { status: 'Packed', date: '2 Jul', time: '09:00 AM', desc: 'Packed.', done: true },
-      { status: 'Shipped', date: '2 Jul', time: '02:00 PM', desc: 'Shipped.', done: true },
-      { status: 'Out For Delivery', date: '4 Jul', time: '08:00 AM', desc: 'Out for delivery.', done: true },
-      { status: 'Delivered', date: '4 Jul', time: '01:00 PM', desc: 'Delivered successfully.', done: true }
-    ]
-  };
-
   const [orders, setOrders] = useState(() => {
     const saved = localStorage.getItem('coskinn_orders');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        const hasDelivered = parsed.some(o => o.status === 'Delivered');
-        return hasDelivered ? parsed : [dummyDeliveredOrder, ...parsed];
+        return Array.isArray(parsed) ? parsed.filter(order => order.id !== 'ORD-999999') : [];
       } catch (e) {
-        return [dummyDeliveredOrder];
+        return [];
       }
     }
-    return [dummyDeliveredOrder];
+    return [];
   });
 
   useEffect(() => {
@@ -77,8 +53,15 @@ export function OrderProvider({ children }) {
     return orders.find(o => o.id === orderId);
   };
 
+  const memoizedContextValue = useMemo(() => ({
+    orders, 
+    placeOrder, 
+    updateOrderStatus, 
+    getOrderById
+  }), [orders]);
+
   return (
-    <OrderContext.Provider value={{ orders, placeOrder, updateOrderStatus, getOrderById }}>
+    <OrderContext.Provider value={memoizedContextValue}>
       {children}
     </OrderContext.Provider>
   );
