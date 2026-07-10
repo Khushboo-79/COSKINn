@@ -139,7 +139,8 @@ export default function NewArrivalsPage() {
               <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
                 key={product.id}
@@ -166,7 +167,7 @@ export default function NewArrivalsPage() {
                 
                 {/* Image */}
                 <Link to={theme === 'skincare' ? `/product/${product.id}` : "#"} className="block relative w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-theme-secondary/20">
-                  <img loading="lazy" src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                  <img loading="lazy" decoding="async" src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                   
                   {/* Quick View */}
                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">

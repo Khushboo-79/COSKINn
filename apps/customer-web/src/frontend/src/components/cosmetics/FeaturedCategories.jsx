@@ -144,6 +144,8 @@ export default function FeaturedCategories() {
                 <motion.img 
                   src={category.image} 
                   alt={category.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                   variants={{
                     hover: { scale: 1.05 }

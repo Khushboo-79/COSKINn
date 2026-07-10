@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useLayoutEffect } from 'react';
+import React, { createContext, useContext, useState, useLayoutEffect, useMemo } from 'react';
 import { themes } from '../constants/theme';
 
 const ThemeContext = createContext();
@@ -44,8 +44,13 @@ export const ThemeProvider = ({ children }) => {
     }
   };
 
+  const memoizedContextValue = useMemo(() => ({
+    theme: themeName,
+    toggleTheme
+  }), [themeName]);
+
   return (
-    <ThemeContext.Provider value={{ theme: themeName, toggleTheme }}>
+    <ThemeContext.Provider value={memoizedContextValue}>
       {children}
     </ThemeContext.Provider>
   );

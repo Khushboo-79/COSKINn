@@ -68,12 +68,13 @@ const CategoryCard = ({ data, delay = 0 }) => {
        {/* 1. Base Gradient & Organic Botanical Background (Default State) */}
        <div className={`absolute inset-0 bg-gradient-to-br ${data.gradient} z-0 transition-opacity duration-[1.2s] group-hover:opacity-10`} />
        <div className="absolute inset-0 opacity-40 group-hover:opacity-0 transition-opacity duration-[1.2s] mix-blend-overlay z-0 pointer-events-none">
-          <img loading="lazy" src={data.bgImg} alt={data.ingredient} className="w-full h-full object-cover blur-[3px]" />
+          <img loading="lazy" decoding="async" src={data.bgImg} alt={data.ingredient} className="w-full h-full object-cover blur-[3px]" />
        </div>
 
        {/* 2. The Premium Model Lifestyle Reveal (Fades in on hover) */}
        <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-[1.2s] ease-in-out overflow-hidden pointer-events-none">
           <img loading="lazy" 
+            decoding="async"
             src={data.modelImg} 
             alt={`${data.title} Lifestyle`} 
             className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-[4s] ease-out" 
@@ -91,6 +92,7 @@ const CategoryCard = ({ data, delay = 0 }) => {
           </div>
           
           <img loading="lazy" 
+            decoding="async"
             src={data.productImg} 
             alt={data.title} 
             className="w-full h-full object-cover lg:object-contain mix-blend-multiply drop-shadow-[0_30px_60px_rgba(0,0,0,0.1)] scale-[1.02] transition-all duration-[1.2s] ease-out group-hover:scale-75 group-hover:-translate-x-[20%] lg:group-hover:-translate-x-[25%] group-hover:translate-y-[10%] group-hover:rotate-[-5deg] group-hover:drop-shadow-[0_20px_30px_rgba(0,0,0,0.4)] z-20" 

@@ -448,6 +448,12 @@ const DashboardScreen = () => {
           if (tabId === 'shop') {
             navigation.navigate('Shop');
           }
+          if (tabId === 'new') {
+            navigation.navigate('NewScreen');
+          }
+          if (tabId === 'rewards') {
+            navigation.navigate('RewardsScreen');
+          }
         }} 
       />
     </View>

@@ -5,22 +5,22 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const CoskinnLogo = ({ fill = "black" }) => (
-  <svg className="h-[36px] lg:h-[42px] w-auto object-contain drop-shadow-sm" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg className="h-[36px] w-[135px] lg:h-[42px] lg:w-[158px] object-contain drop-shadow-sm" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="modal-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#FF0069" />
         <stop offset="35%" stopColor="#FF6B6B" />
         <stop offset="70%" stopColor="#FFA07A" />
         <stop offset="100%" stopColor="#FFD498" />
       </linearGradient>
     </defs>
-    <path d="M 72 20 A 8 8 0 1 1 62 30 C 52 20, 35 30, 30 55 C 25 80, 40 95, 60 95 C 70 95, 85 82, 85 82 C 85 82, 95 92, 75 105 C 45 118, 10 105, 8 60 C 5 15, 45 2, 72 20 Z" fill="url(#modal-logo-grad)" />
-    <path d="M 75 92 C 75 92, 65 82, 65 74 A 6 6 0 0 1 75 70 A 6 6 0 0 1 85 74 C 85 82, 75 92, 75 92 Z" stroke="url(#modal-logo-grad)" strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M 72 20 A 8 8 0 1 1 62 30 C 52 20, 35 30, 30 55 C 25 80, 40 95, 60 95 C 70 95, 85 82, 85 82 C 85 82, 95 92, 75 105 C 45 118, 10 105, 8 60 C 5 15, 45 2, 72 20 Z" fill="url(#coskinn-logo-grad)" />
+    <path d="M 75 92 C 75 92, 65 82, 65 74 A 6 6 0 0 1 75 70 A 6 6 0 0 1 85 74 C 85 82, 75 92, 75 92 Z" stroke="url(#coskinn-logo-grad)" strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
     <text x="105" y="95" fontFamily="var(--font-heading)" fill={fill}>
       <tspan fontSize="85" fontWeight="600" letterSpacing="2">OSKIN</tspan>
       <tspan fontSize="65" fontWeight="600">n</tspan>
     </text>
-    <path d="M 280 40 C 280 40, 266 28, 266 18 A 7 7 0 0 1 280 15 A 7 7 0 0 1 294 18 C 294 28, 280 40, 280 40 Z" fill="url(#modal-logo-grad)" />
+    <path d="M 280 40 C 280 40, 266 28, 266 18 A 7 7 0 0 1 280 15 A 7 7 0 0 1 294 18 C 294 28, 280 40, 280 40 Z" fill="url(#coskinn-logo-grad)" />
   </svg>
 );
 
@@ -261,7 +261,7 @@ export default function AuthModal({ isOpen, onClose }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full max-w-[850px] bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col md:flex-row min-h-[500px]"
+        className="relative w-full max-w-[850px] bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.2)] overflow-y-auto max-h-[90vh] md:max-h-none md:overflow-hidden flex flex-col md:flex-row md:min-h-[500px]"
       >
         {/* Close Button */}
         <button
@@ -288,7 +288,7 @@ export default function AuthModal({ isOpen, onClose }) {
         </div>
 
         {/* Right Side: Forms */}
-        <div className="flex-1 p-8 md:p-12 flex flex-col justify-center relative font-body">
+        <div className="flex-1 p-6 sm:p-8 md:p-12 flex flex-col justify-center relative font-body">
           <AnimatePresence mode="wait">
             
             {/* STEP 1: MOBILE */}
@@ -438,7 +438,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 </div>
                 
                 <form onSubmit={handleOtpSubmit} className="flex flex-col gap-8">
-                  <div className="flex justify-center gap-4">
+                  <div className="flex justify-center gap-2 sm:gap-4">
                     {otp.map((digit, index) => (
                       <input
                         key={index}
@@ -449,7 +449,7 @@ export default function AuthModal({ isOpen, onClose }) {
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value, false)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e, false)}
-                        className={`w-14 h-14 text-center text-xl font-bold border rounded-xl outline-none transition-all ${digit ? 'border-theme-primary ring-1 ring-theme-primary/50 text-black' : 'border-gray-300 focus:border-theme-primary focus:ring-1 focus:ring-theme-primary text-gray-900'}`}
+                        className={`w-11 h-11 sm:w-14 sm:h-14 text-center text-lg sm:text-xl font-bold border rounded-xl outline-none transition-all ${digit ? 'border-theme-primary ring-1 ring-theme-primary/50 text-black' : 'border-gray-300 focus:border-theme-primary focus:ring-1 focus:ring-theme-primary text-gray-900'}`}
                       />
                     ))}
                   </div>
@@ -560,7 +560,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 </div>
                 
                 <form onSubmit={handleEmailOtpSubmit} className="flex flex-col gap-8">
-                  <div className="flex justify-center gap-4">
+                  <div className="flex justify-center gap-2 sm:gap-4">
                     {emailOtp.map((digit, index) => (
                       <input
                         key={index}
@@ -571,7 +571,7 @@ export default function AuthModal({ isOpen, onClose }) {
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value, true)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e, true)}
-                        className={`w-14 h-14 text-center text-xl font-bold border rounded-xl outline-none transition-all ${digit ? 'border-theme-primary ring-1 ring-theme-primary/50 text-black' : 'border-gray-300 focus:border-theme-primary focus:ring-1 focus:ring-theme-primary text-gray-900'}`}
+                        className={`w-11 h-11 sm:w-14 sm:h-14 text-center text-lg sm:text-xl font-bold border rounded-xl outline-none transition-all ${digit ? 'border-theme-primary ring-1 ring-theme-primary/50 text-black' : 'border-gray-300 focus:border-theme-primary focus:ring-1 focus:ring-theme-primary text-gray-900'}`}
                       />
                     ))}
                   </div>

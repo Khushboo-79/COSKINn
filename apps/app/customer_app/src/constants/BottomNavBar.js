@@ -7,7 +7,7 @@ import { AppTheme, scaleh, scalev } from './AppTheme';
 const tabs = [
   { id: 'home', label: 'Home', IconComponent: Home },
   { id: 'shop', label: 'Shop', IconComponent: ShoppingBag },
-  { id: 'new', label: 'Sparkles', IconComponent: Sparkles },
+  { id: 'new', label: 'New', IconComponent: Sparkles },
   { id: 'rewards', label: 'Rewards', IconComponent: Ticket },
   { id: 'account', label: 'Account', IconComponent: User },
 ];

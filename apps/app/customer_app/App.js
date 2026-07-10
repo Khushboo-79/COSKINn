@@ -30,6 +30,14 @@ import OrderConfirmedScreen from './src/screens/Dashboard/Cart/OrderConfirmedScr
 import ShopScreen from './src/screens/Dashboard/BottomNav/Shop/ShopScreen';
 import CategoriesScreen from './src/screens/Dashboard/BottomNav/Shop/CategoriesScreen';
 import ViewAllCategoriesScreen from './src/screens/Dashboard/BottomNav/Shop/ViewAllCategoriesScreen';
+import ViewAllSkinTypesScreen from './src/screens/Dashboard/BottomNav/Shop/ViewAllSkinTypesScreen';
+import ViewAllSkinConcernsScreen from './src/screens/Dashboard/BottomNav/Shop/ViewAllSkinConcernsScreen';
+import ViewAllIngredientsScreen from './src/screens/Dashboard/BottomNav/Shop/ViewAllIngredientsScreen';
+import ViewAllRoutinesScreen from './src/screens/Dashboard/BottomNav/Shop/ViewAllRoutinesScreen';
+import ViewAllNewArrivalsScreen from './src/screens/Dashboard/BottomNav/Shop/ViewAllNewArrivalsScreen';
+import NewScreen from './src/screens/Dashboard/BottomNav/New/NewScreen';
+import RewardsScreen from './src/screens/Dashboard/BottomNav/Rewards/RewardsScreen';
+import FilterScreen from './src/screens/Dashboard/BottomNav/Shop/FilterScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +65,14 @@ function App() {
           <Stack.Screen name="Shop" component={ShopScreen} />
           <Stack.Screen name="Categories" component={CategoriesScreen} />
           <Stack.Screen name="ViewAllCategories" component={ViewAllCategoriesScreen} />
+          <Stack.Screen name="ViewAllSkinTypes" component={ViewAllSkinTypesScreen} />
+          <Stack.Screen name="ViewAllSkinConcerns" component={ViewAllSkinConcernsScreen} />
+          <Stack.Screen name="ViewAllIngredients" component={ViewAllIngredientsScreen} />
+          <Stack.Screen name="ViewAllRoutines" component={ViewAllRoutinesScreen} />
+          <Stack.Screen name="ViewAllNewArrivals" component={ViewAllNewArrivalsScreen} />
+          <Stack.Screen name="NewScreen" component={NewScreen} />
+          <Stack.Screen name="RewardsScreen" component={RewardsScreen} />
+          <Stack.Screen name="FilterScreen" component={FilterScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

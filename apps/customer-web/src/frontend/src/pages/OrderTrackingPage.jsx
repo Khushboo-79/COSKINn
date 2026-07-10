@@ -37,7 +37,7 @@ export default function OrderTrackingPage() {
           <AlertTriangle className="mx-auto w-12 h-12 text-gray-400 mb-4" />
           <h2 className="text-xl font-heading font-medium text-black mb-2">Order Not Found</h2>
           <p className="text-gray-500 mb-6">We couldn't find the order you're looking for.</p>
-          <button onClick={() => navigate('/account')} className="px-6 py-2.5 rounded-xl bg-[#FF0069] text-white font-bold hover:bg-pink-700 transition-colors">
+          <button onClick={() => navigate('/account/orders')} className="px-6 py-2.5 rounded-xl bg-[#FF0069] text-white font-bold hover:bg-pink-700 transition-colors">
             Back to My Orders
           </button>
         </div>
@@ -82,7 +82,7 @@ export default function OrderTrackingPage() {
         
         {/* Breadcrumb / Header */}
         <button 
-          onClick={() => navigate('/account?tab=orders')}
+          onClick={() => navigate('/account/orders')}
           className="flex items-center gap-2 text-gray-500 hover:text-black mb-8 transition-colors group"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />

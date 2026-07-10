@@ -52,6 +52,7 @@ const BeforeAfterReveal = () => {
       
       {/* AFTER IMAGE (Background) - Radiant, Glowing */}
       <img loading="lazy" 
+        decoding="async"
         src="/why-choose-us-model.webp" 
         alt="After Transformation" 
         className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" 
@@ -66,6 +67,7 @@ const BeforeAfterReveal = () => {
         style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
       >
         <img loading="lazy" 
+          decoding="async"
           src="/why-choose-us-model.webp" 
           alt="Before Transformation" 
           className="absolute inset-0 w-full h-full object-cover filter grayscale-[0.4] sepia-[0.3] brightness-90 contrast-75 blur-[1px] select-none" 
@@ -242,7 +244,7 @@ export default function Results() {
                 <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none opacity-80 mix-blend-overlay">
                   <span className="font-heading text-white text-3xl lg:text-5xl font-light tracking-[0.3em] uppercase rotate-[-90deg]">COSKINn</span>
                 </div>
-                <img loading="lazy" src="/mockup_product_3.webp" alt="COSKINn Serum" className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src="/mockup_product_3.webp" alt="COSKINn Serum" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-theme-secondary/20 to-transparent mix-blend-multiply z-10" />
               </motion.div>
             </div>

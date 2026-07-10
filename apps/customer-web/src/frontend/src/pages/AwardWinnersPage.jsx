@@ -247,6 +247,7 @@ export default function AwardWinnersPage() {
                 <Link to={`/product/${product.id}`} className="block w-full h-full">
                   <img 
                     loading="lazy"
+                    decoding="async"
                     src={product.image} 
                     alt={product.name} 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

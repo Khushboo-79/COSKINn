@@ -345,7 +345,8 @@ export default function BestSellersPage() {
               <motion.div 
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
                 key={product.id} 
@@ -357,6 +358,7 @@ export default function BestSellersPage() {
                   <Link to={`/product/${product.id}`} className="block w-full h-full">
                     <img 
                       loading="lazy"
+                      decoding="async"
                       src={product.image} 
                       alt={product.name} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

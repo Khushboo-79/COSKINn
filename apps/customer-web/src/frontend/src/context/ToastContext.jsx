@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, Info } from 'lucide-react';
 
@@ -21,8 +21,12 @@ export function ToastProvider({ children }) {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
+  const memoizedContextValue = useMemo(() => ({
+    showToast
+  }), [showToast]);
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={memoizedContextValue}>
       {children}
       
       {/* Global Toast Container */}

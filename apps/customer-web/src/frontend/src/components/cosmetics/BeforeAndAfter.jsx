@@ -132,6 +132,8 @@ export default function BeforeAndAfter() {
             <motion.img 
               src={paletteImage} 
               alt="COSKINn Palette" 
+              loading="lazy"
+              decoding="async"
               className="w-full h-auto object-contain"
               animate={{ y: [-15, 15, -15], rotate: [-5, 5, -5] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
@@ -145,6 +147,8 @@ export default function BeforeAndAfter() {
             <motion.img 
               src={lipstickImage} 
               alt="COSKINn Lipstick" 
+              loading="lazy"
+              decoding="async"
               className="w-full h-auto object-contain"
               animate={{ y: [15, -15, 15], rotate: [5, -5, 5] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
@@ -164,6 +168,7 @@ export default function BeforeAndAfter() {
             {/* Base Image (Before) */}
             <div className="absolute inset-0 w-full h-full pointer-events-none">
               <img loading="lazy" 
+                decoding="async"
                 src={beforeImage} 
                 alt="Before COSKINn Makeup" 
                 className="absolute inset-0 w-full h-full object-cover"
@@ -179,6 +184,7 @@ export default function BeforeAndAfter() {
               style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
             >
               <img loading="lazy" 
+                decoding="async"
                 src={afterImage} 
                 alt="After COSKINn Makeup" 
                 className="absolute inset-0 w-full h-full object-cover"
