@@ -1,11 +1,12 @@
 generator client {
   provider        = "prisma-client-js"
   engineType      = "library"
-  previewFeatures = ["fullTextSearchPostgres"]
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ==========================================
