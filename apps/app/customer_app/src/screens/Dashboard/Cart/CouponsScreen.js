@@ -223,6 +223,11 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   couponCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     backgroundColor: AppTheme.colors.white,
     marginHorizontal: scaleh(20),
     marginBottom: scalev(15),

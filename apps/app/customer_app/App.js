@@ -18,7 +18,13 @@ import AuthScreen from './src/screens/Auth/AuthScreen';
 import OtpScreen from './src/screens/Auth/OtpScreen';
 import DashboardScreen from './src/screens/Dashboard/DashboardScreen';
 import SearchScreen from './src/screens/Dashboard/SearchScreen';
-import WishlistScreen from './src/screens/Dashboard/Wishlist/WishlistScreen';
+import WishlistScreen from './src/screens/Dashboard/BottomNav/Account/WishlistScreen';
+import TermsAndConditionsScreen from './src/screens/Dashboard/BottomNav/Account/TermsAndConditionsScreen';
+import ReturnPolicyScreen from './src/screens/Dashboard/BottomNav/Account/ReturnPolicyScreen';
+import FAQScreen from './src/screens/Dashboard/BottomNav/Account/FAQScreen';
+import PrivacyScreen from './src/screens/Dashboard/BottomNav/Account/PrivacyScreen';
+import ProductDetailsScreen from './src/screens/Dashboard/ProductDetails/ProductDetailsScreen';
+import AllReviewsScreen from './src/screens/Dashboard/ProductDetails/AllReviewsScreen';
 import CartScreen from './src/screens/Dashboard/Cart/CartScreen';
 import CouponsScreen from './src/screens/Dashboard/Cart/CouponsScreen';
 import GiftBoxScreen from './src/screens/Dashboard/Cart/GiftBoxScreen';
@@ -38,6 +44,10 @@ import ViewAllNewArrivalsScreen from './src/screens/Dashboard/BottomNav/Shop/Vie
 import NewScreen from './src/screens/Dashboard/BottomNav/New/NewScreen';
 import RewardsScreen from './src/screens/Dashboard/BottomNav/Rewards/RewardsScreen';
 import FilterScreen from './src/screens/Dashboard/BottomNav/Shop/FilterScreen';
+import AccountScreen from './src/screens/Dashboard/BottomNav/Account/AccountScreen';
+import ProfileScreen from './src/screens/Dashboard/BottomNav/Account/ProfileScreen';
+import AddressScreen from './src/screens/Dashboard/BottomNav/Account/AddressScreen';
+import OrdersListScreen from './src/screens/Dashboard/BottomNav/Account/OrdersListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -72,6 +82,16 @@ function App() {
           <Stack.Screen name="ViewAllNewArrivals" component={ViewAllNewArrivalsScreen} />
           <Stack.Screen name="NewScreen" component={NewScreen} />
           <Stack.Screen name="RewardsScreen" component={RewardsScreen} />
+          <Stack.Screen name="AccountScreen" component={AccountScreen} />
+          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+          <Stack.Screen name="AddressScreen" component={AddressScreen} />
+          <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
+          <Stack.Screen name="TermsAndConditionsScreen" component={TermsAndConditionsScreen} />
+          <Stack.Screen name="ReturnPolicyScreen" component={ReturnPolicyScreen} />
+          <Stack.Screen name="FAQScreen" component={FAQScreen} />
+          <Stack.Screen name="PrivacyScreen" component={PrivacyScreen} />
+          <Stack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} />
+          <Stack.Screen name="AllReviewsScreen" component={AllReviewsScreen} />
           <Stack.Screen name="FilterScreen" component={FilterScreen} />
         </Stack.Navigator>
       </NavigationContainer>

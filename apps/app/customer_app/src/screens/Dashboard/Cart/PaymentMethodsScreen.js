@@ -456,6 +456,11 @@ const styles = StyleSheet.create({
     marginBottom: scalev(15),
   },
   paymentCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     backgroundColor: AppTheme.colors.white,
     marginHorizontal: scaleh(20),
     borderRadius: scaleh(20),
@@ -676,6 +681,11 @@ const styles = StyleSheet.create({
     paddingBottom: scalev(15),
   },
   shippingOptionCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,

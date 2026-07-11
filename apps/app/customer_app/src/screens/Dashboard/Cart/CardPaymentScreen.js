@@ -156,6 +156,11 @@ const styles = StyleSheet.create({
     marginTop: scalev(10),
   },
   priceSummaryCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     backgroundColor: '#FFFFFF',
     borderRadius: scaleh(10),
     paddingHorizontal: scaleh(15),
@@ -173,6 +178,11 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   userCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     backgroundColor: '#FFFFFF',
     borderRadius: scaleh(10),
     paddingHorizontal: scaleh(15),

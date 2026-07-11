@@ -34,7 +34,11 @@ const ViewAllCategoriesScreen = () => {
   const [activeTab, setActiveTab] = useState('All');
 
   const renderProductCard = ({ item }) => (
-    <View style={styles.productCard}>
+    <TouchableOpacity 
+      style={styles.productCard} 
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate('ProductDetailsScreen')}
+    >
       {/* Top Image Section */}
       <LinearGradient 
         colors={['#FFD1DC', '#FFF5F5', '#FFFFFF']} 
@@ -83,7 +87,7 @@ const ViewAllCategoriesScreen = () => {
           <Text style={styles.addToCartText}>ADD TO CART</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -215,6 +219,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   productCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     width: '48%',
     backgroundColor: '#FFFFFF',
     borderRadius: scaleh(15),
