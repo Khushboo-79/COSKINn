@@ -96,10 +96,10 @@ export default function GiftSetsPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text pt-[72px]">
+    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text">
       
       {/* Premium Hero Section */}
-      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50">
+      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50 pt-[90px]">
         <div className="absolute inset-0 opacity-50 mix-blend-multiply">
           <img 
             src={heroImg} 

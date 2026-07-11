@@ -110,23 +110,10 @@ export default function SunscreenPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text mt-[72px]">
+    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text">
       
-      {/* Breadcrumbs */}
-      <div className="w-full border-b border-black/5 bg-white/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-2 text-xs font-medium text-black/50 tracking-wide">
-          <Link to="/" className="hover:text-theme-primary transition-colors">Home</Link>
-          <ChevronRight className="w-3 h-3" />
-          <Link to="/skincare" className="hover:text-theme-primary transition-colors">Shop</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-black font-bold truncate">Face Care</span>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-[#FF0069] font-bold truncate">COSKINn Sunscreen</span>
-        </div>
-      </div>
-
       {/* SECTION 1: PREMIUM HERO */}
-      <section className="relative w-full min-h-[600px] lg:min-h-[85vh] bg-[#FFF5F8] overflow-hidden flex flex-col lg:flex-row items-center">
+      <section className="relative w-full min-h-[600px] lg:min-h-[85vh] bg-[#FFF5F8] overflow-hidden flex flex-col lg:flex-row items-center pt-[140px] lg:pt-[150px]">
         {/* Abstract Gradient Background & Glassmorphism */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-gradient-to-br from-[#FF0069]/10 to-[#FFD498]/20 rounded-full blur-[100px]" />
@@ -136,6 +123,17 @@ export default function SunscreenPage() {
         <div className="max-w-7xl mx-auto w-full px-6 py-12 lg:py-20 flex flex-col lg:flex-row items-center relative z-10">
           {/* Left Side: Content */}
           <div className="w-full lg:w-1/2 flex flex-col items-start lg:pr-12 text-left mb-12 lg:mb-0">
+            {/* Breadcrumbs */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-black/50 tracking-wide mb-6 lg:mb-8">
+              <Link to="/" className="hover:text-theme-primary transition-colors">Home</Link>
+              <ChevronRight className="w-3 h-3" />
+              <Link to="/skincare" className="hover:text-theme-primary transition-colors">Shop</Link>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-black font-bold truncate">Face Care</span>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-[#FF0069] font-bold truncate">COSKINn Sunscreen</span>
+            </div>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -205,13 +203,13 @@ export default function SunscreenPage() {
             >
               <button 
                 onClick={() => document.getElementById('product-collection').scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-[#FF0069] text-white font-bold rounded-full shadow-[0_10px_30px_rgba(255,0,105,0.3)] hover:scale-105 transition-all text-sm uppercase tracking-widest"
+                className="px-8 py-4 btn-primary-skincare font-bold text-sm uppercase tracking-widest"
               >
                 Shop Collection
               </button>
               <button 
                 onClick={() => document.getElementById('uv-guide').scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-white text-black border border-black/10 font-bold rounded-full hover:bg-black/5 transition-all text-sm uppercase tracking-widest"
+                className="px-8 py-4 btn-secondary-skincare font-bold text-sm uppercase tracking-widest mt-4 sm:mt-0"
               >
                 Explore Protection
               </button>
@@ -327,7 +325,7 @@ export default function SunscreenPage() {
                       </div>
                     )}
                     {product.badge && (
-                      <div className="px-3 py-1 bg-black text-white text-[10px] font-bold tracking-widest rounded-full shadow-lg w-max">
+                      <div className="px-3 py-1 bg-[#FF0069] text-white text-[10px] font-bold tracking-widest rounded-full shadow-lg w-max">
                         {product.badge}
                       </div>
                     )}
@@ -358,7 +356,7 @@ export default function SunscreenPage() {
                         e.stopPropagation();
                         addToCart(product, 1);
                       }}
-                      className="flex-1 bg-white/90 backdrop-blur-md text-black font-bold py-3 rounded-xl hover:bg-[#FF0069] hover:text-white transition-colors flex items-center justify-center gap-2 text-sm shadow-lg"
+                      className="flex-1 btn-secondary-skincare py-3 flex items-center justify-center gap-2 text-sm font-bold"
                     >
                       <ShoppingBag size={16} /> Add
                     </button>
@@ -367,7 +365,7 @@ export default function SunscreenPage() {
                         e.stopPropagation();
                         navigate(`/product/${product.id}`);
                       }}
-                      className="w-12 bg-black/90 backdrop-blur-md text-white font-bold py-3 rounded-xl hover:bg-[#FF0069] transition-colors flex items-center justify-center shadow-lg shrink-0"
+                      className="w-12 btn-primary-skincare flex items-center justify-center shrink-0 py-3"
                     >
                       <Eye size={16} />
                     </button>
@@ -405,7 +403,7 @@ export default function SunscreenPage() {
                         e.stopPropagation();
                         handleBuyNow(product);
                       }}
-                      className="px-4 py-2 bg-black text-white text-xs font-bold rounded-lg hover:bg-[#FF0069] hover:shadow-lg transition-all"
+                      className="px-4 py-2 btn-primary-skincare text-xs font-bold"
                     >
                       Buy Now
                     </button>
@@ -472,7 +470,7 @@ export default function SunscreenPage() {
                   onClick={() => setActiveSkinType(type.id)}
                   className={`w-full flex items-center justify-between px-6 py-5 rounded-2xl transition-all duration-300 font-bold text-left border ${
                     activeSkinType === type.id
-                      ? 'bg-black text-white border-black shadow-xl lg:translate-x-2'
+                      ? 'btn-primary-skincare lg:translate-x-2 border-transparent'
                       : 'bg-white text-gray-600 border-black/5 hover:border-[#FF0069] hover:text-[#FF0069]'
                   }`}
                 >
@@ -511,7 +509,7 @@ export default function SunscreenPage() {
                         <div className="flex gap-2 mt-auto">
                           <button 
                             onClick={() => addToCart(product, 1)}
-                            className="flex-1 py-2.5 bg-black text-white text-xs font-bold rounded-xl hover:bg-[#FF0069] shadow-md transition-colors"
+                            className="flex-1 py-2.5 btn-primary-skincare text-xs font-bold"
                           >
                             Add to Cart
                           </button>

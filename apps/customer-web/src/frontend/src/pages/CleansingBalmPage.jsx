@@ -148,21 +148,10 @@ export default function CleansingBalmPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text mt-[72px]">
+    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text">
       
-      {/* Breadcrumbs */}
-      <div className="w-full border-b border-black/5 bg-white/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-2 text-xs font-medium text-black/50 tracking-wide">
-          <Link to="/" className="hover:text-[#FF0069] transition-colors">Home</Link>
-          <ChevronRight className="w-3 h-3 text-black/25" />
-          <Link to="/skincare" className="hover:text-[#FF0069] transition-colors">Skincare</Link>
-          <ChevronRight className="w-3 h-3 text-black/25" />
-          <span className="text-black font-bold truncate">Cleansing Balms</span>
-        </div>
-      </div>
-
       {/* SECTION 1 — PREMIUM LUXURY HERO */}
-      <section className="relative w-full min-h-[90vh] flex items-center bg-[#FAFAFA] overflow-hidden pt-10 pb-20">
+      <section className="relative w-full min-h-[90vh] flex items-center bg-[#FAFAFA] overflow-hidden pt-[140px] lg:pt-[150px] pb-20">
         
         {/* Abstract Luxury Background Elements */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -189,6 +178,15 @@ export default function CleansingBalmPage() {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col items-start text-left pt-12 lg:pt-0"
           >
+            {/* Breadcrumbs */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-black/50 tracking-wide mb-6 lg:mb-8">
+              <Link to="/" className="hover:text-[#FF0069] transition-colors">Home</Link>
+              <ChevronRight className="w-3 h-3 text-black/25" />
+              <Link to="/skincare" className="hover:text-[#FF0069] transition-colors">Skincare</Link>
+              <ChevronRight className="w-3 h-3 text-black/25" />
+              <span className="text-black font-bold truncate">Cleansing Balms</span>
+            </div>
+
             {/* Badge */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -234,8 +232,8 @@ export default function CleansingBalmPage() {
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
               <button 
-                onClick={() => document.getElementById('products-grid').scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                className="group relative w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-[0.15em] text-[11px] overflow-hidden shadow-[0_15px_30px_rgba(255,0,105,0.25)] hover:shadow-[0_20px_40px_rgba(255,0,105,0.35)] transition-all duration-300"
+                onClick={() => document.getElementById('collection').scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="group relative overflow-hidden w-full sm:w-auto px-10 py-4 btn-primary-skincare font-bold uppercase tracking-[0.15em] text-[11px]"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   Shop Collection
@@ -251,7 +249,7 @@ export default function CleansingBalmPage() {
               
               <button 
                 onClick={() => document.getElementById('how-to-use').scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                className="w-full sm:w-auto px-10 py-4 bg-transparent text-black border border-black/20 rounded-full font-bold uppercase tracking-[0.15em] text-[11px] hover:border-black hover:bg-black/5 transition-all duration-300"
+                className="w-full sm:w-auto px-10 py-4 btn-secondary-skincare font-bold uppercase tracking-[0.15em] text-[11px] mt-4 sm:mt-0"
               >
                 Learn More
               </button>
@@ -403,7 +401,7 @@ export default function CleansingBalmPage() {
                         </span>
                       )}
                       {product.discountBadge && (
-                        <span className="px-3.5 py-1.5 bg-black text-white text-[10px] font-black tracking-widest uppercase rounded-full shadow-lg">
+                        <span className="px-3.5 py-1.5 bg-[#FF0069] text-white text-[10px] font-black tracking-widest uppercase rounded-full shadow-lg">
                           {product.discountBadge}
                         </span>
                       )}
@@ -481,13 +479,13 @@ export default function CleansingBalmPage() {
                     <div className="flex flex-col sm:flex-row gap-2">
                       <button 
                         onClick={() => addToCart(product, 1)}
-                        className="flex-1 py-3 border-2 border-black bg-black text-white hover:bg-[#FF0069] hover:border-[#FF0069] font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-sm"
+                        className="flex-1 py-3 btn-secondary-skincare font-bold uppercase tracking-widest text-[10px]"
                       >
                         Add to Cart
                       </button>
                       <button 
                         onClick={() => handleBuyNow(product)}
-                        className="flex-1 py-3 bg-[#FF0069] text-white hover:bg-black font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-sm"
+                        className="flex-1 py-3 btn-primary-skincare font-bold uppercase tracking-widest text-[10px]"
                       >
                         Buy Now
                       </button>
@@ -615,7 +613,7 @@ export default function CleansingBalmPage() {
                   
                   <button
                     onClick={() => addToCart(item, 1)}
-                    className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest text-[10px] rounded-xl hover:bg-[#FF0069] transition-colors"
+                    className="w-full py-3 btn-primary-skincare font-bold uppercase tracking-widest text-[10px]"
                   >
                     Add To Cart
                   </button>

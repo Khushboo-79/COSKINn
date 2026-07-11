@@ -204,7 +204,7 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-8 lg:px-12 pt-32 pb-20 lg:pt-40 lg:pb-16 flex flex-col justify-center flex-1">
+      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-8 lg:px-12 pt-32 pb-8 lg:pt-40 lg:pb-8 flex flex-col justify-center flex-1">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
 
           {/* Left Content */}
@@ -251,13 +251,13 @@ export default function Hero() {
             </motion.div>
 
             <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-8 mb-16">
-              <button className="group flex items-center justify-center gap-2 bg-[#FF0069] text-white hover:bg-pink-700 px-8 py-4 rounded-full text-[14px] font-body font-semibold tracking-wide transition-all duration-300 shadow-[0_10px_30px_rgba(43,89,104,0.3)] hover:-translate-y-1 hover:scale-105">
+              <button className="group flex items-center justify-center gap-2 btn-primary-skincare px-8 py-4 text-[14px] font-body font-semibold tracking-wide">
                 Shop Now
                 <ArrowRight size={18} strokeWidth={2} className="group-hover:translate-x-1 transition-transform ml-1" />
               </button>
 
               <button className="group flex items-center gap-4 hover:opacity-80 transition-opacity">
-                <div className="w-12 h-12 rounded-full bg-[#FFD498] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform btn-secondary-skincare rounded-[16px]">
                   <Play size={16} className="text-[#1F1F1F] ml-1" fill="currentColor" />
                 </div>
                 <span className="text-[13px] font-body font-bold text-[#1F1F1F]">See How It Works</span>

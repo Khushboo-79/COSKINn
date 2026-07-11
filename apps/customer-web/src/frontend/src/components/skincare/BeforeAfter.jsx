@@ -19,8 +19,8 @@ const StatCounter = ({ endValue, label, delay = 0 }) => {
   }, [isInView, endValue, count]);
 
   return (
-    <motion.div 
-      ref={ref} 
+    <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay }}
@@ -46,31 +46,31 @@ const StatCounter = ({ endValue, label, delay = 0 }) => {
 
 const BeforeAfterReveal = () => {
   const [sliderPos, setSliderPos] = useState(50);
-  
+
   return (
-    <div className="relative w-full aspect-[4/5] lg:aspect-[4/3] rounded-[48px] lg:rounded-[64px] overflow-hidden shadow-[0_40px_100px_rgba(43,89,104,0.15)] bg-white group border border-white/40">
-      
+    <div className="relative w-full max-w-[700px] h-[400px] md:h-[450px] lg:h-[500px] mx-auto rounded-[48px] lg:rounded-[64px] overflow-hidden shadow-[0_40px_100px_rgba(43,89,104,0.15)] bg-white group border border-white/40">
+
       {/* AFTER IMAGE (Background) - Radiant, Glowing */}
-      <img loading="lazy" 
+      <img loading="lazy"
         decoding="async"
-        src="/why-choose-us-model.webp" 
-        alt="After Transformation" 
-        className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" 
+        src="/why-choose-us-model.webp"
+        alt="After Transformation"
+        className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
       />
-      
+
       {/* Subtle Glow Overlay for After */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent mix-blend-overlay pointer-events-none" />
-      
+
       {/* BEFORE IMAGE (Foreground) - Dull, Desaturated */}
-      <div 
+      <div
         className="absolute inset-0 w-full h-full pointer-events-none border-r border-white/20"
         style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
       >
-        <img loading="lazy" 
+        <img loading="lazy"
           decoding="async"
-          src="/why-choose-us-model.webp" 
-          alt="Before Transformation" 
-          className="absolute inset-0 w-full h-full object-cover filter grayscale-[0.4] sepia-[0.3] brightness-90 contrast-75 blur-[1px] select-none" 
+          src="/why-choose-us-model.webp"
+          alt="Before Transformation"
+          className="absolute inset-0 w-full h-full object-cover filter grayscale-[0.4] sepia-[0.3] brightness-90 contrast-75 blur-[1px] select-none"
         />
         <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
       </div>
@@ -84,19 +84,19 @@ const BeforeAfterReveal = () => {
       </div>
 
       {/* DRAG HANDLE */}
-      <div 
+      <div
         className="absolute top-0 bottom-0 w-[1px] bg-white/80 shadow-[0_0_20px_rgba(255,255,255,1)] pointer-events-none z-20 transition-all duration-75"
         style={{ left: `${sliderPos}%` }}
       >
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/30 backdrop-blur-2xl border border-white/80 shadow-[0_15px_30px_rgba(43,89,104,0.2)] flex items-center justify-center transform transition-transform group-hover:scale-105">
-           <ChevronsLeftRight className="text-white w-7 h-7 drop-shadow-md" strokeWidth={1.5} />
+          <ChevronsLeftRight className="text-white w-7 h-7 drop-shadow-md" strokeWidth={1.5} />
         </div>
       </div>
 
       {/* NATIVE RANGE INPUT (Accessible & Robust) */}
-      <input 
-        type="range" 
-        min="0" max="100" 
+      <input
+        type="range"
+        min="0" max="100"
         value={sliderPos}
         onChange={(e) => setSliderPos(e.target.value)}
         className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 touch-pan-y"
@@ -111,8 +111,8 @@ const BeforeAfterReveal = () => {
    ========================================= */
 
 const resultHighlights = [
-  "Deep Hydration", "Natural Glow", "Skin Texture", 
-  "Smoothness", "Radiance", "Healthy Skin Barrier", 
+  "Deep Hydration", "Natural Glow", "Skin Texture",
+  "Smoothness", "Radiance", "Healthy Skin Barrier",
   "Deep Nourishment", "Fresh Appearance"
 ];
 
@@ -134,19 +134,19 @@ export default function Results() {
   const yProduct = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
 
   return (
-    <section 
-      ref={containerRef} 
-      className="relative w-full bg-white py-32 lg:py-48 overflow-hidden font-body text-black selection:bg-theme-secondary selection:text-black"
+    <section
+      ref={containerRef}
+      className="relative w-full bg-white pt-10 pb-10 lg:pt-16 lg:pb-16 overflow-hidden font-body text-black selection:bg-theme-secondary selection:text-black"
     >
       {/* LUXURY BACKGROUND */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(247,220,224,0.4)_0%,rgba(202,186,177,0.05)_60%,rgba(255,255,255,0)_100%)]" />
-        
-        <motion.div 
+
+        <motion.div
           style={{ y: yBg }}
           className="absolute top-[20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-theme-primary/10 blur-[150px] mix-blend-multiply"
         />
-        <motion.div 
+        <motion.div
           animate={{ scale: [1, 1.05, 1], rotate: [0, 5, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-theme-accent/20 blur-[130px]"
@@ -154,15 +154,15 @@ export default function Results() {
       </div>
 
       <div className="max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
-        
+
         {/* EDITORIAL HEADING */}
-        <div className="flex flex-col items-center text-center mb-20 lg:mb-32">
+        <div className="flex flex-col items-center text-center mb-6 lg:mb-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="flex items-center gap-4 mb-8"
+            className="flex items-center gap-4 mb-3"
           >
             <div className="h-[1px] w-12 bg-black/30" />
             <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-black/70">
@@ -171,12 +171,12 @@ export default function Results() {
             <div className="h-[1px] w-12 bg-black/30" />
           </motion.div>
 
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-heading text-[3.2rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[1.05] tracking-tight text-black mb-8"
+            className="font-heading text-[3.2rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[1.05] tracking-tight text-black mb-4"
           >
             The Art of <br />
             <span className="italic font-light text-theme-primary">Transformation</span>.
@@ -194,11 +194,11 @@ export default function Results() {
         </div>
 
         {/* INTERACTIVE COMPARISON COMPOSITION */}
-        <div className="relative mb-32 lg:mb-48">
+        <div className="relative mb-10 lg:mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
+
             {/* Left Column: Context & Ingredients */}
-            <motion.div 
+            <motion.div
               style={{ y: window.innerWidth >= 1024 ? yContent : 0 }}
               className="lg:col-span-4 lg:col-start-1 relative z-20 flex flex-col gap-12 lg:pr-10 order-2 lg:order-1"
             >
@@ -234,21 +234,21 @@ export default function Results() {
             {/* Right Column: Interactive Reveal */}
             <div className="lg:col-span-8 relative z-10 order-1 lg:order-2">
               <BeforeAfterReveal />
-              
+
               {/* Floating Product Guarantee Overlay */}
-              <motion.div 
+              <motion.div
                 style={{ y: yProduct }}
                 className="absolute -right-4 lg:-right-20 -bottom-10 lg:-bottom-20 w-[140px] lg:w-[220px] aspect-[3/4] rounded-[24px] lg:rounded-[40px] overflow-hidden shadow-[0_30px_60px_rgba(43,89,104,0.2)] border border-white/60 z-40 hidden sm:block"
               >
                 <div className="absolute inset-0 bg-black/10 mix-blend-overlay z-10" />
                 <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none opacity-80 mix-blend-overlay">
-                  <span className="font-heading text-white text-3xl lg:text-5xl font-light tracking-[0.3em] uppercase rotate-[-90deg]">COSKINn</span>
+                  {/* <span className="font-heading text-white text-3xl lg:text-5xl font-light tracking-[0.3em] uppercase rotate-[-90deg]">COSKINn</span> */}
                 </div>
                 <img loading="lazy" decoding="async" src="/mockup_product_3.webp" alt="COSKINn Serum" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-theme-secondary/20 to-transparent mix-blend-multiply z-10" />
               </motion.div>
             </div>
-            
+
           </div>
         </div>
 

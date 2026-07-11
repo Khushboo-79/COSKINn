@@ -206,23 +206,10 @@ export default function FaceMistPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text mt-[72px]">
-
-      {/* Breadcrumbs */}
-      <div className="w-full border-b border-black/5 bg-white/60 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-2 text-xs font-medium text-black/50 tracking-wide">
-          <Link to="/" className="hover:text-[#FF0069] transition-colors">Home</Link>
-          <ChevronRight className="w-3 h-3" />
-          <Link to="/skincare" className="hover:text-[#FF0069] transition-colors">Shop</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-black font-bold">Face Care</span>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-[#FF0069] font-bold">COSKINn Face Mist</span>
-        </div>
-      </div>
+    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text">
 
       {/* ══ SECTION 1: HERO ══════════════════════════════════════════════════ */}
-      <section className="relative w-full min-h-[600px] lg:min-h-[88vh] bg-gradient-to-br from-[#FFF0F5] via-[#FFF8F0] to-[#FFEDE8] overflow-hidden">
+      <section className="relative w-full min-h-[600px] lg:min-h-[88vh] bg-gradient-to-br from-[#FFF0F5] via-[#FFF8F0] to-[#FFEDE8] overflow-hidden pt-[140px] lg:pt-[150px]">
         {/* Ambient orbs */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-[#FF0069]/10 rounded-full blur-[120px]" />
@@ -250,6 +237,18 @@ export default function FaceMistPage() {
 
           {/* LEFT */}
           <div className="w-full lg:w-1/2 flex flex-col items-start">
+            {/* Breadcrumbs */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-black/50 tracking-wide mb-6 lg:mb-8">
+              <Link to="/" className="hover:text-[#FF0069] transition-colors">Home</Link>
+              <ChevronRight className="w-3 h-3" />
+              <Link to="/skincare" className="hover:text-[#FF0069] transition-colors">Shop</Link>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-black font-bold">Face Care</span>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-[#FF0069] font-bold">COSKINn Face Mist</span>
+            </div>
+
+
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 backdrop-blur-md border border-white shadow-sm mb-6"
@@ -306,13 +305,13 @@ export default function FaceMistPage() {
             >
               <button
                 onClick={() => document.getElementById('collection').scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-[#FF0069] text-white font-bold rounded-full shadow-[0_10px_30px_rgba(255,0,105,0.35)] hover:scale-105 hover:shadow-[0_14px_40px_rgba(255,0,105,0.45)] transition-all text-sm uppercase tracking-widest"
+                className="px-8 py-4 btn-primary-skincare font-bold text-sm uppercase tracking-widest"
               >
                 Shop Collection
               </button>
               <button
                 onClick={() => document.getElementById('when-to-use').scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-white text-black font-bold rounded-full border border-black/10 hover:bg-black/5 transition-all text-sm uppercase tracking-widest"
+                className="px-8 py-4 btn-secondary-skincare font-bold text-sm uppercase tracking-widest mt-4 sm:mt-0"
               >
                 Discover Refreshment
               </button>
@@ -433,7 +432,7 @@ export default function FaceMistPage() {
                     </div>
                   )}
                   {product.badge && (
-                    <div className="absolute top-10 left-4 z-10 mt-1 px-3 py-1 bg-black text-white text-[10px] font-bold tracking-widest rounded-full shadow w-max">
+                    <div className="absolute top-10 left-4 z-10 mt-1 px-3 py-1 bg-[#FF0069] text-white text-[10px] font-bold tracking-widest rounded-full shadow w-max">
                       {product.badge}
                     </div>
                   )}
@@ -454,13 +453,13 @@ export default function FaceMistPage() {
                   <div className="absolute inset-x-4 bottom-4 translate-y-16 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-2">
                     <button
                       onClick={e => { e.stopPropagation(); addToCart(product, 1); }}
-                      className="flex-1 bg-white/90 backdrop-blur-md text-black font-bold py-3 rounded-xl hover:bg-[#FF0069] hover:text-white transition-colors flex items-center justify-center gap-2 text-sm shadow-lg"
+                      className="flex-1 btn-secondary-skincare py-3 flex items-center justify-center gap-2 text-sm font-bold"
                     >
                       <ShoppingBag size={15} /> Add
                     </button>
                     <button
                       onClick={e => { e.stopPropagation(); navigate(`/product/${product.id}`); }}
-                      className="w-12 bg-black/90 backdrop-blur-md text-white rounded-xl hover:bg-[#FF0069] transition-colors flex items-center justify-center shadow-lg shrink-0"
+                      className="w-12 btn-primary-skincare flex items-center justify-center shrink-0 py-3"
                     >
                       <Eye size={15} />
                     </button>
@@ -488,7 +487,7 @@ export default function FaceMistPage() {
                     </div>
                     <button
                       onClick={e => { e.stopPropagation(); handleBuyNow(product); }}
-                      className="px-4 py-2 bg-black text-white text-xs font-bold rounded-xl hover:bg-[#FF0069] hover:shadow-lg transition-all"
+                      className="px-4 py-2 btn-primary-skincare text-xs font-bold"
                     >
                       Buy Now
                     </button>
@@ -586,7 +585,7 @@ export default function FaceMistPage() {
                       <div className="flex flex-col gap-2 mt-auto">
                         <button
                           onClick={() => addToCart(product, 1)}
-                          className="w-full py-2.5 bg-black text-white text-xs font-bold rounded-xl hover:bg-[#FF0069] transition-colors whitespace-nowrap text-center"
+                          className="w-full py-2.5 btn-primary-skincare text-xs font-bold whitespace-nowrap text-center"
                         >Add to Cart</button>
                         <button
                           onClick={() => handleBuyNow(product)}

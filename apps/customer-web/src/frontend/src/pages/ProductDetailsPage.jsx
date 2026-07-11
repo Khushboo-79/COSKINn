@@ -82,7 +82,7 @@ export default function ProductDetailsPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text mt-[72px] pb-20">
+    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text mt-[60px] pb-20">
       
       {/* Sticky Purchase Bar */}
       <AnimatePresence>
@@ -110,13 +110,13 @@ export default function ProductDetailsPage() {
               </div>
               <button
                 onClick={() => addToCart(product, quantity)}
-                className="flex-1 md:w-40 h-12 bg-theme-primary text-white font-bold uppercase tracking-widest text-xs rounded-full hover:bg-black transition-colors shadow-lg"
+                className="flex-1 md:w-40 h-12 btn-secondary-skincare font-bold uppercase tracking-widest text-xs"
               >
                 Add to Cart
               </button>
               <button
                 onClick={handleBuyNow}
-                className="flex-1 md:w-40 h-12 bg-black text-white font-bold uppercase tracking-widest text-xs rounded-full hover:bg-theme-primary transition-colors shadow-lg"
+                className="flex-1 md:w-40 h-12 btn-primary-skincare font-bold uppercase tracking-widest text-xs"
               >
                 Buy Now
               </button>
@@ -124,17 +124,6 @@ export default function ProductDetailsPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Breadcrumbs */}
-      <div className="w-full border-b border-black/5 bg-white/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-2 text-xs font-medium text-black/50 tracking-wide">
-          <Link to="/" className="hover:text-theme-primary transition-colors">Home</Link>
-          <ChevronRight className="w-3 h-3" />
-          <Link to="/skincare" className="hover:text-theme-primary transition-colors">Skincare</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-black font-bold truncate">{product.name}</span>
-        </div>
-      </div>
 
       {/* Main Product Section */}
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -236,7 +225,7 @@ export default function ProductDetailsPage() {
 
               <button
                 onClick={() => addToCart(product, quantity)}
-                className="flex-1 h-14 bg-black text-white font-bold uppercase tracking-widest text-sm rounded-full flex items-center justify-center gap-2 hover:bg-[#FF0069] transition-colors shadow-lg"
+                className="flex-1 h-14 btn-secondary-skincare flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-sm"
               >
                 <ShoppingBag className="w-5 h-5" /> Add to Cart
               </button>
@@ -252,7 +241,7 @@ export default function ProductDetailsPage() {
             <div ref={buyButtonRef} className="mb-10">
               <button
                 onClick={handleBuyNow}
-                className="w-full h-14 bg-[#FF0069] text-white font-bold uppercase tracking-widest text-sm rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors shadow-[0_10px_30px_rgba(255,0,105,0.3)]"
+                className="w-full h-14 btn-primary-skincare flex items-center justify-center font-bold uppercase tracking-widest text-sm"
               >
                 Buy It Now
               </button>
@@ -617,7 +606,7 @@ export default function ProductDetailsPage() {
                   <div className="font-bold text-[#FF0069] text-xl mt-auto mb-4">₹{item.price}</div>
                   <button
                     onClick={(e) => { e.preventDefault(); addToCart(item); }}
-                    className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-[#FF0069] transition-colors"
+                    className="w-full py-3 btn-primary-skincare font-bold uppercase tracking-widest text-xs"
                   >
                     Add To Cart
                   </button>
