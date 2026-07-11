@@ -301,7 +301,7 @@ const CategoriesScreen = () => {
 
             <View style={styles.gridContainer}>
               {[1, 2].map((item) => (
-                <TouchableOpacity key={item} style={styles.shopByProductCard} activeOpacity={0.8}>
+                <TouchableOpacity key={item} style={styles.shopByProductCard} activeOpacity={0.8} onPress={() => navigation.navigate('ProductDetailsScreen')}>
                   {/* Top Image Section */}
                   <LinearGradient 
                     colors={['#FFD1DC', '#FFF5F5', '#FFFFFF']} 
@@ -386,6 +386,8 @@ const CategoriesScreen = () => {
             navigation.navigate('NewScreen');
           } else if (tabId === 'rewards') {
             navigation.navigate('RewardsScreen');
+          } else if (tabId === 'account') {
+            navigation.navigate('AccountScreen');
           }
         }} 
       />
@@ -551,6 +553,11 @@ const styles = StyleSheet.create({
     marginTop: scalev(40),
   },
   skinTypeCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     width: '30%',
     borderRadius: scaleh(15),
     overflow: 'hidden',
@@ -637,6 +644,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   guideCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     height: '100%',
     marginHorizontal: scaleh(20),
     borderRadius: scaleh(15),
@@ -690,6 +702,11 @@ const styles = StyleSheet.create({
     color: '#FF0069',
   },
   shopByProductCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     width: '48%',
     borderRadius: scaleh(20),
     borderWidth: 1,

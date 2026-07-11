@@ -84,6 +84,9 @@ const ShopScreen = () => {
           if (tabId === 'rewards') {
             navigation.navigate('RewardsScreen');
           }
+          if (tabId === 'account') {
+            navigation.navigate('AccountScreen');
+          }
         }} 
       />
     </View>

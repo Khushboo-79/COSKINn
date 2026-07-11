@@ -179,6 +179,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   productCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     width: '48%',
     backgroundColor: AppTheme.colors.white,
     borderRadius: scaleh(15),

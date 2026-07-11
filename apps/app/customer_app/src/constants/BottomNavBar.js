@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Home, ShoppingBag, Sparkles, Ticket, User } from 'lucide-react-native';
+import { Home, ShoppingBag, Sparkles, Wallet, User } from 'lucide-react-native';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Polygon } from 'react-native-svg';
 import { AppTheme, scaleh, scalev } from './AppTheme';
 
@@ -8,7 +8,7 @@ const tabs = [
   { id: 'home', label: 'Home', IconComponent: Home },
   { id: 'shop', label: 'Shop', IconComponent: ShoppingBag },
   { id: 'new', label: 'New', IconComponent: Sparkles },
-  { id: 'rewards', label: 'Rewards', IconComponent: Ticket },
+  { id: 'rewards', label: 'Rewards', IconComponent: Wallet },
   { id: 'account', label: 'Account', IconComponent: User },
 ];
 

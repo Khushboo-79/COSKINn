@@ -442,8 +442,8 @@ const DashboardScreen = () => {
         </ScrollView>
       </SafeAreaView>
 
-      <BottomNavBar 
-        activeTab="home" 
+      <BottomNavBar
+        activeTab="home"
         onTabPress={(tabId) => {
           if (tabId === 'shop') {
             navigation.navigate('Shop');
@@ -454,7 +454,10 @@ const DashboardScreen = () => {
           if (tabId === 'rewards') {
             navigation.navigate('RewardsScreen');
           }
-        }} 
+          if (tabId === 'account') {
+            navigation.navigate('AccountScreen');
+          }
+        }}
       />
     </View>
   );
@@ -781,6 +784,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skinTypeCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     width: scaleh(200),
     height: scalev(130),
     borderRadius: scaleh(15),
@@ -882,6 +890,11 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
   guideCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     height: scalev(250),
     marginHorizontal: scaleh(20),
     borderRadius: scaleh(15),

@@ -196,6 +196,11 @@ const styles = StyleSheet.create({
     marginBottom: scalev(20),
   },
   summaryCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: AppTheme.colors.white,
@@ -211,6 +216,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   payingViaCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     backgroundColor: '#FFF2F6', // light pink background
     borderColor: '#FFF2F6',
     elevation: 0,
@@ -262,6 +272,11 @@ const styles = StyleSheet.create({
 
   // Address view styles
   addressCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

@@ -24,7 +24,7 @@ const ViewAllNewArrivalsScreen = () => {
   };
 
   const renderProductCard = ({ item }) => (
-    <TouchableOpacity style={styles.shopByProductCard} activeOpacity={0.8}>
+    <TouchableOpacity style={styles.shopByProductCard} activeOpacity={0.8} onPress={() => navigation.navigate('ProductDetailsScreen')}>
       {/* Top Image Section */}
       <LinearGradient 
         colors={['#FFD1DC', '#FFF5F5', '#FFFFFF']} 
@@ -215,6 +215,11 @@ const styles = StyleSheet.create({
 
   // Detailed Product Card styles (from Shop By)
   shopByProductCard: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     width: '48%',
     borderRadius: scaleh(20),
     borderWidth: 1,
