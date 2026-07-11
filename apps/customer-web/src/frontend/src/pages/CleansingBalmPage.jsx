@@ -401,9 +401,9 @@ export default function CleansingBalmPage() {
                         </span>
                       )}
                       {product.discountBadge && (
-                        <span className="px-3.5 py-1.5 bg-[#FF0069] text-white text-[10px] font-black tracking-widest uppercase rounded-full shadow-lg">
+                        <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white border border-[#FFD1E5] text-[#FF0069] text-[10px] font-bold tracking-widest rounded-full shadow-[0_4px_10px_rgba(255,0,105,0.15)] w-max">
                           {product.discountBadge}
-                        </span>
+                        </div>
                       )}
                     </div>
 

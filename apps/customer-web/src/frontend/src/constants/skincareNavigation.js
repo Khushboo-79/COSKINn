@@ -16,8 +16,8 @@ export const skincareNavigation = {
         { name: "COSKINn Cleansing Balm", href: "/skincare/cleansing-balms" },
         { name: "COSKINn Sunscreen", href: "/skincare/sunscreens" },
         { name: "COSKINn Face Mist", href: "/skincare/face-mist" },
-        { name: "COSKINn Overnight Mask", href: "#" },
-        { name: "COSKINn Under Eye Patches", href: "#" },
+        { name: "COSKINn Overnight Mask", href: "/skincare/overnight-mask" },
+        { name: "COSKINn Under Eye Patches", href: "/skincare/under-eye-patches" },
       ]
     },
     {
@@ -48,8 +48,8 @@ export const skincareNavigation = {
         { name: "COSKINn Cleansing Balm", href: "/skincare/cleansing-balms" },
         { name: "COSKINn Sunscreen", href: "/skincare/sunscreens" },
         { name: "COSKINn Face Mist", href: "/skincare/face-mist" },
-        { name: "COSKINn Overnight Mask", href: "#" },
-        { name: "COSKINn Under Eye Patches", href: "#" },
+        { name: "COSKINn Overnight Mask", href: "/skincare/overnight-mask" },
+        { name: "COSKINn Under Eye Patches", href: "/skincare/under-eye-patches" },
       ]
     },
     {
