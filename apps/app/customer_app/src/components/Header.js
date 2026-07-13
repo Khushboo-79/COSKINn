@@ -38,7 +38,11 @@ const Header = ({ showHeart = false, rightComponent, onBackPress, transparent = 
       ) : (
         <View style={styles.rightIcons}>
           <TouchableOpacity style={styles.iconButton}>
-            <Icon name={showHeart ? "heart" : "shopping-cart"} size={scaleh(22)} color="#1a1a1a" />
+            <Image 
+              source={showHeart ? require('../images/icons/Wishlist.webp') : require('../images/icons/Cart.webp')} 
+              style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} 
+              resizeMode="contain" 
+            />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
             <Icon name="search" size={scaleh(22)} color="#1a1a1a" />

@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform, StatusBar } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,6 +22,7 @@ export const AppTheme = {
     textLight: '#666666',
     cardBackground: 'rgba(255, 215, 225, 0.5)', // slightly transparent pinkish card background
     cardBorder: 'rgba(255, 0, 105, 0.4)', // pink border
+    cosmeticsCard: 'rgba(255, 194, 209, 0.5)', // FFC2D1 at 50% opacity
     inputBackground: '#FFFFFF',
     success: '#4CAF50',
     discountBg: '#FFE4E1',
@@ -44,5 +45,22 @@ export const AppTheme = {
   metrics: {
     screenWidth: width,
     screenHeight: height,
+  },
+  styles: {
+    safeArea: {
+      flex: 1,
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    },
+    shadowCard: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleh(15),
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      elevation: 5,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.03)',
+    }
   }
 };
