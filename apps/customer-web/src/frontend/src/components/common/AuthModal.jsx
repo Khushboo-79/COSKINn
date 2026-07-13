@@ -228,8 +228,8 @@ export default function AuthModal({ isOpen, onClose }) {
     }
   };
 
-  const primaryClass = "bg-theme-primary text-white";
-  const primaryHoverClass = "hover:bg-theme-primary/90";
+  const primaryClass = theme === 'skincare' ? "btn-primary-skincare !shadow-md" : "bg-theme-primary text-white";
+  const primaryHoverClass = theme === 'skincare' ? "" : "hover:bg-theme-primary/90";
   const disabledClass = "bg-gray-100 text-gray-400 cursor-not-allowed";
   const textPrimaryClass = "text-theme-primary";
 

@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight } from 'lucide-react';
+import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight, ArrowLeft } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { skincareProducts } from '../../constants/skincareProducts';
 
 import { ShopMegaMenu, CategoriesMegaMenu, RoutineMenu, JournalMenu } from './MegaMenus';
 import MobileMenu from './MobileMenu';
 import AuthModal from './AuthModal';
 
-const CoskinnLogo = () => (
-  <svg className="h-[42px] lg:h-[48px] w-auto object-contain drop-shadow-sm" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+const CoskinnLogo = ({ isScrolled }) => (
+  <svg className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#FF0069" />  {/* Hot Pink */}
@@ -320,6 +321,108 @@ export default function Navbar() {
     return () => { document.body.style.overflow = 'auto'; };
   }, [isMobileMenuOpen, isMobileProfileOpen]);
 
+  // Check if we are on a Product Details Page
+  const isProductPage = location.pathname.startsWith('/product/');
+  const productId = isProductPage ? location.pathname.split('/')[2] : null;
+  const product = productId ? skincareProducts.find(p => p.id === parseInt(productId)) : null;
+
+  if (isProductPage && product) {
+    return (
+      <>
+        <motion.nav
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-black/5 shadow-sm h-[60px] flex flex-col justify-center"
+        >
+          <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between">
+            
+            {/* Left: Back Button & Breadcrumbs */}
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => navigate(-1)} 
+                className="flex items-center gap-1 font-bold text-sm text-black hover:text-[#FF0069] transition-colors"
+              >
+                <ArrowLeft size={18} />
+                <span>Back</span>
+              </button>
+
+              {/* Desktop Breadcrumbs */}
+              <div className="hidden lg:flex items-center gap-2 text-xs font-medium text-black/50 border-l border-black/10 pl-4">
+                <Link to="/" className="hover:text-[#FF0069] transition-colors">Home</Link>
+                <ChevronRight size={12} />
+                <Link to={`/${theme}`} className="hover:text-[#FF0069] transition-colors">Shop</Link>
+                <ChevronRight size={12} />
+                <span className="hover:text-[#FF0069] transition-colors cursor-pointer" onClick={() => navigate(-1)}>{product.category || 'Face Care'}</span>
+                <ChevronRight size={12} />
+                <span className="text-black font-bold truncate max-w-[200px] xl:max-w-[300px]">{product.name}</span>
+              </div>
+            </div>
+
+            {/* Right: Icons (Search, Wishlist, Cart) */}
+            <div className="flex items-center justify-end gap-5 lg:gap-6 text-black/80">
+              <button
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="hover:text-[#FF0069] transition flex items-center justify-center"
+              >
+                <Search size={22} strokeWidth={1.5} />
+              </button>
+              <button
+                onClick={handleWishlistClick}
+                className="hover:text-[#FF0069] transition flex items-center justify-center"
+              >
+                <Heart size={22} strokeWidth={1.5} />
+              </button>
+              <button 
+                onClick={openCart} 
+                className="relative hover:text-[#FF0069] transition flex items-center"
+              >
+                <ShoppingBag size={22} strokeWidth={1.5} />
+                <span className="absolute -top-1 -right-2 bg-theme-secondary text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
+              </button>
+            </div>
+          </div>
+        </motion.nav>
+
+        {/* Search sliding bar */}
+        <AnimatePresence>
+          {isSearchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="fixed top-[60px] left-0 w-full bg-white border-b border-black/5 px-6 lg:px-12 py-3 flex items-center gap-3 z-[90]"
+            >
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40" size={18} />
+                <input
+                  type="text"
+                  placeholder="Search for skincare, cosmetics, ingredients..."
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setIsSearchOpen(false);
+                      navigate(`/${theme}?search=${encodeURIComponent(e.target.value)}`);
+                    }
+                  }}
+                  className="w-full pl-12 pr-4 py-3 bg-black/5 border-none rounded-full outline-none font-medium text-sm text-black focus:ring-1 focus:ring-theme-primary transition-all"
+                  autoFocus
+                />
+              </div>
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
+      </>
+    );
+  }
+
   return (
     <motion.nav
       variants={{
@@ -328,25 +431,25 @@ export default function Navbar() {
       }}
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} // Premium ease curve
-      className={`fixed top-0 left-0 w-full z-[100] transition-colors duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-xl border-b border-black/5 shadow-sm' : 'bg-transparent'
+      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-xl border-b border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)]' : 'bg-transparent'
         }`}
     >
       {/* Top Theme Switcher Bar */}
-      <div className="w-full pt-1">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-2 flex items-center justify-between font-body text-[13px] text-white">
+      <div className={`w-full overflow-hidden transition-all duration-300 ${isScrolled ? 'h-0 opacity-0' : 'h-[60px] opacity-100 pt-4'}`}>
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-1 flex items-center justify-between font-body text-[13px] text-white">
           <div className="flex items-center gap-2"></div>
 
           {/* Pill Theme Switcher */}
           <div className="flex bg-white/40 p-1 rounded-full text-xs font-semibold backdrop-blur-sm">
             <button
               onClick={() => handleThemeSwitch('skincare')}
-              className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
               Skincare
             </button>
             <button
               onClick={() => handleThemeSwitch('cosmetics')}
-              className={`px-5 py-1.5 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
               Cosmetics
             </button>
@@ -354,11 +457,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-12 pb-4 flex items-center justify-between mt-2 relative">
+      <div className={`w-full max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between relative transition-all duration-300 ${isScrolled ? 'py-3' : 'pb-4 mt-2'}`}>
 
         {/* Logo */}
         <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative z-[130]">
-          <CoskinnLogo />
+          <CoskinnLogo isScrolled={isScrolled} />
         </Link>
 
         {/* Desktop Navigation Links */}

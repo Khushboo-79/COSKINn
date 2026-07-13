@@ -96,10 +96,10 @@ export default function GiftSetsPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text pt-[72px]">
+    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text">
       
       {/* Premium Hero Section */}
-      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50">
+      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50 pt-[90px]">
         <div className="absolute inset-0 opacity-50 mix-blend-multiply">
           <img 
             src={heroImg} 
@@ -229,7 +229,7 @@ export default function GiftSetsPage() {
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-xs font-bold text-black/40 line-through">₹{product.originalPrice}</span>
-                              <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">{product.discountBadge}</span>
+                              <span className="px-3 py-1 bg-white border border-[#FFD1E5] text-[#FF0069] text-[10px] font-bold tracking-widest uppercase rounded-full shadow-[0_4px_10px_rgba(255,0,105,0.15)] text-center w-max">{product.discountBadge}</span>
                             </div>
                             <div className="text-2xl font-bold text-black">₹{product.price}</div>
                           </div>
@@ -300,7 +300,7 @@ export default function GiftSetsPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-bold text-black/40 line-through">₹{product.originalPrice}</span>
-                        <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">{product.discountBadge}</span>
+                        <span className="px-3 py-1 bg-white border border-[#FFD1E5] text-[#FF0069] text-[10px] font-bold tracking-widest uppercase rounded-full shadow-[0_4px_10px_rgba(255,0,105,0.15)] text-center w-max">{product.discountBadge}</span>
                       </div>
                       <div className="text-3xl font-bold text-black">₹{product.price}</div>
                     </div>

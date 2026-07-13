@@ -100,3 +100,60 @@ html, body, #root {
 @media (prefers-reduced-motion: no-preference) {
   .bg-product { animation-iteration-count: 1; }
 }
+
+/* =========================================
+   SKINCARE BUTTON SYSTEM
+   ========================================= */
+
+.btn-primary-skincare {
+  background: linear-gradient(135deg, #FF0069 0%, #FF4F9A 45%, #FF7AB8 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(255, 0, 105, 0.25);
+  transition: all 300ms ease;
+  border: none;
+}
+.btn-primary-skincare:hover {
+  background: linear-gradient(135deg, #FF1A7A 0%, #FF66A8 45%, #FF8FBD 100%);
+  box-shadow: 0 6px 20px rgba(255, 0, 105, 0.35);
+  transform: translateY(-2px) scale(1.03);
+}
+.btn-primary-skincare:active {
+  background: linear-gradient(135deg, #E6005E 0%, #E6478B 45%, #E66EA6 100%);
+  transform: translateY(0) scale(0.98);
+}
+.btn-primary-skincare:disabled {
+  background: #FFB3D1;
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-secondary-skincare {
+  background: #FFF1F7;
+  color: #FF0069;
+  border: 1px solid #FFD1E5;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(255, 0, 105, 0.1);
+  transition: all 300ms ease;
+}
+.btn-secondary-skincare:hover {
+  background: linear-gradient(135deg, #FF0069 0%, #FF4F9A 100%);
+  color: #ffffff;
+  border: 1px solid transparent;
+  box-shadow: 0 6px 20px rgba(255, 0, 105, 0.25);
+  transform: translateY(-2px) scale(1.03);
+}
+.btn-secondary-skincare:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn-secondary-skincare:disabled {
+  background: #FFF1F7;
+  color: #FF0069;
+  border: 1px solid #FFD1E5;
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}

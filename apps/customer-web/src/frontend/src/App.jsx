@@ -27,6 +27,8 @@ const CleanserPage = React.lazy(() => import('./pages/CleanserPage'));
 const CleansingBalmPage = React.lazy(() => import('./pages/CleansingBalmPage'));
 const SunscreenPage = React.lazy(() => import('./pages/SunscreenPage'));
 const FaceMistPage = React.lazy(() => import('./pages/FaceMistPage'));
+const OvernightMaskPage = React.lazy(() => import('./pages/OvernightMaskPage'));
+const UnderEyePatchesPage = React.lazy(() => import('./pages/UnderEyePatchesPage'));
 
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
@@ -65,6 +67,8 @@ const MainLayout = () => {
             <Route path="/skincare/cleansing-balms" element={<CleansingBalmPage />} />
             <Route path="/skincare/sunscreens" element={<SunscreenPage />} />
             <Route path="/skincare/face-mist" element={<FaceMistPage />} />
+            <Route path="/skincare/overnight-mask" element={<OvernightMaskPage />} />
+            <Route path="/skincare/under-eye-patches" element={<UnderEyePatchesPage />} />
           </Routes>
         </Suspense>
       </div>

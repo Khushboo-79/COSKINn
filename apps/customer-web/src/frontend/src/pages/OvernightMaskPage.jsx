@@ -3,74 +3,50 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ShoppingBag, Heart, Star, ChevronRight, Eye, ChevronLeft,
-  Droplets, Sparkles, Sun, Moon, Briefcase, Plane, Brush
+  Moon, Droplets, Sparkles, Shield, Sun
 } from 'lucide-react';
 import { skincareProducts } from '../constants/skincareProducts';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import Footer from '../components/common/Footer';
 
-import faceMistImg from '../assets/images/face_mist.webp';
-import faceMistLifestyleImg from '../assets/images/face_mist_lifestyle.webp';
+// Images
+import overnightMaskImg from '../assets/images/overnight_mask.webp'; 
+import maskLifestyleImg from '../assets/images/overnight_mask_lifestyle.webp'; 
+
+const LIFESTYLE_IMG = maskLifestyleImg || overnightMaskImg;
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const FILTERS = ['All', 'Hydrating', 'Glow Boosting', 'Rose', 'Aloe Vera', 'Vitamin C', 'Travel Size'];
+const FILTERS = ['All', 'Anti-Aging', 'Hydrating', 'Brightening', 'Value Pack'];
 const SORT_OPTIONS = ['Popular', 'Newest', 'Price Low to High', 'Price High to Low'];
 
 const USAGE_OCCASIONS = [
   {
-    id: 'morning',
-    icon: Sun,
-    emoji: '🌞',
-    label: 'Morning Routine',
-    why: 'Start your day with an instant hydration reset. The lightweight mist refreshes skin, primes it for serum absorption, and gives you that coveted just-woke-up dewy glow.',
-    benefit: 'Hydration + Glow Prep',
-    matchBadges: ['BEST SELLER', 'GLOW BOOSTER'],
-  },
-  {
-    id: 'before-makeup',
-    icon: Brush,
-    emoji: '💄',
-    label: 'Before Makeup',
-    why: 'A light spritz before foundation creates a smooth, hydrated canvas that helps makeup apply more evenly and last significantly longer throughout the day.',
-    benefit: 'Smooth Canvas + Makeup Longevity',
-    matchBadges: ['GLOW BOOSTER', 'NEW LAUNCH'],
-  },
-  {
-    id: 'after-makeup',
-    icon: Sparkles,
-    emoji: '✨',
-    label: 'After Makeup',
-    why: 'Set your finished look and melt away that powdery finish. A setting mist blends your makeup seamlessly and adds a natural, skin-like finish for hours.',
-    benefit: 'Makeup Setting + Natural Finish',
-    matchBadges: ['BEST SELLER', 'REFRESHING'],
-  },
-  {
-    id: 'office',
-    icon: Briefcase,
-    emoji: '🏢',
-    label: 'During Office',
-    why: 'Combat screen dryness and air-conditioned environments. A mid-day mist revives tired, dehydrated skin without disturbing your makeup.',
-    benefit: 'Instant Refresh + Anti-dryness',
-    matchBadges: ['ANTIOXIDANT', 'SOOTHING'],
-  },
-  {
-    id: 'travel',
-    icon: Plane,
-    emoji: '✈',
-    label: 'During Travel',
-    why: 'Aircraft cabin air is notoriously dehydrating. Keep a travel-size mist in your carry-on to counteract cabin dehydration and arrive glowing.',
-    benefit: 'Cabin Hydration + Compact',
-    matchBadges: ['TRAVEL SIZE', 'SOOTHING'],
-  },
-  {
-    id: 'night',
+    id: 'night-routine',
     icon: Moon,
     emoji: '🌙',
     label: 'Night Routine',
-    why: 'Prep your skin for overnight regeneration. A night mist helps seal in moisture before your heavier treatments and supports the skin\'s natural repair cycle.',
-    benefit: 'Overnight Repair + Deep Hydration',
-    matchBadges: ['NIGHT RITUAL', 'SOOTHING'],
+    why: 'Apply an even layer as the final step in your night routine. The mask locks in moisture and active ingredients while repairing your skin barrier as you sleep.',
+    benefit: 'Overnight Repair + Hydration',
+    matchBadges: ['BEST SELLER', 'AWARD WINNER'],
+  },
+  {
+    id: 'flight',
+    icon: Sparkles,
+    emoji: '✈',
+    label: 'In-Flight Mask',
+    why: 'Airplane cabins are notoriously dry. Applying a thin layer during long flights prevents dehydration and keeps your skin plump and glowing.',
+    benefit: 'Intense Moisture + Protection',
+    matchBadges: ['TRAVEL FRIENDLY'],
+  },
+  {
+    id: 'sos-hydration',
+    icon: Droplets,
+    emoji: '💧',
+    label: 'SOS Hydration',
+    why: 'When your skin feels severely dry, compromised, or irritated, apply a thick layer for 20 minutes as a wash-off rescue treatment.',
+    benefit: 'Barrier Rescue + Soothing',
+    matchBadges: ['BEST SELLER', 'NEW LAUNCH'],
   },
 ];
 
@@ -78,65 +54,50 @@ const BENEFITS = [
   {
     id: 'hydration',
     emoji: '💧',
-    title: '24-Hour Hydration',
-    short: 'Hyaluronic acid locks moisture in all day.',
-    detail: 'Our multi-weight hyaluronic acid complex penetrates all layers of the skin to deliver deep, lasting hydration that lasts up to 24 hours. Plumper, bouncier skin from the very first spray.',
+    title: '72-Hour Hydration',
+    short: 'Locks in moisture for days.',
+    detail: 'Our advanced ceramide complex combined with multi-weight hyaluronic acid ensures that moisture is sealed deep within the skin layers, preventing transepidermal water loss overnight.',
   },
   {
     id: 'glow',
     emoji: '✨',
-    title: 'Instant Glow',
-    short: 'Niacinamide and antioxidants for radiance.',
-    detail: 'A potent combination of niacinamide, Vitamin C, and light-reflecting particles work synergistically to brighten your complexion, fade dark spots, and deliver that coveted glass-skin luminosity.',
-  },
-  {
-    id: 'botanical',
-    emoji: '🌿',
-    title: 'Botanical Ingredients',
-    short: 'Pure plant extracts, no harsh chemicals.',
-    detail: 'We source only certified organic botanical extracts — rose water, green tea, aloe vera, chamomile — to deliver nature\'s best in every bottle. Free from parabens, sulfates, and synthetic dyes.',
-  },
-  {
-    id: 'lightweight',
-    emoji: '🌸',
-    title: 'Lightweight Formula',
-    short: 'Never heavy, never sticky. Just refreshed.',
-    detail: 'Our ultra-fine micro-mist technology delivers a weightless veil of hydration that absorbs instantly. No heaviness, no white residue — just fresh, comfortable skin you can feel in seconds.',
+    title: 'Morning Radiance',
+    short: 'Wake up to glowing, bright skin.',
+    detail: 'Niacinamide and blueberry extracts work synergistically to brighten your complexion, fade dark spots, and deliver that coveted glass-skin luminosity by morning.',
   },
   {
     id: 'barrier',
     emoji: '🛡',
-    title: 'Skin Barrier Support',
-    short: 'Ceramides strengthen your skin\'s shield.',
-    detail: 'Ceramides and panthenol work together to reinforce your skin\'s natural barrier, reducing moisture loss and protecting against environmental stressors like pollution and harsh weather.',
-  },
-  {
-    id: 'refresh',
-    emoji: '🌬',
-    title: 'Refresh Anytime',
-    short: 'On-the-go hydration, no rinse needed.',
-    detail: 'Designed for real life. Spritz over bare skin or makeup alike, morning, noon or night. The no-rinse formula means you can refresh your skin anywhere — desk, gym, flight, or festival.',
+    title: 'Barrier Repair',
+    short: 'Strengthens your skin\'s shield.',
+    detail: 'Rich in essential fatty acids and ceramides, this mask actively rebuilds compromised skin barriers, reducing redness, sensitivity, and environmental damage.',
   },
 ];
 
-const HYDRATION_ROUTINE = [
-  { id: 104, step: '1. Cleanse' },
+const NIGHT_ROUTINE = [
+  { id: 301, step: '1. Cleanse' },
   { id: 109, step: '2. Face Mist' },
   { id: 114, step: '3. Serum' },
-  { id: 112, step: '4. Moisturise' },
-  { id: 109, step: '5. Final Mist' },
+  { id: 110, step: '4. Overnight Mask' },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
-export default function FaceMistPage() {
+const VARIANTS = [
+  { id: 110, name: "COSKINn Blueberry Overnight Mask", shortDescription: "Wake up to plumper, more radiant skin.", price: 1099, originalPrice: 1299, rating: 4.9, reviews: 512, badge: "AWARD WINNER", discountBadge: "15% OFF", image: overnightMaskImg, benefits: ["hydrat", "glow"] },
+  { id: 1101, name: "COSKINn Vitamin C Sleep Mask", shortDescription: "Brightening overnight treatment.", price: 1199, originalPrice: 1499, rating: 4.8, reviews: 320, badge: "NEW LAUNCH", discountBadge: "20% OFF", image: overnightMaskImg, benefits: ["brightening", "glow"] },
+  { id: 1102, name: "COSKINn Rose Hydration Mask", shortDescription: "Deep floral moisture surge.", price: 1899, originalPrice: 2299, rating: 5.0, reviews: 890, badge: "VALUE PACK", discountBadge: "", image: overnightMaskImg, benefits: ["hydrat", "anti-aging"] },
+  { id: 1103, name: "COSKINn Travel Size Mask", shortDescription: "Pocket-size overnight hydration.", price: 399, originalPrice: 499, rating: 4.7, reviews: 150, badge: "TRAVEL FRIENDLY", discountBadge: "", image: overnightMaskImg, benefits: ["hydrat"] },
+];
+
+export default function OvernightMaskPage() {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
   const [activeFilter, setActiveFilter] = useState('All');
   const [activeSort, setActiveSort] = useState('Popular');
-  const [activeOccasion, setActiveOccasion] = useState('morning');
+  const [activeOccasion, setActiveOccasion] = useState('night-routine');
   const [expandedBenefit, setExpandedBenefit] = useState(null);
+  
   const carouselRef = useRef(null);
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
@@ -144,20 +105,14 @@ export default function FaceMistPage() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const allFaceMists = useMemo(() =>
-    skincareProducts.filter(p => p.name.toLowerCase().includes('mist') || p.name.toLowerCase().includes('face mist')),
-    []);
-
   const filtered = useMemo(() => {
-    let result = [...allFaceMists];
+    let result = [...VARIANTS];
     if (activeFilter !== 'All') {
       const map = {
+        'Anti-Aging': p => p.benefits?.some(b => b.toLowerCase().includes('anti-aging')),
         'Hydrating': p => p.benefits?.some(b => b.toLowerCase().includes('hydrat')),
-        'Glow Boosting': p => p.benefits?.some(b => b.toLowerCase().includes('glow')),
-        'Rose': p => p.name.toLowerCase().includes('rose') || p.keyIngredients?.some(i => i.toLowerCase().includes('rose')),
-        'Aloe Vera': p => p.keyIngredients?.some(i => i.toLowerCase().includes('aloe')),
-        'Vitamin C': p => p.keyIngredients?.some(i => i.toLowerCase().includes('vitamin c')),
-        'Travel Size': p => p.badge === 'TRAVEL SIZE' || p.name.toLowerCase().includes('mini') || p.name.toLowerCase().includes('travel'),
+        'Brightening': p => p.benefits?.some(b => b.toLowerCase().includes('brightening') || b.toLowerCase().includes('glow')),
+        'Value Pack': p => p.badge === 'VALUE PACK',
       };
       if (map[activeFilter]) result = result.filter(map[activeFilter]);
     }
@@ -168,18 +123,18 @@ export default function FaceMistPage() {
       default: result.sort((a, b) => b.reviews - a.reviews);
     }
     return result;
-  }, [allFaceMists, activeFilter, activeSort]);
+  }, [activeFilter, activeSort]);
 
   const occasionData = useMemo(() => {
     const occ = USAGE_OCCASIONS.find(o => o.id === activeOccasion);
-    let recs = allFaceMists.filter(p => occ.matchBadges.includes(p.badge));
-    if (!recs.length) recs = allFaceMists.slice(0, 3);
+    let recs = VARIANTS.filter(p => occ.matchBadges.includes(p.badge));
+    if (!recs.length) recs = VARIANTS.slice(0, 2);
     return { occ, recs: recs.slice(0, 4) };
-  }, [allFaceMists, activeOccasion]);
+  }, [activeOccasion]);
 
   const routineProducts = useMemo(() =>
-    HYDRATION_ROUTINE.map(r => ({
-      ...skincareProducts.find(p => p.id === r.id),
+    NIGHT_ROUTINE.map(r => ({
+      ...skincareProducts.find(p => p.id === r.id) || VARIANTS[0],
       step: r.step,
     })).filter(p => p.id),
     []);
@@ -206,7 +161,7 @@ export default function FaceMistPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text">
+    <div className="w-full min-h-screen bg-[#fcfaf9] overflow-x-hidden font-sans text-black selection:bg-theme-secondary selection:text-black">
 
       {/* ══ SECTION 1: HERO ══════════════════════════════════════════════════ */}
       <section className="relative w-full min-h-[600px] lg:min-h-[88vh] bg-gradient-to-br from-[#FFF0F5] via-[#FFF8F0] to-[#FFEDE8] overflow-hidden pt-[140px] lg:pt-[150px]">
@@ -217,7 +172,7 @@ export default function FaceMistPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-white/30 rounded-full blur-[80px]" />
         </div>
 
-        {/* Mist particle effects */}
+        {/* Floating particles */}
         {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
@@ -245,16 +200,15 @@ export default function FaceMistPage() {
               <ChevronRight className="w-3 h-3" />
               <span className="text-black font-bold">Face Care</span>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-[#FF0069] font-bold">COSKINn Face Mist</span>
+              <span className="text-[#FF0069] font-bold">COSKINn Overnight Mask</span>
             </div>
-
 
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 backdrop-blur-md border border-white shadow-sm mb-6"
             >
               <span className="w-2 h-2 bg-[#FF0069] rounded-full animate-pulse" />
-              <span className="text-[11px] font-bold tracking-widest text-[#FF0069] uppercase">New Hydration Essential</span>
+              <span className="text-[11px] font-bold tracking-widest text-[#FF0069] uppercase">Nightly Repair Essential</span>
             </motion.div>
 
             <motion.h1
@@ -262,22 +216,22 @@ export default function FaceMistPage() {
               className="text-5xl md:text-6xl lg:text-7xl font-heading font-black text-black leading-[1.0] mb-5"
             >
               COSKINn<br />
-              <span className="text-[#FF0069]">Face Mist</span>
+              <span className="text-[#FF0069]">Overnight Mask</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.25 }}
               className="text-2xl md:text-3xl font-heading font-bold text-gray-700 mb-5 leading-tight"
             >
-              Refresh.<br />Hydrate.<br />
-              <span className="text-[#FF0069]">Glow Anytime.</span>
+              Repair.<br />Hydrate.<br />
+              <span className="text-[#FF0069]">Glow By Morning.</span>
             </motion.p>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.35 }}
               className="text-base text-gray-600 leading-relaxed mb-6 max-w-lg"
             >
-              Instantly refresh and hydrate your skin with the lightweight COSKINn Face Mist enriched with botanical extracts for a healthy radiant glow.
+              Indulge in deep, restorative hydration while you sleep. This luxurious mask repairs your natural barrier and reveals a luminous, rested complexion.
             </motion.p>
 
             <motion.div
@@ -288,7 +242,7 @@ export default function FaceMistPage() {
                 {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
               </div>
               <span className="font-bold text-black">4.9</span>
-              <span className="text-gray-500 text-sm">(7,500+ Reviews)</span>
+              <span className="text-gray-500 text-sm">(1,200+ Reviews)</span>
             </motion.div>
 
             <motion.div
@@ -296,7 +250,7 @@ export default function FaceMistPage() {
               className="mb-8"
             >
               <span className="text-xs text-gray-500 uppercase tracking-widest font-bold block">Starting from</span>
-              <span className="text-3xl font-black text-black">₹499</span>
+              <span className="text-3xl font-black text-black">₹1099</span>
             </motion.div>
 
             <motion.div
@@ -313,7 +267,7 @@ export default function FaceMistPage() {
                 onClick={() => document.getElementById('when-to-use').scrollIntoView({ behavior: 'smooth' })}
                 className="px-8 py-4 btn-secondary-skincare font-bold text-sm uppercase tracking-widest mt-4 sm:mt-0"
               >
-                Discover Refreshment
+                Discover Benefits
               </button>
             </motion.div>
           </div>
@@ -333,8 +287,8 @@ export default function FaceMistPage() {
               className="relative z-10 w-full h-full max-w-[480px]"
             >
               <img
-                src={faceMistLifestyleImg}
-                alt="COSKINn Face Mist Lifestyle"
+                src={LIFESTYLE_IMG}
+                alt="COSKINn Overnight Mask Lifestyle"
                 className="w-full h-full object-cover rounded-[3rem] shadow-2xl border-4 border-white/50"
               />
 
@@ -345,33 +299,23 @@ export default function FaceMistPage() {
                 className="absolute -bottom-10 -left-8 w-36 md:w-44 bg-white/80 backdrop-blur-xl p-3 rounded-3xl shadow-2xl border border-white flex items-center justify-center"
                 style={{ height: '200px' }}
               >
-                <img src={faceMistImg} alt="COSKINn Face Mist Bottle" className="w-full h-full object-contain" />
+                <img src={overnightMaskImg} alt="COSKINn Overnight Mask Bottle" className="w-full h-full object-contain" />
               </motion.div>
 
-              {/* Droplet badge */}
+              {/* Moon badge */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.8 }}
                 className="absolute top-16 -right-4 md:-right-8 bg-white/80 backdrop-blur-lg px-5 py-4 rounded-2xl shadow-xl border border-white flex items-center gap-3"
               >
                 <div className="w-11 h-11 bg-gradient-to-br from-[#FF0069] to-[#FFD498] rounded-full flex items-center justify-center shrink-0 shadow">
-                  <Droplets size={18} className="text-white" />
+                  <Moon size={18} className="text-white" />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-black whitespace-nowrap">Botanical Mist</div>
-                  <div className="text-[11px] text-gray-500 whitespace-nowrap">24-Hour Hydration</div>
+                  <div className="text-sm font-bold text-black whitespace-nowrap">Overnight Repair</div>
+                  <div className="text-[11px] text-gray-500 whitespace-nowrap">72-Hour Hydration</div>
                 </div>
               </motion.div>
 
-              {/* Mist particle dots decoration */}
-              {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 rounded-full bg-[#FF0069]/40 pointer-events-none"
-                  style={{ top: `${20 + i * 12}%`, right: `${10 + (i % 3) * 8}%` }}
-                  animate={{ y: [-8, 8, -8], opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: 2 + i * 0.4, repeat: Infinity, delay: i * 0.3 }}
-                />
-              ))}
             </motion.div>
           </div>
         </div>
@@ -381,8 +325,8 @@ export default function FaceMistPage() {
       <section id="collection" className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-10 border-b border-black/8 pb-8">
           <div>
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-black">COSKINn Face Mist Collection</h2>
-            <p className="text-gray-500 mt-2 font-medium">{filtered.length} products · Instant hydration, anytime</p>
+            <h2 className="text-3xl md:text-4xl font-heading font-black text-black">Overnight Mask Collection</h2>
+            <p className="text-gray-500 mt-2 font-medium">{filtered.length} products · Deep restorative hydration</p>
           </div>
           <select
             value={activeSort}
@@ -496,12 +440,6 @@ export default function FaceMistPage() {
               </motion.div>
             ))}
           </AnimatePresence>
-
-          {filtered.length === 0 && (
-            <div className="col-span-4 text-center py-20 text-gray-400 font-medium">
-              No products match this filter. <button onClick={() => setActiveFilter('All')} className="text-[#FF0069] font-bold underline ml-1">Show All</button>
-            </div>
-          )}
         </div>
       </section>
 
@@ -509,29 +447,27 @@ export default function FaceMistPage() {
       <section id="when-to-use" className="w-full bg-gradient-to-br from-[#FFF5F8] to-[#FFF8F0] py-24 border-t border-black/5">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-black mb-3">When To Use Your Face Mist</h2>
+            <h2 className="text-3xl md:text-4xl font-heading font-black text-black mb-3">When To Use Your Mask</h2>
             <p className="text-gray-500 font-medium max-w-2xl mx-auto">
-              Face mist is your skin's best friend — anytime, anywhere. Choose your moment below.
+              More than just an overnight treatment. Choose your moment below.
             </p>
           </div>
 
-          {/* Occasion Selector */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-14">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-14">
             {USAGE_OCCASIONS.map(occ => (
               <button
                 key={occ.id}
                 onClick={() => setActiveOccasion(occ.id)}
-                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all font-bold text-sm text-center ${activeOccasion === occ.id
+                className={`flex flex-col items-center gap-2 p-6 rounded-2xl border-2 transition-all font-bold text-sm text-center ${activeOccasion === occ.id
                   ? 'border-[#FF0069] bg-white shadow-[0_8px_24px_rgba(255,0,105,0.15)] text-[#FF0069] scale-105'
                   : 'border-black/5 bg-white text-gray-600 hover:border-[#FF0069]/40 hover:text-[#FF0069]'}`}
               >
-                <span className="text-3xl">{occ.emoji}</span>
-                <span className="text-xs leading-tight">{occ.label}</span>
+                <span className="text-4xl mb-2">{occ.emoji}</span>
+                <span className="text-sm leading-tight">{occ.label}</span>
               </button>
             ))}
           </div>
 
-          {/* Dynamic Content */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeOccasion}
@@ -541,7 +477,6 @@ export default function FaceMistPage() {
               transition={{ duration: 0.4, ease: 'easeOut' }}
               className="flex flex-col lg:flex-row gap-10"
             >
-              {/* Why panel */}
               <div className="w-full lg:w-2/5 bg-white rounded-3xl p-8 border border-black/5 shadow-sm flex flex-col justify-between">
                 <div>
                   <div className="text-5xl mb-5">{occasionData.occ.emoji}</div>
@@ -554,14 +489,11 @@ export default function FaceMistPage() {
                 </div>
               </div>
 
-              {/* Recommended products */}
               <div className="w-full lg:w-3/5 grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {occasionData.recs.map(product => (
                   <div key={product.id} className="bg-white rounded-3xl p-4 flex gap-4 border border-black/5 hover:border-[#FF0069]/30 hover:shadow-xl transition-all group">
-                    {/* Product image with wishlist on top-right */}
                     <div className="relative w-28 aspect-[3/4] rounded-2xl bg-[#FFF5F8] overflow-hidden shrink-0 cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      {/* Heart icon on top-right of image */}
                       <button
                         onClick={e => { e.stopPropagation(); toggleWishlist(product); }}
                         className="absolute top-2 right-2 z-10 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-[#FF0069] hover:bg-white transition-all shadow-sm"
@@ -570,7 +502,6 @@ export default function FaceMistPage() {
                       </button>
                     </div>
 
-                    {/* Info */}
                     <div className="flex flex-col flex-1 py-1 min-w-0">
                       <span className="text-[10px] font-bold text-[#FF0069] uppercase tracking-widest shrink-0">Recommended</span>
                       <h4
@@ -581,7 +512,6 @@ export default function FaceMistPage() {
 
                       <span className="text-base font-black text-black block mb-3">₹{product.price}</span>
 
-                      {/* Buttons — stacked full-width to prevent overflow */}
                       <div className="flex flex-col gap-2 mt-auto">
                         <button
                           onClick={() => addToCart(product, 1)}
@@ -601,12 +531,12 @@ export default function FaceMistPage() {
         </div>
       </section>
 
-      {/* ══ SECTION 4: HYDRATION ROUTINE CAROUSEL ════════════════════════════ */}
+      {/* ══ SECTION 4: ROUTINE CAROUSEL ══════════════════════════════════════ */}
       <section className="py-24 bg-white border-t border-black/5 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-black mb-2">Complete Your Hydration Routine</h2>
-            <p className="text-gray-500 font-medium">A curated 5-step ritual for round-the-clock glow.</p>
+            <h2 className="text-3xl md:text-4xl font-heading font-black text-black mb-2">Complete Your Night Routine</h2>
+            <p className="text-gray-500 font-medium">A curated 4-step ritual for overnight regeneration.</p>
           </div>
           <div className="flex gap-3">
             <button
@@ -673,11 +603,11 @@ export default function FaceMistPage() {
         </div>
       </section>
 
-      {/* ══ SECTION 5: HYDRATION BENEFITS ════════════════════════════════════ */}
+      {/* ══ SECTION 5: BENEFITS ══════════════════════════════════════════════ */}
       <section className="py-24 bg-gradient-to-br from-[#FFF5F8] to-[#FFF8F0] border-t border-black/5">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-black text-black mb-3">Why COSKINn Face Mist?</h2>
+            <h2 className="text-3xl md:text-4xl font-heading font-black text-black mb-3">Why COSKINn Overnight Mask?</h2>
             <p className="text-gray-500 font-medium max-w-2xl mx-auto">Click any benefit to discover the science and ingredients behind the glow.</p>
           </div>
 

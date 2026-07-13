@@ -1,12 +1,12 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 /* =========================================
-   1. SVG ICONS
+   1. SVG ICONS & SHAPES
    ========================================= */
 
 const InstagramIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -14,253 +14,223 @@ const InstagramIcon = () => (
 );
 
 const FacebookIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
   </svg>
 );
 
 const PinterestIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M8 22l3-11"></path>
     <path d="M11 11a3 3 0 1 0 3-3"></path>
     <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
   </svg>
 );
 
-const TikTokIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+const YouTubeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8.17 1 12 1 12s0 3.83.46 5.58a2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 15.83 23 12 23 12s0-3.83-.46-5.58z"></path>
+    <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon>
+  </svg>
+);
+
+const TruckIcon = ({ className }) => (
+  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="1" y="3" width="15" height="13"></rect>
+    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+  </svg>
+);
+
+const RefreshIcon = ({ className }) => (
+  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+    <path d="M3 3v5h5"></path>
+  </svg>
+);
+
+const ShieldCheckIcon = ({ className }) => (
+  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    <path d="M9 12l2 2 4-4"></path>
+  </svg>
+);
+
+const LeafIcon = ({ className }) => (
+  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
   </svg>
 );
 
 const SocialIcon = ({ children }) => (
-  <a href="#" className="w-10 h-10 rounded-full bg-white/30 border border-[#4a3b42]/10 flex items-center justify-center text-[#4a3b42] hover:text-white hover:bg-theme-primary hover:border-theme-primary shadow-sm hover:shadow-[0_8px_20px_rgba(255,0,105,0.25)] transition-all duration-500 group">
-    <div className="transform group-hover:scale-110 transition-transform duration-500">
+  <a href="#" className="w-11 h-11 lg:w-12 lg:h-12 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-[#2B5968] hover:text-white hover:bg-pink-400 hover:border-[#F7DCE0] shadow-[0_4px_15px_rgba(202,186,177,0.2)] hover:shadow-[0_8px_25px_rgba(247,220,224,0.6)] transition-all duration-500 group">
+    <div className="transform transition-transform duration-500 group-hover:-translate-y-1">
       {children}
     </div>
   </a>
+);
+
+const FooterLink = ({ children }) => (
+  <a href="#" className="flex items-center text-[15px] lg:text-[16px] font-medium text-[#2B5968]/80 hover:text-[#2B5968] w-fit relative group overflow-hidden transition-colors duration-300">
+    <span className="transform transition-transform duration-300 ease-out group-hover:translate-x-2">
+      {children}
+    </span>
+  </a>
+);
+
+const FeatureCard = ({ icon, title, desc, delay }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.6, delay }}
+    whileHover={{ y: -6, scale: 1.02 }}
+    className="flex flex-col items-center sm:items-start sm:flex-row gap-4 bg-white/70 backdrop-blur-xl border border-white p-5 lg:p-6 rounded-[24px] shadow-[0_10px_40px_rgba(202,186,177,0.2)] group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(247,220,224,0.4)]"
+  >
+    <div className="text-[#97B5C2] bg-white w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center shrink-0 shadow-[0_4px_15px_rgba(151,181,194,0.15)] group-hover:text-[#F7DCE0] transition-colors duration-500">
+      {icon}
+    </div>
+    <div className="text-center sm:text-left flex flex-col justify-center">
+      <h5 className="text-[#2B5968] font-heading font-semibold text-[15px] lg:text-[17px] mb-0.5">{title}</h5>
+      <p className="text-[#2B5968]/70 text-[13px] lg:text-[14px] font-medium">{desc}</p>
+    </div>
+  </motion.div>
 );
 
 /* =========================================
    2. MAIN COMPONENT
    ========================================= */
 
-function Footer() {
+export default function Footer() {
   return (
-    <footer className="relative w-full bg-[#FFD498] overflow-hidden font-body text-[#4a3b42] pt-20 lg:pt-28 pb-8 selection:bg-white selection:text-[#8B1C31]">
+    <footer className="relative w-full font-body pt-16 lg:pt-24 mt-10">
 
-      {/* 
-        =========================================
-        LUXURY LAYERED BACKGROUND
-        =========================================
-      */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FFD498] via-[#FFD498] to-[#FF0069]/30" />
-        
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(255,0,105,0.2)_0%,rgba(255,212,152,0)_70%)]" />
+      {/* Animated Gradient Background with large rounded corners */}
+      <motion.div
+        animate={{
+          backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
+        }}
+        transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+        className="absolute top-[120px] sm:top-[80px] lg:top-[60px] inset-x-0 bottom-0 rounded-t-[40px] lg:rounded-t-[60px] shadow-[0_-15px_50px_rgba(247,220,224,0.3)] z-0"
+        style={{
+          background: 'linear-gradient(135deg, #F7DCE0 0%, #FFFFFF 40%, #F7DCE0 80%, #DFC2C0 100%)',
+          backgroundSize: '200% 200%'
+        }}
+      />
 
-        <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-white blur-[150px] rounded-full mix-blend-overlay"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.3, 0.15] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-[#FF0069] blur-[160px] rounded-full mix-blend-multiply"
-        />
-        <div className="absolute top-[20%] left-[40%] w-[40vw] h-[40vw] bg-white blur-[130px] rounded-full mix-blend-overlay opacity-60" />
-      </div>
+      <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10 pb-8">
 
-      <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
-
-        {/* 
-           =========================================
-           TOP: NEWSLETTER EXPERIENCE & VISUAL
-           =========================================
-         */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center mb-16 lg:mb-24">
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="lg:col-span-6 flex flex-col"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="h-[1px] w-12 bg-[#8B1C31]/40" />
-              <span className="text-[11.5px] font-bold tracking-[0.4em] uppercase text-[#8B1C31]">
-                Join The Society
-              </span>
-            </div>
-            <h3 className="font-heading text-[3.25rem] lg:text-[4.75rem] font-light leading-[1.05] mb-5 text-[#4A2536] tracking-tight">
-              Elevate your <br /> <span className="italic font-medium text-[#8B1C31]">daily ritual.</span>
-            </h3>
-            <p className="text-[17px] lg:text-[18px] text-[#4a3b42] font-medium max-w-[450px] mb-8 leading-[1.9]">
-              Receive exclusive access to new botanical formulations, private wellness events, and profound skincare insights directly to your inbox.
-            </p>
-
-            {/* Premium Subscription Input */}
-            <div className="relative w-full max-w-[450px] group">
-              <div className="absolute inset-0 bg-white/40 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="relative w-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-full py-4 lg:py-5 pl-8 pr-[140px] text-[15px] lg:text-[16px] text-[#4A2536] placeholder-[#4a3b42]/60 focus:outline-none focus:border-white focus:bg-white/60 transition-all duration-500 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]"
-              />
-              <button className="absolute right-2.5 top-2.5 bottom-2.5 bg-white text-theme-primary px-6 lg:px-8 rounded-full text-[12px] lg:text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-theme-primary hover:text-white transition-colors duration-500 shadow-sm">
-                Subscribe
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Floating Product Composition */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="lg:col-span-5 lg:col-start-8 relative"
-          >
-            <div className="w-full max-w-[400px] aspect-[4/5] mx-auto rounded-[40px] lg:rounded-[56px] overflow-hidden shadow-[0_30px_60px_rgba(74,37,54,0.15)] bg-white/20 backdrop-blur-md border border-white/40 relative group">
-
-              {/* Branding Overlay Guarantee */}
-              <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none opacity-40 mix-blend-overlay">
-                <span className="font-heading text-[#8B1C31] text-[5rem] lg:text-[6rem] tracking-[0.3em] font-light rotate-[-90deg]">COSKINn</span>
-              </div>
-
-              <img
-                src="/mockup_product_1.webp"
-                alt="COSKINn Newsletter"
-                className="w-full h-full object-cover scale-[1.03] group-hover:scale-[1.08] transition-transform duration-[2.5s] ease-out opacity-[0.85]"
-              />
-
-              <div className="absolute inset-0 bg-[#FFD1EE]/10 mix-blend-multiply z-10 pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#FFD1EE]/80 via-transparent to-transparent z-10 pointer-events-none" />
-
-              {/* Glass Reflection Sweep */}
-              <div className="absolute top-0 bottom-0 -left-[100%] w-[50%] bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-[30deg] z-20 group-hover:left-[200%] transition-all duration-[2.5s] ease-in-out pointer-events-none" />
-            </div>
-          </motion.div>
+        {/* =========================================
+            TOP FEATURE BAR
+            ========================================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-12 lg:mb-16 -mt-8 lg:-mt-12">
+          <FeatureCard icon={<TruckIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Free Shipping" desc="On Orders Above ₹799" delay={0.1} />
+          <FeatureCard icon={<RefreshIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Easy Returns" desc="7 Days Easy Return" delay={0.2} />
+          <FeatureCard icon={<ShieldCheckIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Secure Checkout" desc="100% Safe Payment" delay={0.3} />
+          <FeatureCard icon={<LeafIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Cruelty Free" desc="Dermatologist Tested" delay={0.4} />
         </div>
 
-        {/* 
-           =========================================
-           MIDDLE: BRAND AREA & NAVIGATION
-           =========================================
-         */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-[#4a3b42]/10">
-
-          {/* Brand Statement */}
-          <div className="lg:col-span-6 flex flex-col pr-10">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="font-heading text-[4.75rem] lg:text-[7.25rem] tracking-[0.2em] font-light leading-none mb-4 text-[#4A2536]"
-            >
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 pt-4 lg:pt-8"
+        >
+          {/* =========================================
+              SECTION 1: BRAND
+              ========================================= */}
+          <div className="sm:col-span-2 lg:col-span-3 flex flex-col items-center lg:items-start text-center lg:text-left mb-4 lg:mb-0">
+            <span className="font-heading text-[32px] tracking-[0.2em] text-[#2B5968] mb-5">
               COSKINn
-            </motion.span>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-[22px] lg:text-[26px] font-heading font-light text-[#4a3b42] leading-[1.6]"
-            >
-              Nature Inspired.<br />
-              Science Perfected.<br />
-              <span className="italic font-medium text-[#8B1C31]">Luxury Skincare.</span>
-            </motion.p>
+            </span>
+            <p className="text-[15px] lg:text-[16px] text-[#2B5968]/80 font-medium leading-[1.7] max-w-[280px] mb-8">
+              Nature meets modern skincare.<br />
+              Crafted for healthy glowing skin.
+            </p>
+            <div className="flex items-center justify-center lg:justify-start gap-4">
+              <SocialIcon><InstagramIcon /></SocialIcon>
+              <SocialIcon><FacebookIcon /></SocialIcon>
+              <SocialIcon><PinterestIcon /></SocialIcon>
+              <SocialIcon><YouTubeIcon /></SocialIcon>
+            </div>
           </div>
 
-          {/* Navigation Links */}
-          <div className="lg:col-span-3 flex flex-col gap-5 lg:pt-4">
-            <motion.h4
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-[12.5px] font-bold tracking-[0.3em] text-[#8B1C31] uppercase mb-1 lg:mb-3"
-            >
-              Discover
-            </motion.h4>
-            {['Our Story', 'Build Your Routine', 'Contact'].map((link, idx) => (
-              <motion.a
-                href="#"
-                key={link}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 + (idx * 0.05) }}
-                className="text-[16px] font-medium text-[#4a3b42] hover:text-[#8B1C31] transition-colors duration-300 w-fit relative group"
-              >
-                {link}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-[#8B1C31] transition-all duration-500 group-hover:w-full" />
-              </motion.a>
-            ))}
+          {/* =========================================
+              SECTION 2: CUSTOMER CARE
+              ========================================= */}
+          <div className="lg:col-span-3 flex flex-col gap-5 lg:pl-10">
+            <h4 className="text-[18px] lg:text-[20px] font-heading font-medium text-[#2B5968] mb-1">Customer Care</h4>
+            <div className="flex flex-col gap-3">
+              <FooterLink>Help Center</FooterLink>
+              <FooterLink>Track My Order</FooterLink>
+              <FooterLink>Shipping & Delivery</FooterLink>
+              <FooterLink>Returns & Refunds</FooterLink>
+              <FooterLink>Contact Support</FooterLink>
+              <FooterLink>FAQs</FooterLink>
+            </div>
           </div>
 
-          {/* Support Links */}
-          <div className="lg:col-span-3 flex flex-col gap-5 lg:pt-4">
-            <motion.h4
-              initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-[12.5px] font-bold tracking-[0.3em] text-[#8B1C31] uppercase mb-1 lg:mb-3"
-            >
-              Support
-            </motion.h4>
-            {['Shipping', 'Returns', 'Privacy Policy', 'Terms & Conditions', 'FAQ'].map((link, idx) => (
-              <motion.a
-                href="#"
-                key={link}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 + (idx * 0.05) }}
-                className="text-[16px] font-medium text-[#4a3b42] hover:text-[#8B1C31] transition-colors duration-300 w-fit relative group"
-              >
-                {link}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-[#8B1C31] transition-all duration-500 group-hover:w-full" />
-              </motion.a>
-            ))}
+          {/* =========================================
+              SECTION 3: MY ACCOUNT
+              ========================================= */}
+          <div className="lg:col-span-3 flex flex-col gap-5 lg:pl-10">
+            <h4 className="text-[18px] lg:text-[20px] font-heading font-medium text-[#2B5968] mb-1">My Account</h4>
+            <div className="flex flex-col gap-3">
+              <FooterLink>My Profile</FooterLink>
+              <FooterLink>My Orders</FooterLink>
+              <FooterLink>Wishlist</FooterLink>
+              <FooterLink>Saved Addresses</FooterLink>
+              <FooterLink>Notifications</FooterLink>
+              <FooterLink>Account Settings</FooterLink>
+            </div>
           </div>
 
-        </div>
+          {/* =========================================
+              SECTION 4: POLICIES & TRUST
+              ========================================= */}
+          <div className="lg:col-span-3 flex flex-col gap-5 lg:pl-10">
+            <h4 className="text-[18px] lg:text-[20px] font-heading font-medium text-[#2B5968] mb-1">Policies & Trust</h4>
+            <div className="flex flex-col gap-3">
+              <FooterLink>Privacy Policy</FooterLink>
+              <FooterLink>Terms & Conditions</FooterLink>
+              <FooterLink>Refund Policy</FooterLink>
+              <FooterLink>Cookie Policy</FooterLink>
+              <FooterLink>Accessibility</FooterLink>
+              <FooterLink>Security</FooterLink>
+            </div>
+          </div>
 
-        {/* 
-           =========================================
-           BOTTOM: COPYRIGHT & SOCIALS
-           =========================================
-         */}
+        </motion.div>
+
+        {/* =========================================
+            BOTTOM BAR
+            ========================================= */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1, delay: 0.3 }}
-          className="pt-8 flex flex-col md:flex-row items-center justify-between gap-6"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-14 lg:mt-16 pt-6 border-t border-[#CABAB1]/40 flex flex-col md:flex-row items-center justify-between gap-6"
         >
-          <div className="flex flex-col md:flex-row items-center gap-4 text-[14px] text-[#4a3b42] font-medium tracking-wide">
-            <span>© 2026 COSKINn</span>
-            <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-[#8B1C31]/30" />
-            <span>Designed with elegance.</span>
+          <div className="text-[14px] lg:text-[15px] text-[#2B5968]/70 font-medium">
+            © 2026 COSKINn. All Rights Reserved.
           </div>
-
-          <div className="flex items-center gap-5">
-            <SocialIcon><InstagramIcon /></SocialIcon>
-            <SocialIcon><PinterestIcon /></SocialIcon>
-            <SocialIcon><FacebookIcon /></SocialIcon>
-            <SocialIcon><TikTokIcon /></SocialIcon>
+          <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8">
+            <div className="flex items-center gap-2 text-[13px] font-bold text-[#2B5968]/80 uppercase tracking-wider">
+              <span className="text-[16px]">🇮🇳</span> Made in India
+            </div>
+            <div className="flex items-center gap-2 text-[13px] font-bold text-[#2B5968]/80 uppercase tracking-wider">
+              <ShieldCheckIcon className="w-4 h-4 text-[#97B5C2]" /> Secure Payments
+            </div>
+            <div className="flex items-center gap-2 text-[13px] font-bold text-[#2B5968]/80 uppercase tracking-wider">
+              <LeafIcon className="w-4 h-4 text-[#97B5C2]" /> Cruelty Free
+            </div>
           </div>
         </motion.div>
-
       </div>
     </footer>
   );
 }
-
-export default memo(Footer);

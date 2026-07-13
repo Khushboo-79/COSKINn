@@ -164,10 +164,10 @@ export default function AwardWinnersPage() {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text pt-[72px]">
+    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text">
       
       {/* Premium Hero Section */}
-      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50">
+      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50 pt-[90px]">
         {/* WebP Background Image */}
         <div className="absolute inset-0 opacity-40 mix-blend-multiply">
           <img 
@@ -274,7 +274,7 @@ export default function AwardWinnersPage() {
                 <div className="absolute bottom-4 left-4 right-4 flex gap-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                   <button 
                     onClick={() => addToCart(product)}
-                    className="flex-1 bg-white/95 backdrop-blur-md hover:bg-black text-black hover:text-white h-12 rounded-full font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-2 transition-colors shadow-lg"
+                    className="flex-1 btn-secondary-skincare h-12 flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-[11px]"
                   >
                     <ShoppingBag className="w-4 h-4" /> Add to Cart
                   </button>
@@ -413,7 +413,7 @@ export default function AwardWinnersPage() {
                   <div className="font-bold text-[#FF0069] text-xl mt-auto mb-4">₹{product.price}</div>
                   <button 
                     onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                    className="w-full py-3 bg-theme-primary text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-pink-700 transition-colors"
+                    className="w-full py-3 btn-primary-skincare font-bold uppercase tracking-widest text-xs"
                   >
                     Add to Cart
                   </button>

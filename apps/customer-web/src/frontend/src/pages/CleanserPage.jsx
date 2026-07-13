@@ -51,19 +51,10 @@ export default function CleanserPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text mt-[72px]">
+    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text">
       
-      {/* Breadcrumbs */}
-      <div className="w-full border-b border-black/5 bg-white/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-2 text-xs font-medium text-black/50 tracking-wide">
-          <Link to="/" className="hover:text-theme-primary transition-colors">Home</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-black font-bold truncate">COSKINn Cleansers</span>
-        </div>
-      </div>
-
       {/* Hero Section — Full Screen Background Image */}
-      <section className="relative w-full min-h-[600px] lg:min-h-[750px] xl:min-h-[85vh] overflow-hidden flex items-end md:items-center">
+      <section className="relative w-full min-h-[600px] lg:min-h-[750px] xl:min-h-[85vh] overflow-hidden flex items-end md:items-center pt-[140px] lg:pt-[150px]">
 
         {/* Full-screen background image */}
         <motion.img
@@ -120,6 +111,13 @@ export default function CleanserPage() {
         {/* Content overlaid on full-screen image */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 py-16 lg:py-24">
           <div className="max-w-xl">
+            {/* Breadcrumbs */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-white/70 tracking-wide mb-6 lg:mb-8">
+              <Link to="/" className="hover:text-white transition-colors">Home</Link>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-white font-bold truncate">COSKINn Cleansers</span>
+            </div>
+
             {/* Premium Label Chip */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -303,7 +301,7 @@ export default function CleanserPage() {
                 <div className="relative aspect-[4/5] bg-theme-secondary/10 overflow-hidden cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
                   {/* Badge */}
                   {product.discountBadge && (
-                    <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-[#FF0069] text-white text-[10px] font-bold tracking-widest rounded-full shadow-lg">
+                    <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white border border-[#FFD1E5] text-[#FF0069] text-[10px] font-bold tracking-widest rounded-full shadow-[0_4px_10px_rgba(255,0,105,0.15)] w-max">
                       {product.discountBadge}
                     </div>
                   )}
@@ -334,7 +332,7 @@ export default function CleanserPage() {
                         e.stopPropagation();
                         addToCart(product, 1);
                       }}
-                      className="flex-1 bg-white/90 backdrop-blur-md text-black font-bold py-3 rounded-xl hover:bg-[#FF0069] hover:text-white transition-colors flex items-center justify-center gap-2 text-sm shadow-lg"
+                      className="flex-1 btn-secondary-skincare py-3 flex items-center justify-center gap-2 text-sm font-bold"
                     >
                       <ShoppingBag size={16} /> Add
                     </button>
@@ -343,7 +341,7 @@ export default function CleanserPage() {
                         e.stopPropagation();
                         navigate(`/product/${product.id}`);
                       }}
-                      className="w-12 bg-black/90 backdrop-blur-md text-white font-bold py-3 rounded-xl hover:bg-[#FF0069] transition-colors flex items-center justify-center shadow-lg"
+                      className="w-12 btn-primary-skincare flex items-center justify-center shrink-0 py-3"
                     >
                       <Eye size={16} />
                     </button>
@@ -376,7 +374,7 @@ export default function CleanserPage() {
                         e.stopPropagation();
                         handleBuyNow(product);
                       }}
-                      className="px-5 py-2.5 bg-black text-white text-sm font-bold rounded-xl hover:bg-[#FF0069] hover:shadow-[0_5px_15px_rgba(255,0,105,0.3)] transition-all"
+                      className="px-5 py-2.5 btn-primary-skincare text-sm font-bold"
                     >
                       Buy Now
                     </button>
