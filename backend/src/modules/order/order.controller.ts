@@ -65,4 +65,25 @@ export class OrderController {
   ) {
     return this.orderService.updateOrderStatus(id, status, req.user.id, notes);
   }
+
+  // --- SETTINGS ENDPOINTS ---
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager')
+  @Get('admin/orders/settings/config')
+  async getSettings() {
+    return this.orderService.getSettings();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager')
+  @Put('admin/orders/settings/config')
+  async updateSettings(@Body() body: any) {
+    return this.orderService.updateSettings({
+      returnWindowDays: body.returnWindowDays,
+      autoCancelHours: body.autoCancelHours,
+      codEnabled: body.codEnabled,
+      maxCodAmount: body.maxCodAmount
+    });
+  }
 }

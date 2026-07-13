@@ -1279,3 +1279,15 @@ model Faq {
 
   @@map("faqs")
 }
+
+model OrderSettings {
+  id               String   @id @default(uuid())
+  returnWindowDays Int      @default(7)
+  autoCancelHours  Int      @default(24)
+  codEnabled       Boolean  @default(true)
+  maxCodAmount     Float    @default(5000)
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+
+  @@map("order_settings")
+}

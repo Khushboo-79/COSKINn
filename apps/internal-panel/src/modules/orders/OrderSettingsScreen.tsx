@@ -1,16 +1,64 @@
-import { useState } from 'react';
-import { Save, Settings, Clock, Truck, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Save, Settings, Clock, Truck, Shield, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 
 export default function OrderSettingsScreen() {
+  const queryClient = useQueryClient();
+
   const [returnWindowDays, setReturnWindowDays] = useState('7');
   const [codEnabled, setCodEnabled] = useState(true);
   const [maxCodAmount, setMaxCodAmount] = useState('5000');
   const [autoCancelHours, setAutoCancelHours] = useState('24');
-  
+
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ['orderSettings'],
+    queryFn: async () => {
+      const res = await api.get('/admin/orders/settings/config');
+      return res.data;
+    }
+  });
+
+  useEffect(() => {
+    if (settings) {
+      setReturnWindowDays(settings.returnWindowDays?.toString() || '7');
+      setCodEnabled(settings.codEnabled ?? true);
+      setMaxCodAmount(settings.maxCodAmount?.toString() || '5000');
+      setAutoCancelHours(settings.autoCancelHours?.toString() || '24');
+    }
+  }, [settings]);
+
+  const updateSettingsMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      const res = await api.put('/admin/orders/settings/config', payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success('Order settings updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['orderSettings'] });
+    },
+    onError: () => {
+      toast.error('Failed to update settings');
+    }
+  });
+
   const handleSave = () => {
-    toast.success('Order settings updated successfully');
+    updateSettingsMutation.mutate({
+      returnWindowDays: parseInt(returnWindowDays, 10),
+      autoCancelHours: parseInt(autoCancelHours, 10),
+      codEnabled,
+      maxCodAmount: parseFloat(maxCodAmount)
+    });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-4xl">
@@ -103,9 +151,11 @@ export default function OrderSettingsScreen() {
         <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
           <button 
             onClick={handleSave}
-            className="bg-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200 flex items-center gap-2"
+            disabled={updateSettingsMutation.isPending}
+            className="bg-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-200 flex items-center gap-2 disabled:opacity-50"
           >
-            <Save className="w-4 h-4" /> Save Settings
+            {updateSettingsMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Save Settings
           </button>
         </div>
       </div>

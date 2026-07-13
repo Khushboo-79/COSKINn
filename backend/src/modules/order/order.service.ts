@@ -282,4 +282,34 @@ export class OrderService {
       return updatedOrder;
     });
   }
+
+  // --- SETTINGS METHODS ---
+
+  async getSettings() {
+    let settings = await this.prisma.orderSettings.findFirst();
+    if (!settings) {
+      settings = await this.prisma.orderSettings.create({
+        data: {
+          returnWindowDays: 7,
+          autoCancelHours: 24,
+          codEnabled: true,
+          maxCodAmount: 5000
+        }
+      });
+    }
+    return settings;
+  }
+
+  async updateSettings(data: {
+    returnWindowDays?: number;
+    autoCancelHours?: number;
+    codEnabled?: boolean;
+    maxCodAmount?: number;
+  }) {
+    const settings = await this.getSettings();
+    return this.prisma.orderSettings.update({
+      where: { id: settings.id },
+      data
+    });
+  }
 }
