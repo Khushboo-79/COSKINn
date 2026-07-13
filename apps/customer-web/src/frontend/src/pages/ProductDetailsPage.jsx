@@ -74,7 +74,10 @@ export default function ProductDetailsPage() {
 
   if (!product) return null;
 
-  const relatedProducts = skincareProducts.filter(p => p.id !== product.id).slice(0, 4);
+  const relatedProducts = skincareProducts.filter(p => 
+    p.id !== product.id && 
+    (product.subcategory ? p.subcategory === product.subcategory : p.category === product.category)
+  ).slice(0, 4);
 
   const handleBuyNow = () => {
     addToCart(product, quantity);

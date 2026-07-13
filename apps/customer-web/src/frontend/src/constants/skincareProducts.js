@@ -1466,5 +1466,364 @@ export const skincareProducts = [
     shelfLife: "24 Months",
     countryOfOrigin: "India",
     manufacturedBy: "COSKINn Labs"
+  },
+  { 
+    id: 1101, 
+    name: "COSKINn Strawberry Pocket Perfume", 
+    originalPrice: 2140,
+    price: 1499, 
+    discountBadge: "30% OFF",
+    rating: 4.9, 
+    reviews: 1245,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "BEST SELLER",
+    shortDescription: "Sweet fruity freshness for a playful luxurious aroma.",
+    longDescription: "Our signature Strawberry Pocket Perfume captures the essence of fresh summer strawberries. It leaves a playful, sweet, and luxurious aroma that lingers all day, bringing an instant boost of joy to your everyday routine.",
+    benefits: ["Long-lasting fruity fragrance", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Wild Strawberry Extract", "Red Berry Nectar"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Strawberry Extract", benefit: "Provides a fresh, sweet, and playful aromatic opening.", skinType: "All Skin Types" },
+      { name: "Red Berry Nectar", benefit: "Adds long-lasting depth to the fruity profile.", skinType: "All Skin Types" },
+      { name: "Hydrating Base", benefit: "Ensures the perfume is safe and non-drying on the skin.", skinType: "Sensitive Skin" }
+    ],
+    customerReviews: [
+      { user: "Jessica T.", date: "2 days ago", rating: 5, text: "This is the most luxurious pocket perfume I've ever owned. The Strawberry scent stays all day. Truly high-end!", helpful: 45 },
+      { user: "Amanda L.", date: "1 week ago", rating: 5, text: "So convenient for traveling! It fits perfectly in my smallest clutch and gets so many compliments.", helpful: 32 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Sweet Strawberry",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 120
+  },
+  { 
+    id: 1102, 
+    name: "COSKINn Orange Pocket Perfume", 
+    originalPrice: 2130,
+    price: 1599, 
+    discountBadge: "25% OFF",
+    rating: 4.8, 
+    reviews: 950,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "FRESH & ZESTY",
+    shortDescription: "Fresh citrus energy that adds an instant refreshing opening.",
+    longDescription: "Awaken your senses with the Orange Pocket Perfume. A vibrant burst of sweet orange and zesty mandarin that provides an instant refreshing aura, perfect for busy days and energetic mornings.",
+    benefits: ["Energizing scent", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Sweet Orange Extract", "Mandarin Zest"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Sweet Orange Extract", benefit: "Delivers an energetic, uplifting citrus aroma.", skinType: "All Skin Types" },
+      { name: "Mandarin Zest", benefit: "Adds a sharp, zesty note that revitalizes the senses.", skinType: "All Skin Types" }
+    ],
+    customerReviews: [
+      { user: "Priya M.", date: "3 days ago", rating: 5, text: "Perfect morning scent! Wakes me up and stays fresh all day.", helpful: 28 },
+      { user: "Sarah J.", date: "2 weeks ago", rating: 4, text: "Love the citrus notes, it feels very high end.", helpful: 15 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Fresh Orange",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 85
+  },
+  { 
+    id: 1103, 
+    name: "COSKINn Mango Pocket Perfume", 
+    originalPrice: 2165,
+    price: 1299, 
+    discountBadge: "40% OFF",
+    rating: 4.7, 
+    reviews: 642,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "WARM & CREAMY",
+    shortDescription: "Soft tropical warmth that provides creamy fruity comfort.",
+    longDescription: "Escape to a tropical paradise. The Mango Pocket Perfume delivers a soft, warm, and creamy fragrance profile that wraps you in a comforting and luxurious exotic aura.",
+    benefits: ["Creamy tropical scent", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Mango Nectar", "Tropical Fruit Blend"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Mango Nectar", benefit: "Provides a warm, creamy, and exotic base note.", skinType: "All Skin Types" },
+      { name: "Tropical Fruit Blend", benefit: "Enhances the fragrance with complex fruity layers.", skinType: "All Skin Types" }
+    ],
+    customerReviews: [
+      { user: "Sophie M.", date: "1 month ago", rating: 5, text: "Obsessed with the Mango fragrance. It's sophisticated and not overpowering. Will buy the whole set.", helpful: 89 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Warm Mango",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 200
+  },
+  { 
+    id: 1104, 
+    name: "COSKINn Blueberry Pocket Perfume", 
+    originalPrice: 2530,
+    price: 1899, 
+    discountBadge: "25% OFF",
+    rating: 4.9, 
+    reviews: 875,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "LUXURY",
+    shortDescription: "Antioxidant freshness that adds smooth long-lasting depth.",
+    longDescription: "A sophisticated take on fruity fragrances. Blueberry Pocket Perfume offers a smooth, deep, and subtly crisp scent profile that feels incredibly elegant and modern.",
+    benefits: ["Sophisticated depth", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Blueberry Extract", "Wild Berries"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Blueberry Extract", benefit: "Delivers a deep, rich, and sophisticated berry note.", skinType: "All Skin Types" },
+      { name: "Wild Berries", benefit: "Adds a crisp, fresh edge to the fragrance.", skinType: "All Skin Types" }
+    ],
+    customerReviews: [
+      { user: "Emma R.", date: "5 days ago", rating: 5, text: "The deepest and most elegant fruity scent I've ever tried.", helpful: 56 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Deep Blueberry",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 50
+  },
+  { 
+    id: 1105, 
+    name: "COSKINn Pomegranate Pocket Perfume", 
+    originalPrice: 1999,
+    price: 1499, 
+    discountBadge: "25% OFF",
+    rating: 4.8, 
+    reviews: 730,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "RICH & ELEGANT",
+    shortDescription: "Elegant richness that creates a sophisticated fruity heart.",
+    longDescription: "Bold, rich, and utterly luxurious. Pomegranate Pocket Perfume is a captivating fragrance that balances tartness with deep, elegant fruity notes for a truly memorable signature scent.",
+    benefits: ["Rich elegant scent", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Pomegranate Seed Extract", "Red Fruit Blend"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Pomegranate Seed Extract", benefit: "Provides a rich, tart, and highly elegant aroma.", skinType: "All Skin Types" },
+      { name: "Red Fruit Blend", benefit: "Smooths the tartness with deep, sweet undertones.", skinType: "All Skin Types" }
+    ],
+    customerReviews: [
+      { user: "Nina K.", date: "1 week ago", rating: 5, text: "Very premium. Smells exactly like a high-end designer perfume.", helpful: 41 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Rich Pomegranate",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 150
+  },
+  { 
+    id: 1106, 
+    name: "COSKINn Green Tea Pocket Perfume", 
+    originalPrice: 1899,
+    price: 1399, 
+    discountBadge: "26% OFF",
+    rating: 4.9, 
+    reviews: 512,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "CLEAN & FRESH",
+    shortDescription: "Clean fresh finish that leaves a refreshing calming effect.",
+    longDescription: "Minimalist, clean, and incredibly fresh. Green Tea Pocket Perfume offers a serene, spa-like fragrance experience that instantly calms the mind and refreshes your presence.",
+    benefits: ["Clean calming scent", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Green Tea Extract", "White Tea Leaves"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Green Tea Extract", benefit: "Delivers a crisp, clean, and highly refreshing scent.", skinType: "All Skin Types" },
+      { name: "White Tea Leaves", benefit: "Adds a delicate, soft background note.", skinType: "All Skin Types" }
+    ],
+    customerReviews: [
+      { user: "Aarohi S.", date: "3 weeks ago", rating: 5, text: "The perfect everyday scent. So clean and fresh, never overwhelming.", helpful: 67 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Fresh Green Tea",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 90
+  },
+  { 
+    id: 1107, 
+    name: "COSKINn Berry Fusion Pocket Perfume", 
+    originalPrice: 2299,
+    price: 1699, 
+    discountBadge: "26% OFF",
+    rating: 4.8, 
+    reviews: 430,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "EXOTIC",
+    shortDescription: "A playful fusion of our finest red and blue berries.",
+    longDescription: "For those who can't choose just one. Berry Fusion combines the playful sweetness of strawberry with the sophisticated depth of blueberry for an incredibly complex, luxurious scent.",
+    benefits: ["Complex fruity profile", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Mixed Berry Extracts", "Acai Nectar"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Mixed Berry Extracts", benefit: "A dynamic, layered fruity experience.", skinType: "All Skin Types" },
+      { name: "Acai Nectar", benefit: "Adds a touch of exotic sweetness.", skinType: "All Skin Types" }
+    ],
+    customerReviews: [
+      { user: "Ria D.", date: "1 month ago", rating: 4, text: "Very unique scent, the berries blend together beautifully.", helpful: 22 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Mixed Berries",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 110
+  },
+  { 
+    id: 1108, 
+    name: "COSKINn Tropical Bloom Pocket Perfume", 
+    originalPrice: 2499,
+    price: 1799, 
+    discountBadge: "28% OFF",
+    rating: 4.9, 
+    reviews: 620,
+    category: "Skincare", 
+    subcategory: "Pocket Perfume",
+    image: pocketPerfumeImg, 
+    images: getGallery(pocketPerfumeImg),
+    badge: "SUMMER ESSENTIAL",
+    shortDescription: "The ultimate tropical vacation in a bottle.",
+    longDescription: "Capture the essence of a sun-drenched holiday. Tropical Bloom is a vibrant, joyous fragrance that masterfully blends sweet mango, fresh orange, and subtle passionfruit.",
+    benefits: ["Vibrant vacation scent", "Travel friendly", "Premium extracts", "Alcohol balanced"],
+    keyIngredients: ["Mango Nectar", "Orange Zest", "Passionfruit"],
+    howToUse: [
+      { title: "Target Pulse Points", desc: "Spray lightly on wrists, neck, and behind ears." },
+      { title: "Do Not Rub", desc: "Let the perfume dry naturally to preserve the scent notes." },
+      { title: "Refresh", desc: "Reapply throughout the day as desired for an instant boost." }
+    ],
+    detailedIngredients: [
+      { name: "Mango Nectar", benefit: "Provides a warm, creamy tropical base.", skinType: "All Skin Types" },
+      { name: "Orange Zest", benefit: "Adds an energetic citrus sparkle.", skinType: "All Skin Types" },
+      { name: "Passionfruit", benefit: "A tart, exotic note that completes the profile.", skinType: "All Skin Types" }
+    ],
+    customerReviews: [
+      { user: "Tara W.", date: "2 weeks ago", rating: 5, text: "I wear this every day. It instantly puts me in a good mood!", helpful: 77 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Fragrance",
+    texture: "Fine Mist",
+    fragrance: "Tropical Fruit Blend",
+    netQuantity: "20ml",
+    shelfLife: "36 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 140
+  },
+  {
+    id: 8001,
+    name: "COSKINn Glow Kit",
+    category: "Bundles",
+    subcategory: "Kit",
+    price: 2449,
+    originalPrice: 3499,
+    discountBadge: "30% OFF",
+    rating: 4.9,
+    reviews: 1245,
+    image: giftGlowEssentialsImg,
+    gallery: getGallery(giftGlowEssentialsImg),
+    shortDescription: "Everything your skin needs for a healthy, radiant glow. A complete day-to-night routine.",
+    longDescription: "The COSKINn Glow Kit is a curated collection of our best-selling essentials designed to hydrate, protect, and repair your skin around the clock.",
+    howToUse: [
+      { step: "Step 1", title: "Cleanse", description: "Use the Gentle Cleanser morning and night." },
+      { step: "Step 2", title: "Refresh", description: "Spritz the Face Mist for instant hydration." },
+      { step: "Step 3", title: "Protect", description: "Apply Lip Balm SPF throughout the day." },
+      { step: "Step 4", title: "Repair", description: "Use the Overnight Mask before bed." }
+    ],
+    benefits: [
+      { title: "Complete Routine", description: "4 full-sized essentials." },
+      { title: "Deep Hydration", description: "Locks in moisture." },
+      { title: "Radiant Skin", description: "Boosts natural glow." }
+    ],
+    keyIngredients: ["Vitamin C", "Hyaluronic Acid", "Fruit Extracts"],
+    detailedIngredients: [
+      { name: "Strawberry", benefit: "Brightens skin.", skinType: "All" },
+      { name: "Mango", benefit: "Nourishes.", skinType: "All" }
+    ],
+    customerReviews: [
+      { user: "Emma R.", date: "1 week ago", rating: 5, text: "The perfect starter kit! My skin has never looked better.", helpful: 142 }
+    ],
+    suitableSkinType: "All Skin Types",
+    skinConcerns: "Dullness, Dryness",
+    texture: "Varied",
+    fragrance: "Signature Fruit Blend",
+    netQuantity: "4 Full Size Products",
+    shelfLife: "24 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 50
   }
 ];
