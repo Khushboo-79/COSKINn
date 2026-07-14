@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrderContext';
+import { useTheme } from '../context/ThemeContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, CreditCard, CheckCircle, Package, ArrowLeft, ShieldCheck, Lock, QrCode, Smartphone, RefreshCw, AlertCircle, Download, Truck, Building2, Wallet, Zap, Trash2, Plus, Minus, Tag } from 'lucide-react';
 import BnplFlow from '../components/checkout/BnplFlow';
@@ -12,6 +13,7 @@ export default function CheckoutPage() {
   const { cart, cartSubtotal, clearCart, addToCart, removeFromCart } = useCart();
   const { user } = useAuth();
   const { placeOrder } = useOrders();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   
   // Steps: 1: Cart, 2: Address, 3: Review, 4: Payment, 5: Success/Failed
@@ -280,7 +282,11 @@ export default function CheckoutPage() {
             
             <button 
               onClick={() => setPaymentStatus('idle')}
-              className="px-8 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-xl"
+              className={`px-8 py-4 font-bold uppercase tracking-widest text-sm ${
+                theme === 'skincare'
+                  ? 'btn-primary-skincare'
+                  : 'bg-theme-primary text-white rounded-full hover:bg-pink-700 transition-colors shadow-xl'
+              }`}
             >
               Retry Payment
             </button>
@@ -376,10 +382,14 @@ export default function CheckoutPage() {
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link to="/new-arrivals" className="px-8 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-xl">
+              <Link to="/new-arrivals" className={`px-8 py-4 font-bold uppercase tracking-widest text-sm flex items-center justify-center ${
+                theme === 'skincare' ? 'btn-primary-skincare' : 'bg-theme-primary text-white rounded-full hover:bg-pink-700 transition-colors shadow-xl'
+              }`}>
                 Continue Shopping
               </Link>
-              <button className="px-8 py-4 bg-white border border-black/10 text-black font-bold uppercase tracking-widest text-sm rounded-full hover:bg-black/5 transition-colors flex items-center gap-2">
+              <button className={`px-8 py-4 font-bold uppercase tracking-widest text-sm flex items-center gap-2 ${
+                theme === 'skincare' ? 'btn-secondary-skincare' : 'bg-white border border-black/10 text-black rounded-full hover:bg-black/5 transition-colors'
+              }`}>
                 <Download className="w-4 h-4" /> Download Invoice
               </button>
             </div>
@@ -420,7 +430,9 @@ export default function CheckoutPage() {
                         ))}
                       </div>
                       <div className="flex justify-end">
-                        <button onClick={() => setCurrentStep(2)} className="px-10 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-lg">
+                        <button onClick={() => setCurrentStep(2)} className={`px-10 py-4 font-bold uppercase tracking-widest text-sm ${
+                          theme === 'skincare' ? 'btn-primary-skincare' : 'bg-theme-primary text-white rounded-full hover:bg-pink-700 transition-colors shadow-lg'
+                        }`}>
                           Continue to Shipping
                         </button>
                       </div>
@@ -458,7 +470,9 @@ export default function CheckoutPage() {
                         <button 
                           disabled={!address.name || !address.street || !address.city || !address.pincode}
                           onClick={() => setCurrentStep(3)}
-                          className="px-10 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 disabled:opacity-50 disabled:hover:bg-black transition-colors shadow-lg"
+                          className={`px-10 py-4 font-bold uppercase tracking-widest text-sm disabled:opacity-50 transition-colors ${
+                            theme === 'skincare' ? 'btn-primary-skincare disabled:hover:bg-[#FF0069]' : 'bg-theme-primary text-white rounded-full hover:bg-pink-700 disabled:hover:bg-black shadow-lg'
+                          }`}
                         >
                           Deliver Here
                         </button>
@@ -488,7 +502,9 @@ export default function CheckoutPage() {
                       <p className="text-black/60 font-medium mb-6">Please review your final order amount and apply any coupons before proceeding to payment.</p>
                       
                       <div className="flex justify-end">
-                        <button onClick={() => setCurrentStep(4)} className="px-10 py-4 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full hover:bg-pink-700 transition-colors shadow-lg">
+                        <button onClick={() => setCurrentStep(4)} className={`px-10 py-4 font-bold uppercase tracking-widest text-sm ${
+                          theme === 'skincare' ? 'btn-primary-skincare' : 'bg-theme-primary text-white rounded-full hover:bg-pink-700 transition-colors shadow-lg'
+                        }`}>
                           Proceed to Payment
                         </button>
                       </div>
@@ -535,7 +551,9 @@ export default function CheckoutPage() {
                                     <p className="text-sm font-bold mb-4">Scan QR or enter UPI ID</p>
                                     <div className="flex gap-2 mb-4">
                                       <input type="text" placeholder="example@upi" className="flex-1 px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:border-theme-primary bg-[#fafafa]" />
-                                      <button className="px-6 py-3 bg-theme-primary text-white font-bold rounded-xl hover:bg-pink-700 transition-colors text-sm">Verify</button>
+                                      <button className={`px-6 py-3 font-bold rounded-xl transition-colors text-sm ${
+                                        theme === 'skincare' ? 'btn-primary-skincare !rounded-xl' : 'bg-theme-primary text-white hover:bg-pink-700'
+                                      }`}>Verify</button>
                                     </div>
                                     <div className="flex gap-2 flex-wrap">
                                       <span className="px-4 py-2 border border-black/10 rounded-lg text-xs font-bold text-black/60 bg-[#fafafa]">GPay</span>
@@ -719,7 +737,11 @@ export default function CheckoutPage() {
                           (paymentMethod === 'bnpl' && !bnplProvider) ||
                           (paymentMethod === 'wallet' && !walletProvider)
                         }
-                        className="w-full py-5 bg-theme-primary text-white font-bold uppercase tracking-widest text-sm rounded-full shadow-lg shadow-theme-primary/30 hover:shadow-xl hover:bg-pink-700/90 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-theme-primary disabled:shadow-none"
+                        className={`w-full py-5 font-bold uppercase tracking-widest text-sm flex items-center justify-center transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none ${
+                          theme === 'skincare' 
+                            ? 'btn-primary-skincare shadow-[0_10px_30px_rgba(255,0,105,0.3)] disabled:hover:bg-[#FF0069]'
+                            : 'bg-theme-primary text-white rounded-full shadow-lg shadow-theme-primary/30 hover:shadow-xl hover:bg-pink-700/90 hover:-translate-y-1 disabled:hover:bg-theme-primary'
+                        }`}
                       >
                         {paymentMethod === 'cod' 
                           ? 'Place Order' 
@@ -742,29 +764,40 @@ export default function CheckoutPage() {
                 
                 {/* Coupon Section */}
                 <div className="mb-6 pb-6 border-b border-black/5">
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
+                  <div className="flex flex-row items-center gap-3 w-full h-[52px]">
+                    {/* Input Field (75%) */}
+                    <div className="relative w-3/4 h-full">
                       <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
                       <input 
                         type="text" 
-                        placeholder="Promo Code" 
+                        placeholder="Enter Promo Code" 
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:border-theme-primary text-sm uppercase bg-[#fafafa]"
+                        className="w-full h-full pl-10 pr-4 rounded-[18px] border border-[#FFD1E5] bg-white focus:outline-none focus:border-[#FF0069] focus:ring-2 focus:ring-[#FF0069]/20 transition-all text-sm uppercase font-medium text-black placeholder:text-gray-400 placeholder:normal-case shadow-sm hover:border-[#FF5EA8]/50"
                       />
                     </div>
+                    
+                    {/* Apply Button (25%) */}
                     <button 
                       onClick={handleApplyCoupon}
-                      className="px-6 py-3 bg-theme-primary text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-pink-700 transition-colors"
+                      className="w-1/4 h-full bg-gradient-to-r from-[#FF0069] to-[#FF5CA8] text-white font-semibold uppercase tracking-widest text-xs rounded-[18px] shadow-[0_4px_14px_rgba(255,0,105,0.25)] hover:shadow-[0_6px_20px_rgba(255,0,105,0.4)] hover:-translate-y-[2px] active:scale-[0.98] transition-all duration-300 flex items-center justify-center"
                     >
                       Apply
                     </button>
                   </div>
-                  {couponError && <p className="text-red-500 text-xs font-bold mt-2 ml-1">{couponError}</p>}
+                  
+                  {/* Error Message */}
+                  {couponError && (
+                    <div className="mt-3 flex items-center gap-1.5 px-4 py-2 bg-[#FFF0F5] border border-[#FFD1E5] rounded-full w-max text-[#FF0069]">
+                      <span className="text-xs font-bold flex items-center gap-1.5"><span className="text-[10px]">⚠</span> {couponError}</span>
+                    </div>
+                  )}
+                  
+                  {/* Success Message */}
                   {appliedCoupon && (
-                    <div className="flex items-center justify-between mt-3 bg-green-50 px-4 py-2.5 rounded-lg border border-green-100">
+                    <div className="flex items-center justify-between mt-3 bg-green-50 px-4 py-2.5 rounded-full border border-green-100">
                       <span className="text-green-700 text-xs font-bold flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5" /> {appliedCoupon.message}</span>
-                      <button onClick={() => setAppliedCoupon(null)} className="text-black/40 hover:text-red-500 text-xs font-bold uppercase">Remove</button>
+                      <button onClick={() => setAppliedCoupon(null)} className="text-black/40 hover:text-red-500 text-xs font-bold uppercase transition-colors">Remove</button>
                     </div>
                   )}
                 </div>

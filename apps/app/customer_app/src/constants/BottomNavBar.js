@@ -1,20 +1,26 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Home, ShoppingBag, Sparkles, Ticket, User } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Stop, Polygon } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from './AppTheme';
 
 const tabs = [
-  { id: 'home', label: 'Home', IconComponent: Home },
-  { id: 'shop', label: 'Shop', IconComponent: ShoppingBag },
-  { id: 'new', label: 'New', IconComponent: Sparkles },
-  { id: 'rewards', label: 'Rewards', IconComponent: Ticket },
-  { id: 'account', label: 'Account', IconComponent: User },
+  { id: 'home', label: 'Home', iconSource: require('../images/icons/Home.webp') },
+  { id: 'shop', label: 'Shop', iconSource: require('../images/icons/Shop.webp') },
+  { id: 'new', label: 'New', iconSource: require('../images/icons/New.webp') },
+  { id: 'rewards', label: 'Rewards', iconSource: require('../images/icons/Rewards.webp') },
+  { id: 'account', label: 'Account', iconSource: require('../images/icons/Account.webp') },
 ];
 
 const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+  const navBorderColor = isCosmetics ? '#FFC2D1' : AppTheme.colors.primary;
+  const gradientColor = isCosmetics ? '#FFC2D1' : 'rgba(255, 0, 106, 0.10)';
+  const activeIconColor = isCosmetics ? '#FF6B9E' : AppTheme.colors.primary; // Pink icon for active cosmetics tab
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { borderColor: navBorderColor }]}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         const label = tab.customLabel || tab.label;
@@ -31,7 +37,12 @@ const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
                 <Svg height="100%" width="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <Defs>
                     <SvgLinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                      <Stop offset="0" stopColor="rgba(255, 0, 106, 0.10)" />
+                      <Stop offset="0" stopColor={gradientColor} />
+                      {isCosmetics ? (
+                        <Stop offset="0.47" stopColor={gradientColor} />
+                      ) : (
+                        <Stop offset="0" stopColor={gradientColor} />
+                      )}
                       <Stop offset="1" stopColor="#FFFFFF" />
                     </SvgLinearGradient>
                   </Defs>
@@ -41,13 +52,13 @@ const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
             )}
 
             <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
-              <tab.IconComponent
-                size={scaleh(24)}
-                color={isActive ? AppTheme.colors.primary : '#1a1a1a'}
-                strokeWidth={2}
+              <Image 
+                source={tab.iconSource} 
+                style={{ width: scaleh(24), height: scaleh(24), tintColor: isActive ? activeIconColor : '#1a1a1a' }} 
+                resizeMode="contain" 
               />
             </View>
-            <Text style={[styles.label, isActive && styles.activeLabel]}>
+            <Text style={[styles.label, isActive && { color: activeIconColor }]}>
               {label}
             </Text>
           </TouchableOpacity>
@@ -65,7 +76,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: scaleh(30),
     borderTopRightRadius: scaleh(30),
     borderWidth: 1.5,
-    borderColor: AppTheme.colors.primary,
     borderBottomWidth: 0, // No bottom border
     justifyContent: 'space-around',
     alignItems: 'center',

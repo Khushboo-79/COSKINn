@@ -109,21 +109,16 @@ export class OrderService {
               let variantId = item.variantId;
               let sku = 'UNKNOWN_SKU';
               
+              let variant: any = null;
               if (variantId) {
-                const variant = await tx.productVariant.findUnique({
-                  where: { id: variantId }
-                });
-                if (variant) {
-                  sku = variant.sku;
-                }
+                variant = await tx.productVariant.findUnique({ where: { id: variantId } });
               } else {
-                const firstVariant = await tx.productVariant.findFirst({
-                  where: { productId: item.productId }
-                });
-                if (firstVariant) {
-                  variantId = firstVariant.id;
-                  sku = firstVariant.sku;
-                }
+                variant = await tx.productVariant.findFirst({ where: { productId: item.productId } });
+              }
+
+              if (variant) {
+                variantId = variant.id;
+                sku = variant.sku;
               }
 
               return {

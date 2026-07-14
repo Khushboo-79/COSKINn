@@ -90,7 +90,7 @@ const OtpScreen = ({ navigation }) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.verifyWrapper}
-                onPress={() => navigation.navigate('Dashboard')}
+                onPress={() => navigation.navigate('Main')}
               >
                 <LinearGradient
                   colors={[AppTheme.colors.primary, AppTheme.colors.secondary]}
