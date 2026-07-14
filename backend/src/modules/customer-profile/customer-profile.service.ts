@@ -165,6 +165,22 @@ export class CustomerProfileService {
     return user;
   }
 
+  async updateUserStatus(userId: string, isActive: boolean) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { isActive }
+    });
+    return { success: true, isActive: user.isActive };
+  }
+
+  async sendResetPasswordLink(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Customer not found');
+    // In a real implementation, you would generate a token and send an email
+    console.log(`[STUB] Sending password reset link to ${user.email || user.phone}`);
+    return { success: true, message: 'Password reset link sent' };
+  }
+
   // --- Address Methods ---
 
   async getAddresses(userId: string) {

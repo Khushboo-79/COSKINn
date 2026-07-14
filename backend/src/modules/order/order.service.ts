@@ -176,11 +176,29 @@ export class OrderService {
       where,
       include: {
         address: true,
-        user: { select: { id: true, email: true, phone: true } },
+        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
         items: { include: { variant: { include: { product: true } } } }
       },
       orderBy: { createdAt: 'desc' }
     });
+  }
+
+  async getAdminOrderById(orderId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        address: true,
+        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
+        items: { include: { variant: { include: { product: true } } } },
+        payments: true,
+        shipments: true,
+        cancellations: true,
+        statusHistory: { orderBy: { createdAt: 'desc' } }
+      }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+    return order;
   }
 
   async updateOrderStatus(orderId: string, status: string, adminId: string, notes?: string) {
@@ -237,6 +255,45 @@ export class OrderService {
     return res;
   }
 
+  async adminCancelOrder(orderId: string, adminId: string, reason: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+
+    if (order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELLED') {
+      throw new BadRequestException(`Cannot cancel order in ${order.status} state`);
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Mark as cancelled
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status: 'CANCELLED' }
+      });
+
+      // 2. Add history and cancellation record
+      await tx.orderStatusHistory.create({
+        data: { orderId, status: 'CANCELLED', notes: `Cancelled by Admin ${adminId}: ${reason}` }
+      });
+
+      await tx.orderCancellation.create({
+        data: { orderId, reason, cancelledBy: adminId }
+      });
+
+      // 3. Release reserved stock if it was PACKED or PLACED
+      if (order.status === 'PACKED' || order.status === 'PLACED') {
+        for (const item of order.items) {
+          await this.inventoryService.releaseReservedStock(item.sku, item.quantity, tx);
+        }
+      }
+
+      return updatedOrder;
+    });
+  }
+
   async cancelOrder(orderId: string, userId: string, reason: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
@@ -275,6 +332,36 @@ export class OrderService {
       // In a real system, we'd hit PaymentService/RefundService here
 
       return updatedOrder;
+    });
+  }
+
+  // --- SETTINGS METHODS ---
+
+  async getSettings() {
+    let settings = await this.prisma.orderSettings.findFirst();
+    if (!settings) {
+      settings = await this.prisma.orderSettings.create({
+        data: {
+          returnWindowDays: 7,
+          autoCancelHours: 24,
+          codEnabled: true,
+          maxCodAmount: 5000
+        }
+      });
+    }
+    return settings;
+  }
+
+  async updateSettings(data: {
+    returnWindowDays?: number;
+    autoCancelHours?: number;
+    codEnabled?: boolean;
+    maxCodAmount?: number;
+  }) {
+    const settings = await this.getSettings();
+    return this.prisma.orderSettings.update({
+      where: { id: settings.id },
+      data
     });
   }
 }

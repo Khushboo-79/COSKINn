@@ -1,8 +1,11 @@
 
 import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
-import { Megaphone, Image as ImageIcon, Tag } from 'lucide-react';
+import { Megaphone, Image as ImageIcon, Tag, Send, ShoppingCart, Users } from 'lucide-react';
 import BannerManager from './BannerManager';
 import CouponManager from './CouponManager';
+import CampaignManager from './CampaignManager';
+import AbandonedCarts from './AbandonedCarts';
+import AffiliateManager from './AffiliateManager';
 
 export default function MarketingPanel() {
   const location = useLocation();
@@ -10,6 +13,9 @@ export default function MarketingPanel() {
   const tabs = [
     { name: 'Banners', path: '/marketing/banners', icon: <ImageIcon className="w-4 h-4" /> },
     { name: 'Coupons', path: '/marketing/coupons', icon: <Tag className="w-4 h-4" /> },
+    { name: 'Campaigns', path: '/marketing/campaigns', icon: <Send className="w-4 h-4" /> },
+    { name: 'Abandoned Carts', path: '/marketing/abandoned-carts', icon: <ShoppingCart className="w-4 h-4" /> },
+    { name: 'Affiliates', path: '/marketing/affiliates', icon: <Users className="w-4 h-4" /> },
   ];
 
   return (
@@ -44,6 +50,9 @@ export default function MarketingPanel() {
           <Route path="/" element={<Navigate to="banners" replace />} />
           <Route path="banners" element={<BannerManager />} />
           <Route path="coupons" element={<CouponManager />} />
+          <Route path="campaigns" element={<CampaignManager />} />
+          <Route path="abandoned-carts" element={<AbandonedCarts />} />
+          <Route path="affiliates" element={<AffiliateManager />} />
         </Routes>
       </div>
     </div>

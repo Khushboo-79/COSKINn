@@ -1,13 +1,43 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
-import { Plus, Image as ImageIcon, Trash2, Edit3, Save, X } from 'lucide-react';
+import { Plus, Image as ImageIcon, Trash2, Edit3, Save, X, Upload, Loader2 } from 'lucide-react';
 
 export default function BannerManager() {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<any>({});
   const [isCreating, setIsCreating] = useState(false);
+
+  const uploadImageMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const { data: presignedData } = await api.post('/upload/presigned-url', {
+        fileName: file.name,
+        contentType: file.type,
+        folder: `banners`
+      });
+
+      await fetch(presignedData.presignedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type
+        }
+      });
+
+      return presignedData.finalUrl;
+    },
+    onSuccess: (url) => {
+      setEditForm((prev: any) => ({ ...prev, imageUrl: url }));
+    },
+    onError: () => alert('Failed to upload image')
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      uploadImageMutation.mutate(e.target.files[0]);
+    }
+  };
 
   const { data: banners, isLoading } = useQuery({
     queryKey: ['banners'],
@@ -76,13 +106,19 @@ export default function BannerManager() {
                 value={editForm.title || ''}
                 onChange={e => setEditForm({...editForm, title: e.target.value})}
               />
-              <input 
-                type="text" 
-                placeholder="Image URL" 
-                className="w-full border rounded px-3 py-2 text-sm"
-                value={editForm.imageUrl || ''}
-                onChange={e => setEditForm({...editForm, imageUrl: e.target.value})}
-              />
+              <div className="flex gap-2 items-center">
+                <input 
+                  type="text" 
+                  placeholder="Image URL" 
+                  className="flex-1 border rounded px-3 py-2 text-sm"
+                  value={editForm.imageUrl || ''}
+                  onChange={e => setEditForm({...editForm, imageUrl: e.target.value})}
+                />
+                <label className="cursor-pointer px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-200 flex items-center justify-center transition-colors">
+                  {uploadImageMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} disabled={uploadImageMutation.isPending} />
+                </label>
+              </div>
               <input 
                 type="text" 
                 placeholder="Link URL (Optional)" 
@@ -122,12 +158,19 @@ export default function BannerManager() {
                     value={editForm.title || ''}
                     onChange={e => setEditForm({...editForm, title: e.target.value})}
                   />
-                  <input 
-                    type="text" 
-                    className="w-full border rounded px-3 py-2 text-sm"
-                    value={editForm.imageUrl || ''}
-                    onChange={e => setEditForm({...editForm, imageUrl: e.target.value})}
-                  />
+                  <div className="flex gap-2 items-center">
+                    <input 
+                      type="text" 
+                      placeholder="Image URL" 
+                      className="flex-1 border rounded px-3 py-2 text-sm"
+                      value={editForm.imageUrl || ''}
+                      onChange={e => setEditForm({...editForm, imageUrl: e.target.value})}
+                    />
+                    <label className="cursor-pointer px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-200 flex items-center justify-center transition-colors">
+                      {uploadImageMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                      <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} disabled={uploadImageMutation.isPending} />
+                    </label>
+                  </div>
                   <input 
                     type="text" 
                     className="w-full border rounded px-3 py-2 text-sm"

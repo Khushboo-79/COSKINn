@@ -22,8 +22,8 @@ export class InventoryService {
     return this.prisma.warehouse.create({
       data: {
         name: dto.name,
-        location: dto.location || 'Unknown',
-        type: dto.type || 'MAIN',
+        code: dto.name.toUpperCase().replace(/\s+/g, '-').substring(0, 10) + '-' + Math.floor(Math.random() * 1000),
+        address: dto.location || 'Unknown',
         isActive: true
       }
     });

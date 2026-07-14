@@ -43,7 +43,7 @@ export class OrderController {
   // --- ADMIN ENDPOINTS ---
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'order-manager')
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
   @Get('admin/orders')
   async getAdminOrders(
     @Query('status') status?: string,
@@ -55,7 +55,35 @@ export class OrderController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'order-manager')
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
+  @Get('admin/orders/:id')
+  async getAdminOrderById(@Param('id') id: string) {
+    return this.orderService.getAdminOrderById(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
+  @Get('admin/orders/:id/invoice')
+  async getAdminOrderInvoice(@Param('id') id: string) {
+    const order = await this.orderService.getAdminOrderById(id);
+    // Mock HTML for invoice
+    const mockHtml = `
+      <html>
+        <head><title>Invoice ${order.id}</title></head>
+        <body style="font-family: sans-serif; padding: 40px;">
+          <h1>Invoice for Order #${order.id.split('-')[0]}</h1>
+          <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
+          <p><strong>Total Amount:</strong> ₹${order.finalAmount}</p>
+          <hr/>
+          <p><em>Thank you for your business!</em></p>
+        </body>
+      </html>
+    `;
+    return { invoiceNumber: `INV-${order.id.split('-')[0]}`, mockHtml };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
   @Put('admin/orders/:id/status')
   async updateOrderStatus(
     @Request() req,
@@ -64,5 +92,40 @@ export class OrderController {
     @Body('notes') notes?: string
   ) {
     return this.orderService.updateOrderStatus(id, status, req.user.id, notes);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
+  @Post('admin/orders/:id/cancel')
+  async adminCancelOrder(
+    @Request() req,
+    @Param('id') id: string,
+    @Body('reason') reason: string
+  ) {
+    if (!reason) {
+      throw new BadRequestException('Cancellation reason is required');
+    }
+    return this.orderService.adminCancelOrder(id, req.user.id, reason);
+  }
+
+  // --- SETTINGS ENDPOINTS ---
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
+  @Get('admin/orders/settings/config')
+  async getSettings() {
+    return this.orderService.getSettings();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
+  @Put('admin/orders/settings/config')
+  async updateSettings(@Body() body: any) {
+    return this.orderService.updateSettings({
+      returnWindowDays: body.returnWindowDays,
+      autoCancelHours: body.autoCancelHours,
+      codEnabled: body.codEnabled,
+      maxCodAmount: body.maxCodAmount
+    });
   }
 }

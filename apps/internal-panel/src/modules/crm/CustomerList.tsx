@@ -11,7 +11,7 @@ export default function CustomerList() {
   const { data, isLoading } = useQuery({
     queryKey: ['customers', page, search],
     queryFn: async () => {
-      const res = await api.get('/customer/profile/admin/all', {
+      const res = await api.get('/customer/admin/all', {
         params: { page, limit: 10, search }
       });
       return res.data;

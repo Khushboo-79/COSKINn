@@ -125,19 +125,17 @@ export default function ProductDashboard() {
           <div className="flex-1 flex flex-col items-center justify-center relative min-h-[200px]">
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={[
-                  { name: 'Serums', value: 28, color: '#0ea5e9' },
-                  { name: 'Cleansers', value: 20, color: '#f43f5e' },
-                  { name: 'Moisturizers', value: 18, color: '#10b981' },
-                  { name: 'Sunscreens', value: 15, color: '#f59e0b' },
-                  { name: 'Toners', value: 10, color: '#8b5cf6' },
-                  { name: 'Masks', value: 9, color: '#ec4899' },
-                ]} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value" stroke="none">
-                  {[
-                    { color: '#0ea5e9' }, { color: '#f43f5e' }, { color: '#10b981' }, 
-                    { color: '#f59e0b' }, { color: '#8b5cf6' }, { color: '#ec4899' }
-                  ].map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                <Pie 
+                  data={
+                    categories?.map((cat: any) => ({
+                      name: cat.name,
+                      value: products?.filter((p: any) => p.categoryId === cat.id).length || 0
+                    })).filter((c: any) => c.value > 0) || []
+                  } 
+                  cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value" stroke="none"
+                >
+                  {categories?.map((entry: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={['#0ea5e9', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'][index % 6]} />
                   ))}
                 </Pie>
                 <RechartsTooltip />
