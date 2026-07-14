@@ -29,6 +29,13 @@ const SunscreenPage = React.lazy(() => import('./pages/SunscreenPage'));
 const FaceMistPage = React.lazy(() => import('./pages/FaceMistPage'));
 const OvernightMaskPage = React.lazy(() => import('./pages/OvernightMaskPage'));
 const UnderEyePatchesPage = React.lazy(() => import('./pages/UnderEyePatchesPage'));
+const HandCreamPage = React.lazy(() => import('./pages/HandCreamPage'));
+const LipBalmSPFPage = React.lazy(() => import('./pages/LipBalmSPFPage'));
+const PocketPerfumePage = React.lazy(() => import('./pages/PocketPerfumePage'));
+const GlowKitPage = React.lazy(() => import('./pages/GlowKitPage'));
+const DailyEssentialsPage = React.lazy(() => import('./pages/DailyEssentialsPage'));
+
+const WeekendCollectionPage = React.lazy(() => import('./pages/WeekendCollectionPage'));
 
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
@@ -69,6 +76,12 @@ const MainLayout = () => {
             <Route path="/skincare/face-mist" element={<FaceMistPage />} />
             <Route path="/skincare/overnight-mask" element={<OvernightMaskPage />} />
             <Route path="/skincare/under-eye-patches" element={<UnderEyePatchesPage />} />
+            <Route path="/shop/body-lips/hand-cream" element={<HandCreamPage />} />
+            <Route path="/shop/body-lips/lip-balm-spf" element={<LipBalmSPFPage />} />
+            <Route path="/shop/body-lips/pocket-perfume" element={<PocketPerfumePage />} />
+            <Route path="/shop/bundles/glow-kit" element={<GlowKitPage />} />
+            <Route path="/shop/collections/daily-essentials" element={<DailyEssentialsPage />} />
+            <Route path="/shop/collections/weekend-collection" element={<WeekendCollectionPage />} />
           </Routes>
         </Suspense>
       </div>

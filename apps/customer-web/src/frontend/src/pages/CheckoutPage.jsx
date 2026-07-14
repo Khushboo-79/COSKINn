@@ -764,31 +764,40 @@ export default function CheckoutPage() {
                 
                 {/* Coupon Section */}
                 <div className="mb-6 pb-6 border-b border-black/5">
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
+                  <div className="flex flex-row items-center gap-3 w-full h-[52px]">
+                    {/* Input Field (75%) */}
+                    <div className="relative w-3/4 h-full">
                       <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
                       <input 
                         type="text" 
-                        placeholder="Promo Code" 
+                        placeholder="Enter Promo Code" 
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:border-theme-primary text-sm uppercase bg-[#fafafa]"
+                        className="w-full h-full pl-10 pr-4 rounded-[18px] border border-[#FFD1E5] bg-white focus:outline-none focus:border-[#FF0069] focus:ring-2 focus:ring-[#FF0069]/20 transition-all text-sm uppercase font-medium text-black placeholder:text-gray-400 placeholder:normal-case shadow-sm hover:border-[#FF5EA8]/50"
                       />
                     </div>
+                    
+                    {/* Apply Button (25%) */}
                     <button 
                       onClick={handleApplyCoupon}
-                      className={`absolute right-1 top-1 bottom-1 px-6 font-bold uppercase tracking-widest text-xs rounded-xl transition-colors ${
-                        theme === 'skincare' ? 'btn-primary-skincare !rounded-xl' : 'bg-black text-white hover:bg-theme-primary'
-                      }`}
+                      className="w-1/4 h-full bg-gradient-to-r from-[#FF0069] to-[#FF5CA8] text-white font-semibold uppercase tracking-widest text-xs rounded-[18px] shadow-[0_4px_14px_rgba(255,0,105,0.25)] hover:shadow-[0_6px_20px_rgba(255,0,105,0.4)] hover:-translate-y-[2px] active:scale-[0.98] transition-all duration-300 flex items-center justify-center"
                     >
                       Apply
                     </button>
                   </div>
-                  {couponError && <p className="text-red-500 text-xs font-bold mt-2 ml-1">{couponError}</p>}
+                  
+                  {/* Error Message */}
+                  {couponError && (
+                    <div className="mt-3 flex items-center gap-1.5 px-4 py-2 bg-[#FFF0F5] border border-[#FFD1E5] rounded-full w-max text-[#FF0069]">
+                      <span className="text-xs font-bold flex items-center gap-1.5"><span className="text-[10px]">⚠</span> {couponError}</span>
+                    </div>
+                  )}
+                  
+                  {/* Success Message */}
                   {appliedCoupon && (
-                    <div className="flex items-center justify-between mt-3 bg-green-50 px-4 py-2.5 rounded-lg border border-green-100">
+                    <div className="flex items-center justify-between mt-3 bg-green-50 px-4 py-2.5 rounded-full border border-green-100">
                       <span className="text-green-700 text-xs font-bold flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5" /> {appliedCoupon.message}</span>
-                      <button onClick={() => setAppliedCoupon(null)} className="text-black/40 hover:text-red-500 text-xs font-bold uppercase">Remove</button>
+                      <button onClick={() => setAppliedCoupon(null)} className="text-black/40 hover:text-red-500 text-xs font-bold uppercase transition-colors">Remove</button>
                     </div>
                   )}
                 </div>
