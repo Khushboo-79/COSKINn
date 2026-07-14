@@ -29,6 +29,16 @@ export class ReferralService {
     });
   }
 
+  async getAllReferrals() {
+    return this.prisma.referral.findMany({
+      include: {
+        referrer: { select: { id: true, firstName: true, lastName: true, email: true } },
+        referee: { select: { id: true, firstName: true, lastName: true, email: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
   async processReferralSignup(referralCode: string, newUserId: string) {
     const referral = await this.prisma.referral.findUnique({
       where: { referralCode }

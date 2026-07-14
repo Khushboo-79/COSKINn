@@ -23,7 +23,7 @@ export default function OrderList() {
       const params = new URLSearchParams();
       if (statusFilter) params.append('status', statusFilter);
       if (searchTerm) params.append('search', searchTerm);
-      const res = await api.get(`/orders?${params.toString()}`);
+      const res = await api.get(`/admin/orders?${params.toString()}`);
       return res.data;
     }
   });

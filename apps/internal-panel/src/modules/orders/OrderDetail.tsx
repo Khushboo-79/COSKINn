@@ -29,7 +29,7 @@ export default function OrderDetail() {
   const { data: order, isLoading } = useQuery({
     queryKey: ['orders', id],
     queryFn: async () => {
-      const res = await api.get(`/orders/${id}`);
+      const res = await api.get(`/admin/orders/${id}`);
       return res.data;
     },
     enabled: !!id
@@ -37,7 +37,7 @@ export default function OrderDetail() {
 
   const updateMutation = useMutation({
     mutationFn: async (newStatus: string) => {
-      return api.patch(`/orders/${id}/status`, { status: newStatus, notes: updateNotes });
+      return api.put(`/admin/orders/${id}/status`, { status: newStatus, notes: updateNotes });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders', id] });
@@ -47,7 +47,7 @@ export default function OrderDetail() {
 
   const cancelMutation = useMutation({
     mutationFn: async (reason: string) => {
-      return api.post(`/orders/${id}/cancel`, { reason });
+      return api.post(`/admin/orders/${id}/cancel`, { reason });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders', id] });
@@ -58,7 +58,7 @@ export default function OrderDetail() {
 
   const downloadInvoice = async () => {
     try {
-      const res = await api.get(`/orders/${id}/invoice`);
+      const res = await api.get(`/admin/orders/${id}/invoice`);
       // Mock download logic
       const blob = new Blob([res.data.mockHtml], { type: 'text/html' });
       const url = window.URL.createObjectURL(blob);

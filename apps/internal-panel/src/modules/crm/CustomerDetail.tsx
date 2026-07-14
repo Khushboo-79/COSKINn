@@ -12,7 +12,7 @@ export default function CustomerDetail() {
   const { data: user, isLoading } = useQuery({
     queryKey: ['customer-360', id],
     queryFn: async () => {
-      const res = await api.get(`/customer/profile/admin/${id}/360`);
+      const res = await api.get(`/customer/admin/${id}/360`);
       return res.data;
     }
   });
@@ -25,15 +25,53 @@ export default function CustomerDetail() {
   const orders = user.orders || [];
   const wishlist = user.wishlist?.items || [];
 
+  const handleBlockUser = async () => {
+    try {
+      const action = user.isActive ? 'block' : 'unblock';
+      if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+      await api.post(`/customer/admin/${id}/${action}`);
+      alert(`User ${action}ed successfully.`);
+      window.location.reload();
+    } catch (e) {
+      alert('Failed to update user status.');
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      if (!confirm('Send a password reset link to this user?')) return;
+      await api.post(`/customer/admin/${id}/reset-password`);
+      alert('Password reset link sent to user email.');
+    } catch (e) {
+      alert('Failed to send reset link.');
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link to="/crm/customers" className="p-2 hover:bg-gray-100 rounded-full">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Customer 360</h1>
-          <p className="text-gray-500">Detailed view of {user.firstName} {user.lastName}</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <Link to="/crm/customers" className="p-2 hover:bg-gray-100 rounded-full">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Customer 360</h1>
+            <p className="text-gray-500">Detailed view of {user.firstName} {user.lastName}</p>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={handleResetPassword}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Reset Password
+          </button>
+          <button
+            onClick={handleBlockUser}
+            className={`px-4 py-2 border rounded-lg text-sm font-medium ${user.isActive ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100' : 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100'}`}
+          >
+            {user.isActive ? 'Block User' : 'Unblock User'}
+          </button>
         </div>
       </div>
 
