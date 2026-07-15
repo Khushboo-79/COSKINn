@@ -1,43 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 import { AddRemarkModal } from './components/AddRemarkModal';
 
+const useAuditLogs = (entity: string) => useQuery({
+  queryKey: ['auditLogs', entity],
+  queryFn: async () => {
+    const { data } = await api.get(`/admin/audit/logs?entity=${entity}`);
+    return data;
+  }
+});
+
 export const PriceChangeLog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Mock data for Day 3 UI scaffolding
-  const mockLogs = [
-    {
-      id: 1,
-      timestamp: '2026-07-04 11:20:00',
-      productSku: 'SKU-8801',
-      productName: 'Vitamin C Face Serum',
-      changedBy: 'productmgr@coskinn.com',
-      beforePrice: '₹45.00',
-      afterPrice: '₹40.00',
-      reason: 'Summer Promo',
-    },
-    {
-      id: 2,
-      timestamp: '2026-07-03 14:10:15',
-      productSku: 'SKU-7722',
-      productName: 'Niacinamide Cleanser',
-      changedBy: 'admin@coskinn.com',
-      beforePrice: '₹25.00',
-      afterPrice: '₹28.00',
-      reason: 'Supplier cost increase',
-    },
-    {
-      id: 3,
-      timestamp: '2026-07-01 09:05:00',
-      productSku: 'SKU-9918',
-      productName: 'Retinol Night Cream',
-      changedBy: 'productmgr@coskinn.com',
-      beforePrice: '₹55.00 (10% off)',
-      afterPrice: '₹55.00 (No discount)',
-      reason: 'Promo ended',
-    },
-  ];
+  const { data: logs, isLoading } = useAuditLogs('ProductPrice');
+
 
   return (
     <div className="space-y-6">
@@ -92,31 +71,40 @@ export const PriceChangeLog = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-rose-50">
-            {mockLogs.map((log) => (
-              <tr key={log.id} className="hover:bg-rose-50/30 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.timestamp}</td>
-                <td className="px-6 py-4 text-sm text-rose-900">
-                  <div className="font-semibold">{log.productSku}</div>
-                  <div className="text-gray-500 text-xs">{log.productName}</div>
-                </td>
-                <td className="px-6 py-4 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-gray-500 line-through">{log.beforePrice}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                    <span className="font-medium text-rose-800">{log.afterPrice}</span>
-                  </div>
-                  <div className="text-xs text-rose-500 mt-1">Reason: {log.reason}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{log.changedBy}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <button onClick={() => setIsModalOpen(true)} className="text-rose-600 hover:text-rose-800 font-medium transition-colors text-xs">
-                    + Add Remark
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {isLoading ? (
+              <tr><td colSpan={7} className="text-center p-4">Loading...</td></tr>
+            ) : logs?.map((log: any) => {
+              const oldD = log.oldData ? JSON.parse(log.oldData) : {};
+              const newD = log.newData ? JSON.parse(log.newData) : {};
+              return (
+                <tr key={log.id} className="hover:bg-rose-50/30 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(log.createdAt).toLocaleString()}</td>
+                  <td className="px-6 py-4 text-sm text-rose-900">
+                    <div className="font-semibold">{log.entityId}</div>
+                    <div className="text-gray-500 text-xs">{newD.productName || 'Unknown'}</div>
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-500 line-through">{oldD.price}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                      <span className="font-medium text-rose-800">{newD.price}</span>
+                    </div>
+                    <div className="text-xs text-rose-500 mt-1">Reason: {newD.reason}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{log.adminId}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <button 
+                      onClick={() => setIsModalOpen(true)}
+                      className="text-rose-600 hover:text-rose-900 hover:underline font-medium"
+                    >
+                      Add Remark
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

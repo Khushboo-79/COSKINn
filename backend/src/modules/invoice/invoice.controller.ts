@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'; // Note: auth guar
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
-@Controller('api')
+@Controller('')
 export class InvoiceController {
   constructor(private readonly invoiceService: InvoiceService) {}
 

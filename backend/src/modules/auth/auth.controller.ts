@@ -22,4 +22,9 @@ export class AuthController {
   verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(verifyOtpDto);
   }
+
+  @Post('logout')
+  logout() {
+    return this.authService.logout();
+  }
 }

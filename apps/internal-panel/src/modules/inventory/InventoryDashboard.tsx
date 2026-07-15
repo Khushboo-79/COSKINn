@@ -83,14 +83,16 @@ const KpiCard = ({ title, value, icon: Icon, trend, trendUp, subtext, colorClass
   </div>
 );
 
+const useInventoryStats = () => useQuery({
+  queryKey: ['inventoryStats'],
+  queryFn: async () => {
+    const res = await api.get('/inventory/dashboard-stats');
+    return res.data;
+  }
+});
+
 export default function InventoryDashboard() {
-  const { data: dashboardData, isLoading } = useQuery({
-    queryKey: ['inventoryDashboard'],
-    queryFn: async () => {
-      const res = await api.get('/inventory/dashboard-stats');
-      return res.data;
-    }
-  });
+  const { data: dashboardData, isLoading } = useInventoryStats();
 
   if (isLoading) {
     return (

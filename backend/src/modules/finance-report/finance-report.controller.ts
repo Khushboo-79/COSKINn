@@ -4,11 +4,26 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
-@Controller('api/admin/finance')
+@Controller('admin/finance')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'SUPER_ADMIN', 'FINANCE')
 export class FinanceReportController {
   constructor(private readonly financeReportService: FinanceReportService) {}
+
+  @Get('overview')
+  getOverview() {
+    return this.financeReportService.getOverview();
+  }
+
+  @Get('transactions')
+  getTransactions() {
+    return this.financeReportService.getTransactions();
+  }
+
+  @Get('monthly-breakdown')
+  getMonthlyBreakdown() {
+    return this.financeReportService.getMonthlyBreakdown();
+  }
 
   @Get('ledgers')
   getLedgers() {

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { HrService } from './hr.service';
 import { HrController } from './hr.controller';
 import { PrismaModule } from '../../prisma/prisma.module';
@@ -9,4 +9,10 @@ import { PrismaModule } from '../../prisma/prisma.module';
   providers: [HrService],
   exports: [HrService]
 })
-export class HrModule {}
+export class HrModule implements OnModuleInit {
+  constructor(private readonly hrService: HrService) {}
+
+  async onModuleInit() {
+    await this.hrService.seedHrData();
+  }
+}

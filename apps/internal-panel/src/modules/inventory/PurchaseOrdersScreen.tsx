@@ -7,13 +7,16 @@ export default function PurchaseOrdersScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
   const [warehouses, setWarehouses] = useState<any[]>([]);
+  const [suppliers, setSuppliers] = useState<any[]>([]);
   const [selectedWarehouseId, setSelectedWarehouseId] = useState('');
+  const [selectedSupplierId, setSelectedSupplierId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showPOModal, setShowPOModal] = useState(false);
 
   useEffect(() => {
     fetchPurchaseOrders();
     fetchWarehouses();
+    fetchSuppliers();
   }, []);
 
   const fetchPurchaseOrders = async () => {
@@ -37,14 +40,25 @@ export default function PurchaseOrdersScreen() {
     }
   };
 
+  const fetchSuppliers = async () => {
+    try {
+      const { data } = await api.get('/inventory/suppliers');
+      setSuppliers(data);
+      if (data.length > 0) setSelectedSupplierId(data[0].id);
+    } catch (err) {
+      console.error('Failed to load suppliers');
+    }
+  };
+
   const handleCreatePO = async () => {
-    if (!selectedWarehouseId) {
-      toast.error('Please select a destination warehouse');
+    if (!selectedWarehouseId || !selectedSupplierId) {
+      toast.error('Please select a destination warehouse and supplier');
       return;
     }
     try {
-      await api.post('/purchase-orders', {
+      await api.post('/inventory/purchase-orders', {
         warehouseId: selectedWarehouseId,
+        vendorId: selectedSupplierId,
         status: 'DRAFT'
       });
       toast.success('Purchase Order Draft Created!');
@@ -52,6 +66,20 @@ export default function PurchaseOrdersScreen() {
       fetchPurchaseOrders();
     } catch (error) {
       toast.error('Failed to create Purchase Order');
+    }
+  };
+
+  const markAsReceived = async (id: string) => {
+    try {
+      // Hardcoding some items to simulate auto-stock in for the demo
+      await api.post(`/inventory/purchase-orders/${id}/update`, {
+        status: 'RECEIVED',
+        items: [{ sku: 'CSK-VC-001', quantity: 100 }]
+      });
+      toast.success('PO Received and Stock Updated!');
+      fetchPurchaseOrders();
+    } catch (error) {
+      toast.error('Failed to update PO');
     }
   };
 
@@ -115,8 +143,8 @@ export default function PurchaseOrdersScreen() {
               <tr><td colSpan={6} className="text-center py-8 text-slate-500">No purchase orders found.</td></tr>
             ) : filteredOrders.map(po => (
               <tr key={po.id} className="hover:bg-slate-50/50 group transition-colors">
-                <td className="px-6 py-4 font-mono font-bold text-slate-700">{po.id}</td>
-                <td className="px-6 py-4 font-medium text-slate-800">COSKINn Manufacturer</td>
+                <td className="px-6 py-4 font-mono font-bold text-slate-700">{po.id.split('-')[0]}</td>
+                <td className="px-6 py-4 font-medium text-slate-800">{po.vendor?.name || 'Unknown Supplier'}</td>
                 <td className="px-6 py-4 text-slate-500">{new Date(po.createdAt).toLocaleDateString()}</td>
                 <td className="px-6 py-4 text-slate-700 font-medium">{po.warehouse?.name || 'N/A'}</td>
                 <td className="px-6 py-4 text-center">
@@ -128,10 +156,15 @@ export default function PurchaseOrdersScreen() {
                     {po.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <button className="text-sm font-semibold text-rose-600 hover:text-rose-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                    View Details
-                  </button>
+                <td className="px-6 py-4 text-right flex justify-end gap-2">
+                  {po.status !== 'RECEIVED' && (
+                    <button 
+                      onClick={() => markAsReceived(po.id)}
+                      className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                    >
+                      Receive
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -156,7 +189,14 @@ export default function PurchaseOrdersScreen() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1.5">Supplier</label>
-                  <input type="text" value="COSKINn Central Manufacturer" disabled className="w-full px-4 py-2.5 bg-slate-100 text-slate-500 border border-slate-200 rounded-xl text-sm" />
+                  <select 
+                    value={selectedSupplierId}
+                    onChange={(e) => setSelectedSupplierId(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500">
+                    {suppliers.map(sup => (
+                      <option key={sup.id} value={sup.id}>{sup.name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1.5">Destination Warehouse</label>
