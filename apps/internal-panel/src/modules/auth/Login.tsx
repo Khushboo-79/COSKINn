@@ -88,9 +88,9 @@ export const Login = () => {
         otp: data.otp
       });
       
-      const { access_token, user } = response.data;
+      const { access_token, refresh_token, user } = response.data;
       
-      login(access_token, user);
+      login(access_token, refresh_token, user);
       navigate('/admin'); // Redirect to dashboard
     } catch (err: any) {
       if (err.response?.status === 400) {

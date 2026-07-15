@@ -134,7 +134,7 @@ export default function ProductDashboard() {
                   } 
                   cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value" stroke="none"
                 >
-                  {categories?.map((entry: any, index: number) => (
+                  {categories?.map((_entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={['#0ea5e9', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'][index % 6]} />
                   ))}
                 </Pie>

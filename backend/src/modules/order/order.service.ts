@@ -352,6 +352,31 @@ export class OrderService {
     return settings;
   }
 
+  async getCancellations() {
+    const cancellations = await this.prisma.orderCancellation.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        order: {
+          select: {
+            id: true,
+            totalAmount: true,
+            status: true,
+            user: { select: { email: true } }
+          }
+        }
+      }
+    });
+
+    return cancellations.map(c => ({
+      id: c.id,
+      date: c.createdAt.toISOString().split('T')[0],
+      orderId: c.orderId.split('-')[0].toUpperCase(),
+      customer: c.order.user ? c.order.user.email : 'Guest',
+      reason: c.reason,
+      refundStatus: c.order.status === 'CANCELLED' ? 'PROCESSED' : 'PENDING'
+    }));
+  }
+
   async updateSettings(data: {
     returnWindowDays?: number;
     autoCancelHours?: number;

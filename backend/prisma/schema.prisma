@@ -46,7 +46,8 @@ model User {
   membershipHistory MembershipHistory[]
   membershipTier    MembershipTier?      @relation(fields: [membershipTierId], references: [id])
   membershipTierId  String?
-  supportTickets    SupportTicket[]
+  supportTickets    SupportTicket[]      @relation("UserTickets")
+  assignedTickets   SupportTicket[]      @relation("AssignedTickets")
   abandonedCartLogs AbandonedCartLog[]
 
   @@map("users")
@@ -1239,16 +1240,24 @@ model AuditLog {
 
 // --- CRM & Support ---
 model SupportTicket {
-  id        String   @id @default(uuid())
-  userId    String
-  subject   String
-  status    String   @default("OPEN") // 'OPEN', 'CLOSED'
-  priority  String   @default("NORMAL")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                       String   @id @default(uuid())
+  userId                   String
+  assignedToId             String?
+  subject                  String
+  category                 String?
+  status                   String   @default("OPEN") // 'OPEN', 'CLOSED', 'ESCALATED'
+  priority                 String   @default("NORMAL")
+  slaFirstResponseDeadline DateTime?
+  slaResolutionDeadline    DateTime?
+  firstResponseAt          DateTime?
+  resolvedAt               DateTime?
+  slaBreached              Boolean  @default(false)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
 
-  user     User            @relation(fields: [userId], references: [id])
-  messages TicketMessage[]
+  user       User            @relation("UserTickets", fields: [userId], references: [id])
+  assignedTo User?           @relation("AssignedTickets", fields: [assignedToId], references: [id])
+  messages   TicketMessage[]
 
   @@map("support_tickets")
 }
@@ -1300,6 +1309,9 @@ model ContentArticle {
   type         String // 'BLOG', 'TIP'
   contentJson  String // Structured JSON content
   heroImageUrl String?
+  seoTitle     String?
+  seoDesc      String?
+  seoKeywords  String?
   published    Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -1317,6 +1329,17 @@ model Faq {
   updatedAt  DateTime @updatedAt
 
   @@map("faqs")
+}
+
+model GlobalSeo {
+  id          String   @id @default(uuid())
+  title       String?
+  description String?
+  keywords    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("global_seo")
 }
 
 model OrderSettings {

@@ -59,13 +59,12 @@ export default function OrderDetail() {
   const downloadInvoice = async () => {
     try {
       const res = await api.get(`/admin/orders/${id}/invoice`);
-      // Mock download logic
-      const blob = new Blob([res.data.mockHtml], { type: 'text/html' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${res.data.invoiceNumber || 'invoice'}.html`;
-      a.click();
+      if (res.data?.pdfUrl) {
+        const baseUrl = api.defaults.baseURL?.replace(/\/api$/, '') || 'http://localhost:3000';
+        window.open(baseUrl + res.data.pdfUrl, '_blank');
+      } else {
+        alert('Invoice PDF not available.');
+      }
     } catch (e) {
       console.error('Failed to fetch invoice', e);
       alert('Failed to fetch invoice. Check console.');
@@ -253,7 +252,7 @@ export default function OrderDetail() {
                 className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold hover:bg-slate-50 transition-colors mb-4"
               >
                 <FileText className="w-4 h-4 text-slate-500" />
-                Download Invoice (Mock)
+                Download Invoice
               </button>
 
               {order.cancellations?.length > 0 && (

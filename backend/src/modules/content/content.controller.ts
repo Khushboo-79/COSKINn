@@ -66,5 +66,19 @@ export class ContentController {
   deleteFaq(@Param('id') id: string) {
     return this.contentService.deleteFaq(id);
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Get('admin/seo/global')
+  getGlobalSeo() {
+    return this.contentService.getGlobalSeo();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Put('admin/seo/global')
+  updateGlobalSeo(@Body() data: any) {
+    return this.contentService.updateGlobalSeo(data);
+  }
 }
 

@@ -21,7 +21,7 @@ export default function PurchaseOrdersScreen() {
 
   const fetchPurchaseOrders = async () => {
     try {
-      const { data } = await api.get('/purchase-orders');
+      const { data } = await api.get('/inventory/purchase-orders');
       setPurchaseOrders(data);
     } catch (err) {
       toast.error('Failed to load purchase orders');

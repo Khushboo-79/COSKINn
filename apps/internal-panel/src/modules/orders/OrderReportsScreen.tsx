@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Filter, FileSpreadsheet, Calendar, BarChart } from 'lucide-react';
+import { Download, FileSpreadsheet, Calendar, BarChart } from 'lucide-react';
 
 export default function OrderReportsScreen() {
   const [dateRange, setDateRange] = useState('Last 30 Days');

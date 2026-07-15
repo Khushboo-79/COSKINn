@@ -1,46 +1,26 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 import { AddRemarkModal } from './components/AddRemarkModal';
 
 export const RefundReport = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Mock data for Day 10 UI scaffolding
-  const mockReports = [
-    {
-      id: 1,
-      initiationDate: '2026-07-04 10:15:00',
-      orderId: 'ORD-104990',
-      customer: 'jane.doe@example.com',
-      amount: '₹145.00',
-      method: 'Razorpay',
-      status: 'COMPLETED',
-      completionDate: '2026-07-04 14:20:00',
-      txnRef: 'rfnd_Mxyz8839',
-    },
-    {
-      id: 2,
-      initiationDate: '2026-07-03 16:40:00',
-      orderId: 'ORD-104812',
-      customer: 'john.smith@example.com',
-      amount: '₹35.00',
-      method: 'Wallet (COD Default)',
-      status: 'COMPLETED',
-      completionDate: '2026-07-03 16:40:05',
-      txnRef: 'txn_W99281',
-    },
-    {
-      id: 3,
-      initiationDate: '2026-07-04 09:00:00',
-      orderId: 'ORD-105021',
-      customer: 'alice.w@example.com',
-      amount: '₹89.50',
-      method: 'Razorpay',
-      status: 'PROCESSING',
-      completionDate: '-',
-      txnRef: 'rfnd_Mabc1123',
-    },
-  ];
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: reports = [], isLoading } = useQuery({
+    queryKey: ['auditRefundReport'],
+    queryFn: async () => {
+      const res = await api.get('/admin/audit/refund-report');
+      return res.data;
+    }
+  });
+
+  const filteredReports = reports.filter((report: any) => 
+    report.orderId.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    report.customer.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -77,7 +57,13 @@ export const RefundReport = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-rose-100 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm font-medium text-rose-800 mb-1">Order ID / Customer</label>
-          <input type="text" placeholder="Search..." className="w-full border-rose-200 rounded-md shadow-sm p-2 bg-rose-50/30 text-rose-900 focus:ring-rose-500 focus:border-rose-500 placeholder-rose-300" />
+          <input 
+            type="text" 
+            placeholder="Search Order ID or email..." 
+            className="w-full px-4 py-2 border border-rose-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder-rose-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
         
         <div className="flex-1 min-w-[150px]">
@@ -103,7 +89,7 @@ export const RefundReport = () => {
           <button className="bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-6 rounded-md shadow-sm transition-colors">
             Filter Report
           </button>
-          <ExportButtons />
+          <ExportButtons data={filteredReports} filename="refund_report" />
         </div>
       </div>
 
@@ -121,7 +107,9 @@ export const RefundReport = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-rose-50">
-            {mockReports.map((report) => (
+            {isLoading ? (
+              <tr><td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">Loading...</td></tr>
+            ) : filteredReports.map((report: any) => (
               <tr key={report.id} className="hover:bg-rose-50/30 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{report.initiationDate}</td>
                 <td className="px-6 py-4 text-sm">

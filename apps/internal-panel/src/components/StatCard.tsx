@@ -7,9 +7,10 @@ interface StatCardProps {
   trend?: string;        // e.g. "+12.5%"
   trendUp?: boolean;
   prefix?: string;       // e.g. "₹" 
+  subtitle?: string;
 }
 
-export default function StatCard({ label, value, icon: Icon, trend, trendUp, prefix = '' }: StatCardProps) {
+export default function StatCard({ label, value, icon: Icon, trend, trendUp, prefix = '', subtitle }: StatCardProps) {
   return (
     <div className="group p-5 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       <div className="flex items-start justify-between mb-3">
@@ -28,6 +29,11 @@ export default function StatCard({ label, value, icon: Icon, trend, trendUp, pre
           <span>{trendUp ? '↑' : '↓'}</span>
           <span>{trend} from last month</span>
         </div>
+      )}
+      {subtitle && !trend && (
+        <p className="mt-2 text-xs font-semibold text-slate-500">
+          {subtitle}
+        </p>
       )}
     </div>
   );

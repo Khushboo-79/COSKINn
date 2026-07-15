@@ -1,6 +1,8 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { RequireRole } from '../../components/RequireRole';
 import { AuditDashboard } from './AuditDashboard';
+
+// Existing Reports/Logs
 import { AdminActivityLog } from './AdminActivityLog';
 import { PriceChangeLog } from './PriceChangeLog';
 import { StockAdjustmentLog } from './StockAdjustmentLog';
@@ -14,12 +16,34 @@ import { InventoryReport } from './InventoryReport';
 import { PaymentReport } from './PaymentReport';
 import { CrossLogCorrelation } from './CrossLogCorrelation';
 
+// New Screens (Placeholders)
+import { AuditTransactionsScreen } from './screens/AuditTransactionsScreen';
+import { AuditOrdersScreen } from './screens/AuditOrdersScreen';
+import { InventoryAuditScreen } from './screens/InventoryAuditScreen';
+import { ComplianceScreen } from './screens/ComplianceScreen';
+import { DocumentsScreen } from './screens/DocumentsScreen';
+import { RiskFlagsScreen } from './screens/RiskFlagsScreen';
+import { ActivityLogsScreen } from './screens/ActivityLogsScreen';
+import { AuditReportsScreen } from './screens/AuditReportsScreen';
+import { AuditSettingsScreen } from './screens/AuditSettingsScreen';
+
 export const AuditModuleRoutes = () => {
   return (
     <Routes>
-      {/* Protect all routes in this module with the 'auditor' role */}
       <Route element={<RequireRole allowedRoles={['auditor']} />}>
-        <Route index element={<AuditDashboard />} />
+        {/* New Navigation Routes */}
+        <Route path="/" element={<AuditDashboard />} />
+        <Route path="/transactions" element={<AuditTransactionsScreen />} />
+        <Route path="/orders" element={<AuditOrdersScreen />} />
+        <Route path="/inventory" element={<InventoryAuditScreen />} />
+        <Route path="/compliance" element={<ComplianceScreen />} />
+        <Route path="/documents" element={<DocumentsScreen />} />
+        <Route path="/risk" element={<RiskFlagsScreen />} />
+        <Route path="/activity" element={<ActivityLogsScreen />} />
+        <Route path="/reports" element={<AuditReportsScreen />} />
+        <Route path="/settings" element={<AuditSettingsScreen />} />
+
+        {/* Legacy / Hidden Routes inside Reports & Activity Logs */}
         <Route path="admin-activity" element={<AdminActivityLog />} />
         <Route path="price-changes" element={<PriceChangeLog />} />
         <Route path="stock-adjustments" element={<StockAdjustmentLog />} />
@@ -32,7 +56,8 @@ export const AuditModuleRoutes = () => {
         <Route path="inventory-reports" element={<InventoryReport />} />
         <Route path="payment-reports" element={<PaymentReport />} />
         <Route path="correlation" element={<CrossLogCorrelation />} />
-        {/* Additional audit routes (logs, reports) will be added here in future days */}
+
+        <Route path="*" element={<Navigate to="/audit" replace />} />
       </Route>
     </Routes>
   );

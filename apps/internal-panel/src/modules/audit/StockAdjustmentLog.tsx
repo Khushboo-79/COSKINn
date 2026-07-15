@@ -1,46 +1,26 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 import { AddRemarkModal } from './components/AddRemarkModal';
 
 export const StockAdjustmentLog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Mock data for Day 4 UI scaffolding
-  const mockLogs = [
-    {
-      id: 1,
-      timestamp: '2026-07-04 12:05:00',
-      productSku: 'SKU-8801',
-      productName: 'Vitamin C Face Serum',
-      changedBy: 'warehouse_mgr@coskinn.com',
-      beforeQty: 150,
-      afterQty: 132,
-      reasonCode: 'DAMAGE_WRITEOFF',
-      details: 'Damaged during transit',
-    },
-    {
-      id: 2,
-      timestamp: '2026-07-03 16:20:15',
-      productSku: 'SKU-7722',
-      productName: 'Niacinamide Cleanser',
-      changedBy: 'inventory@coskinn.com',
-      beforeQty: 200,
-      afterQty: 190,
-      reasonCode: 'EXPIRY_DISPOSAL',
-      details: 'Expired batch #B-991',
-    },
-    {
-      id: 3,
-      timestamp: '2026-07-01 10:30:00',
-      productSku: 'SKU-9918',
-      productName: 'Retinol Night Cream',
-      changedBy: 'admin@coskinn.com',
-      beforeQty: 120,
-      afterQty: 150,
-      reasonCode: 'MANUAL_RESTOCK',
-      details: 'Emergency restock from offline store',
-    },
-  ];
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: logs = [], isLoading } = useQuery({
+    queryKey: ['auditStockAdjustments'],
+    queryFn: async () => {
+      const res = await api.get('/admin/audit/stock-adjustments');
+      return res.data;
+    }
+  });
+
+  const filteredLogs = logs.filter((log: any) => 
+    log.sku.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    log.reason.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -61,7 +41,13 @@ export const StockAdjustmentLog = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-rose-100 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm font-medium text-rose-800 mb-1">Product SKU / Name</label>
-          <input type="text" placeholder="Search product..." className="w-full border-rose-200 rounded-md shadow-sm p-2 bg-rose-50/30 text-rose-900 focus:ring-rose-500 focus:border-rose-500 placeholder-rose-300" />
+          <input 
+            type="text" 
+            placeholder="Search SKU or reason..." 
+            className="w-full px-4 py-2 border border-rose-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder-rose-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
         <div className="flex-1 min-w-[200px]">
@@ -87,9 +73,9 @@ export const StockAdjustmentLog = () => {
         
         <div className="w-auto flex space-x-2">
           <button className="bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-6 rounded-md shadow-sm transition-colors">
-            Filter
+            Filter Log
           </button>
-          <ExportButtons />
+          <ExportButtons data={filteredLogs} filename="stock_adjustment_log" />
         </div>
       </div>
 
@@ -106,32 +92,29 @@ export const StockAdjustmentLog = () => {
               <th className="px-6 py-3 text-left text-xs font-semibold text-rose-800 uppercase tracking-wider">Remarks</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-rose-50">
-            {mockLogs.map((log) => (
+          <tbody className="divide-y divide-rose-50">
+            {isLoading ? (
+              <tr><td colSpan={9} className="px-6 py-4 text-center text-sm text-slate-500">Loading...</td></tr>
+            ) : filteredLogs.map((log: any) => (
               <tr key={log.id} className="hover:bg-rose-50/30 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.timestamp}</td>
                 <td className="px-6 py-4 text-sm text-rose-900">
-                  <div className="font-semibold">{log.productSku}</div>
-                  <div className="text-gray-500 text-xs">{log.productName}</div>
+                  <span className="font-semibold">{log.sku}</span>
+                  <div className="text-gray-500 text-xs">{log.warehouse}</div>
                 </td>
                 <td className="px-6 py-4 text-sm">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
-                    {log.reasonCode}
+                    {log.reason}
                   </span>
-                  <div className="text-xs text-gray-500 mt-1">{log.details}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex items-center space-x-2">
-                    <span className="text-gray-500">{log.beforeQty}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                    <span className={`font-semibold ${log.afterQty < log.beforeQty ? 'text-red-600' : 'text-green-600'}`}>
-                      {log.afterQty}
+                    <span className={`font-semibold ${log.change.startsWith('-') ? 'text-rose-600' : 'text-emerald-600'}`}>
+                      {log.change}
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{log.changedBy}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{log.adjustedBy}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <button onClick={() => setIsModalOpen(true)} className="text-rose-600 hover:text-rose-800 font-medium transition-colors text-xs">
                     + Add Remark

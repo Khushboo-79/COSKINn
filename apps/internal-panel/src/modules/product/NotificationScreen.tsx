@@ -1,41 +1,22 @@
 import { Bell, PackageCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
+
+const iconMap: Record<string, any> = {
+  Bell,
+  PackageCheck,
+  AlertCircle,
+  CheckCircle2
+};
 
 export default function NotificationScreen() {
-  const mockNotifications = [
-    {
-      id: 1,
-      type: 'APPROVAL',
-      title: 'Product Approved',
-      message: 'Your product "Vitamin C Serum" has been approved by the Admin and is now live.',
-      time: '2 hours ago',
-      read: false,
-      icon: PackageCheck,
-      color: 'text-emerald-500',
-      bg: 'bg-emerald-50'
-    },
-    {
-      id: 2,
-      type: 'REJECTION',
-      title: 'Product Rejected',
-      message: 'Your product "Matte Lipstick" was rejected. Reason: Missing manufacturing details.',
-      time: '5 hours ago',
-      read: false,
-      icon: AlertCircle,
-      color: 'text-rose-500',
-      bg: 'bg-rose-50'
-    },
-    {
-      id: 3,
-      type: 'SYSTEM',
-      title: 'System Maintenance',
-      message: 'The inventory sync system will be down for maintenance at midnight.',
-      time: '1 day ago',
-      read: true,
-      icon: Bell,
-      color: 'text-blue-500',
-      bg: 'bg-blue-50'
+  const { data: notifications = [], isLoading } = useQuery({
+    queryKey: ['adminNotifications'],
+    queryFn: async () => {
+      const res = await api.get('/admin/config/notifications');
+      return res.data;
     }
-  ];
+  });
 
   return (
     <div className="h-full flex flex-col max-w-4xl mx-auto w-full">
@@ -55,10 +36,14 @@ export default function NotificationScreen() {
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="divide-y divide-slate-100">
-          {mockNotifications.map((notif) => {
-            const Icon = notif.icon;
+          {isLoading ? (
+            <div className="p-8 text-center text-slate-500">Loading notifications...</div>
+          ) : notifications.length === 0 ? (
+            <div className="p-8 text-center text-slate-500">No new notifications.</div>
+          ) : notifications.map((notif: any) => {
+            const Icon = iconMap[notif.iconType] || Bell;
             return (
-              <div key={notif.id} className={`p-6 flex gap-4 transition-colors hover:bg-slate-50/50 ${notif.read ? 'opacity-70' : ''}`}>
+              <div key={notif.id} className={`p-6 flex gap-4 transition-colors hover:bg-slate-50/50 ${notif.read ? 'opacity-60' : ''}`}>
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${notif.bg} ${notif.color}`}>
                   <Icon className="w-6 h-6" />
                 </div>

@@ -1,11 +1,12 @@
 import { 
   ShoppingBag, RotateCcw, Truck, CheckCircle, 
-  XCircle, ArrowUpRight, ArrowDownRight, Package, ShieldAlert,
-  BarChart2, Loader2
+  XCircle, ArrowUpRight, ArrowDownRight, Package,
+  Loader2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const statusColors: Record<string, string> = {
   PLACED: 'bg-indigo-100 text-indigo-700',
@@ -108,30 +109,92 @@ export default function OrderDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Charts Area (Mocked for Phase 1) */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center min-h-[350px]">
+        {/* Main Charts Area (Recharts) */}
+        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col min-h-[350px]">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-slate-800">Orders Overview</h3>
+            <h3 className="font-bold text-slate-800">Orders Overview (Last 7 Days)</h3>
             <select className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-rose-500 text-slate-600 font-medium">
-              <option>Last 30 Days</option>
-              <option>This Week</option>
-              <option>This Year</option>
+              <option>Last 7 Days</option>
+              <option>This Month</option>
             </select>
           </div>
-          <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-xl bg-slate-50">
-            <p className="text-slate-400 font-medium text-sm flex items-center gap-2">
-              <BarChart2 className="w-5 h-5" /> Chart Component Placeholder
-            </p>
+          <div className="flex-1 h-64">
+            {orders.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={
+                    Array.from({ length: 7 }).map((_, i) => {
+                      const d = new Date();
+                      d.setDate(d.getDate() - (6 - i));
+                      const dateStr = d.toLocaleDateString();
+                      return {
+                        date: dateStr,
+                        orders: orders.filter((o: any) => new Date(o.createdAt).toLocaleDateString() === dateStr).length
+                      };
+                    })
+                  }
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="date" tick={{fontSize: 10, fill: '#94a3b8'}} axisLine={false} tickLine={false} />
+                  <YAxis tick={{fontSize: 10, fill: '#94a3b8'}} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <Bar dataKey="orders" fill="#f43f5e" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex-1 flex items-center justify-center h-full border-2 border-dashed border-slate-100 rounded-xl bg-slate-50">
+                <p className="text-slate-400 font-medium text-sm">No recent orders</p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Order Status Donut */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center min-h-[350px]">
           <h3 className="font-bold text-slate-800 mb-6">Order Status</h3>
-          <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-xl bg-slate-50">
-            <p className="text-slate-400 font-medium text-sm flex items-center gap-2">
-              <BarChart2 className="w-5 h-5" /> Donut Chart Placeholder
-            </p>
+          <div className="flex-1 h-64 flex flex-col justify-center relative">
+            {orders.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: 'Processing', value: processingOrders, color: '#f59e0b' },
+                      { name: 'Shipped', value: shippedOrders, color: '#6366f1' },
+                      { name: 'Delivered', value: deliveredOrders, color: '#10b981' },
+                      { name: 'Cancelled/Returned', value: cancelledOrders, color: '#ef4444' }
+                    ].filter(d => d.value > 0)}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {[
+                      { name: 'Processing', value: processingOrders, color: '#f59e0b' },
+                      { name: 'Shipped', value: shippedOrders, color: '#6366f1' },
+                      { name: 'Delivered', value: deliveredOrders, color: '#10b981' },
+                      { name: 'Cancelled/Returned', value: cancelledOrders, color: '#ef4444' }
+                    ].filter(d => d.value > 0).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-xl bg-slate-50">
+                <p className="text-slate-400 font-medium text-sm">No data</p>
+              </div>
+            )}
+            
+            {orders.length > 0 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-2xl font-bold text-slate-800">{totalOrders}</span>
+                <span className="text-xs font-medium text-slate-400">Total</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   role: AppRole; // The primary active role
-  login: (token: string, user: UserProfile) => void;
+  login: (token: string, refreshToken: string | null, user: UserProfile) => void;
   logout: () => void;
 }
 
@@ -41,8 +41,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     ? AppRole.SUPER_ADMIN 
     : user?.roles?.[0] || AppRole.PRODUCT_MANAGER;
 
-  const login = (newToken: string, newUser: UserProfile) => {
+  const login = (newToken: string, newRefreshToken: string | null, newUser: UserProfile) => {
     localStorage.setItem('internal_panel_token', newToken);
+    if (newRefreshToken) {
+      localStorage.setItem('internal_panel_refresh_token', newRefreshToken);
+    }
     localStorage.setItem('internal_panel_user', JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
@@ -50,10 +53,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     localStorage.removeItem('internal_panel_token');
+    localStorage.removeItem('internal_panel_refresh_token');
     localStorage.removeItem('internal_panel_user');
     setToken(null);
     setUser(null);
   };
+
+  // Listen for the global 'auth-expired' event fired by axios interceptor
+  React.useEffect(() => {
+    const handleAuthExpired = () => {
+      logout();
+    };
+    window.addEventListener('auth-expired', handleAuthExpired);
+    return () => {
+      window.removeEventListener('auth-expired', handleAuthExpired);
+    };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, token, isAuthenticated, role, login, logout }}>

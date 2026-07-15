@@ -39,4 +39,9 @@ export class AdminController {
   updateSettings(@Body() body: any) {
     return this.adminService.updateSettings(body);
   }
+
+  @Get('notifications')
+  getNotifications() {
+    return this.adminService.getNotifications();
+  }
 }

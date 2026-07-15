@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
-import { Search, Package, CheckCircle, ArrowRight, MapPin, Box, Loader2 } from 'lucide-react';
+import { Search, Package, CheckCircle, MapPin, Box, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function FulfillmentScreen() {
@@ -151,3 +151,4 @@ export default function FulfillmentScreen() {
     </div>
   );
 }
+

@@ -188,7 +188,49 @@ export class AuthService {
     };
   }
 
-  logout() {
+  async refreshToken(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    const session = await this.prisma.loginSession.findUnique({
+      where: { refreshToken },
+      include: {
+        user: {
+          include: { roles: { include: { role: true } } }
+        }
+      }
+    });
+
+    if (!session) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    if (session.isRevoked) {
+      throw new UnauthorizedException('Session has been revoked');
+    }
+
+    if (new Date() > session.expiresAt) {
+      throw new UnauthorizedException('Refresh token expired');
+    }
+
+    const roles = session.user.roles.map(ur => ur.role.name);
+    const payload = { sub: session.user.id, email: session.user.email, roles };
+
+    // Return new access token (keep same refresh token, or could rotate it)
+    return {
+      access_token: this.jwtService.sign(payload),
+      refresh_token: refreshToken
+    };
+  }
+
+  async logout(refreshToken?: string) {
+    if (refreshToken) {
+      await this.prisma.loginSession.updateMany({
+        where: { refreshToken },
+        data: { isRevoked: true }
+      });
+    }
     return { success: true, message: 'Logged out successfully. Please clear your local token.' };
   }
 }

@@ -1,37 +1,16 @@
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 
 export const SalesReport = () => {
-  // Mock data for Day 8 UI scaffolding
-  const mockReports = [
-    {
-      id: 1,
-      date: '2026-07-03',
-      totalOrders: 420,
-      grossSales: '₹21,500.00',
-      discounts: '₹1,200.00',
-      refunds: '₹450.00',
-      netSales: '₹19,850.00',
-    },
-    {
-      id: 2,
-      date: '2026-07-02',
-      totalOrders: 385,
-      grossSales: '₹19,200.00',
-      discounts: '₹800.00',
-      refunds: '₹200.00',
-      netSales: '₹18,200.00',
-    },
-    {
-      id: 3,
-      date: '2026-07-01',
-      totalOrders: 450,
-      grossSales: '₹24,000.00',
-      discounts: '₹2,500.00',
-      refunds: '₹600.00',
-      netSales: '₹20,900.00',
-    },
-  ];
+  const { data: reports = [], isLoading } = useQuery({
+    queryKey: ['auditSalesReport'],
+    queryFn: async () => {
+      const res = await api.get('/admin/audit/sales-report');
+      return res.data;
+    }
+  });
 
   return (
     <div className="space-y-6">
@@ -90,10 +69,10 @@ export const SalesReport = () => {
         </div>
         
         <div className="w-auto flex space-x-2">
-          <button className="bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-6 rounded-md shadow-sm transition-colors">
+          <button className="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-6 rounded-md shadow-sm transition-colors">
             Generate Report
           </button>
-          <ExportButtons />
+          <ExportButtons data={reports} filename="sales_report" />
         </div>
       </div>
 
@@ -111,14 +90,16 @@ export const SalesReport = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-rose-50">
-            {mockReports.map((report) => (
+            {isLoading ? (
+              <tr><td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">Loading...</td></tr>
+            ) : reports.map((report: any) => (
               <tr key={report.id} className="hover:bg-rose-50/30 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{report.date}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">{report.totalOrders}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">{report.grossSales}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-rose-500">-{report.discounts}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-red-500">-{report.refunds}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-rose-900">{report.netSales}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-rose-900">{report.date}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{report.totalOrders}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{report.grossSales.toLocaleString('en-IN')}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-rose-600 font-medium">-₹{report.discounts.toLocaleString('en-IN')}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-rose-600 font-medium">-₹{report.refunds.toLocaleString('en-IN')}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">₹{report.netSales.toLocaleString('en-IN')}</td>
               </tr>
             ))}
           </tbody>

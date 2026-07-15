@@ -1,43 +1,26 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 import { AddRemarkModal } from './components/AddRemarkModal';
 
 export const RewardUsageLog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Mock data for Day 7 UI scaffolding
-  const mockLogs = [
-    {
-      id: 1,
-      timestamp: '2026-07-04 16:30:00',
-      user: 'alice@example.com',
-      eventType: 'COUPON_REDEMPTION',
-      value: '-₹15.00',
-      referenceId: 'SUMMER_SALE_2026',
-      flagged: false,
-      details: 'Applied 15% off coupon to order ORD-105001',
-    },
-    {
-      id: 2,
-      timestamp: '2026-07-03 14:15:22',
-      user: 'bob@example.com',
-      eventType: 'REFERRAL_CREDIT',
-      value: '+₹50.00',
-      referenceId: 'REF-8849',
-      flagged: true,
-      details: 'ANOMALY: Multiple referrals credited to same device ID',
-    },
-    {
-      id: 3,
-      timestamp: '2026-07-02 09:10:00',
-      user: 'charlie@example.com',
-      eventType: 'POINTS_REDEEMED',
-      value: '-500 pts',
-      referenceId: 'ORD-104882',
-      flagged: false,
-      details: 'Redeemed 500 loyalty points for ₹5 off',
-    },
-  ];
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: logs = [], isLoading } = useQuery({
+    queryKey: ['auditRewardUsage'],
+    queryFn: async () => {
+      const res = await api.get('/admin/audit/reward-usage');
+      return res.data;
+    }
+  });
+
+  const filteredLogs = logs.filter((log: any) => 
+    log.user.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    log.referenceId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -58,7 +41,13 @@ export const RewardUsageLog = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-rose-100 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm font-medium text-rose-800 mb-1">User / Email</label>
-          <input type="text" placeholder="Search user..." className="w-full border-rose-200 rounded-md shadow-sm p-2 bg-rose-50/30 text-rose-900 focus:ring-rose-500 focus:border-rose-500 placeholder-rose-300" />
+          <input 
+            type="text" 
+            placeholder="Search by email..." 
+            className="w-full px-4 py-2 border border-rose-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder-rose-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
         
         <div className="flex-1 min-w-[200px]">
@@ -89,9 +78,9 @@ export const RewardUsageLog = () => {
         
         <div className="w-auto flex space-x-2">
           <button className="bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-6 rounded-md shadow-sm transition-colors">
-            Filter
+            Apply Filters
           </button>
-          <ExportButtons />
+          <ExportButtons data={filteredLogs} filename="reward_usage_log" />
         </div>
       </div>
 
@@ -108,9 +97,11 @@ export const RewardUsageLog = () => {
               <th className="px-6 py-3 text-left text-xs font-semibold text-rose-800 uppercase tracking-wider">Remarks</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-rose-50">
-            {mockLogs.map((log) => (
-              <tr key={log.id} className={`transition-colors ${log.flagged ? 'bg-amber-50 hover:bg-amber-100/50' : 'hover:bg-rose-50/30'}`}>
+          <tbody className="divide-y divide-rose-50">
+            {isLoading ? (
+              <tr><td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">Loading...</td></tr>
+            ) : filteredLogs.map((log: any) => (
+              <tr key={log.id} className={`${log.flagged ? 'bg-amber-50 hover:bg-amber-100/50' : 'hover:bg-rose-50/30'} transition-colors`}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.timestamp}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-rose-900">{log.user}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">

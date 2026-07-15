@@ -7,6 +7,7 @@ import { RewardPointModule } from '../reward-point/reward-point.module';
 import { BonusModule } from '../bonus/bonus.module';
 import { ReferralModule } from '../referral/referral.module';
 import { OfferModule } from '../offer/offer.module';
+import { InvoiceModule } from '../invoice/invoice.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { OfferModule } from '../offer/offer.module';
     RewardPointModule,
     BonusModule,
     ReferralModule,
-    OfferModule
+    OfferModule,
+    InvoiceModule
   ],
   controllers: [OrderController],
   providers: [OrderService],

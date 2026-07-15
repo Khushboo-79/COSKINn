@@ -20,5 +20,35 @@ export class AuditController {
     const limitNum = limit ? parseInt(limit, 10) : 50;
     return this.auditService.getLogs(pageNum, limitNum, entity);
   }
+
+  @Get('reward-usage')
+  getRewardUsageLog() {
+    return this.auditService.getRewardUsageLog();
+  }
+
+  @Get('sales-report')
+  getSalesReport() {
+    return this.auditService.getSalesReport();
+  }
+
+  @Get('session-activity')
+  getSessionActivityLog() {
+    return this.auditService.getSessionActivityLog();
+  }
+
+  @Get('stock-adjustments')
+  getStockAdjustmentLog() {
+    return this.auditService.getStockAdjustmentLog();
+  }
+
+  @Get('refund-report')
+  getRefundReport() {
+    return this.auditService.getRefundReport();
+  }
+
+  @Get('payment-report')
+  getPaymentReport() {
+    return this.auditService.getPaymentReport();
+  }
 }
 

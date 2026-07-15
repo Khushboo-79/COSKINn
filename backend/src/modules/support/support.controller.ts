@@ -39,5 +39,26 @@ export class SupportController {
   replyToTicket(@Param('id') ticketId: string, @Body() body: { adminId: string; message: string }) {
     return this.supportService.addMessage(ticketId, body.adminId, 'ADMIN', body.message);
   }
+
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN', 'SUPPORT')
+  @Post('admin/tickets/:id/escalate')
+  escalateTicket(@Param('id') ticketId: string) {
+    return this.supportService.escalateTicket(ticketId);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN', 'SUPPORT')
+  @Post('admin/tickets/:id/assign')
+  assignTicket(@Param('id') ticketId: string, @Body() body: { adminId: string }) {
+    return this.supportService.assignTicket(ticketId, body.adminId);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN', 'SUPPORT')
+  @Get('admin/tickets/stats/sla')
+  getSlaStats() {
+    return this.supportService.getSlaStats();
+  }
 }
 
