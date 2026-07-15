@@ -57,7 +57,7 @@ const CartScreen = ({ navigation }) => {
   const isCosmetics = activeDomain === 'cosmetics';
 
   // Toggle this state to see the empty vs filled UI
-  const [cartItems, setCartItems] = useState([1]); 
+  const [cartItems, setCartItems] = useState([1]);
   const [rewardPoints, setRewardPoints] = useState(false);
   const [isPriceDetailsOpen, setIsPriceDetailsOpen] = useState(false);
   const [isCheckoutVisible, setIsCheckoutVisible] = useState(false);
@@ -66,36 +66,36 @@ const CartScreen = ({ navigation }) => {
 
   const renderProgressGifts = () => (
     <LinearGradient
-      colors={isCosmetics ? ['#FFE2E6', '#FFFFFF'] : [AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd]}
+      colors={isCosmetics ? ['rgba(255, 235, 240, 0.9)', 'rgba(255, 235, 240, 0.9)'] : [AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd]}
       style={styles.progressContainer}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
     >
       <Text style={styles.progressTitle}>15% OFF Availed!</Text>
       <Text style={styles.progressSubtitle}>Shop for <Text style={styles.boldText}>Rs 304</Text> to get a free gift</Text>
-      
+
       <View style={styles.progressBarWrapper}>
-        <View style={styles.progressLine} />
-        <View style={[styles.progressLineFill, { width: '33%' }]} />
-        
+        <View style={[styles.progressLine, isCosmetics && { backgroundColor: '#FFD4E0' }]} />
+        <View style={[styles.progressLineFill, { width: '33%' }, isCosmetics && { backgroundColor: primaryColor }]} />
+
         <View style={styles.stepsRow}>
           <View style={styles.stepItem}>
-            <View style={[styles.iconCircle, styles.iconCircleActive, isCosmetics && { backgroundColor: primaryColor }]}>
-              <Icon name="gift" size={scaleh(16)} color={isCosmetics ? '#FFFFFF' : AppTheme.colors.primary} />
-              <View style={[styles.checkBadge, isCosmetics && { backgroundColor: '#28a745' }]}>
+            <View style={[styles.iconCircle, styles.iconCircleActive, isCosmetics && { borderColor: primaryColor }]}>
+              <Icon name="gift" size={scaleh(16)} color={primaryColor} />
+              <View style={[styles.checkBadge, isCosmetics && { backgroundColor: '#4CAF50', borderWidth: 1, borderColor: '#FFF' }]}>
                 <Icon name="check" size={scaleh(8)} color={AppTheme.colors.white} />
               </View>
             </View>
             <Text style={styles.stepText}>FLAT 15% OFF</Text>
           </View>
-          
+
           <View style={styles.stepItem}>
             <View style={styles.iconCircle}>
               <Icon name="gift" size={scaleh(16)} color={primaryColor} />
             </View>
             <Text style={styles.stepText}>Free Gifts</Text>
           </View>
-          
+
           <View style={styles.stepItem}>
             <View style={styles.iconCircle}>
               <Icon name="gift" size={scaleh(16)} color={primaryColor} />
@@ -109,9 +109,9 @@ const CartScreen = ({ navigation }) => {
 
   const renderFilled = () => (
     <View style={styles.filledContainer}>
-      
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
+
         {/* Sub Header Location */}
         <View style={styles.locationHeader}>
           <Icon name="map-pin" size={scaleh(16)} color="#000" />
@@ -156,7 +156,7 @@ const CartScreen = ({ navigation }) => {
               <Text style={styles.productTitle} numberOfLines={2}>{item.title}</Text>
               <Text style={styles.productSize}>Size: {item.size}</Text>
               <Text style={styles.productDelivery}>{item.delivery}</Text>
-              
+
               <View style={styles.priceRow}>
                 <Text style={styles.productPrice}>₹{item.price}</Text>
                 <Text style={styles.productOriginalPrice}>₹{item.originalPrice}</Text>
@@ -186,7 +186,7 @@ const CartScreen = ({ navigation }) => {
 
         <TouchableOpacity style={styles.accordionCardBox} onPress={() => navigation.navigate('GiftBox')}>
           <View style={styles.boxLeft}>
-            <Icon name="gift" size={scaleh(20)} color="#666" style={{marginRight: scaleh(10)}} />
+            <Icon name="gift" size={scaleh(20)} color="#666" style={{ marginRight: scaleh(10) }} />
             <Text style={styles.boxTitle}>Add gift box for <Text style={styles.boxPrice}>₹40</Text></Text>
           </View>
           <Icon name="chevron-right" size={scaleh(20)} color="#1a1a1a" />
@@ -194,7 +194,7 @@ const CartScreen = ({ navigation }) => {
 
         <View style={styles.accordionCardBox}>
           <View style={styles.boxLeft}>
-            <Icon name="gift" size={scaleh(20)} color="#666" style={{marginRight: scaleh(10)}} />
+            <Icon name="gift" size={scaleh(20)} color="#666" style={{ marginRight: scaleh(10) }} />
             <Text style={styles.boxTitle}>Use reward points</Text>
           </View>
           <View style={styles.boxRight}>
@@ -212,8 +212,8 @@ const CartScreen = ({ navigation }) => {
 
         {/* Price Details Accordion */}
         <View style={styles.priceDetailsContainer}>
-          <TouchableOpacity 
-            style={styles.priceDetailsHeader} 
+          <TouchableOpacity
+            style={styles.priceDetailsHeader}
             onPress={() => setIsPriceDetailsOpen(!isPriceDetailsOpen)}
             activeOpacity={0.8}
           >
@@ -228,7 +228,7 @@ const CartScreen = ({ navigation }) => {
             </View>
             <View style={styles.priceDetailsRight}>
               <Text style={styles.priceDetailsTotal}>₹699</Text>
-              <Icon name={isPriceDetailsOpen ? "chevron-up" : "chevron-down"} size={scaleh(20)} color="#1a1a1a" style={{marginLeft: scaleh(10)}} />
+              <Icon name={isPriceDetailsOpen ? "chevron-up" : "chevron-down"} size={scaleh(20)} color="#1a1a1a" style={{ marginLeft: scaleh(10) }} />
             </View>
           </TouchableOpacity>
 
@@ -248,7 +248,7 @@ const CartScreen = ({ navigation }) => {
                   <Text style={styles.strikethroughPrice}>₹75</Text> ₹5
                 </Text>
               </View>
-              
+
               <View style={[styles.priceRowItem, { marginTop: scalev(15) }]}>
                 <Text style={styles.priceRowLabel}>You pay</Text>
                 <Text style={[styles.priceRowValue, { fontWeight: '700' }]}>₹994</Text>
@@ -269,7 +269,7 @@ const CartScreen = ({ navigation }) => {
         {/* Last minute additions */}
         <View style={styles.lastMinuteSection}>
           <Text style={styles.lastMinuteTitle}>Last minute additions</Text>
-          
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.lastMinuteScroll}>
             {lastMinuteData.map((item, index) => (
               <View key={item.id} style={[styles.lastMinuteCard, index === 0 && { marginLeft: scaleh(20) }]}>
@@ -281,7 +281,7 @@ const CartScreen = ({ navigation }) => {
                   <Text style={styles.lmBrand}>COSKINn</Text>
                   <Text style={styles.lmTitle} numberOfLines={2}>{item.title}</Text>
                   <Text style={styles.lmSizes}>{item.sizes}</Text>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={styles.lmOriginalPrice}>₹{item.originalPrice}</Text>
                   </View>
                   <View style={styles.lmActionRow}>
@@ -301,47 +301,47 @@ const CartScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* Sticky Bottom Bar */}
-        <View style={styles.stickyBottomBar}>
-          <LinearGradient
-            colors={isCosmetics ? ['#FFC2D1', '#FFC2D1'] : [AppTheme.colors.cartBottomGradientStart, AppTheme.colors.cartBottomGradientEnd]}
-            style={styles.savingStrip}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          >
-            <Text style={[styles.savingText, isCosmetics && { color: '#000000' }]}>
-              You are saving <Text style={[styles.savingAmount, isCosmetics && { color: '#28a745' }]}>₹99</Text>
-            </Text>
-          </LinearGradient>
-          <View style={styles.checkoutRow}>
-            <View style={styles.totalSection}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.totalPrice}>₹699</Text>
-                <Icon name="info" size={scaleh(12)} color="#666" style={{marginLeft: scaleh(5)}} />
-              </View>
-              <Text style={styles.totalItems}>1 Item selected</Text>
+      <View style={styles.stickyBottomBar}>
+        <LinearGradient
+          colors={isCosmetics ? ['#FFC2D1', '#FFC2D1'] : [AppTheme.colors.cartBottomGradientStart, AppTheme.colors.cartBottomGradientEnd]}
+          style={styles.savingStrip}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <Text style={[styles.savingText, isCosmetics && { color: '#000000' }]}>
+            You are saving <Text style={[styles.savingAmount, isCosmetics && { color: '#28a745' }]}>₹99</Text>
+          </Text>
+        </LinearGradient>
+        <View style={styles.checkoutRow}>
+          <View style={styles.totalSection}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.totalPrice}>₹699</Text>
+              <Icon name="info" size={scaleh(12)} color="#666" style={{ marginLeft: scaleh(5) }} />
             </View>
-            <TouchableOpacity onPress={() => setIsCheckoutVisible(true)}>
-              {isCosmetics ? (
-                <View style={[styles.proceedButton, { backgroundColor: '#FFC2D1' }]}>
-                  <Text style={[styles.proceedButtonText, { color: '#000000' }]}>Proceed to Pay</Text>
-                  <Icon name="arrow-right" size={scaleh(20)} color="#000000" />
-                </View>
-              ) : (
-                <LinearGradient
-                  colors={[AppTheme.colors.primary, AppTheme.colors.secondary]}
-                  style={styles.proceedButton}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={styles.proceedButtonText}>Proceed to Pay</Text>
-                  <Icon name="arrow-right" size={scaleh(20)} color={AppTheme.colors.white} />
-                </LinearGradient>
-              )}
-            </TouchableOpacity>
+            <Text style={styles.totalItems}>1 Item selected</Text>
           </View>
+          <TouchableOpacity onPress={() => setIsCheckoutVisible(true)}>
+            {isCosmetics ? (
+              <View style={[styles.proceedButton, { backgroundColor: '#FFC2D1' }]}>
+                <Text style={[styles.proceedButtonText, { color: '#000000' }]}>Proceed to Pay</Text>
+                <Icon name="arrow-right" size={scaleh(20)} color="#000000" />
+              </View>
+            ) : (
+              <LinearGradient
+                colors={[AppTheme.colors.primary, AppTheme.colors.secondary]}
+                style={styles.proceedButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.proceedButtonText}>Proceed to Pay</Text>
+                <Icon name="arrow-right" size={scaleh(20)} color={AppTheme.colors.white} />
+              </LinearGradient>
+            )}
+          </TouchableOpacity>
         </View>
+      </View>
 
-        <CheckoutModal visible={isCheckoutVisible} onClose={() => setIsCheckoutVisible(false)} />
+      <CheckoutModal visible={isCheckoutVisible} onClose={() => setIsCheckoutVisible(false)} />
 
     </View>
   );

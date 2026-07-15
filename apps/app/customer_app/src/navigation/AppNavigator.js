@@ -1,10 +1,12 @@
-import React from 'react';
-import { Image, View, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { View, Image, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { setCredentials } from '../redux/slices/authSlice';
 import AuthScreen from '../screens/Auth/AuthScreen';
 import OtpScreen from '../screens/Auth/OtpScreen';
 import DashboardScreen from '../screens/Skincare/DashboardScreen';
@@ -132,13 +134,45 @@ const MainDomainNavigator = () => {
 };
 
 const AppNavigator = () => {
+  const { isAuthenticated } = useSelector(state => state.auth || {});
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const bootstrapAsync = async () => {
+      try {
+        const token = await AsyncStorage.getItem('access_token');
+        if (token) {
+          dispatch(setCredentials({ access_token: token }));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      setLoading(false);
+    };
+    bootstrapAsync();
+  }, [dispatch]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+        <ActivityIndicator size="large" color="#FF0069" />
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Auth" component={AuthScreen} />
-          <Stack.Screen name="Otp" component={OtpScreen} />
-          <Stack.Screen name="Main" component={MainDomainNavigator} />
+          {!isAuthenticated ? (
+            <>
+              <Stack.Screen name="Auth" component={AuthScreen} />
+              <Stack.Screen name="Otp" component={OtpScreen} />
+            </>
+          ) : (
+            <Stack.Screen name="Main" component={MainDomainNavigator} />
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </View>

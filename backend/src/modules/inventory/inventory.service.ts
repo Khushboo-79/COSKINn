@@ -22,8 +22,8 @@ export class InventoryService {
     return this.prisma.warehouse.create({
       data: {
         name: dto.name,
-        location: dto.location || 'Unknown',
-        type: dto.type || 'MAIN',
+        code: dto.code || `WH-${Date.now()}`,
+        address: dto.location || dto.address || 'Unknown',
         isActive: true
       }
     });

@@ -1,9 +1,32 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
+import api from '../../services/api';
 
 const AuthScreen = ({ navigation }) => {
+  const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSendOtp = async () => {
+    if (!phone || phone.length < 10) {
+      Alert.alert('Invalid Number', 'Please enter a valid mobile number.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formattedPhone = `+91${phone}`;
+      await api.post('/auth/send-otp', { phone: formattedPhone });
+      navigation.navigate('Otp', { phone: formattedPhone });
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', error.response?.data?.message || 'Failed to send OTP. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <LinearGradient
       colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
@@ -67,13 +90,18 @@ const AuthScreen = ({ navigation }) => {
                   placeholder="Enter mobile number"
                   placeholderTextColor={AppTheme.colors.textLight}
                   keyboardType="phone-pad"
+                  value={phone}
+                  onChangeText={setPhone}
+                  maxLength={10}
+                  editable={!loading}
                 />
               </View>
 
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.sendOtpWrapper}
-                onPress={() => navigation.navigate('Otp')}
+                onPress={handleSendOtp}
+                disabled={loading}
               >
                 <LinearGradient
                   colors={[AppTheme.colors.primary, AppTheme.colors.secondary]}
@@ -81,7 +109,11 @@ const AuthScreen = ({ navigation }) => {
                   end={{ x: 1, y: 0.5 }}
                   style={styles.sendOtpGradient}
                 >
-                  <Text style={styles.sendOtpText}>Send OTP</Text>
+                  {loading ? (
+                    <ActivityIndicator color="#FFF" />
+                  ) : (
+                    <Text style={styles.sendOtpText}>Send OTP</Text>
+                  )}
                 </LinearGradient>
               </TouchableOpacity>
 
