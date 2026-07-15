@@ -8,6 +8,7 @@ export default function StockInScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<any[]>([]);
   const [warehouses, setWarehouses] = useState<any[]>([]);
+  const [supplier, setSupplier] = useState<any>(null);
   const [poRef, setPoRef] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -22,7 +23,7 @@ export default function StockInScreen() {
       try {
         const text = event.target?.result as string;
         const lines = text.split('\n');
-        const parsedItems = [];
+        const parsedItems: any[] = [];
         // Assuming CSV format: SKU,Name,Quantity
         for (let i = 1; i < lines.length; i++) {
           if (!lines[i].trim()) continue;
@@ -56,7 +57,16 @@ export default function StockInScreen() {
         console.error('Failed to load warehouses', err);
       }
     };
+    const fetchSupplier = async () => {
+      try {
+        const { data } = await api.get('/inventory/suppliers');
+        if (data.length > 0) setSupplier(data[0]);
+      } catch (err) {
+        console.error('Failed to load suppliers');
+      }
+    };
     fetchWarehouses();
+    fetchSupplier();
   }, []);
 
   const handleAddItem = () => {
@@ -158,7 +168,7 @@ export default function StockInScreen() {
             <div className="mt-4">
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Supplier / Source</label>
               <div className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 font-medium">
-                COSKINn Central Manufacturer (Default)
+                {supplier?.name || 'Default Supplier'}
               </div>
             </div>
           </div>

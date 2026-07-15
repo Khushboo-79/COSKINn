@@ -54,6 +54,103 @@ export class FinanceReportService {
       })
     ));
   }
-}
+  // --- Overview ---
+  async getOverview() {
+    const [orders, entries, returns] = await Promise.all([
+      this.prisma.order.findMany({
+        where: { status: { not: 'CANCELLED' } }
+      }),
+      this.prisma.journalEntry.findMany({
+        where: { type: 'DEBIT' }
+      }),
+      this.prisma.return.findMany({
+        where: { status: 'RECEIVED' },
+        include: { order: true }
+      })
+    ]);
 
+    const revenue = orders.reduce((sum, order) => sum + order.finalAmount, 0);
+    const expenses = entries.reduce((sum, entry) => sum + entry.amount, 0);
+    const profit = revenue - expenses;
+    
+    // Pending payments: COD orders that are not delivered yet? Or just all non-delivered orders
+    const pendingOrders = orders.filter(o => o.status !== 'DELIVERED');
+    const pendingPayments = pendingOrders.reduce((sum, order) => sum + order.finalAmount, 0);
+    
+    const refunds = returns.reduce((sum, ret) => sum + ret.order.finalAmount, 0);
+    const taxes = orders.reduce((sum, order) => sum + order.taxAmount, 0);
+
+    return {
+      revenue,
+      expenses,
+      profit,
+      pendingPayments,
+      refunds,
+      taxes,
+      revenueTrend: '+12.5%', // Mock trends
+      expenseTrend: '+3.2%',
+      profitTrend: '+18.1%'
+    };
+  }
+
+  // --- Transactions ---
+  async getTransactions() {
+    const orders = await this.prisma.order.findMany({
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+      include: { user: true }
+    });
+
+    return orders.map(order => ({
+      id: order.id.split('-')[0].toUpperCase(),
+      date: order.createdAt.toISOString().split('T')[0],
+      type: 'Sale',
+      customer: `${order.user.firstName} ${order.user.lastName}`,
+      amount: order.finalAmount,
+      status: order.status === 'DELIVERED' ? 'Completed' : 'Pending'
+    }));
+  }
+
+  // --- Monthly Breakdown ---
+  async getMonthlyBreakdown() {
+    const currentYear = new Date().getFullYear();
+    
+    const orders = await this.prisma.order.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(`${currentYear}-01-01`),
+          lte: new Date(`${currentYear}-12-31`)
+        },
+        status: { not: 'CANCELLED' }
+      }
+    });
+
+    const entries = await this.prisma.journalEntry.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(`${currentYear}-01-01`),
+          lte: new Date(`${currentYear}-12-31`)
+        },
+        type: 'DEBIT'
+      }
+    });
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const breakdown = monthNames.map((month, index) => {
+      const monthOrders = orders.filter(o => o.createdAt.getMonth() === index);
+      const monthEntries = entries.filter(e => e.createdAt.getMonth() === index);
+      
+      return {
+        month,
+        revenue: monthOrders.reduce((sum, order) => sum + order.finalAmount, 0),
+        expenses: monthEntries.reduce((sum, entry) => sum + entry.amount, 0)
+      };
+    });
+
+    // Return only up to current month to avoid empty future months, unless we want a full year view.
+    const currentMonth = new Date().getMonth();
+    return breakdown.slice(0, currentMonth + 1);
+  }
+}
 // Trigger IDE re-parse

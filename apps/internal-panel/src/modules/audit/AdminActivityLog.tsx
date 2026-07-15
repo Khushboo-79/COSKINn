@@ -1,34 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 import { AddRemarkModal } from './components/AddRemarkModal';
 
+const useAuditLogs = (entity: string) => useQuery({
+  queryKey: ['auditLogs', entity],
+  queryFn: async () => {
+    const { data } = await api.get(`/admin/audit/logs?entity=${entity}`);
+    return data;
+  }
+});
+
 export const AdminActivityLog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Mock data for Day 2 UI scaffolding
-  const mockLogs = [
-    {
-      id: 1,
-      timestamp: '2026-07-04 10:15:00',
-      adminUser: 'superadmin@coskinn.com',
-      action: 'Modified RBAC',
-      details: 'Added "Manager" role to user ID 402',
-    },
-    {
-      id: 2,
-      timestamp: '2026-07-04 09:30:22',
-      adminUser: 'rolemanager@coskinn.com',
-      action: 'Changed Settings',
-      details: 'Updated global return policy window from 15 to 30 days',
-    },
-    {
-      id: 3,
-      timestamp: '2026-07-03 16:45:10',
-      adminUser: 'superadmin@coskinn.com',
-      action: 'Deleted Role',
-      details: 'Removed deprecated "TempStaff" role',
-    },
-  ];
+  const { data: logs, isLoading } = useAuditLogs('Admin');
+
 
   return (
     <div className="space-y-6">
@@ -87,23 +75,31 @@ export const AdminActivityLog = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-rose-50">
-            {mockLogs.map((log) => (
-              <tr key={log.id} className="hover:bg-rose-50/30 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.timestamp}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-rose-900">{log.adminUser}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
-                    {log.action}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{log.details}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <button onClick={() => setIsModalOpen(true)} className="text-rose-600 hover:text-rose-800 font-medium transition-colors text-xs">
-                    + Add Remark
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {isLoading ? (
+              <tr><td colSpan={5} className="text-center p-4">Loading...</td></tr>
+            ) : logs?.map((log: any) => {
+              const details = log.newData ? JSON.parse(log.newData).details : '';
+              return (
+                <tr key={log.id} className="hover:bg-rose-50/30 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(log.createdAt).toLocaleString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-rose-900">{log.adminId || 'System'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
+                      {log.action}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{details}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <button 
+                      onClick={() => setIsModalOpen(true)}
+                      className="text-rose-600 hover:text-rose-900 hover:underline font-medium"
+                    >
+                      Add Remark
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

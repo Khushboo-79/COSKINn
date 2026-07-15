@@ -187,4 +187,8 @@ export class AuthService {
       }
     };
   }
+
+  logout() {
+    return { success: true, message: 'Logged out successfully. Please clear your local token.' };
+  }
 }

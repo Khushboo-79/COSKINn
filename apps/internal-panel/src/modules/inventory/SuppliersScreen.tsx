@@ -1,11 +1,54 @@
 import { Building2, Mail, Phone, ExternalLink, Users, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../../lib/axios';
 
 export default function SuppliersScreen() {
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [supplier, setSupplier] = useState<any>(null);
+
+  // Form State
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    fetchSupplier();
+  }, []);
+
+  const fetchSupplier = async () => {
+    try {
+      const { data } = await api.get('/inventory/suppliers');
+      if (data.length > 0) {
+        setSupplier(data[0]);
+        setName(data[0].name);
+        setEmail(data[0].contactEmail || '');
+        setPhone(data[0].contactPhone || '');
+        setAddress(data[0].address || '');
+      }
+    } catch (err) {
+      toast.error('Failed to load supplier');
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      if (supplier?.id) {
+        await api.post(`/inventory/suppliers/${supplier.id}`, { name, contactEmail: email, contactPhone: phone, address });
+        toast.success('Details updated successfully!');
+      } else {
+        await api.post(`/inventory/suppliers`, { name, contactEmail: email, contactPhone: phone, address });
+        toast.success('Supplier created successfully!');
+      }
+      setShowEditModal(false);
+      fetchSupplier();
+    } catch (err) {
+      toast.error('Failed to save supplier');
+    }
+  };
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-end mb-8">
@@ -28,7 +71,7 @@ export default function SuppliersScreen() {
               <div className="mt-16">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-800">COSKINn Central Manufacturer</h3>
+                    <h3 className="text-2xl font-bold text-slate-800">{supplier ? supplier.name : 'No Supplier Found'}</h3>
                     <p className="text-slate-500 mt-1">Primary production facility for all COSKINn products.</p>
                   </div>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -56,7 +99,7 @@ export default function SuppliersScreen() {
                         </div>
                         <div>
                           <p className="text-xs text-slate-500 font-medium">Email Address</p>
-                          <a href="mailto:production@coskinn.com" className="text-sm font-bold text-rose-600 hover:text-rose-700 transition-colors">production@coskinn.com</a>
+                          <a href={`mailto:${supplier?.contactEmail}`} className="text-sm font-bold text-rose-600 hover:text-rose-700 transition-colors">{supplier?.contactEmail || 'N/A'}</a>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
@@ -65,7 +108,7 @@ export default function SuppliersScreen() {
                         </div>
                         <div>
                           <p className="text-xs text-slate-500 font-medium">Phone Number</p>
-                          <p className="text-sm font-bold text-slate-800">+91 98765 43210</p>
+                          <p className="text-sm font-bold text-slate-800">{supplier?.contactPhone || 'N/A'}</p>
                         </div>
                       </div>
                     </div>
@@ -76,10 +119,8 @@ export default function SuppliersScreen() {
                     <div className="space-y-4">
                       <div>
                         <p className="text-xs text-slate-500 font-medium">Address</p>
-                        <p className="text-sm font-medium text-slate-800 mt-1">
-                          Phase 4, Industrial Area<br />
-                          MIDC, Andheri East<br />
-                          Mumbai, Maharashtra 400093
+                        <p className="text-sm font-medium text-slate-800 mt-1 whitespace-pre-wrap">
+                          {supplier?.address || 'No Address Provided'}
                         </p>
                       </div>
                       <div>
@@ -140,20 +181,20 @@ export default function SuppliersScreen() {
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Production Manager Name</label>
-                  <input type="text" defaultValue="Dr. Aarav Mehta" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Supplier Name</label>
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1.5">Email Address</label>
-                  <input type="email" defaultValue="production@coskinn.com" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1.5">Phone Number</label>
-                  <input type="tel" defaultValue="+91 98765 43210" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
+                  <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500" />
                 </div>
                 <div className="col-span-2">
                   <label className="block text-xs font-semibold text-slate-600 mb-1.5">Facility Address</label>
-                  <textarea defaultValue="Phase 4, Industrial Area&#10;MIDC, Andheri East&#10;Mumbai, Maharashtra 400093" rows={3} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"></textarea>
+                  <textarea value={address} onChange={e => setAddress(e.target.value)} rows={3} className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"></textarea>
                 </div>
               </div>
               <div className="pt-4 flex gap-3">
@@ -164,10 +205,7 @@ export default function SuppliersScreen() {
                   Cancel
                 </button>
                 <button 
-                  onClick={() => {
-                    toast.success('Details updated successfully! (Mock)');
-                    setShowEditModal(false);
-                  }}
+                  onClick={handleUpdate}
                   className="flex-1 bg-rose-600 text-white py-3 rounded-xl font-semibold hover:bg-rose-700 transition-colors shadow-sm shadow-rose-200"
                 >
                   Save Changes

@@ -39,6 +39,7 @@ import { SupportModule } from './modules/support/support.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { FinanceReportModule } from './modules/finance-report/finance-report.module';
 import { ContentModule } from './modules/content/content.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -78,7 +79,8 @@ import { ContentModule } from './modules/content/content.module';
     SupportModule,
     AuditModule,
     FinanceReportModule,
-    ContentModule
+    ContentModule,
+    AdminModule
   ],
   controllers: [AppController],
   providers: [AppService],

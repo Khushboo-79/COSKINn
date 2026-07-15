@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import PanelHeader from '../../components/PanelHeader';
 import StatCard from '../../components/StatCard';
 import { TrendingUp, TrendingDown, PieChart,
@@ -9,43 +10,26 @@ import { TrendingUp, TrendingDown, PieChart,
 // Mock data — will be replaced with real API calls later
 const useFinanceOverview = () => useQuery({
   queryKey: ['financeOverview'],
-  queryFn: async () => ({
-    revenue: 12_50_000,
-    expenses: 8_30_000,
-    profit: 4_20_000,
-    pendingPayments: 1_85_000,
-    refunds: 42_000,
-    taxes: 1_12_000,
-    revenueTrend: '+18.3%',
-    expenseTrend: '+5.2%',
-    profitTrend: '+28.7%',
-  })
+  queryFn: async () => {
+    const res = await api.get('/admin/finance/overview');
+    return res.data;
+  }
 });
 
 const useRecentTransactions = () => useQuery({
   queryKey: ['financeTransactions'],
-  queryFn: async () => ([
-    { id: 'TXN-1001', date: '2026-07-05', type: 'Sale', customer: 'Priya Sharma', amount: 4500, status: 'Completed' },
-    { id: 'TXN-1002', date: '2026-07-05', type: 'Refund', customer: 'Rahul Verma', amount: -1200, status: 'Processed' },
-    { id: 'TXN-1003', date: '2026-07-04', type: 'Sale', customer: 'Anita Desai', amount: 8900, status: 'Completed' },
-    { id: 'TXN-1004', date: '2026-07-04', type: 'Sale', customer: 'Vikram Patel', amount: 3200, status: 'Pending' },
-    { id: 'TXN-1005', date: '2026-07-03', type: 'Subscription', customer: 'Meera Joshi', amount: 999, status: 'Completed' },
-    { id: 'TXN-1006', date: '2026-07-03', type: 'Refund', customer: 'Karan Singh', amount: -750, status: 'Processed' },
-    { id: 'TXN-1007', date: '2026-07-02', type: 'Sale', customer: 'Sonal Gupta', amount: 6700, status: 'Completed' },
-    { id: 'TXN-1008', date: '2026-07-01', type: 'Sale', customer: 'Deepak Nair', amount: 2100, status: 'Pending' },
-  ])
+  queryFn: async () => {
+    const res = await api.get('/admin/finance/transactions');
+    return res.data;
+  }
 });
 
 const useMonthlyBreakdown = () => useQuery({
   queryKey: ['monthlyBreakdown'],
-  queryFn: async () => ([
-    { month: 'Jan', revenue: 980000, expenses: 720000 },
-    { month: 'Feb', revenue: 1050000, expenses: 680000 },
-    { month: 'Mar', revenue: 1120000, expenses: 750000 },
-    { month: 'Apr', revenue: 1200000, expenses: 790000 },
-    { month: 'May', revenue: 1180000, expenses: 810000 },
-    { month: 'Jun', revenue: 1250000, expenses: 830000 },
-  ])
+  queryFn: async () => {
+    const res = await api.get('/admin/finance/monthly-breakdown');
+    return res.data;
+  }
 });
 
 export default function FinancePanel() {
@@ -114,8 +98,8 @@ export default function FinancePanel() {
             </div>
           </div>
           <div className="flex items-end gap-3 h-48">
-            {monthly.map((m) => {
-              const maxVal = Math.max(...monthly.map(x => x.revenue));
+            {monthly.map((m: any) => {
+              const maxVal = Math.max(...monthly.map((x: any) => x.revenue));
               const revH = (m.revenue / maxVal) * 100;
               const expH = (m.expenses / maxVal) * 100;
               return (
@@ -172,7 +156,7 @@ export default function FinancePanel() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {transactions?.map(txn => (
+                {transactions?.map((txn: any) => (
                   <tr key={txn.id} className="hover:bg-white/60 transition-colors">
                     <td className="px-5 py-3.5 text-sm font-mono text-gray-700">{txn.id}</td>
                     <td className="px-5 py-3.5 text-sm text-gray-600">{txn.date}</td>

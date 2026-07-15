@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import PanelHeader from '../../components/PanelHeader';
 import StatCard from '../../components/StatCard';
 import { Users, UserPlus, Calendar,  Wallet,
@@ -8,59 +8,42 @@ import { Users, UserPlus, Calendar,  Wallet,
   Award,   
    Download } from 'lucide-react';
 
+import { api } from '../../lib/axios';
+
 const useHROverview = () => useQuery({
   queryKey: ['hrOverview'],
-  queryFn: async () => ({
-    totalEmployees: 42,
-    activeToday: 38,
-    onLeave: 4,
-    pendingLeaveRequests: 6,
-    newHiresThisMonth: 3,
-    totalPayroll: 18_50_000,
-    departments: 6,
-    avgTenure: '2.4 years',
-  })
+  queryFn: async () => {
+    const { data } = await api.get('/admin/hr/overview');
+    return data;
+  }
 });
 
 const useEmployees = () => useQuery({
   queryKey: ['employees'],
-  queryFn: async () => ([
-    { id: 'EMP-001', name: 'Priya Sharma', email: 'priya@coskinn.com', phone: '+91 98765 43210', role: 'Senior Developer', department: 'Engineering', joinDate: '2024-03-15', status: 'Active', leaveBalance: 12, avatar: 'PS' },
-    { id: 'EMP-002', name: 'Rahul Verma', email: 'rahul@coskinn.com', phone: '+91 98765 43211', role: 'Product Manager', department: 'Product', joinDate: '2024-01-10', status: 'Active', leaveBalance: 8, avatar: 'RV' },
-    { id: 'EMP-003', name: 'Anita Desai', email: 'anita@coskinn.com', phone: '+91 98765 43212', role: 'UI/UX Designer', department: 'Design', joinDate: '2024-06-01', status: 'On Leave', leaveBalance: 15, avatar: 'AD' },
-    { id: 'EMP-004', name: 'Vikram Patel', email: 'vikram@coskinn.com', phone: '+91 98765 43213', role: 'Marketing Lead', department: 'Marketing', joinDate: '2023-11-20', status: 'Active', leaveBalance: 6, avatar: 'VP' },
-    { id: 'EMP-005', name: 'Meera Joshi', email: 'meera@coskinn.com', phone: '+91 98765 43214', role: 'Supply Chain Manager', department: 'Operations', joinDate: '2023-08-05', status: 'Active', leaveBalance: 10, avatar: 'MJ' },
-    { id: 'EMP-006', name: 'Karan Singh', email: 'karan@coskinn.com', phone: '+91 98765 43215', role: 'Customer Support Lead', department: 'Support', joinDate: '2024-02-28', status: 'Active', leaveBalance: 14, avatar: 'KS' },
-    { id: 'EMP-007', name: 'Sonal Gupta', email: 'sonal@coskinn.com', phone: '+91 98765 43216', role: 'HR Manager', department: 'HR', joinDate: '2023-06-15', status: 'Active', leaveBalance: 9, avatar: 'SG' },
-    { id: 'EMP-008', name: 'Deepak Nair', email: 'deepak@coskinn.com', phone: '+91 98765 43217', role: 'Backend Developer', department: 'Engineering', joinDate: '2025-01-10', status: 'On Leave', leaveBalance: 18, avatar: 'DN' },
-  ])
+  queryFn: async () => {
+    const { data } = await api.get('/admin/hr/employees');
+    return data;
+  }
 });
 
 const useLeaveRequests = () => useQuery({
   queryKey: ['leaveRequests'],
-  queryFn: async () => ([
-    { id: 'LV-101', employee: 'Anita Desai', department: 'Design', type: 'Sick Leave', from: '2026-07-06', to: '2026-07-08', days: 3, status: 'Pending', reason: 'Medical appointment and recovery' },
-    { id: 'LV-102', employee: 'Deepak Nair', department: 'Engineering', type: 'Casual Leave', from: '2026-07-07', to: '2026-07-07', days: 1, status: 'Approved', reason: 'Personal work' },
-    { id: 'LV-103', employee: 'Vikram Patel', department: 'Marketing', type: 'Vacation', from: '2026-07-15', to: '2026-07-22', days: 6, status: 'Pending', reason: 'Family vacation' },
-    { id: 'LV-104', employee: 'Priya Sharma', department: 'Engineering', type: 'Work From Home', from: '2026-07-08', to: '2026-07-09', days: 2, status: 'Pending', reason: 'Internet installation at new apartment' },
-    { id: 'LV-105', employee: 'Meera Joshi', department: 'Operations', type: 'Sick Leave', from: '2026-07-03', to: '2026-07-04', days: 2, status: 'Approved', reason: 'Fever' },
-    { id: 'LV-106', employee: 'Karan Singh', department: 'Support', type: 'Casual Leave', from: '2026-07-10', to: '2026-07-10', days: 1, status: 'Rejected', reason: 'High workload period' },
-  ])
+  queryFn: async () => {
+    const { data } = await api.get('/admin/hr/leaves');
+    return data;
+  }
 });
 
 const usePayrollSummary = () => useQuery({
   queryKey: ['payrollSummary'],
-  queryFn: async () => ([
-    { department: 'Engineering', headcount: 12, totalCTC: 7_20_000, avgSalary: 60_000 },
-    { department: 'Product', headcount: 4, totalCTC: 2_80_000, avgSalary: 70_000 },
-    { department: 'Design', headcount: 5, totalCTC: 2_75_000, avgSalary: 55_000 },
-    { department: 'Marketing', headcount: 8, totalCTC: 4_00_000, avgSalary: 50_000 },
-    { department: 'Operations', headcount: 6, totalCTC: 3_00_000, avgSalary: 50_000 },
-    { department: 'Support', headcount: 7, totalCTC: 2_80_000, avgSalary: 40_000 },
-  ])
+  queryFn: async () => {
+    const { data } = await api.get('/admin/hr/payroll');
+    return data;
+  }
 });
 
 export default function HRPanel() {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'directory' | 'leave' | 'payroll'>('directory');
   const [searchTerm, setSearchTerm] = useState('');
   const [deptFilter, setDeptFilter] = useState('All');
@@ -69,15 +52,26 @@ export default function HRPanel() {
   const { data: leaveRequests } = useLeaveRequests();
   const { data: payroll } = usePayrollSummary();
 
+  const updateLeaveStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string, status: 'Approved' | 'Rejected' }) => {
+      await api.post(`/admin/hr/leaves/${id}/status`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leaveRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['hrOverview'] });
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+    }
+  });
+
   const tabs = [
     { key: 'directory' as const, label: 'Employee Directory', icon: Users },
     { key: 'leave' as const, label: 'Leave Management', icon: Calendar },
     { key: 'payroll' as const, label: 'Payroll Overview', icon: Wallet },
   ];
 
-  const departments = ['All', ...new Set(employees?.map(e => e.department) || [])];
+  const departments = ['All', ...new Set(employees?.map((e: any) => e.department) || [])];
 
-  const filteredEmployees = employees?.filter(e => {
+  const filteredEmployees = employees?.filter((e: any) => {
     const matchSearch = !searchTerm || e.name.toLowerCase().includes(searchTerm.toLowerCase()) || e.email.toLowerCase().includes(searchTerm.toLowerCase()) || e.role.toLowerCase().includes(searchTerm.toLowerCase());
     const matchDept = deptFilter === 'All' || e.department === deptFilter;
     return matchSearch && matchDept;
@@ -157,12 +151,12 @@ export default function HRPanel() {
               onChange={e => setDeptFilter(e.target.value)}
               className="px-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#FF0069]/30 focus:border-[#FF0069] outline-none bg-white"
             >
-              {departments.map(d => <option key={d} value={d}>{d}</option>)}
+              {departments.map((d: any) => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredEmployees?.map(emp => (
+            {filteredEmployees?.map((emp: any) => (
               <div key={emp.id} className="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF0069] to-[#FFD498] flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-md">
@@ -181,7 +175,7 @@ export default function HRPanel() {
                     <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
                       <span className="flex items-center gap-1"><Building2 className="w-3 h-3" /> {emp.department}</span>
                       <span className="flex items-center gap-1"><Mail className="w-3 h-3" /> {emp.email}</span>
-                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Joined {emp.joinDate}</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Joined {new Date(emp.joinDate).toLocaleDateString()}</span>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
@@ -198,14 +192,14 @@ export default function HRPanel() {
       {/* Leave Management Tab */}
       {activeTab === 'leave' && leaveRequests && (
         <div className="space-y-3">
-          {leaveRequests.map(req => (
+          {leaveRequests.map((req: any) => (
             <div key={req.id} className="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-gray-900">{req.employee}</h4>
+                    <h4 className="font-bold text-gray-900">{req.employee?.name || req.employee}</h4>
                     <span className="text-xs text-gray-400">•</span>
-                    <span className="text-xs text-gray-500">{req.department}</span>
+                    <span className="text-xs text-gray-500">{req.employee?.department || req.department}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-600 mb-2">
                     <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
@@ -216,7 +210,7 @@ export default function HRPanel() {
                     }`}>
                       {req.type}
                     </span>
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {req.from} → {req.to}</span>
+                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {new Date(req.fromDate || req.from).toLocaleDateString()} → {new Date(req.toDate || req.to).toLocaleDateString()}</span>
                     <span className="font-semibold">{req.days} day{req.days > 1 ? 's' : ''}</span>
                   </div>
                   <p className="text-xs text-gray-500">Reason: {req.reason}</p>
@@ -224,10 +218,10 @@ export default function HRPanel() {
                 <div className="flex items-center gap-2 ml-4">
                   {req.status === 'Pending' ? (
                     <>
-                      <button className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-semibold hover:bg-emerald-600 transition-colors flex items-center gap-1">
+                      <button onClick={() => updateLeaveStatus.mutate({ id: req.id, status: 'Approved' })} disabled={updateLeaveStatus.isPending} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-semibold hover:bg-emerald-600 transition-colors flex items-center gap-1 disabled:opacity-50">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Approve
                       </button>
-                      <button className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors flex items-center gap-1">
+                      <button onClick={() => updateLeaveStatus.mutate({ id: req.id, status: 'Rejected' })} disabled={updateLeaveStatus.isPending} className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors flex items-center gap-1 disabled:opacity-50">
                         <XCircle className="w-3.5 h-3.5" /> Reject
                       </button>
                     </>
@@ -266,8 +260,8 @@ export default function HRPanel() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {payroll.map(dept => {
-                  const maxCTC = Math.max(...payroll.map(d => d.totalCTC));
+                {payroll.map((dept: any) => {
+                  const maxCTC = Math.max(...payroll.map((d: any) => d.totalCTC));
                   const pct = Math.round((dept.totalCTC / maxCTC) * 100);
                   return (
                     <tr key={dept.department} className="hover:bg-white/60 transition-colors">
@@ -293,8 +287,8 @@ export default function HRPanel() {
               <tfoot>
                 <tr className="bg-gray-50/60 border-t-2 border-gray-200">
                   <td className="px-5 py-3 text-sm font-bold text-gray-900">Total</td>
-                  <td className="px-5 py-3 text-sm text-center font-bold text-gray-900">{payroll.reduce((a, b) => a + b.headcount, 0)}</td>
-                  <td className="px-5 py-3 text-sm text-right font-bold text-[#FF0069]">₹{payroll.reduce((a, b) => a + b.totalCTC, 0).toLocaleString('en-IN')}</td>
+                  <td className="px-5 py-3 text-sm text-center font-bold text-gray-900">{payroll.reduce((a: any, b: any) => a + b.headcount, 0)}</td>
+                  <td className="px-5 py-3 text-sm text-right font-bold text-[#FF0069]">₹{payroll.reduce((a: any, b: any) => a + b.totalCTC, 0).toLocaleString('en-IN')}</td>
                   <td className="px-5 py-3 text-sm text-right text-gray-600">—</td>
                   <td className="px-5 py-3"></td>
                 </tr>

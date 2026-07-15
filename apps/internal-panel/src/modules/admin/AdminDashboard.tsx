@@ -8,18 +8,12 @@ import {
   TrendingUp, Users, ShoppingCart, Activity, ShieldCheck, FileCheck
 } from 'lucide-react';
 
-// Mock system-wide metrics for the Superadmin view
 const useSystemOverview = () => useQuery({
   queryKey: ['systemOverview'],
-  queryFn: async () => ({
-    totalRevenue: 28_45_000,
-    activeUsers: 14_250,
-    totalOrders: 3_840,
-    systemHealth: '99.9%',
-    revenueTrend: '+12.5%',
-    usersTrend: '+8.2%',
-    ordersTrend: '+15.4%',
-  })
+  queryFn: async () => {
+    const { data } = await api.get('/admin/config/overview');
+    return data;
+  }
 });
 
 export default function AdminPanel() {

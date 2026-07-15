@@ -10,7 +10,7 @@ export default function ActivityScreen() {
   useEffect(() => {
     async function fetchActivity() {
       try {
-        const response = await api.get('/admin/audit/logs?entity=InventoryStock'); // optionally filter by entity or just fetch all inventory-related
+        // optionally filter by entity or just fetch all inventory-related
         // If the endpoint doesn't support entity filter natively, or if the backend logs multiple entities (like StockMovement, Warehouse, etc)
         // For now, let's fetch all logs and filter in frontend if needed, or just display them.
         const resAll = await api.get('/admin/audit/logs');

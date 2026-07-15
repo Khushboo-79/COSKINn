@@ -280,7 +280,7 @@ export class OrderService {
       });
 
       await tx.orderCancellation.create({
-        data: { orderId, reason, cancelledBy: adminId }
+        data: { orderId, reason }
       });
 
       // 3. Release reserved stock if it was PACKED or PLACED
