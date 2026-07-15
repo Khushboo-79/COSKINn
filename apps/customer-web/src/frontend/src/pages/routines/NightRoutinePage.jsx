@@ -53,28 +53,28 @@ export default function NightRoutinePage() {
         </div>
 
         {/* Left Side Content Container */}
-        <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-12 relative z-10 h-full flex flex-col justify-center pt-48 pb-16">
+        <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-12 relative z-10 h-full flex flex-col justify-center pt-[160px] pb-12">
           <div className="w-full lg:w-[45%] lg:pr-12">
             <motion.div 
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
             >
-              <div className="flex items-center gap-2 text-sm font-bold tracking-widest uppercase text-gray-400 mb-8">
+              <div className="flex items-center gap-2 text-sm font-bold tracking-widest uppercase text-gray-400 mb-5">
                 <Link to="/" className="hover:text-[#FF2D7A] transition-colors">Home</Link>
                 <span>/</span>
                 <Link to="/routine" className="hover:text-[#FF2D7A] transition-colors">Routine</Link>
               </div>
               
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[#FF2D7A]/20 text-[#FF2D7A] text-xs font-bold uppercase tracking-widest mb-8 shadow-sm">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[#FF2D7A]/20 text-[#FF2D7A] text-xs font-bold uppercase tracking-widest mb-5 shadow-sm">
                 <Moon size={14} className="text-[#FF2D7A]" /> PM Ritual
               </span>
 
-              <h1 className="text-6xl lg:text-7xl xl:text-8xl font-heading font-black text-[#1B1B1B] leading-[1.05] mb-8 tracking-tight">
+              <h1 className="text-5xl lg:text-6xl xl:text-7xl font-heading font-black text-[#1B1B1B] leading-[1.05] mb-6 tracking-tight">
                 Repair While You <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2D7A] to-[#FF8EAA] italic font-light">Sleep.</span>
               </h1>
               
-              <p className="text-xl text-gray-600 font-medium leading-relaxed max-w-md mb-12">
+              <p className="text-xl text-gray-600 font-medium leading-relaxed max-w-md mb-8">
                 Melt away the day and deeply nourish your skin with our luxurious 3-step nocturnal repair routine.
               </p>
 
@@ -127,48 +127,125 @@ export default function NightRoutinePage() {
       {/* 3. OVERNIGHT RECOVERY */}
       <section className="py-16 lg:py-20 bg-white relative">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="bg-[#FFFDFD] rounded-[3rem] p-8 md:p-16 border border-[#FF2D7A]/10 flex flex-col lg:flex-row items-center gap-16 relative overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-500">
+          <div className="bg-[#FFFDFD] rounded-[3rem] p-8 md:p-16 border border-[#FF2D7A]/10 flex flex-col xl:flex-row items-center gap-12 relative overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-500">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-transparent via-[#FF2D7A]/5 to-transparent blur-3xl pointer-events-none"></div>
 
-            <div className="w-full lg:w-1/2 relative z-10">
+            <div className="w-full xl:w-5/12 relative z-10">
               <h2 className="text-4xl lg:text-5xl font-heading font-bold text-[#1B1B1B] mb-6 tracking-tight">Overnight Recovery</h2>
-              <p className="text-gray-600 text-xl leading-relaxed mb-10 font-medium">
-                Your skin enters its most intense state of repair between 11 PM and 4 AM. Our nocturnal routine floods your cells with antioxidants and rich mango butter precisely when they are most receptive, ensuring you wake up to a revitalized, plump complexion.
+              <p className="text-gray-600 text-lg leading-relaxed mb-8 font-medium">
+                Your skin enters its most intense state of repair between 11 PM and 4 AM. Our nocturnal routine floods your cells with antioxidants and rich mango butter precisely when they are most receptive.
               </p>
               
-              <ul className="space-y-6">
+              <ul className="space-y-4">
                 <li className="flex items-start gap-4">
-                  <div className="w-2 h-2 rounded-full bg-[#FF2D7A] mt-2.5 shrink-0 shadow-[0_0_10px_#FF2D7A]"></div>
-                  <p className="text-[#1B1B1B] font-bold text-lg">Accelerates natural cellular turnover.</p>
+                  <div className="w-2 h-2 rounded-full bg-[#FF2D7A] mt-2 shrink-0 shadow-[0_0_10px_#FF2D7A]"></div>
+                  <p className="text-[#1B1B1B] font-bold">Accelerates natural cellular turnover.</p>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="w-2 h-2 rounded-full bg-[#FF2D7A] mt-2.5 shrink-0 shadow-[0_0_10px_#FF2D7A]"></div>
-                  <p className="text-[#1B1B1B] font-bold text-lg">Restores moisture lost to environmental stress.</p>
+                  <div className="w-2 h-2 rounded-full bg-[#FF2D7A] mt-2 shrink-0 shadow-[0_0_10px_#FF2D7A]"></div>
+                  <p className="text-[#1B1B1B] font-bold">Restores moisture lost to environmental stress.</p>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="w-2 h-2 rounded-full bg-[#FF2D7A] mt-2.5 shrink-0 shadow-[0_0_10px_#FF2D7A]"></div>
-                  <p className="text-[#1B1B1B] font-bold text-lg">Smooths fine lines caused by dehydration.</p>
+                  <div className="w-2 h-2 rounded-full bg-[#FF2D7A] mt-2 shrink-0 shadow-[0_0_10px_#FF2D7A]"></div>
+                  <p className="text-[#1B1B1B] font-bold">Smooths fine lines caused by dehydration.</p>
                 </li>
               </ul>
             </div>
 
-            <div className="w-full lg:w-1/2 flex gap-4 h-[400px]">
-              <div className="w-1/2 bg-[#FFF5F8] rounded-3xl p-6 flex flex-col justify-end relative overflow-hidden border border-[#FF2D7A]/10">
-                <div className="absolute top-6 left-6 text-sm font-bold uppercase tracking-widest text-[#FF2D7A]/60">10:00 PM</div>
-                <div className="relative z-10">
-                  <div className="h-1.5 w-full bg-white rounded-full mb-4 overflow-hidden border border-[#FF2D7A]/10">
-                    <div className="h-full w-1/4 bg-[#FF2D7A]/30 rounded-full"></div>
+            <div className="w-full xl:w-7/12 flex flex-col md:flex-row gap-6">
+              {/* Left Card: 10:00 PM Before */}
+              <div className="flex-1 bg-white/60 backdrop-blur-md rounded-3xl p-6 md:p-8 relative overflow-hidden border border-[#FF2D7A]/10 shadow-[0_10px_30px_rgba(255,45,122,0.05)] hover:-translate-y-1 transition-transform duration-300">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="text-sm font-bold uppercase tracking-widest text-[#FF2D7A]/60">10:00 PM</div>
+                  <Moon className="w-5 h-5 text-[#FF2D7A]/60" />
+                </div>
+                <h3 className="text-lg font-bold text-[#1B1B1B] mb-6 flex items-center gap-2">🌙 Skin Before Routine</h3>
+                
+                <div className="space-y-5">
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
+                      <span>Barrier Strength</span>
+                      <span>30%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '30%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-[#FF2D7A]/40 rounded-full" />
+                    </div>
                   </div>
-                  <p className="text-gray-500 font-bold">Depleted Barrier</p>
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
+                      <span>Hydration Level</span>
+                      <span>45%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '45%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-[#FF2D7A]/40 rounded-full" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
+                      <span>Skin Stress</span>
+                      <span>85%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '85%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.4 }} className="h-full bg-[#FF2D7A]/60 rounded-full" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
+                      <span>Moisture Lock</span>
+                      <span>20%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '20%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.5 }} className="h-full bg-[#FF2D7A]/40 rounded-full" />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="w-1/2 bg-[#FF2D7A]/10 rounded-3xl p-6 flex flex-col justify-end relative overflow-hidden border border-[#FF2D7A]/20">
-                <div className="absolute top-6 left-6 text-sm font-bold uppercase tracking-widest text-[#FF2D7A]">07:00 AM</div>
-                <div className="relative z-10">
-                  <div className="h-1.5 w-full bg-white rounded-full mb-4 overflow-hidden">
-                    <div className="h-full w-full bg-[#FF2D7A] rounded-full shadow-[0_0_10px_#FF2D7A]"></div>
+
+              {/* Right Card: 07:00 AM After */}
+              <div className="flex-1 bg-gradient-to-br from-[#FFF5F8] to-[#FFFDFD] rounded-3xl p-6 md:p-8 relative overflow-hidden border border-[#FF2D7A]/20 shadow-[0_15px_40px_rgba(255,45,122,0.1)] hover:-translate-y-1 transition-transform duration-300">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="text-sm font-bold uppercase tracking-widest text-[#FF2D7A]">07:00 AM</div>
+                  <Zap className="w-5 h-5 text-[#FF2D7A]" />
+                </div>
+                <h3 className="text-lg font-bold text-[#FF2D7A] mb-6 flex items-center gap-2">✨ Skin After Recovery</h3>
+                
+                <div className="space-y-5">
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-[#FF2D7A] mb-2 uppercase tracking-wide">
+                      <span>Barrier Restored</span>
+                      <span>100%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-[#FF2D7A]/10 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '100%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.4 }} className="h-full bg-[#FF2D7A] rounded-full shadow-[0_0_10px_#FF2D7A]" />
+                    </div>
                   </div>
-                  <p className="text-[#FF2D7A] font-bold">Fully Restored</p>
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-[#FF2D7A] mb-2 uppercase tracking-wide">
+                      <span>Hydration Increased</span>
+                      <span>95%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-[#FF2D7A]/10 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '95%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.5 }} className="h-full bg-[#FF2D7A] rounded-full shadow-[0_0_10px_#FF2D7A]" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-[#FF2D7A] mb-2 uppercase tracking-wide">
+                      <span>Calm Skin</span>
+                      <span>90%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-[#FF2D7A]/10 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '90%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.6 }} className="h-full bg-[#FF2D7A] rounded-full shadow-[0_0_10px_#FF2D7A]" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-[#FF2D7A] mb-2 uppercase tracking-wide">
+                      <span>Glow Level</span>
+                      <span>100%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-[#FF2D7A]/10 rounded-full overflow-hidden">
+                      <motion.div initial={{ width: 0 }} whileInView={{ width: '100%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.7 }} className="h-full bg-[#FF2D7A] rounded-full shadow-[0_0_10px_#FF2D7A]" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -113,12 +113,19 @@ export default function Footer() {
           backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
         }}
         transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-        className="absolute top-[120px] sm:top-[80px] lg:top-[60px] inset-x-0 bottom-0 rounded-t-[40px] lg:rounded-t-[60px] shadow-[0_-15px_50px_rgba(247,220,224,0.3)] z-0"
+        className="absolute top-[120px] sm:top-[80px] lg:top-[60px] inset-x-0 bottom-0 rounded-t-[40px] lg:rounded-t-[60px] shadow-[0_-15px_50px_rgba(247,220,224,0.3)] z-0 overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #F7DCE0 0%, #FFFFFF 40%, #F7DCE0 80%, #DFC2C0 100%)',
+          background: 'linear-gradient(135deg, #FFF3F7 0%, #FFE8F1 25%, #FFDCEB 55%, #FFEAF3 80%, #FFF8FB 100%)',
           backgroundSize: '200% 200%'
         }}
-      />
+      >
+        {/* Soft radial pink glow in the center */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] max-w-[800px] bg-[#FFDCEB]/50 blur-[100px] rounded-full pointer-events-none"></div>
+        
+        {/* Very light blush highlights in the corners */}
+        <div className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-[#FFE8F1]/60 blur-[100px] rounded-full pointer-events-none"></div>
+        <div className="absolute -bottom-20 -right-20 w-[500px] h-[500px] bg-[#FFF3F7]/80 blur-[120px] rounded-full pointer-events-none"></div>
+      </motion.div>
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10 pb-8">
 

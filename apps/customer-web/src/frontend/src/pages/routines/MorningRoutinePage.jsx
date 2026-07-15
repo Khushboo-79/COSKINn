@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, ArrowRight, Clock, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowRight, Clock, CheckCircle2, Shield, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../../components/common/ProductCard';
 import Footer from '../../components/common/Footer';
@@ -19,59 +19,34 @@ export default function MorningRoutinePage() {
     sunscreen: skincareProducts.find(p => p.name === "COSKINn Sunscreen SPF 50") || skincareProducts[0]
   };
 
-  const timelineSteps = [
+  const flowSteps = [
     {
-      title: "Wake Up",
-      time: "07:00 AM",
-      desc: "Start your day by drinking a full glass of water. Internal hydration is the foundation of glowing skin.",
-      benefits: ["Flushes toxins", "Kickstarts metabolism"],
-      why: "Topical products work exponentially better when your body is hydrated from within.",
-      isProduct: false
-    },
-    {
-      title: "Gentle Cleanse",
-      time: "07:05 AM",
+      num: "01",
+      name: "Cleanser",
+      time: "30 sec",
+      benefit: "Removes overnight oil",
       product: products.cleanser,
-      desc: "Wash away overnight impurities and excess sebum without stripping your skin's natural moisture barrier.",
-      benefits: ["Balances pH", "Removes dead skin cells"],
-      why: "Creates a clean, receptive canvas so the rest of your products can penetrate deeply.",
-      isProduct: true
     },
     {
-      title: "Hydrating Mist",
-      time: "07:08 AM",
-      product: products.mist,
-      desc: "Spritz generously over the face while the skin is still slightly damp from cleansing.",
-      benefits: ["Instant hydration", "Soothes redness"],
-      why: "Damp skin acts like a sponge, pulling water-based ingredients deep into the epidermis.",
-      isProduct: true
-    },
-    {
-      title: "Vitamin Serum",
-      time: "07:10 AM",
+      num: "02",
+      name: "Vitamin C",
+      time: "1 min",
+      benefit: "Antioxidant defense",
       product: products.serum,
-      desc: "Apply 2-3 drops of Vitamin Serum and press gently into the skin. Let it absorb fully.",
-      benefits: ["Brightens complexion", "Antioxidant defense"],
-      why: "Neutralizes free radicals from pollution and UV rays before they can damage your skin.",
-      isProduct: true
     },
     {
-      title: "Seal with Moisture",
-      time: "07:12 AM",
+      num: "03",
+      name: "Moisturizer",
+      time: "1 min",
+      benefit: "Locks in hydration",
       product: products.moisturizer,
-      desc: "Massage a dime-sized amount of moisturizer onto the face and neck to lock in all previous layers.",
-      benefits: ["Locks in hydration", "Plumps skin"],
-      why: "Creates a protective seal over the active ingredients, ensuring they don't evaporate.",
-      isProduct: true
     },
     {
-      title: "Essential SPF",
-      time: "07:15 AM",
+      num: "04",
+      name: "Sunscreen",
+      time: "2 min",
+      benefit: "Blocks UV rays",
       product: products.sunscreen,
-      desc: "Apply two finger-lengths of SPF 50 generously. Never skip this step, rain or shine.",
-      benefits: ["Prevents aging", "Blocks UV rays"],
-      why: "The ultimate shield. Protects your skin from the #1 cause of premature aging and hyperpigmentation.",
-      isProduct: true
     }
   ];
 
@@ -151,90 +126,117 @@ export default function MorningRoutinePage() {
         </div>
       </section>
 
-      {/* 2. PREMIUM TIMELINE ROUTINE */}
-      <section className="py-16 lg:py-20 bg-[#FAFAFA] relative overflow-hidden">
+      {/* 2. PREMIUM TIMELINE ROUTINE (REDESIGNED) */}
+      <section className="py-16 lg:py-24 bg-[#FAFAFA] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#FF2D7A]/5 rounded-full blur-[100px] pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#FF8EAA]/5 rounded-full blur-[100px] pointer-events-none"></div>
 
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 relative z-10">
-          <div className="text-center mb-20 max-w-3xl mx-auto">
-            <span className="text-[#FF2D7A] font-bold uppercase tracking-widest text-sm mb-4 block">The AM Flow</span>
-            <h2 className="text-4xl lg:text-6xl font-heading font-bold text-[#1B1B1B] mb-6 tracking-tight">Morning Routine Flow</h2>
-            <p className="text-gray-600 font-medium text-xl leading-relaxed">A seamless transition from sleepy skin to an awake, protected, and glowing complexion.</p>
+          <div className="mb-12">
+            <span className="text-[#FF2D7A] font-bold uppercase tracking-widest text-sm mb-2 block">The AM Flow</span>
+            <h2 className="text-4xl lg:text-5xl font-heading font-bold text-[#1B1B1B] tracking-tight">Morning Routine Flow</h2>
           </div>
 
-          <div className="max-w-4xl mx-auto space-y-12 lg:space-y-16">
-            {timelineSteps.map((step, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6 }}
-                className={`relative bg-white/70 backdrop-blur-2xl rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_40px_rgba(0,0,0,0.03)] border border-white hover:shadow-[0_30px_60px_rgba(255,45,122,0.08)] hover:-translate-y-1 transition-all duration-500 group ${idx % 2 !== 0 ? 'lg:ml-20' : 'lg:mr-20'}`}
-              >
-                {/* Step Number Badge */}
-                <div className="absolute -top-6 -left-6 lg:-left-8 w-16 h-16 bg-gradient-to-br from-[#FF2D7A] to-[#FF5E95] rounded-full flex items-center justify-center text-white font-black text-2xl shadow-[0_10px_20px_rgba(255,45,122,0.3)] z-20">
-                  {idx + 1}
-                </div>
+          <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+            {/* Left side: Horizontal Flow */}
+            <div className="w-full lg:w-[65%] relative flex flex-col justify-center">
+              {/* Connecting Line (Desktop) */}
+              <div className="hidden md:block absolute top-[160px] left-10 right-10 h-0.5 bg-gradient-to-r from-transparent via-[#FF2D7A]/20 to-transparent z-0 overflow-hidden">
+                <motion.div 
+                  initial={{ x: "-100%" }}
+                  whileInView={{ x: "200%" }}
+                  transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+                  className="w-1/3 h-full bg-gradient-to-r from-transparent via-[#FF2D7A] to-transparent blur-[2px]"
+                />
+              </div>
 
-                <div className="flex flex-col md:flex-row gap-10 items-center">
-                  {/* Image/Visual Side */}
-                  <div className="w-full md:w-1/3 shrink-0 relative flex justify-center">
-                    {step.isProduct && step.product ? (
-                      <div className="w-full aspect-square bg-[#F7F7F7] rounded-3xl p-6 flex items-center justify-center group-hover:bg-[#FFF5F8] transition-colors duration-500">
-                        <img 
-                          src={step.product.image || step.product.img} 
-                          alt={step.product.name} 
-                          className="w-full h-full object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-500 mix-blend-multiply" 
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full aspect-square bg-gradient-to-br from-[#FFF0F4] to-[#FFE6ED] rounded-3xl p-6 flex items-center justify-center border border-[#FF2D7A]/10">
-                        <Clock className="w-20 h-20 text-[#FF2D7A]/40" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Content Side */}
-                  <div className="w-full md:w-2/3">
-                    <div className="flex items-center gap-3 text-[#FF2D7A] font-bold uppercase tracking-widest text-xs mb-3">
-                      <Clock size={14} />
-                      {step.time}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
+                {flowSteps.map((step, idx) => (
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    className="bg-gradient-to-b from-white to-[#FFF5F8] rounded-[24px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-white hover:shadow-[0_15px_40px_rgba(255,45,122,0.1)] hover:-translate-y-2 transition-all duration-500 flex flex-col h-full group"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="text-[#FF2D7A] font-black text-2xl opacity-40">{step.num}</span>
+                      <span className="text-[10px] font-bold tracking-widest uppercase text-gray-400">COSKINn</span>
                     </div>
-                    <h3 className="text-3xl font-heading font-bold text-[#1B1B1B] mb-4">{step.title}</h3>
-                    <p className="text-gray-600 text-lg leading-relaxed mb-6 font-medium">
-                      {step.desc}
-                    </p>
-                    
-                    <div className="bg-[#FAF9F7] p-5 rounded-2xl mb-6 border border-gray-100">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Why it matters</h4>
-                      <p className="text-[#1B1B1B] font-medium text-sm leading-relaxed">{step.why}</p>
+                    <div className="w-full aspect-square bg-white rounded-2xl p-3 mb-5 shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform duration-500 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#FF2D7A]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <img src={step.product.image || step.product.img} alt={step.product.name} className="object-contain w-full h-full drop-shadow-md mix-blend-multiply relative z-10" />
                     </div>
+                    <h3 className="font-bold text-[#1B1B1B] text-lg mb-2 leading-tight">{step.name}</h3>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF2D7A] mb-3">
+                      <Clock size={12} /> {step.time}
+                    </div>
+                    <p className="text-gray-500 text-sm font-medium leading-relaxed mt-auto">{step.benefit}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
 
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                      <ul className="space-y-2">
-                        {step.benefits.map((benefit, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm font-bold text-gray-700">
-                            <CheckCircle2 size={16} className="text-[#FF2D7A]" />
-                            {benefit}
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      {step.isProduct && step.product && (
-                        <Link 
-                          to={`/product/${step.product.id}`}
-                          className="shrink-0 px-6 py-3 bg-[#1B1B1B] text-white rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FF2D7A] hover:shadow-[0_5px_15px_rgba(255,45,122,0.3)] transition-all duration-300 flex items-center gap-2"
-                        >
-                          View Product <ArrowRight size={14} />
-                        </Link>
-                      )}
+            {/* Right side: Morning Glow Preview */}
+            <div className="w-full lg:w-[35%] flex">
+              <div className="w-full bg-white/70 backdrop-blur-2xl rounded-[32px] p-8 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-white flex flex-col justify-between hover:shadow-[0_25px_60px_rgba(255,45,122,0.08)] transition-shadow duration-500">
+                <div>
+                  <div className="flex justify-between items-start mb-10">
+                    <h3 className="text-2xl lg:text-3xl font-heading font-bold text-[#1B1B1B]">Morning Glow</h3>
+                    <div className="flex text-[#FF2D7A] drop-shadow-sm">
+                      {'★★★★★'.split('').map((s, i) => <span key={i} className="text-lg">{s}</span>)}
                     </div>
                   </div>
+
+                  <div className="space-y-8">
+                    <div>
+                      <div className="flex justify-between items-end mb-2">
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                          <Activity size={14} className="text-[#FF2D7A]" /> Hydration
+                        </span>
+                        <span className="text-[#FF2D7A] font-black text-lg leading-none">+92%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <motion.div initial={{ width: 0 }} whileInView={{ width: '92%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-gradient-to-r from-[#FF2D7A] to-[#FF8EAA] shadow-[0_0_10px_#FF2D7A]" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-end mb-2">
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                          <CheckCircle2 size={14} className="text-[#FF2D7A]" /> Glow Level
+                        </span>
+                        <span className="text-[#FF2D7A] font-black text-lg leading-none">+85%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <motion.div initial={{ width: 0 }} whileInView={{ width: '85%' }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.4 }} className="h-full bg-gradient-to-r from-[#FF2D7A] to-[#FF8EAA] shadow-[0_0_10px_#FF2D7A]" />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 bg-[#FFF5F8] p-5 rounded-2xl border border-[#FF2D7A]/10 mt-6 group">
+                      <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm text-[#FF2D7A] group-hover:scale-110 group-hover:bg-[#FF2D7A] group-hover:text-white transition-all duration-300">
+                        <Shield size={22} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#1B1B1B] mb-0.5">UV Protection</p>
+                        <p className="text-xs text-[#FF2D7A] font-bold uppercase tracking-wider">SPF 50 PA++++ Active</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </motion.div>
-            ))}
+
+                <div className="mt-10 pt-6 border-t border-gray-100 flex justify-between items-end">
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Routine Time</p>
+                    <p className="text-2xl font-black text-[#1B1B1B] leading-none">5 Minutes</p>
+                  </div>
+                  <button className="w-12 h-12 bg-[#FF2D7A] rounded-full flex items-center justify-center text-white shadow-[0_5px_15px_rgba(255,45,122,0.4)] hover:bg-[#E01B63] hover:scale-110 hover:shadow-[0_10px_25px_rgba(255,45,122,0.5)] transition-all duration-300 cursor-pointer border-none outline-none">
+                    <ArrowRight size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
