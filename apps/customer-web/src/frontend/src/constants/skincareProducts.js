@@ -1825,5 +1825,83 @@ export const skincareProducts = [
     manufacturedBy: "COSKINn Labs",
     countryOfOrigin: "India",
     stock: 50
+  },
+  {
+    id: "s-99",
+    name: "COSKINn Spot Care Gel",
+    category: "Skincare",
+    subcategory: "Treatments",
+    price: 499,
+    originalPrice: 699,
+    discountBadge: "28% OFF",
+    rating: 4.8,
+    reviews: 420,
+    image: niacinamideSerumImg,
+    gallery: getGallery(niacinamideSerumImg),
+    shortDescription: "Targeted overnight spot treatment for acne and blemishes.",
+    longDescription: "Our Spot Care Gel is formulated with Green Tea and Salicylic Acid to reduce inflammation, minimize redness, and clear breakouts fast.",
+    howToUse: [
+      { step: "Step 1", title: "Cleanse", description: "Ensure the skin is clean and dry." },
+      { step: "Step 2", title: "Apply", description: "Dab a small amount directly onto the blemish." }
+    ],
+    benefits: [
+      { title: "Fast Acting", description: "Reduces size and redness overnight." },
+      { title: "Calming", description: "Soothes irritated skin." }
+    ],
+    keyIngredients: ["Green Tea Extract", "Salicylic Acid", "Tea Tree"],
+    detailedIngredients: [
+      { name: "Green Tea", benefit: "Calms inflammation.", skinType: "Acne-prone" }
+    ],
+    customerReviews: [
+      { user: "Sarah L.", date: "2 weeks ago", rating: 5, text: "A lifesaver for breakouts!", helpful: 85 }
+    ],
+    suitableSkinType: "Acne-prone Skin",
+    skinConcerns: "Acne & Blemishes",
+    texture: "Clear Gel",
+    fragrance: "Unscented",
+    netQuantity: "15g",
+    shelfLife: "24 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 100
+  },
+  {
+    id: "s-100",
+    name: "COSKINn Barrier Repair Cream",
+    category: "Skincare",
+    subcategory: "Moisturiser",
+    price: 899,
+    originalPrice: 1199,
+    discountBadge: "25% OFF",
+    rating: 4.9,
+    reviews: 630,
+    image: dailyMoisturiserImg,
+    gallery: getGallery(dailyMoisturiserImg),
+    shortDescription: "Deeply nourishing cream to heal and protect the skin barrier.",
+    longDescription: "Formulated with Ceramides and Blueberry extract, this rich cream repairs compromised skin, locks in moisture, and protects against environmental stressors.",
+    howToUse: [
+      { step: "Step 1", title: "Apply", description: "Take a coin-sized amount." },
+      { step: "Step 2", title: "Massage", description: "Gently massage into face and neck until absorbed." }
+    ],
+    benefits: [
+      { title: "Barrier Repair", description: "Strengthens skin's natural defense." },
+      { title: "Deep Moisture", description: "Provides 48H hydration." }
+    ],
+    keyIngredients: ["Ceramides", "Blueberry Extract", "Panthenol"],
+    detailedIngredients: [
+      { name: "Ceramides", benefit: "Restores skin barrier.", skinType: "All" }
+    ],
+    customerReviews: [
+      { user: "Jessica W.", date: "1 month ago", rating: 5, text: "Cured my dry, irritated skin in days.", helpful: 112 }
+    ],
+    suitableSkinType: "Sensitive, Dry, Acne-prone",
+    skinConcerns: "Barrier Care, Dry Skin, Acne & Blemishes",
+    texture: "Rich Cream",
+    fragrance: "Subtle Blueberry",
+    netQuantity: "50g",
+    shelfLife: "24 Months",
+    manufacturedBy: "COSKINn Labs",
+    countryOfOrigin: "India",
+    stock: 80
   }
 ];

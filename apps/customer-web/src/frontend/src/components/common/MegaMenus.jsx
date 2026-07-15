@@ -4,13 +4,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { skincareNavigation } from '../../constants/skincareNavigation';
 import { cosmeticsNavigation } from '../../constants/cosmeticsNavigation';
 
-const MenuPanel = ({ children }) => (
+const MenuPanel = ({ children, widthClass = "w-[800px]" }) => (
   <motion.div
     initial={{ opacity: 0, y: 15, scale: 0.98 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: 10, scale: 0.98 }}
     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-    className="absolute top-full left-1/2 -translate-x-1/2 mt-6 w-[800px] bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-[0_40px_80px_rgba(0,0,0,0.07)] overflow-hidden z-[100] p-8 cursor-default"
+    className={`absolute top-full left-1/2 -translate-x-1/2 mt-6 ${widthClass} bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-[0_40px_80px_rgba(0,0,0,0.07)] overflow-hidden z-[100] p-8 cursor-default`}
   >
     {children}
   </motion.div>
@@ -82,8 +82,8 @@ export const CategoriesMegaMenu = ({ theme }) => {
   const data = theme === 'skincare' ? skincareNavigation : cosmeticsNavigation;
 
   return (
-    <MenuPanel>
-      <div className="grid grid-cols-4 gap-8">
+    <MenuPanel widthClass="w-[750px]">
+      <div className="grid grid-cols-3 gap-8">
         {data.categories.map((section, idx) => (
           <div key={idx}>
             <MenuSectionTitle>{section.title}</MenuSectionTitle>

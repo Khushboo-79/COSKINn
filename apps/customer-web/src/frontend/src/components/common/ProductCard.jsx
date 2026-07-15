@@ -29,6 +29,17 @@ export default function ProductCard({ product }) {
   const productImg = product.image || product.img;
   const oldPrice = product.originalPrice || product.oldPrice;
 
+  // Split COSKINn from the product name for premium formatting
+  const formatProductName = (name) => {
+    if (!name) return { brand: '', main: '' };
+    if (name.toUpperCase().startsWith('COSKINN ')) {
+      return { brand: 'COSKINn', main: name.substring(8).trim() };
+    }
+    return { brand: '', main: name };
+  };
+
+  const { brand, main } = formatProductName(product.name);
+
   return (
     <motion.div 
       className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full"
@@ -73,8 +84,13 @@ export default function ProductCard({ product }) {
           <span className="text-xs text-gray-500 font-medium">({product.reviews || 0})</span>
         </div>
 
-        <Link to={`/product/${product.id}`}>
-          <h3 className="font-heading font-bold text-[#1B1B1B] text-lg mb-1 group-hover:text-[#FF2D7A] transition-colors line-clamp-1">{product.name}</h3>
+        <Link to={`/product/${product.id}`} className="block">
+          {brand && (
+            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
+              {brand}
+            </div>
+          )}
+          <h3 className="font-heading font-bold text-[#1B1B1B] text-lg mb-1 group-hover:text-[#FF2D7A] transition-colors line-clamp-1">{main}</h3>
         </Link>
         
         <div className="flex items-center gap-2 mt-auto mb-5">

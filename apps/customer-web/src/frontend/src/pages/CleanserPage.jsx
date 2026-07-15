@@ -28,7 +28,7 @@ export default function CleanserPage() {
 
   // Filter products where subcategory === "Cleanser" or category contains "Face Care" and name contains "Cleanser"
   const allCleansers = useMemo(() => {
-    return skincareProducts.filter(p => p.name.includes("Cleanser") && p.id >= 301); 
+    return skincareProducts.filter(p => p.name.includes("Cleanser") && p.id >= 301);
   }, []);
 
   const filteredCleansers = useMemo(() => {
@@ -52,99 +52,104 @@ export default function CleanserPage() {
 
   return (
     <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text">
-      
-      {/* Hero Section — Full Screen Background Image */}
-      <section className="relative w-full min-h-[600px] lg:min-h-[750px] xl:min-h-[85vh] overflow-hidden flex items-end md:items-center pt-[140px] lg:pt-[150px]">
 
-        {/* Full-screen background image */}
-        <motion.img
-          initial={{ scale: 1.08, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.4, ease: 'easeOut' }}
-          src={cleanserHeroImg}
-          alt="COSKINn Gentle Daily Cleanser — lifestyle"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-
-        {/* Gradient overlays for luxury text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FF0069]/80 via-[#FF0069]/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
-
-        {/* Glow Blobs on top of image */}
+      {/* Hero Section — Seamless Luxury Background */}
+      <section className="relative w-full min-h-[90vh] lg:min-h-[100vh] overflow-hidden flex items-center pt-[80px] lg:pt-[100px] bg-[#FFF8F6]">
+        
+        {/* Soft luxury background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDFB] via-[#FDEEEF] to-[#FAD8DE] z-0" />
+        
+        {/* Subtle warm glow behind the model */}
         <motion.div
-          animate={{ scale: [1, 1.25, 1], opacity: [0.2, 0.5, 0.2] }}
+          animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-10%] left-[-5%] w-[45vw] h-[45vw] max-w-xl bg-[#FF0069]/30 rounded-full blur-[100px] pointer-events-none"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.35, 0.1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
-          className="absolute bottom-0 right-[10%] w-[35vw] h-[35vw] max-w-md bg-[#FFD498]/30 rounded-full blur-[80px] pointer-events-none"
+          className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] max-w-2xl bg-[#FFD498] rounded-full blur-[120px] pointer-events-none z-0"
         />
 
-        {/* Floating Particles */}
-        {[...Array(14)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={{
-              opacity: [0, 0.9, 0],
-              y: [0, -(80 + i * 12)],
-              x: [(i % 2 === 0 ? 1 : -1) * (i * 4)]
-            }}
-            transition={{
-              duration: 5 + i * 0.4,
-              repeat: Infinity,
-              delay: i * 0.5,
-              ease: 'easeOut'
-            }}
-            className="absolute rounded-full bg-white/70 pointer-events-none"
-            style={{
-              width: `${3 + (i % 5) * 2}px`,
-              height: `${3 + (i % 5) * 2}px`,
-              bottom: `${5 + (i * 6) % 35}%`,
-              left: `${(i * 7) % 50}%`,
-            }}
-          />
-        ))}
-
-        {/* Content overlaid on full-screen image */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 py-16 lg:py-24">
-          <div className="max-w-xl">
-            {/* Breadcrumbs */}
-            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-white/70 tracking-wide mb-6 lg:mb-8">
-              <Link to="/" className="hover:text-white transition-colors">Home</Link>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-white font-bold truncate">COSKINn Cleansers</span>
-            </div>
-
-            {/* Premium Label Chip */}
+        {/* Floating Bokeh / Particles */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          {[...Array(12)].map((_, i) => (
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6"
+              key={i}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{
+                opacity: [0, 0.6, 0],
+                y: [0, -100 - (i * 20)],
+                x: Math.sin(i) * 30
+              }}
+              transition={{
+                duration: 6 + i * 0.5,
+                repeat: Infinity,
+                delay: i * 0.3,
+                ease: 'easeInOut'
+              }}
+              className="absolute rounded-full bg-white/80 blur-[2px]"
+              style={{
+                width: `${4 + (i % 4) * 3}px`,
+                height: `${4 + (i % 4) * 3}px`,
+                bottom: `${10 + (i * 7) % 40}%`,
+                left: `${(i * 11) % 100}%`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Model Image on the Right with Edge & Top Feather Mask */}
+        <div className="absolute inset-y-0 right-0 z-0 flex justify-end w-full md:w-[60%] lg:w-[48%]">
+          {/* Top fade: keeps the top 90px completely transparent so the Navbar sits entirely on the clean background gradient */}
+          <div 
+            className="w-full h-full relative" 
+            style={{ 
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 90px, black 250px)', 
+              maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 90px, black 250px)' 
+            }}
+          >
+            {/* Left edge feather mask */}
+            <div 
+              className="w-full h-full relative" 
+              style={{ 
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%)', 
+                maskImage: 'linear-gradient(to right, transparent 0%, black 15%)' 
+              }}
             >
-              <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-              Dermatologist Tested
-            </motion.div>
+              <motion.img
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.5, ease: 'easeOut' }}
+                src={cleanserHeroImg}
+                alt="COSKINn Gentle Daily Cleanser"
+                className="w-full h-full object-cover object-[right_top]"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Content overlaid on clean left area */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10">
+          <div className="max-w-xl lg:max-w-xl">
+            {/* Breadcrumbs */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium tracking-wide mb-6 lg:mb-8">
+              <Link to="/" className="text-[#555555] hover:text-[#FF2D7A] transition-colors">Home</Link>
+              <ChevronRight className="w-3 h-3 text-[#555555]" />
+              <span className="text-[#FF2D7A] font-bold truncate">COSKINn Cleansers</span>
+            </div>
 
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.5, ease: 'easeOut' }}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-black text-white leading-[1.05] mb-6 drop-shadow-xl"
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-black leading-[1.05] mb-6"
             >
-              COSKINn<br />
-              <span className="italic font-light">Gentle Daily</span><br />
-              Cleanser
+              <span className="text-[#111111]">COSKINn</span><br />
+              <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-[#FF2D7A] to-[#FF8CB3]">Gentle Daily</span><br />
+              <span className="text-[#111111]">Cleanser</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-base md:text-xl text-white/90 font-medium mb-8 tracking-wide leading-relaxed drop-shadow"
+              className="text-base md:text-xl text-[#4B5563] font-medium mb-8 tracking-wide leading-relaxed"
             >
               Cleanse • Hydrate • Protect Your Skin Barrier
             </motion.p>
@@ -157,7 +162,7 @@ export default function CleanserPage() {
               className="flex flex-wrap gap-3 mb-10"
             >
               {["Sulphate Free", "Paraben Free", "Cruelty Free"].map(badge => (
-                <span key={badge} className="text-xs font-bold text-white border border-white/30 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm">
+                <span key={badge} className="text-xs font-bold text-[#4B5563] border border-[#4B5563]/30 px-3 py-1.5 rounded-full bg-white/50 backdrop-blur-sm">
                   ✓ {badge}
                 </span>
               ))}
@@ -181,13 +186,13 @@ export default function CleanserPage() {
                 Shop Now
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
+                whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.02)' }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   const el = document.getElementById('ingredients-section');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="px-10 py-4 bg-white/10 backdrop-blur-md border-2 border-white text-white font-bold rounded-full text-sm uppercase tracking-widest"
+                className="px-10 py-4 bg-transparent border-2 border-[#4B5563] text-[#4B5563] font-bold rounded-full text-sm uppercase tracking-widest"
               >
                 Know Ingredients
               </motion.button>
@@ -200,25 +205,15 @@ export default function CleanserPage() {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.4, duration: 0.7 }}
-          className="absolute bottom-8 right-6 md:right-10 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-3 z-20"
+          className="absolute bottom-8 right-6 md:right-10 bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl px-5 py-4 flex items-center gap-3 z-20"
         >
-          <div className="w-10 h-10 bg-[#FF0069]/10 rounded-full flex items-center justify-center shrink-0">
-            <span className="text-[#FF0069] font-black">★</span>
+          <div className="w-10 h-10 bg-[#FF2D7A]/10 rounded-full flex items-center justify-center shrink-0">
+            <span className="text-[#FF2D7A] font-black">★</span>
           </div>
           <div>
             <div className="text-black font-black text-sm">4.9 / 5</div>
             <div className="text-gray-500 text-[11px] font-medium">1,450+ Reviews</div>
           </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1.7, duration: 0.7 }}
-          className="absolute top-24 right-6 md:right-10 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl px-5 py-3 z-20"
-        >
-          <div className="text-[#FF0069] font-black text-xs uppercase tracking-widest">✦ New Formula</div>
-          <div className="text-black font-bold text-sm">With Ceramides</div>
         </motion.div>
       </section>
 
@@ -232,11 +227,10 @@ export default function CleanserPage() {
               <button
                 key={type}
                 onClick={() => setActiveSkinType(type)}
-                className={`shrink-0 snap-start px-6 py-4 rounded-2xl border-2 font-bold transition-all ${
-                  activeSkinType === type 
-                    ? 'border-[#FF0069] bg-[#FF0069] text-white shadow-[0_5px_15px_rgba(255,0,105,0.3)]' 
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-[#FF0069] hover:text-[#FF0069]'
-                }`}
+                className={`shrink-0 snap-start px-6 py-4 rounded-2xl border-2 font-bold transition-all ${activeSkinType === type
+                  ? 'border-[#FF0069] bg-[#FF0069] text-white shadow-[0_5px_15px_rgba(255,0,105,0.3)]'
+                  : 'border-gray-200 bg-white text-gray-600 hover:border-[#FF0069] hover:text-[#FF0069]'
+                  }`}
               >
                 {type}
               </button>
@@ -249,7 +243,7 @@ export default function CleanserPage() {
           <div className="flex justify-between items-end mb-6">
             <h2 className="text-2xl font-heading font-bold text-black">Shop by Concern</h2>
             {activeConcern && (
-              <button 
+              <button
                 onClick={() => setActiveConcern(null)}
                 className="text-sm font-medium text-[#FF0069] hover:underline"
               >
@@ -262,11 +256,10 @@ export default function CleanserPage() {
               <button
                 key={concern}
                 onClick={() => setActiveConcern(concern === activeConcern ? null : concern)}
-                className={`px-5 py-2.5 rounded-full border text-sm font-medium transition-all ${
-                  activeConcern === concern
-                    ? 'bg-[#FF0069] border-[#FF0069] text-white shadow-md'
-                    : 'bg-white border-gray-300 text-gray-700 hover:border-[#FF0069] hover:text-[#FF0069]'
-                }`}
+                className={`px-5 py-2.5 rounded-full border text-sm font-medium transition-all ${activeConcern === concern
+                  ? 'bg-[#FF0069] border-[#FF0069] text-white shadow-md'
+                  : 'bg-white border-gray-300 text-gray-700 hover:border-[#FF0069] hover:text-[#FF0069]'
+                  }`}
               >
                 {concern}
               </button>
@@ -307,7 +300,7 @@ export default function CleanserPage() {
                   )}
 
                   {/* Wishlist Button */}
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleWishlist(product);
@@ -317,17 +310,17 @@ export default function CleanserPage() {
                     <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? 'fill-[#FF0069] text-[#FF0069]' : ''}`} />
                   </button>
 
-                  <img 
-                    src={product.image} 
+                  <img
+                    src={product.image}
                     alt={product.name}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  
+
                   {/* Quick Actions Hover */}
                   <div className="absolute inset-x-4 bottom-4 translate-y-16 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-2">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         addToCart(product, 1);
@@ -336,7 +329,7 @@ export default function CleanserPage() {
                     >
                       <ShoppingBag size={16} /> Add
                     </button>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/product/${product.id}`);
@@ -354,7 +347,7 @@ export default function CleanserPage() {
                     <h3 className="font-heading font-bold text-lg text-black group-hover:text-[#FF0069] transition-colors mb-2 line-clamp-2">
                       {product.name}
                     </h3>
-                    
+
                     <div className="flex items-center gap-2 mb-4">
                       <div className="flex items-center text-yellow-400">
                         <Star className="w-4 h-4 fill-current" />
@@ -369,7 +362,7 @@ export default function CleanserPage() {
                       <span className="text-gray-400 text-sm line-through mr-2">₹{product.originalPrice}</span>
                       <span className="text-xl font-bold text-black">₹{product.price}</span>
                     </div>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleBuyNow(product);

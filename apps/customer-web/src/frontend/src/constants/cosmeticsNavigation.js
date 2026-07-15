@@ -38,35 +38,38 @@ export const cosmeticsNavigation = {
   },
   categories: [
     {
-      title: "Face Makeup",
+      title: "Skin Concerns",
       links: [
-        { name: "COSKINn Blush", href: "#" },
-        { name: "COSKINn Blur Lip & Cheek", href: "#" },
+        { name: "Acne & Blemishes", href: "/categories/acne-blemishes" },
+        { name: "Dry Skin", href: "/shop-all-skincare?category=Dry+Skin" },
+        { name: "Oily Skin", href: "/shop-all-skincare?category=Oily+Skin" },
+        { name: "Sensitive Skin", href: "/shop-all-skincare?category=Sensitive+Skin" },
+        { name: "Pigmentation", href: "/shop-all-skincare?category=Pigmentation" },
+        { name: "Dull Skin", href: "/shop-all-skincare?category=Dull+Skin" },
+        { name: "Uneven Skin Tone", href: "/shop-all-skincare?category=Uneven+Skin+Tone" },
+        { name: "Fine Lines & Ageing", href: "/shop-all-skincare?category=Fine+Lines+%26+Ageing" }
       ]
     },
     {
-      title: "Eye Makeup",
+      title: "Skin Goals",
       links: [
-        { name: "COSKINn Mascara", href: "#" },
-        { name: "COSKINn Eyeshadow Palette", href: "#" },
-      ]
-    },
-    {
-      title: "Lip Makeup",
-      links: [
-        { name: "COSKINn Magnetic Lipstick", href: "#" },
-        { name: "COSKINn Lip Liner", href: "#" },
+        { name: "Hydration", href: "/shop-all-skincare?category=Hydration" },
+        { name: "Brightening", href: "/shop-all-skincare?category=Brightening" },
+        { name: "Glow Boost", href: "/shop-all-skincare?category=Glow+Boost" },
+        { name: "Sun Protection", href: "/shop-all-skincare?category=Sun+Protection" },
+        { name: "Repair & Recovery", href: "/shop-all-skincare?category=Repair+%26+Recovery" },
+        { name: "Barrier Care", href: "/shop-all-skincare?category=Barrier+Care" },
+        { name: "Oil Control", href: "/shop-all-skincare?category=Oil+Control" }
       ]
     }
   ],
   categoryHighlight: {
-    title: "Accessories",
+    title: "Discover",
     links: [
-      { name: "COSKINn Makeup Brushes", href: "#" },
-      { name: "COSKINn Brush Holder", href: "#" },
+      { name: "Shop All Products →", href: "/shop-all-skincare" }
     ],
-    highlightTag: "Coming Soon",
-    highlightText: "Holographic Edition"
+    highlightTag: "Personalized",
+    highlightText: "Find the perfect match for your skin type."
   },
   routines: [
     { name: "Everyday Makeup", href: "/routine" },
