@@ -73,4 +73,15 @@ export class ShippingService {
       orderBy: { createdAt: 'desc' }
     });
   }
+
+  async getAllShipments() {
+    return this.prisma.orderShipment.findMany({
+      include: {
+        order: {
+          include: { address: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
 }

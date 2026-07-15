@@ -22,8 +22,8 @@ export class InventoryService {
     return this.prisma.warehouse.create({
       data: {
         name: dto.name,
-        code: dto.code || `WH-${Date.now()}`,
-        address: dto.location || dto.address || 'Unknown',
+        code: dto.name.toUpperCase().replace(/\s+/g, '-').substring(0, 10) + '-' + Math.floor(Math.random() * 1000),
+        address: dto.location || 'Unknown',
         isActive: true
       }
     });
@@ -364,10 +364,9 @@ export class InventoryService {
       items: wh.stocks.reduce((acc, curr) => acc + curr.quantity, 0)
     }));
 
-    // 3. Suppliers / POs
-    const totalSuppliers = await this.prisma.purchaseOrder.groupBy({
-      by: ['vendorId']
-    }).then(res => res.filter(r => r.vendorId !== null).length);
+    const totalSuppliers = await this.prisma.supplier.count({
+      where: { isActive: true }
+    });
 
     // 4. Recent Activity
     const recentActivityRaw = await this.prisma.stockMovement.findMany({
@@ -377,7 +376,7 @@ export class InventoryService {
 
     const recentActivity = recentActivityRaw.map(act => ({
       id: act.id,
-      name: act.sku, // Ideally fetch product name, but SKU works for now
+      name: act.sku,
       desc: `${act.type === 'IN' ? 'Stock In' : act.type === 'OUT' ? 'Stock Out' : 'Transfer'} • ${act.reference || 'Manual'}`,
       qty: act.type === 'IN' ? `+${act.quantity}` : `-${act.quantity}`,
       time: act.createdAt.toISOString(),
@@ -405,7 +404,7 @@ export class InventoryService {
       recentActivity,
       warehouseSummary,
       suppliersData: {
-        totalSuppliers: totalSuppliers || 24, // fallback for mock
+        totalSuppliers: totalSuppliers || 0,
         openPos: pendingPos,
         goodsInTransit: 0
       }
@@ -416,8 +415,83 @@ export class InventoryService {
     return this.prisma.purchaseOrder.findMany({
       include: {
         warehouse: true,
+        vendor: true
       },
       orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async createPurchaseOrder(dto: { warehouseId: string, vendorId?: string, status: string }) {
+    return this.prisma.purchaseOrder.create({
+      data: {
+        warehouseId: dto.warehouseId,
+        vendorId: dto.vendorId,
+        status: dto.status || 'DRAFT'
+      }
+    });
+  }
+
+  async updatePurchaseOrder(id: string, dto: { status: string, items?: { sku: string, quantity: number }[] }) {
+    const po = await this.prisma.purchaseOrder.findUnique({ where: { id } });
+    if (!po) throw new NotFoundException('PO not found');
+
+    // If status changing to RECEIVED, increment stock (Automatic Stock-in)
+    if (po.status !== 'RECEIVED' && dto.status === 'RECEIVED' && dto.items) {
+      await this.prisma.$transaction(async (tx) => {
+        for (const item of (dto.items || [])) {
+          await tx.stockMovement.create({
+            data: {
+              warehouseId: po.warehouseId,
+              sku: item.sku,
+              type: 'IN',
+              quantity: item.quantity,
+              reference: `PO Receipt: ${id}`
+            }
+          });
+
+          await tx.inventoryStock.upsert({
+            where: { warehouseId_sku: { warehouseId: po.warehouseId, sku: item.sku } },
+            create: { warehouseId: po.warehouseId, sku: item.sku, quantity: item.quantity, reservedQty: 0 },
+            update: { quantity: { increment: item.quantity } }
+          });
+        }
+        await tx.purchaseOrder.update({
+          where: { id },
+          data: { status: 'RECEIVED' }
+        });
+      });
+      return { success: true, message: 'PO Received and Stock Updated' };
+    }
+
+    return this.prisma.purchaseOrder.update({
+      where: { id },
+      data: { status: dto.status }
+    });
+  }
+
+  // --- Suppliers ---
+  async getSuppliers() {
+    return this.prisma.supplier.findMany({
+      orderBy: { name: 'asc' }
+    });
+  }
+
+  async createSupplier(dto: { name: string, contactEmail?: string, contactPhone?: string, address?: string }) {
+    return this.prisma.supplier.create({
+      data: {
+        name: dto.name,
+        contactEmail: dto.contactEmail,
+        contactPhone: dto.contactPhone,
+        address: dto.address,
+        isActive: true
+      }
+    });
+  }
+
+  async updateSupplier(id: string, dto: any) {
+    return this.prisma.supplier.update({
+      where: { id },
+      data: dto
     });
   }
 

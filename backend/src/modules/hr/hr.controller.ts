@@ -4,11 +4,16 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
-@Controller('api/admin/hr')
+@Controller('admin/hr')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'SUPER_ADMIN', 'HR')
 export class HrController {
   constructor(private readonly hrService: HrService) {}
+
+  @Get('overview')
+  getOverview() {
+    return this.hrService.getOverview();
+  }
 
   @Get('employees')
   getEmployees() {
@@ -21,8 +26,26 @@ export class HrController {
   }
 
   @Post('employees')
-  createEmployee(@Body() data: { name: string; email: string; role: string; department: string; salary: number }) {
-    return this.hrService.createEmployee(data);
+  createEmployee(@Body() data: { name: string; email: string; role: string; department: string; salary: number; phone?: string; joinDate?: string }) {
+    return this.hrService.createEmployee({
+      ...data,
+      joinDate: data.joinDate ? new Date(data.joinDate) : undefined
+    });
+  }
+
+  @Get('leaves')
+  getLeaveRequests() {
+    return this.hrService.getLeaveRequests();
+  }
+
+  @Post('leaves/:id/status')
+  updateLeaveStatus(@Param('id') id: string, @Body() body: { status: 'Approved' | 'Rejected' }) {
+    return this.hrService.updateLeaveStatus(id, body.status);
+  }
+
+  @Get('payroll')
+  getPayrollSummary() {
+    return this.hrService.getPayrollSummary();
   }
 
   @Post('attendance')
@@ -30,9 +53,9 @@ export class HrController {
     return this.hrService.markAttendance(body.employeeId, body.status);
   }
 
-  @Post('payroll')
-  generatePayrollSlip(@Body() body: { employeeId: string; month: number; year: number }) {
-    return this.hrService.generatePayrollSlip(body.employeeId, body.month, body.year);
+  @Post('seed')
+  seedHrData() {
+    return this.hrService.seedHrData();
   }
 }
 

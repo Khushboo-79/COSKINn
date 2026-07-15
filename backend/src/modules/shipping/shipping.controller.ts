@@ -26,4 +26,11 @@ export class ShippingController {
   getOrderShipments(@Param('orderId') orderId: string) {
     return this.shippingService.getOrderShipments(orderId);
   }
+
+  @Get('all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager')
+  getAllShipments() {
+    return this.shippingService.getAllShipments();
+  }
 }

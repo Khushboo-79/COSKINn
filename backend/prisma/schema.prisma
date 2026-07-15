@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   engineType      = "library"
-  previewFeatures = ["fullTextSearchPostgres"]
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -488,6 +488,21 @@ model Warehouse {
   @@map("warehouses")
 }
 
+model Supplier {
+  id           String   @id @default(uuid())
+  name         String
+  contactEmail String?
+  contactPhone String?
+  address      String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
 model WarehouseBin {
   id          String   @id @default(uuid())
   warehouseId String
@@ -577,6 +592,7 @@ model PurchaseOrder {
   id          String   @id @default(uuid())
   warehouseId String
   vendorId    String?
+  vendor      Supplier?           @relation(fields: [vendorId], references: [id])
   status      String // 'DRAFT', 'ISSUED', 'PARTIAL', 'RECEIVED'
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -1140,19 +1156,43 @@ model RazorpaySettlement {
 
 // --- HR & Payroll ---
 model Employee {
+  id           String   @id @default(uuid())
+  employeeId   String   @unique @default(cuid()) // e.g. EMP-001
+  name         String
+  email        String   @unique
+  phone        String?
+  role         String
+  department   String
+  salary       Float
+  status       String   @default("Active") // 'Active', 'On Leave', 'Terminated'
+  joinDate     DateTime @default(now())
+  leaveBalance Int      @default(15)
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  attendance    Attendance[]
+  payrolls      PayrollSlip[]
+  leaveRequests LeaveRequest[]
+
+  @@map("employees")
+}
+
+model LeaveRequest {
   id         String   @id @default(uuid())
-  name       String
-  email      String   @unique
-  role       String
-  department String
-  salary     Float
+  employeeId String
+  type       String   // 'Sick Leave', 'Vacation', 'Casual Leave', 'Work From Home'
+  fromDate   DateTime
+  toDate     DateTime
+  days       Int
+  status     String   @default("Pending") // 'Pending', 'Approved', 'Rejected'
+  reason     String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  attendance Attendance[]
-  payrolls   PayrollSlip[]
+  employee Employee @relation(fields: [employeeId], references: [id])
 
-  @@map("employees")
+  @@map("leave_requests")
 }
 
 model Attendance {
@@ -1277,4 +1317,16 @@ model Faq {
   updatedAt  DateTime @updatedAt
 
   @@map("faqs")
+}
+
+model OrderSettings {
+  id               String   @id @default(uuid())
+  returnWindowDays Int      @default(7)
+  autoCancelHours  Int      @default(24)
+  codEnabled       Boolean  @default(true)
+  maxCodAmount     Float    @default(5000)
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+
+  @@map("order_settings")
 }

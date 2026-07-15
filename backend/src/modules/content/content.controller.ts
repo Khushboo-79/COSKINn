@@ -4,22 +4,22 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
-@Controller('api')
+@Controller('content')
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
   // --- PUBLIC ENDPOINTS ---
-  @Get('content/articles')
+  @Get('articles')
   getArticles(@Query('type') type?: 'BLOG' | 'TIP') {
     return this.contentService.getArticles(type, true); // only published
   }
 
-  @Get('content/articles/:slug')
+  @Get('articles/:slug')
   getArticleBySlug(@Param('slug') slug: string) {
     return this.contentService.getArticleBySlug(slug);
   }
 
-  @Get('content/faqs')
+  @Get('faqs')
   getFaqs() {
     return this.contentService.getFaqs();
   }
@@ -27,30 +27,44 @@ export class ContentController {
   // --- ADMIN ENDPOINTS ---
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
-  @Post('admin/content/articles')
+  @Post('admin/articles')
   createArticle(@Body() data: any) {
     return this.contentService.createArticle(data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
-  @Put('admin/content/articles/:id')
+  @Put('admin/articles/:id')
   updateArticle(@Param('id') id: string, @Body() data: any) {
     return this.contentService.updateArticle(id, data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
-  @Post('admin/content/faqs')
+  @Delete('admin/articles/:id')
+  deleteArticle(@Param('id') id: string) {
+    return this.contentService.deleteArticle(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Post('admin/faqs')
   createFaq(@Body() data: any) {
     return this.contentService.createFaq(data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
-  @Put('admin/content/faqs/:id')
+  @Put('admin/faqs/:id')
   updateFaq(@Param('id') id: string, @Body() data: any) {
     return this.contentService.updateFaq(id, data);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Delete('admin/faqs/:id')
+  deleteFaq(@Param('id') id: string) {
+    return this.contentService.deleteFaq(id);
   }
 }
 

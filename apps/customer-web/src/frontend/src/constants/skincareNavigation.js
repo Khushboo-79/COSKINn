@@ -23,9 +23,9 @@ export const skincareNavigation = {
     {
       title: "Body & Lips",
       links: [
-        { name: "COSKINn Hand Cream", href: "#" },
-        { name: "COSKINn Lip Balm SPF", href: "#" },
-        { name: "COSKINn Pocket Perfume", href: "#" },
+        { name: "COSKINn Hand Cream", href: "/shop/body-lips/hand-cream" },
+        { name: "COSKINn Lip Balm SPF", href: "/shop/body-lips/lip-balm-spf" },
+        { name: "COSKINn Pocket Perfume", href: "/shop/body-lips/pocket-perfume" },
       ]
     }
   ],
@@ -33,12 +33,12 @@ export const skincareNavigation = {
     title: "Bundles",
     description: "Complete routines at a premium value.",
     links: [
-      { name: "COSKINn Glow Kit", href: "#" },
-      { name: "COSKINn Daily Essentials", href: "#" },
-      { name: "COSKINn Weekend Routine", href: "#" },
+      { name: "COSKINn Glow Kit", href: "/shop/bundles/glow-kit" },
+      { name: "COSKINn Daily Essentials", href: "/shop/collections/daily-essentials" },
+      { name: "COSKINn Weekend Collection", href: "/shop/collections/weekend-collection" },
     ],
     shopAllText: "Shop All Skincare →",
-    shopAllHref: "#"
+    shopAllHref: "/skincare"
   },
   categories: [
     {
@@ -55,21 +55,21 @@ export const skincareNavigation = {
     {
       title: "Body Care",
       links: [
-        { name: "COSKINn Body Sunscreen", href: "#" },
-        { name: "COSKINn Hand Cream", href: "#" },
+        { name: "COSKINn Body Sunscreen", href: "/skincare" },
+        { name: "COSKINn Hand Cream", href: "/shop/body-lips/hand-cream" },
       ]
     },
     {
       title: "Lip Care",
       links: [
-        { name: "COSKINn Lip Balm SPF", href: "#" },
+        { name: "COSKINn Lip Balm SPF", href: "/shop/body-lips/lip-balm-spf" },
       ]
     }
   ],
   categoryHighlight: {
     title: "Fragrance",
     links: [
-      { name: "COSKINn Pocket Perfume", href: "#" }
+      { name: "COSKINn Pocket Perfume", href: "/shop/body-lips/pocket-perfume" }
     ],
     highlightTag: null,
     highlightText: null

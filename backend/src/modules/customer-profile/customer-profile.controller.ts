@@ -98,5 +98,25 @@ export class CustomerProfileController {
   async getCustomer360(@Param('id') id: string) {
     return this.profileService.getCustomer360(id);
   }
-}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('admin/:id/block')
+  @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
+  async blockUser(@Param('id') id: string) {
+    return this.profileService.updateUserStatus(id, false);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('admin/:id/unblock')
+  @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
+  async unblockUser(@Param('id') id: string) {
+    return this.profileService.updateUserStatus(id, true);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('admin/:id/reset-password')
+  @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
+  async sendResetPasswordLink(@Param('id') id: string) {
+    return this.profileService.sendResetPasswordLink(id);
+  }
+}

@@ -107,6 +107,47 @@ export class InventoryController {
     return this.inventoryService.getPurchaseOrders();
   }
 
+  @Post('purchase-orders')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
+  createPurchaseOrder(@Body() dto: { warehouseId: string, vendorId?: string, status: string }) {
+    return this.inventoryService.createPurchaseOrder(dto);
+  }
+
+  @Post('purchase-orders/:id/update')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF')
+  updatePurchaseOrder(
+    @Param('id') id: string,
+    @Body() dto: { status: string, items?: { sku: string, quantity: number }[] }
+  ) {
+    return this.inventoryService.updatePurchaseOrder(id, dto);
+  }
+
+  @Get('suppliers')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
+  getSuppliers() {
+    return this.inventoryService.getSuppliers();
+  }
+
+  @Post('suppliers')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
+  createSupplier(@Body() dto: { name: string, contactEmail?: string, contactPhone?: string, address?: string }) {
+    return this.inventoryService.createSupplier(dto);
+  }
+
+  @Post('suppliers/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
+  updateSupplier(
+    @Param('id') id: string,
+    @Body() dto: any
+  ) {
+    return this.inventoryService.updateSupplier(id, dto);
+  }
+
   @Get('returns')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')

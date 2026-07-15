@@ -5,7 +5,7 @@ import { InventoryModuleRoutes } from './modules/inventory';
 import { OrderModuleRoutes } from './modules/orders';
 import { CrmModuleRoutes } from './modules/crm';
 import { Login } from './modules/auth/Login';
-import AdminPanel from './modules/admin/AdminPanel';
+import { AdminModuleRoutes } from './modules/admin';
 import MarketingPanel from './modules/marketing/MarketingPanel';
 import { 
   Package, Search, LayoutDashboard, 
@@ -119,7 +119,7 @@ const AppContent = () => {
 
         <div className="flex-1 overflow-hidden relative z-10 bg-white/40 backdrop-blur-3xl rounded-3xl border border-white/60 shadow-xl shadow-rose-100/20 p-2">
           <Routes>
-            <Route path="/admin/*" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
+            <Route path="/admin/*" element={<ProtectedRoute><AdminModuleRoutes /></ProtectedRoute>} />
             <Route path="/finance/*" element={<ProtectedRoute><FinancePanel /></ProtectedRoute>} />
             <Route path="/audit/*" element={<ProtectedRoute><AuditModuleRoutes /></ProtectedRoute>} />
             <Route path="/product/*" element={<ProtectedRoute><ProductModuleRoutes /></ProtectedRoute>} />

@@ -1,40 +1,19 @@
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 
+const useAuditLogs = (entity: string) => useQuery({
+  queryKey: ['auditLogs', entity],
+  queryFn: async () => {
+    const { data } = await api.get(`/admin/audit/logs?entity=${entity}`);
+    return data;
+  }
+});
+
 export const TaxReport = () => {
-  // Mock data for Day 9 UI scaffolding
-  const mockReports = [
-    {
-      id: 1,
-      date: '2026-07-03',
-      invoiceNumber: 'INV-2026-07-001',
-      taxableAmount: '₹15,000.00',
-      cgst: '₹1,350.00',
-      sgst: '₹1,350.00',
-      igst: '₹0.00',
-      totalTax: '₹2,700.00',
-    },
-    {
-      id: 2,
-      date: '2026-07-02',
-      invoiceNumber: 'INV-2026-07-002',
-      taxableAmount: '₹4,200.00',
-      cgst: '₹0.00',
-      sgst: '₹0.00',
-      igst: '₹756.00',
-      totalTax: '₹756.00',
-    },
-    {
-      id: 3,
-      date: '2026-07-01',
-      invoiceNumber: 'INV-2026-07-003',
-      taxableAmount: '₹8,500.00',
-      cgst: '₹765.00',
-      sgst: '₹765.00',
-      igst: '₹0.00',
-      totalTax: '₹1,530.00',
-    },
-  ];
+  const { data: logs, isLoading } = useAuditLogs('TaxReport');
+
 
   return (
     <div className="space-y-6">
@@ -115,17 +94,22 @@ export const TaxReport = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-rose-50">
-            {mockReports.map((report) => (
-              <tr key={report.id} className="hover:bg-rose-50/30 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{report.date}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">{report.invoiceNumber}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">{report.taxableAmount}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">{report.cgst}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">{report.sgst}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">{report.igst}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-rose-900">{report.totalTax}</td>
-              </tr>
-            ))}
+            {isLoading ? (
+              <tr><td colSpan={7} className="text-center p-4">Loading...</td></tr>
+            ) : logs?.map((log: any) => {
+              const r = log.newData ? JSON.parse(log.newData) : {};
+              return (
+                <tr key={log.id} className="hover:bg-rose-50/30 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(log.createdAt).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-rose-900">{r.invoiceNumber || log.entityId}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-700">{r.taxableAmount}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">{r.cgst}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">{r.sgst}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">{r.igst}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold text-rose-700">{r.totalTax}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
