@@ -1,22 +1,63 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
+import api from '../../services/api';
+import { setCredentials } from '../../redux/slices/authSlice';
 
-const OtpScreen = ({ navigation }) => {
-  // Creating an array for the 4 OTP input refs
-  const inputs = Array(4).fill(0);
+const OtpScreen = ({ navigation, route }) => {
+  const phone = route.params?.phone || '';
+  const dispatch = useDispatch();
+  
+  // Twilio verify codes are typically 6 digits
+  const OTP_LENGTH = 6;
+  const [otpValues, setOtpValues] = useState(Array(OTP_LENGTH).fill(''));
+  const [loading, setLoading] = useState(false);
   const inputRefs = useRef([]);
 
   const focusNext = (index, value) => {
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = value;
+    setOtpValues(newOtpValues);
+
     if (index < inputRefs.current.length - 1 && value) {
       inputRefs.current[index + 1].focus();
     }
   };
 
   const focusPrevious = (key, index) => {
-    if (key === 'Backspace' && index > 0) {
+    if (key === 'Backspace' && index > 0 && !otpValues[index]) {
       inputRefs.current[index - 1].focus();
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    const otpCode = otpValues.join('');
+    if (otpCode.length < OTP_LENGTH) {
+      Alert.alert('Incomplete OTP', 'Please enter the complete verification code.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await api.post('/auth/verify-otp', { phone, otp: otpCode });
+      const { access_token, refresh_token, user } = response.data;
+      
+      // Save tokens securely
+      await AsyncStorage.setItem('access_token', access_token);
+      if (refresh_token) {
+        await AsyncStorage.setItem('refresh_token', refresh_token);
+      }
+
+      // Dispatch to Redux (this will automatically switch the navigation stack)
+      dispatch(setCredentials({ user, access_token, refresh_token }));
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', error.response?.data?.message || 'Invalid or expired OTP.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,18 +110,20 @@ const OtpScreen = ({ navigation }) => {
             {/* Card Section */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Enter OTP</Text>
-              <Text style={styles.subTitle}>Code sent to <Text style={styles.highlightText}>+91 XXXXX XXXXX</Text></Text>
+              <Text style={styles.subTitle}>Code sent to <Text style={styles.highlightText}>{phone || '+91 XXXXX XXXXX'}</Text></Text>
 
               <View style={styles.otpContainer}>
-                {inputs.map((_, index) => (
+                {Array(OTP_LENGTH).fill(0).map((_, index) => (
                   <View key={index} style={styles.otpInputWrapper}>
                     <TextInput
                       style={styles.otpInput}
                       keyboardType="number-pad"
                       maxLength={1}
                       ref={ref => inputRefs.current[index] = ref}
+                      value={otpValues[index]}
                       onChangeText={value => focusNext(index, value)}
                       onKeyPress={e => focusPrevious(e.nativeEvent.key, index)}
+                      editable={!loading}
                     />
                     <View style={styles.otpUnderline} />
                   </View>
@@ -90,7 +133,8 @@ const OtpScreen = ({ navigation }) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.verifyWrapper}
-                onPress={() => navigation.navigate('Main')}
+                onPress={handleVerifyOtp}
+                disabled={loading}
               >
                 <LinearGradient
                   colors={[AppTheme.colors.primary, AppTheme.colors.secondary]}
@@ -98,7 +142,11 @@ const OtpScreen = ({ navigation }) => {
                   end={{ x: 1, y: 0.5 }}
                   style={styles.verifyGradient}
                 >
-                  <Text style={styles.verifyText}>Verify</Text>
+                  {loading ? (
+                    <ActivityIndicator color="#FFF" />
+                  ) : (
+                    <Text style={styles.verifyText}>Verify</Text>
+                  )}
                 </LinearGradient>
               </TouchableOpacity>
 
@@ -225,8 +273,8 @@ const styles = StyleSheet.create({
     marginBottom: scalev(30),
   },
   otpInputWrapper: {
-    width: scaleh(55),
-    height: scalev(65),
+    width: scaleh(42),
+    height: scalev(55),
     backgroundColor: AppTheme.colors.white,
     borderRadius: scaleh(10),
     borderWidth: 1.5,
@@ -238,7 +286,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     textAlign: 'center',
-    fontSize: scaleh(18),
+    fontSize: scaleh(16),
     color: '#1a1a1a',
     padding: 0, // Remove default padding on Android
   },
