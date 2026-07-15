@@ -19,7 +19,7 @@ export class ContentService {
     return article;
   }
 
-  async createArticle(data: { title: string; slug: string; type: string; contentJson: string; heroImageUrl?: string; published?: boolean }) {
+  async createArticle(data: any) {
     return this.prisma.contentArticle.create({ data });
   }
 
@@ -46,5 +46,31 @@ export class ContentService {
 
   async deleteFaq(id: string) {
     return this.prisma.faq.delete({ where: { id } });
+  }
+
+  async getGlobalSeo() {
+    let seo = await this.prisma.globalSeo.findFirst();
+    if (!seo) {
+      seo = await this.prisma.globalSeo.create({
+        data: {
+          title: 'COSKINn',
+          description: 'Premium Skincare',
+          keywords: 'skincare, beauty'
+        }
+      });
+    }
+    return seo;
+  }
+
+  async updateGlobalSeo(data: any) {
+    const seo = await this.getGlobalSeo();
+    return this.prisma.globalSeo.update({
+      where: { id: seo.id },
+      data: {
+        title: data.title,
+        description: data.description,
+        keywords: data.keywords
+      }
+    });
   }
 }

@@ -1,40 +1,26 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../lib/axios';
 import { ExportButtons } from './components/ExportButtons';
 import { AddRemarkModal } from './components/AddRemarkModal';
 
 export const SessionActivityLog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Mock data for Day 6 UI scaffolding
-  const mockLogs = [
-    {
-      id: 1,
-      timestamp: '2026-07-04 15:45:00',
-      userEmail: 'finance@coskinn.com',
-      eventType: '2FA_SUCCESS',
-      ipAddress: '192.168.1.105',
-      deviceInfo: 'MacBook Pro / Chrome',
-      details: 'Logged into Finance Panel successfully',
-    },
-    {
-      id: 2,
-      timestamp: '2026-07-03 22:15:30',
-      userEmail: 'admin@coskinn.com',
-      eventType: 'OTP_FAILURE',
-      ipAddress: '45.22.19.8',
-      deviceInfo: 'Unknown Device',
-      details: 'Failed OTP attempt (3rd consecutive)',
-    },
-    {
-      id: 3,
-      timestamp: '2026-07-01 08:30:00',
-      userEmail: 'hr@coskinn.com',
-      eventType: 'LOGIN_SUCCESS',
-      ipAddress: '10.0.0.42',
-      deviceInfo: 'Windows 11 / Edge',
-      details: 'Standard login',
-    },
-  ];
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: logs = [], isLoading } = useQuery({
+    queryKey: ['auditSessionActivity'],
+    queryFn: async () => {
+      const res = await api.get('/admin/audit/session-activity');
+      return res.data;
+    }
+  });
+
+  const filteredLogs = logs.filter((log: any) => 
+    log.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    log.ipAddress.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -55,7 +41,13 @@ export const SessionActivityLog = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm border border-rose-100 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm font-medium text-rose-800 mb-1">User Email</label>
-          <input type="text" placeholder="Search email..." className="w-full border-rose-200 rounded-md shadow-sm p-2 bg-rose-50/30 text-rose-900 focus:ring-rose-500 focus:border-rose-500 placeholder-rose-300" />
+          <input 
+            type="text" 
+            placeholder="Search email or IP..." 
+            className="w-full px-4 py-2 border border-rose-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder-rose-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
         
         <div className="flex-1 min-w-[200px]">
@@ -81,10 +73,10 @@ export const SessionActivityLog = () => {
         </div>
         
         <div className="w-auto flex space-x-2">
-          <button className="bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-6 rounded-md shadow-sm transition-colors">
-            Filter
+          <button className="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-6 rounded-md shadow-sm transition-colors">
+            Filter Log
           </button>
-          <ExportButtons />
+          <ExportButtons data={filteredLogs} filename="session_activity_log" />
         </div>
       </div>
 
@@ -101,8 +93,10 @@ export const SessionActivityLog = () => {
               <th className="px-6 py-3 text-left text-xs font-semibold text-rose-800 uppercase tracking-wider">Details</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-rose-50">
-            {mockLogs.map((log) => (
+          <tbody className="divide-y divide-rose-50">
+            {isLoading ? (
+              <tr><td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">Loading...</td></tr>
+            ) : filteredLogs.map((log: any) => (
               <tr key={log.id} className="hover:bg-rose-50/30 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.timestamp}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-rose-900">{log.userEmail}</td>

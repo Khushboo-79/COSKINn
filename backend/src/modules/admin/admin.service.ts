@@ -114,4 +114,80 @@ export class AdminService implements OnModuleInit {
       data
     });
   }
+
+  async getNotifications() {
+    const notifications: any[] = [];
+
+    // 1. Unassigned Support Tickets
+    const unassignedTickets = await this.prisma.supportTicket.count({
+      where: { status: 'OPEN', assignedToId: null }
+    });
+    if (unassignedTickets > 0) {
+      notifications.push({
+        id: 'notif-tickets',
+        type: 'SYSTEM',
+        title: 'Unassigned Tickets',
+        message: `There are ${unassignedTickets} open support tickets waiting to be assigned to an agent.`,
+        time: 'Just now',
+        read: false,
+        iconType: 'AlertCircle',
+        color: 'text-rose-500',
+        bg: 'bg-rose-50'
+      });
+    }
+
+    // 2. Low Stock Alerts
+    const lowStockThreshold = 100;
+    const lowStockItems = await this.prisma.inventoryStock.count({
+      where: { quantity: { gt: 0, lte: lowStockThreshold } }
+    });
+    if (lowStockItems > 0) {
+      notifications.push({
+        id: 'notif-stock',
+        type: 'SYSTEM',
+        title: 'Low Stock Alert',
+        message: `${lowStockItems} products have fallen below the minimum stock threshold of ${lowStockThreshold}.`,
+        time: 'Today',
+        read: false,
+        iconType: 'PackageCheck',
+        color: 'text-amber-500',
+        bg: 'bg-amber-50'
+      });
+    }
+
+    // 3. Pending Orders
+    const pendingOrders = await this.prisma.order.count({
+      where: { status: 'PLACED' }
+    });
+    if (pendingOrders > 0) {
+      notifications.push({
+        id: 'notif-orders',
+        type: 'SYSTEM',
+        title: 'New Orders to Pack',
+        message: `You have ${pendingOrders} new orders waiting to be processed and packed.`,
+        time: 'Today',
+        read: false,
+        iconType: 'Bell',
+        color: 'text-emerald-500',
+        bg: 'bg-emerald-50'
+      });
+    }
+
+    // Default system health notification if all is well
+    if (notifications.length === 0) {
+      notifications.push({
+        id: 'notif-health',
+        type: 'SYSTEM',
+        title: 'System Healthy',
+        message: 'All operations are running smoothly. No pending alerts.',
+        time: 'Today',
+        read: true,
+        iconType: 'CheckCircle2',
+        color: 'text-blue-500',
+        bg: 'bg-blue-50'
+      });
+    }
+
+    return notifications;
+  }
 }

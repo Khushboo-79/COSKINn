@@ -23,8 +23,13 @@ export class AuthController {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
+  @Post('refresh')
+  refreshToken(@Body('refreshToken') refreshToken: string) {
+    return this.authService.refreshToken(refreshToken);
+  }
+
   @Post('logout')
-  logout() {
-    return this.authService.logout();
+  logout(@Body('refreshToken') refreshToken?: string) {
+    return this.authService.logout(refreshToken);
   }
 }

@@ -9,6 +9,7 @@ import { Users, UserPlus, Calendar,  Wallet,
    Download } from 'lucide-react';
 
 import { api } from '../../lib/axios';
+import { AddEmployeeModal } from './components/AddEmployeeModal';
 
 const useHROverview = () => useQuery({
   queryKey: ['hrOverview'],
@@ -47,6 +48,7 @@ export default function HRPanel() {
   const [activeTab, setActiveTab] = useState<'directory' | 'leave' | 'payroll'>('directory');
   const [searchTerm, setSearchTerm] = useState('');
   const [deptFilter, setDeptFilter] = useState('All');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { data: overview, isLoading: overviewLoading } = useHROverview();
   const { data: employees } = useEmployees();
   const { data: leaveRequests } = useLeaveRequests();
@@ -84,7 +86,7 @@ export default function HRPanel() {
         subtitle="Employee directory, leave tracking, and payroll"
         icon={Users}
         actionLabel="Add Employee"
-        onAction={() => alert('Add employee (coming soon)')}
+        onAction={() => setIsAddModalOpen(true)}
         actionIcon={UserPlus}
       />
 
@@ -297,6 +299,11 @@ export default function HRPanel() {
           </div>
         </div>
       )}
+
+      <AddEmployeeModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
     </div>
   );
 }

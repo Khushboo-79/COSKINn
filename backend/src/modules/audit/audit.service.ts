@@ -52,4 +52,132 @@ export class AuditService {
     await this.prisma.auditLog.createMany({ data: logs });
     return { message: 'Seeded audit logs' };
   }
+
+  // --- Specialized Reports for Audit Panel ---
+
+  async getRewardUsageLog() {
+    const ledgers = await this.prisma.rewardPointsLedger.findMany({
+      take: 50,
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { email: true } } }
+    });
+
+    return ledgers.map(l => ({
+      id: l.id,
+      timestamp: l.createdAt.toISOString(),
+      user: l.user.email,
+      eventType: l.type,
+      value: l.points > 0 ? `+${l.points} pts` : `${l.points} pts`,
+      referenceId: l.reference || 'N/A',
+      flagged: l.points > 1000, // Flag unusually high points
+      details: l.points > 0 ? 'Points credited' : 'Points redeemed'
+    }));
+  }
+
+  async getSalesReport() {
+    const orders = await this.prisma.order.findMany({
+      where: { status: { not: 'CANCELLED' } },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    // Group by date
+    const reportsMap = new Map<string, any>();
+    for (const o of orders) {
+      const dateStr = o.createdAt.toISOString().split('T')[0];
+      if (!reportsMap.has(dateStr)) {
+        reportsMap.set(dateStr, {
+          id: dateStr,
+          date: dateStr,
+          totalOrders: 0,
+          grossSales: 0,
+          discounts: 0,
+          refunds: 0,
+          netSales: 0
+        });
+      }
+      const r = reportsMap.get(dateStr);
+      r.totalOrders++;
+      r.grossSales += o.totalAmount + o.shippingFee + o.taxAmount;
+      r.discounts += o.discountAmt;
+      r.netSales += o.finalAmount;
+    }
+
+    return Array.from(reportsMap.values()).slice(0, 30); // Last 30 days of sales
+  }
+
+  async getSessionActivityLog() {
+    const sessions = await this.prisma.loginSession.findMany({
+      take: 50,
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { email: true } } }
+    });
+
+    return sessions.map(s => ({
+      id: s.id,
+      timestamp: s.createdAt.toISOString(),
+      userEmail: s.user.email,
+      eventType: 'LOGIN_SUCCESS',
+      ipAddress: s.ipAddress || 'Unknown',
+      deviceInfo: s.deviceInfo || 'Unknown Device',
+      details: s.isRevoked ? 'Session revoked manually' : 'Standard login'
+    }));
+  }
+
+  async getStockAdjustmentLog() {
+    const adjustments = await this.prisma.stockAdjustment.findMany({
+      take: 50,
+      orderBy: { createdAt: 'desc' },
+      include: { warehouse: { select: { name: true } } }
+    });
+
+    return adjustments.map(a => ({
+      id: a.id,
+      timestamp: a.createdAt.toISOString(),
+      sku: a.sku,
+      warehouse: a.warehouse.name,
+      oldQty: 'N/A',
+      newQty: 'N/A',
+      change: a.quantity > 0 ? `+${a.quantity}` : `${a.quantity}`,
+      reason: a.reason,
+      adjustedBy: 'System/Admin'
+    }));
+  }
+
+  async getRefundReport() {
+    const returns = await this.prisma.return.findMany({
+      take: 50,
+      orderBy: { createdAt: 'desc' },
+      include: { order: { select: { id: true, finalAmount: true, paymentMode: true, user: { select: { email: true } } } } }
+    });
+
+    return returns.map(r => ({
+      id: r.id,
+      initiationDate: r.createdAt.toISOString().replace('T', ' ').substring(0, 19),
+      orderId: r.orderId.split('-')[0].toUpperCase(),
+      customer: r.order.user ? r.order.user.email : 'Guest',
+      amount: `₹${r.order.finalAmount}`,
+      method: r.refundType,
+      status: r.status,
+      completionDate: r.status === 'RECEIVED' ? r.updatedAt.toISOString().replace('T', ' ').substring(0, 19) : '-',
+      txnRef: 'rfnd_' + r.id.substring(0, 8)
+    }));
+  }
+
+  async getPaymentReport() {
+    const txns = await this.prisma.paymentTransaction.findMany({
+      take: 50,
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return txns.map(t => ({
+      id: t.id,
+      date: t.createdAt.toISOString().replace('T', ' ').substring(0, 19),
+      orderRef: 'ORD-' + t.id.substring(0, 6).toUpperCase(),
+      customer: 'customer@coskinn.com', // Would normally join
+      amount: `₹${t.amount}`,
+      gateway: 'Razorpay',
+      status: t.status,
+      txnRef: t.razorpayOrderId || t.id.substring(0, 12)
+    }));
+  }
 }

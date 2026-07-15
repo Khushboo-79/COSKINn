@@ -16,16 +16,16 @@ export type AppRole = typeof AppRole[keyof typeof AppRole];
 
 export const ROLE_PERMISSIONS: Record<AppRole, string[]> = {
   [AppRole.SUPER_ADMIN]: ['*'], // Access to everything
-  [AppRole.PRODUCT_MANAGER]: ['/product', '/admin'],
-  [AppRole.AUDITOR]: ['/audit', '/admin'],
-  [AppRole.FINANCE_MANAGER]: ['/finance', '/admin'],
-  [AppRole.INVENTORY_MANAGER]: ['/inventory', '/admin'],
-  [AppRole.ORDER_MANAGER]: ['/orders', '/admin'],
-  [AppRole.WAREHOUSE_MANAGER]: ['/warehouse', '/admin'],
-  [AppRole.SUPPORT_AGENT]: ['/support', '/admin'],
-  [AppRole.MARKETING_MANAGER]: ['/marketing', '/admin'],
-  [AppRole.CONTENT_MANAGER]: ['/content', '/admin'],
-  [AppRole.HR_MANAGER]: ['/hr', '/admin'],
+  [AppRole.PRODUCT_MANAGER]: ['/product'],
+  [AppRole.AUDITOR]: ['/audit'],
+  [AppRole.FINANCE_MANAGER]: ['/finance'],
+  [AppRole.INVENTORY_MANAGER]: ['/inventory'],
+  [AppRole.ORDER_MANAGER]: ['/orders'],
+  [AppRole.WAREHOUSE_MANAGER]: ['/warehouse'],
+  [AppRole.SUPPORT_AGENT]: ['/support'],
+  [AppRole.MARKETING_MANAGER]: ['/marketing'],
+  [AppRole.CONTENT_MANAGER]: ['/content'],
+  [AppRole.HR_MANAGER]: ['/hr'],
 };
 
 export const hasPermission = (role: AppRole, path: string): boolean => {

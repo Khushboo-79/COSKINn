@@ -50,8 +50,21 @@ export default function InvoicesScreen() {
     invoice.customer.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDownload = (invoiceId: string) => {
-    toast.success(`Downloading ${invoiceId}...`);
+  const handleDownload = async (orderId: string) => {
+    try {
+      toast.loading('Generating invoice...', { id: 'invoice' });
+      const res = await api.get(`/admin/orders/${orderId}/invoice`);
+      if (res.data?.pdfUrl) {
+        const baseUrl = api.defaults.baseURL?.replace(/\/api$/, '') || 'http://localhost:3000';
+        window.open(baseUrl + res.data.pdfUrl, '_blank');
+        toast.success('Invoice generated!', { id: 'invoice' });
+      } else {
+        toast.error('Invoice PDF not available.', { id: 'invoice' });
+      }
+    } catch (e) {
+      console.error('Failed to fetch invoice', e);
+      toast.error('Failed to fetch invoice.', { id: 'invoice' });
+    }
   };
 
   const handleSendEmail = (customer: string) => {
@@ -129,7 +142,7 @@ export default function InvoicesScreen() {
                         <Eye className="w-4 h-4" />
                       </button>
                       <button 
-                        onClick={() => handleDownload(invoice.id)}
+                        onClick={() => handleDownload(invoice.orderId)}
                         className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Download PDF"
                       >
                         <Download className="w-4 h-4" />

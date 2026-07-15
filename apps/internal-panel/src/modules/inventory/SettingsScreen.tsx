@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Settings, Save, ShieldAlert, Mail, Bell, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Save, Bell, AlertTriangle, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SettingsScreen() {

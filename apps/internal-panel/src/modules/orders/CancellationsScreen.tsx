@@ -1,14 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
-import { Search, Ban, CheckCircle, XCircle, Clock, Loader2 } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 
-const statusColors: Record<string, string> = {
-  PENDING_APPROVAL: 'bg-amber-100 text-amber-700',
-  APPROVED: 'bg-emerald-100 text-emerald-700',
-  REJECTED: 'bg-rose-100 text-rose-700',
-  CANCELLED: 'bg-emerald-100 text-emerald-700', // Mapping CANCELLED to our green approved look
-};
 
 const refundColors: Record<string, string> = {
   NOT_INITIATED: 'text-slate-500 bg-slate-100',
@@ -21,15 +15,10 @@ export default function CancellationsScreen() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: cancellations = [], isLoading, error } = useQuery({
-    queryKey: ['cancelledOrders'],
+    queryKey: ['adminCancellations'],
     queryFn: async () => {
-      const res = await api.get('/admin/orders?status=CANCELLED');
-      // Adding mock cancellation reasons/refund status since these aren't returned currently
-      return res.data.map((order: any) => ({
-        ...order,
-        reason: 'Customer requested cancellation',
-        refundStatus: order.paymentMode === 'ONLINE' ? 'PROCESSING' : 'NA'
-      }));
+      const res = await api.get('/admin/orders/config/cancellations');
+      return res.data;
     }
   });
 
@@ -46,8 +35,8 @@ export default function CancellationsScreen() {
   }
 
   const filteredCancellations = cancellations.filter((cancel: any) => 
-    cancel.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (cancel.user?.email && cancel.user.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    cancel.orderId.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    cancel.customer.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -90,17 +79,16 @@ export default function CancellationsScreen() {
               {filteredCancellations.map((cancel: any) => (
                 <tr key={cancel.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-slate-800 text-xs">{cancel.id.split('-')[0]}...</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{cancel.user?.email || 'Guest'}</div>
-                    <div className="text-[10px] text-slate-400 mt-1">{new Date(cancel.createdAt).toLocaleDateString()}</div>
+                    <div className="font-medium text-slate-800 text-xs">{cancel.orderId}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">{cancel.customer}</div>
+                    <div className="text-[10px] text-slate-400 mt-1">{cancel.date}</div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-xs text-slate-600">{cancel.reason}</div>
-                    <div className="text-xs font-medium text-slate-800 mt-1">₹{cancel.finalAmount}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${statusColors[cancel.status] || 'bg-slate-100 text-slate-700'}`}>
-                      {cancel.status.replace(/_/g, ' ')}
+                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700`}>
+                      CANCELLED
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -129,3 +117,4 @@ export default function CancellationsScreen() {
     </div>
   );
 }
+

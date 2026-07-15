@@ -1,12 +1,16 @@
 import { Controller, Post, Body, UseGuards, Request, BadRequestException, Get, Put, Param, Query } from '@nestjs/common';
 import { OrderService } from './order.service';
+import { InvoiceService } from '../invoice/invoice.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 
 @Controller()
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly invoiceService: InvoiceService
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('orders')
@@ -65,21 +69,8 @@ export class OrderController {
   @Roles('admin', 'order-manager', 'SUPER_ADMIN')
   @Get('admin/orders/:id/invoice')
   async getAdminOrderInvoice(@Param('id') id: string) {
-    const order = await this.orderService.getAdminOrderById(id);
-    // Mock HTML for invoice
-    const mockHtml = `
-      <html>
-        <head><title>Invoice ${order.id}</title></head>
-        <body style="font-family: sans-serif; padding: 40px;">
-          <h1>Invoice for Order #${order.id.split('-')[0]}</h1>
-          <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
-          <p><strong>Total Amount:</strong> ₹${order.finalAmount}</p>
-          <hr/>
-          <p><em>Thank you for your business!</em></p>
-        </body>
-      </html>
-    `;
-    return { invoiceNumber: `INV-${order.id.split('-')[0]}`, mockHtml };
+    const invoice = await this.invoiceService.generateGstInvoice(id);
+    return invoice;
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -106,6 +97,13 @@ export class OrderController {
       throw new BadRequestException('Cancellation reason is required');
     }
     return this.orderService.adminCancelOrder(id, req.user.id, reason);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'order-manager', 'SUPER_ADMIN')
+  @Get('admin/orders/config/cancellations')
+  async getCancellations() {
+    return this.orderService.getCancellations();
   }
 
   // --- SETTINGS ENDPOINTS ---
