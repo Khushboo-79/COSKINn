@@ -178,7 +178,7 @@ export default function AwardWinnersPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
         
-        <div className="relative max-w-5xl mx-auto px-6 text-center z-10">
+        <div className="relative max-w-5xl mx-auto px-6 text-center z-10 mt-16 md:mt-0">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-black/10 bg-white/60 backdrop-blur-md text-black text-xs font-bold uppercase tracking-widest mb-8 shadow-sm">
               <Trophy className="w-4 h-4 text-[#FF0069]" />

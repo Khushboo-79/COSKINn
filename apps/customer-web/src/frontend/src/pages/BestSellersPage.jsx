@@ -259,7 +259,7 @@ export default function BestSellersPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
         
-        <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
+        <div className="relative max-w-4xl mx-auto px-6 text-center z-10 mt-16 md:mt-0">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-theme-primary text-white text-xs font-bold uppercase tracking-widest mb-6">
               <Star className="w-3 h-3 fill-current" />

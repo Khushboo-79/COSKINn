@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 /* =========================================
    1. SVG ICONS & SHAPES
@@ -72,12 +73,12 @@ const SocialIcon = ({ children }) => (
   </a>
 );
 
-const FooterLink = ({ children }) => (
-  <a href="#" className="flex items-center text-[15px] lg:text-[16px] font-medium text-[#2B5968]/80 hover:text-[#2B5968] w-fit relative group overflow-hidden transition-colors duration-300">
+const FooterLink = ({ to, children }) => (
+  <Link to={to} className="flex items-center text-[14px] lg:text-[15px] font-medium text-[#2B5968]/80 hover:text-[#FF2D7A] w-fit relative group overflow-hidden transition-colors duration-300">
     <span className="transform transition-transform duration-300 ease-out group-hover:translate-x-2">
       {children}
     </span>
-  </a>
+  </Link>
 );
 
 const FeatureCard = ({ icon, title, desc, delay }) => (
@@ -132,11 +133,12 @@ export default function Footer() {
         {/* =========================================
             TOP FEATURE BAR
             ========================================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-12 lg:mb-16 -mt-8 lg:-mt-12">
-          <FeatureCard icon={<TruckIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Free Shipping" desc="On Orders Above ₹799" delay={0.1} />
-          <FeatureCard icon={<RefreshIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Easy Returns" desc="7 Days Easy Return" delay={0.2} />
-          <FeatureCard icon={<ShieldCheckIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Secure Checkout" desc="100% Safe Payment" delay={0.3} />
-          <FeatureCard icon={<LeafIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Cruelty Free" desc="Dermatologist Tested" delay={0.4} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 mb-12 lg:mb-16 -mt-8 lg:-mt-12">
+          <FeatureCard icon={<LeafIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Fruit-Powered Formula" desc="Natural Ingredients" delay={0.1} />
+          <FeatureCard icon={<ShieldCheckIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Dermatologist Tested" desc="Safe for Skin" delay={0.2} />
+          <FeatureCard icon={<RefreshIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Cruelty Free" desc="No Animal Testing" delay={0.3} />
+          <FeatureCard icon={<ShieldCheckIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Secure Checkout" desc="100% Safe Payment" delay={0.4} />
+          <FeatureCard icon={<TruckIcon className="w-5 h-5 lg:w-6 lg:h-6" />} title="Fast Delivery" desc="Quick Shipping" delay={0.5} />
         </div>
 
         <motion.div
@@ -144,20 +146,28 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.8 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 pt-4 lg:pt-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pt-4 lg:pt-8"
         >
           {/* =========================================
-              SECTION 1: BRAND
+              SECTION 1: BRAND & CONTACT
               ========================================= */}
-          <div className="sm:col-span-2 lg:col-span-3 flex flex-col items-center lg:items-start text-center lg:text-left mb-4 lg:mb-0">
-            <span className="font-heading text-[32px] tracking-[0.2em] text-[#2B5968] mb-5">
+          <div className="sm:col-span-2 lg:col-span-3 flex flex-col items-center lg:items-start text-center lg:text-left mb-6 lg:mb-0">
+            <span className="font-heading text-[32px] tracking-[0.2em] text-[#2B5968] mb-4">
               COSKINn
             </span>
-            <p className="text-[15px] lg:text-[16px] text-[#2B5968]/80 font-medium leading-[1.7] max-w-[280px] mb-8">
+            <p className="text-[14px] lg:text-[15px] text-[#2B5968]/80 font-medium leading-[1.7] max-w-[280px] mb-6">
               Nature meets modern skincare.<br />
               Crafted for healthy glowing skin.
             </p>
-            <div className="flex items-center justify-center lg:justify-start gap-4">
+            
+            <div className="text-[13px] text-[#2B5968]/70 font-medium mb-6 space-y-2 text-center lg:text-left">
+              <p>support@coskinn.com</p>
+              <p>+91 XXXXX XXXXX</p>
+              <p>Mon–Sat | 10:00 AM – 7:00 PM</p>
+              <p>Indore, Madhya Pradesh</p>
+            </div>
+
+            <div className="flex items-center justify-center lg:justify-start gap-3">
               <SocialIcon><InstagramIcon /></SocialIcon>
               <SocialIcon><FacebookIcon /></SocialIcon>
               <SocialIcon><PinterestIcon /></SocialIcon>
@@ -166,48 +176,69 @@ export default function Footer() {
           </div>
 
           {/* =========================================
-              SECTION 2: CUSTOMER CARE
+              SECTION 2: CUSTOMER SUPPORT
               ========================================= */}
-          <div className="lg:col-span-3 flex flex-col gap-5 lg:pl-10">
-            <h4 className="text-[18px] lg:text-[20px] font-heading font-medium text-[#2B5968] mb-1">Customer Care</h4>
+          <div className="lg:col-span-2 flex flex-col gap-4 lg:pl-4">
+            <h4 className="text-[17px] lg:text-[18px] font-heading font-semibold text-[#2B5968] mb-2">Customer Support</h4>
             <div className="flex flex-col gap-3">
-              <FooterLink>Help Center</FooterLink>
-              <FooterLink>Track My Order</FooterLink>
-              <FooterLink>Shipping & Delivery</FooterLink>
-              <FooterLink>Returns & Refunds</FooterLink>
-              <FooterLink>Contact Support</FooterLink>
-              <FooterLink>FAQs</FooterLink>
+              <FooterLink to="/contact">Contact Us</FooterLink>
+              <FooterLink to="/help-center">Help Center</FooterLink>
+              <FooterLink to="/faqs">FAQs</FooterLink>
+              <FooterLink to="/track-order">Track Order</FooterLink>
+              <FooterLink to="/shipping-policy">Shipping & Delivery</FooterLink>
+              <FooterLink to="/returns-refunds">Returns & Refunds</FooterLink>
             </div>
           </div>
 
           {/* =========================================
-              SECTION 3: MY ACCOUNT
+              SECTION 3: ABOUT COSKINn
               ========================================= */}
-          <div className="lg:col-span-3 flex flex-col gap-5 lg:pl-10">
-            <h4 className="text-[18px] lg:text-[20px] font-heading font-medium text-[#2B5968] mb-1">My Account</h4>
+          <div className="lg:col-span-2 flex flex-col gap-4 lg:pl-4">
+            <h4 className="text-[17px] lg:text-[18px] font-heading font-semibold text-[#2B5968] mb-2">About COSKINn</h4>
             <div className="flex flex-col gap-3">
-              <FooterLink>My Profile</FooterLink>
-              <FooterLink>My Orders</FooterLink>
-              <FooterLink>Wishlist</FooterLink>
-              <FooterLink>Saved Addresses</FooterLink>
-              <FooterLink>Notifications</FooterLink>
-              <FooterLink>Account Settings</FooterLink>
+              <FooterLink to="/about">Our Story</FooterLink>
+              <FooterLink to="/our-promise">Our Promise</FooterLink>
+              <FooterLink to="/sustainability">Sustainability</FooterLink>
+              <FooterLink to="/ingredient-philosophy">Ingredient Philosophy</FooterLink>
+              <FooterLink to="/careers">Careers</FooterLink>
             </div>
           </div>
 
           {/* =========================================
-              SECTION 4: POLICIES & TRUST
+              SECTION 4: POLICIES
               ========================================= */}
-          <div className="lg:col-span-3 flex flex-col gap-5 lg:pl-10">
-            <h4 className="text-[18px] lg:text-[20px] font-heading font-medium text-[#2B5968] mb-1">Policies & Trust</h4>
+          <div className="lg:col-span-2 flex flex-col gap-4 lg:pl-4">
+            <h4 className="text-[17px] lg:text-[18px] font-heading font-semibold text-[#2B5968] mb-2">Policies</h4>
             <div className="flex flex-col gap-3">
-              <FooterLink>Privacy Policy</FooterLink>
-              <FooterLink>Terms & Conditions</FooterLink>
-              <FooterLink>Refund Policy</FooterLink>
-              <FooterLink>Cookie Policy</FooterLink>
-              <FooterLink>Accessibility</FooterLink>
-              <FooterLink>Security</FooterLink>
+              <FooterLink to="/privacy-policy">Privacy Policy</FooterLink>
+              <FooterLink to="/terms-conditions">Terms & Conditions</FooterLink>
+              <FooterLink to="/cookie-policy">Cookie Policy</FooterLink>
+              <FooterLink to="/accessibility">Accessibility</FooterLink>
+              <FooterLink to="/payment-policy">Payment Policy</FooterLink>
             </div>
+          </div>
+
+          {/* =========================================
+              SECTION 5: NEWSLETTER
+              ========================================= */}
+          <div className="sm:col-span-2 lg:col-span-3 flex flex-col lg:pl-4 mt-6 lg:mt-0 items-center lg:items-start text-center lg:text-left">
+            <h4 className="text-[18px] lg:text-[20px] font-heading font-bold text-[#FF2D7A] mb-3">Join the COSKINn Glow Club ✨</h4>
+            <p className="text-[14px] text-[#2B5968]/70 font-medium leading-relaxed mb-5 max-w-[300px]">
+              Get skincare tips, exclusive launches, seasonal routines and member-only offers.
+            </p>
+            <form className="flex flex-col gap-3 w-full max-w-[300px]">
+              <input 
+                type="email" 
+                placeholder="Your email address" 
+                className="w-full bg-white border border-[#CABAB1]/50 rounded-full px-5 py-3 text-[14px] text-[#2B5968] placeholder:text-[#2B5968]/40 focus:outline-none focus:border-[#FF2D7A] focus:ring-1 focus:ring-[#FF2D7A] transition-all"
+              />
+              <button 
+                type="submit" 
+                className="w-full bg-[#FF2D7A] text-white rounded-full px-5 py-3 text-[13px] font-bold uppercase tracking-widest hover:bg-[#E01E63] hover:shadow-lg transition-all"
+              >
+                Subscribe
+              </button>
+            </form>
           </div>
 
         </motion.div>
@@ -227,13 +258,14 @@ export default function Footer() {
           </div>
           <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8">
             <div className="flex items-center gap-2 text-[13px] font-bold text-[#2B5968]/80 uppercase tracking-wider">
-              <span className="text-[16px]">🇮🇳</span> Made in India
+              Made with ❤️ in India
             </div>
-            <div className="flex items-center gap-2 text-[13px] font-bold text-[#2B5968]/80 uppercase tracking-wider">
-              <ShieldCheckIcon className="w-4 h-4 text-[#97B5C2]" /> Secure Payments
-            </div>
-            <div className="flex items-center gap-2 text-[13px] font-bold text-[#2B5968]/80 uppercase tracking-wider">
-              <LeafIcon className="w-4 h-4 text-[#97B5C2]" /> Cruelty Free
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] lg:text-[12px] font-bold text-[#2B5968]/60 uppercase tracking-widest mr-2">We Accept:</span>
+              <span className="font-bold text-[#2B5968] text-[13px]">Visa</span>
+              <span className="font-bold text-[#2B5968] text-[13px]">Mastercard</span>
+              <span className="font-bold text-[#2B5968] text-[13px]">UPI</span>
+              <span className="font-bold text-[#2B5968] text-[13px]">Razorpay</span>
             </div>
           </div>
         </motion.div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, animate } from 'framer-motion';
 import { ChevronDown, ChevronUp, Droplet, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../../components/common/ProductCard';
@@ -9,13 +9,18 @@ import heroImg from '../../assets/images/hydration_hero.webp';
 
 export default function HydrationRoutinePage() {
   const [openFaq, setOpenFaq] = useState(0);
-  const [meterLevel, setMeterLevel] = useState(20);
+  const [meterLevel, setMeterLevel] = useState(35);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMeterLevel(95);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const controls = animate(35, 95, {
+      duration: 2.5,
+      delay: 0.5,
+      ease: "easeOut",
+      onUpdate(value) {
+        setMeterLevel(Math.round(value));
+      }
+    });
+    return () => controls.stop();
   }, []);
 
   const products = [
@@ -113,39 +118,121 @@ export default function HydrationRoutinePage() {
               </ul>
             </div>
             
-            {/* 3. WATER BALANCE METER */}
+            {/* 3. PREMIUM SKIN MOISTURE ANALYTICS CARD (REDESIGN) */}
             <div className="w-full lg:w-1/2">
-              <div className="bg-[#FFFDFD] rounded-[3rem] p-12 border border-[#FF2D7A]/10 shadow-sm hover:shadow-xl transition-shadow duration-500 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-2 bg-[#FF2D7A]/10"></div>
-                <h3 className="text-2xl font-heading font-bold text-[#1B1B1B] mb-12">Skin Moisture Balance</h3>
+              <div className="bg-white rounded-[2.5rem] p-8 lg:p-10 border border-[#FF2D7A]/10 shadow-[0_20px_50px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(255,45,122,0.08)] transition-all duration-500 relative overflow-hidden group">
                 
-                <div className="relative h-72 w-full flex items-end bg-white rounded-3xl p-6 border border-gray-100 shadow-inner">
-                  <div className="absolute inset-0 flex flex-col justify-between p-6 opacity-20 pointer-events-none">
-                    <div className="w-full h-px bg-gray-400"></div>
-                    <div className="w-full h-px bg-gray-400"></div>
-                    <div className="w-full h-px bg-gray-400"></div>
-                    <div className="w-full h-px bg-gray-400"></div>
-                  </div>
+                {/* Soft ambient glow */}
+                <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-[#FF2D7A]/10 to-transparent rounded-full blur-[60px] pointer-events-none transition-all duration-700 group-hover:scale-150"></div>
+                
+                <h3 className="text-2xl font-heading font-black text-[#1B1B1B] mb-10 flex items-center gap-3">
+                  Skin Moisture Balance
+                </h3>
+                
+                {/* Visualizer Area: Clean Horizontal Flow */}
+                <div className="flex flex-col sm:flex-row items-stretch justify-between gap-4 sm:gap-2 mb-10 relative z-10">
                   
-                  <div className="w-full flex justify-between items-end h-full gap-4 relative z-10">
-                    <div className="w-1/3 flex flex-col items-center gap-4">
-                      <div className="w-full bg-[#1B1B1B]/10 rounded-t-xl h-[30%] transition-all duration-1000"></div>
-                      <span className="text-xs font-bold uppercase tracking-widest text-gray-400 text-center">Before<br/>Routine</span>
+                  {/* Before State */}
+                  <div className="w-full sm:w-[42%] flex flex-col items-center sm:items-start text-center sm:text-left bg-gray-50/80 rounded-3xl p-6 border border-gray-100/80">
+                    <div className="text-4xl font-black text-gray-400 mb-1">35%</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-5">Before Routine</div>
+                    
+                    <div className="flex items-center gap-1.5 mb-5">
+                      <Droplet size={14} className="text-gray-400 fill-gray-400" />
+                      <Droplet size={14} className="text-gray-400 fill-gray-400" />
+                      <Droplet size={14} className="text-gray-300 fill-transparent" />
+                      <Droplet size={14} className="text-gray-300 fill-transparent" />
+                      <Droplet size={14} className="text-gray-300 fill-transparent" />
                     </div>
-                    <div className="w-1/3 flex flex-col items-center gap-4">
-                      <div 
-                        className="w-full bg-gradient-to-t from-[#FF2D7A] to-[#FF8EAA] rounded-t-xl transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(255,45,122,0.4)]"
-                        style={{ height: `${meterLevel}%` }}
-                      ></div>
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#FF2D7A] text-center">After<br/>Routine</span>
-                    </div>
+                    
+                    <ul className="text-xs font-semibold text-gray-500 space-y-2 mt-auto">
+                      <li className="flex items-center justify-center sm:justify-start gap-2">
+                        <div className="w-1 h-1 rounded-full bg-gray-400"></div> Dry Skin
+                      </li>
+                      <li className="flex items-center justify-center sm:justify-start gap-2">
+                        <div className="w-1 h-1 rounded-full bg-gray-400"></div> Weak Barrier
+                      </li>
+                      <li className="flex items-center justify-center sm:justify-start gap-2">
+                        <div className="w-1 h-1 rounded-full bg-gray-400"></div> Rough Texture
+                      </li>
+                    </ul>
                   </div>
+
+                  {/* Animated Connecting Arrow */}
+                  <div className="hidden sm:flex flex-col items-center justify-center px-1">
+                    <motion.div 
+                      animate={{ x: [0, 5, 0] }} 
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <ArrowRight className="text-[#FF2D7A]/30 w-6 h-6" />
+                    </motion.div>
+                  </div>
+
+                  {/* After State */}
+                  <div className="w-full sm:w-[50%] flex flex-col items-center sm:items-start text-center sm:text-left bg-gradient-to-br from-[#FFF5F8] to-white rounded-3xl p-6 border border-[#FF2D7A]/15 shadow-[0_10px_30px_rgba(255,45,122,0.06)] relative overflow-hidden">
+                    
+                    {/* Inner glow for After State */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF2D7A]/5 rounded-full blur-[30px] pointer-events-none"></div>
+
+                    <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FF2D7A] to-[#FF8EAA] mb-1 drop-shadow-sm">
+                      {meterLevel}%
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-[#FF2D7A] mb-5">After Routine</div>
+                    
+                    <div className="flex items-center gap-1.5 mb-5 relative z-10">
+                      <Droplet size={14} className="text-[#FF2D7A] fill-[#FF2D7A]" />
+                      <Droplet size={14} className="text-[#FF2D7A] fill-[#FF2D7A]" />
+                      <Droplet size={14} className="text-[#FF2D7A] fill-[#FF2D7A]" />
+                      <Droplet size={14} className="text-[#FF2D7A] fill-[#FF2D7A]" />
+                      <Droplet size={14} className="text-[#FF2D7A] fill-[#FF2D7A]" />
+                    </div>
+                    
+                    <ul className="text-xs font-bold text-[#FF2D7A] space-y-2 mt-auto relative z-10">
+                      <li className="flex items-center justify-center sm:justify-start gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#FF2D7A]"></div> Hydrated
+                      </li>
+                      <li className="flex items-center justify-center sm:justify-start gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#FF2D7A]"></div> Smooth
+                      </li>
+                      <li className="flex items-center justify-center sm:justify-start gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#FF2D7A]"></div> Plump Glow
+                      </li>
+                    </ul>
+                  </div>
+
                 </div>
 
-                <div className="mt-8 text-center">
-                  <p className="text-4xl font-black text-[#1B1B1B] mb-2">{meterLevel}% <span className="text-xl font-medium text-gray-500">Increase</span></p>
-                  <p className="text-gray-500 font-medium">in epidermal hydration retention</p>
+                {/* Animated Horizontal Progress Bar */}
+                <div className="w-full h-1.5 bg-gray-100 rounded-full mb-10 overflow-hidden relative z-10">
+                  <motion.div 
+                    initial={{ width: "35%" }}
+                    whileInView={{ width: "95%" }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 2.5, delay: 0.5, ease: "easeOut" }}
+                    className="h-full bg-gradient-to-r from-gray-300 via-[#FF8EAA] to-[#FF2D7A] rounded-full relative"
+                  >
+                    <div className="absolute top-0 right-0 w-10 h-full bg-white/50 blur-[2px]"></div>
+                  </motion.div>
                 </div>
+
+                {/* Bottom Statistic */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 1, duration: 0.5 }}
+                  className="bg-white rounded-2xl p-5 border border-gray-100 flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-3xl font-black text-[#1B1B1B] leading-none">{meterLevel}%</p>
+                    <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">Skin Moisture</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg sm:text-xl font-black text-[#FF2D7A] flex items-center justify-end gap-1 mb-1.5 leading-none">
+                      ↑ +60%
+                    </p>
+                    <p className="text-[9px] sm:text-[10px] font-bold text-[#FF2D7A] uppercase tracking-widest bg-[#FFF5F8] px-3 py-1.5 rounded-full">
+                      Clinically Hydrated
+                    </p>
+                  </div>
+                </motion.div>
               </div>
             </div>
           </div>
