@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Leaf, Droplets, FlaskConical, Play, Rabbit } from 'lucide-react';
+import { ArrowRight, Leaf, Droplets, FlaskConical, Rabbit } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 const themesData = [
   {
@@ -68,6 +69,7 @@ const itemVariants = {
 export default function Hero() {
   const { theme } = useTheme();
   const [bgIndex, setBgIndex] = useState(0);
+  const navigate = useNavigate();
 
   // Mouse Parallax Logic
   const mouseX = useMotionValue(0);
@@ -250,17 +252,10 @@ export default function Hero() {
               </AnimatePresence>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-8 mb-16">
-              <button className="group flex items-center justify-center gap-2 btn-primary-skincare px-8 py-4 text-[14px] font-body font-semibold tracking-wide">
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center mb-16">
+              <button onClick={() => navigate('/shop-all-skincare')} className="group flex items-center justify-center gap-2 btn-primary-skincare px-8 py-4 text-[14px] font-body font-semibold tracking-wide">
                 Shop Now
                 <ArrowRight size={18} strokeWidth={2} className="group-hover:translate-x-1 transition-transform ml-1" />
-              </button>
-
-              <button className="group flex items-center gap-4 hover:opacity-80 transition-opacity">
-                <div className="w-12 h-12 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform btn-secondary-skincare rounded-[16px]">
-                  <Play size={16} className="text-[#1F1F1F] ml-1" fill="currentColor" />
-                </div>
-                <span className="text-[13px] font-body font-bold text-[#1F1F1F]">See How It Works</span>
               </button>
             </motion.div>
 

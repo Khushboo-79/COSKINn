@@ -3,7 +3,7 @@ import Hero from '../components/skincare/Hero';
 import FeaturedCategories from '../components/skincare/FeaturedCategories';
 import WhyChooseUs from '../components/skincare/WhyChooseUs';
 import AboutBrand from '../components/skincare/AboutBrand';
-import BeforeAfter from '../components/skincare/BeforeAfter';
+import TransformationShowcase from '../components/skincare/TransformationShowcase';
 import BuildYourRoutine from '../components/skincare/BuildYourRoutine';
 import Footer from '../components/common/Footer';
 
@@ -14,7 +14,7 @@ export default function SkincarePage() {
       <FeaturedCategories />
       <WhyChooseUs />
       <AboutBrand />
-      <BeforeAfter />
+      <TransformationShowcase />
       <BuildYourRoutine />
       <Footer />
     </div>
