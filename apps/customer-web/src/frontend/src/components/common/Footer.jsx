@@ -122,7 +122,7 @@ export default function Footer() {
       >
         {/* Soft radial pink glow in the center */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] max-w-[800px] bg-[#FFDCEB]/50 blur-[100px] rounded-full pointer-events-none"></div>
-        
+
         {/* Very light blush highlights in the corners */}
         <div className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-[#FFE8F1]/60 blur-[100px] rounded-full pointer-events-none"></div>
         <div className="absolute -bottom-20 -right-20 w-[500px] h-[500px] bg-[#FFF3F7]/80 blur-[120px] rounded-full pointer-events-none"></div>
@@ -159,10 +159,10 @@ export default function Footer() {
               Nature meets modern skincare.<br />
               Crafted for healthy glowing skin.
             </p>
-            
+
             <div className="text-[13px] text-[#2B5968]/70 font-medium mb-6 space-y-2 text-center lg:text-left">
               <p>support@coskinn.com</p>
-              <p>+91 XXXXX XXXXX</p>
+              <p>+91 9876543210</p>
               <p>Mon–Sat | 10:00 AM – 7:00 PM</p>
               <p>Indore, Madhya Pradesh</p>
             </div>
@@ -227,13 +227,13 @@ export default function Footer() {
               Get skincare tips, exclusive launches, seasonal routines and member-only offers.
             </p>
             <form className="flex flex-col gap-3 w-full max-w-[300px]">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
+              <input
+                type="email"
+                placeholder="Your email address"
                 className="w-full bg-white border border-[#CABAB1]/50 rounded-full px-5 py-3 text-[14px] text-[#2B5968] placeholder:text-[#2B5968]/40 focus:outline-none focus:border-[#FF2D7A] focus:ring-1 focus:ring-[#FF2D7A] transition-all"
               />
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="w-full bg-[#FF2D7A] text-white rounded-full px-5 py-3 text-[13px] font-bold uppercase tracking-widest hover:bg-[#E01E63] hover:shadow-lg transition-all"
               >
                 Subscribe
@@ -251,10 +251,16 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-14 lg:mt-16 pt-6 border-t border-[#CABAB1]/40 flex flex-col md:flex-row items-center justify-between gap-6"
+          className="mt-14 lg:mt-16 pt-6 border-t border-[#CABAB1]/40 flex flex-col xl:flex-row items-center justify-between gap-6"
         >
-          <div className="text-[14px] lg:text-[15px] text-[#2B5968]/70 font-medium">
-            © 2026 COSKINn. All Rights Reserved.
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-[14px] lg:text-[15px] text-[#2B5968]/70 font-medium">
+            <span>© 2026 COSKINn. All Rights Reserved.</span>
+            <div className="flex flex-wrap justify-center items-center gap-4 text-[13px]">
+              <Link to="/privacy-policy" className="hover:text-[#FF2D7A] transition-colors">Privacy Policy</Link>
+              <Link to="/terms-conditions" className="hover:text-[#FF2D7A] transition-colors">Terms & Conditions</Link>
+              <Link to="/cookie-policy" className="hover:text-[#FF2D7A] transition-colors">Cookie Policy</Link>
+              <Link to="/accessibility" className="hover:text-[#FF2D7A] transition-colors">Accessibility</Link>
+            </div>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8">
             <div className="flex items-center gap-2 text-[13px] font-bold text-[#2B5968]/80 uppercase tracking-wider">

@@ -4,6 +4,9 @@ import { Heart, Sparkles, ShieldCheck } from 'lucide-react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
 
+// Use a local premium skincare image instead of the broken external Unsplash link
+import heroImg from '../../assets/images/lifestyle_selfcare.webp';
+
 const PROMISES = [
   {
     icon: <Heart size={32} />,
@@ -60,11 +63,11 @@ export default function OurPromisePage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="flex-1 w-full"
             >
-              <div className="w-full h-[400px] lg:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl relative">
+              <div className="w-full h-[400px] lg:h-[500px] rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(255,45,122,0.1)] border border-[#FF2D7A]/5 relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1615397323136-1e0e84c9823f?w=800&q=80" 
+                  src={heroImg} 
                   alt="Luxurious Skincare Texture" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             </motion.div>
