@@ -173,7 +173,7 @@ export default function ShopAllSkincarePage() {
           />
         </div>
 
-        <div className="relative z-20 max-w-7xl mx-auto px-6 w-full">
+        <div className="relative z-20 max-w-7xl mx-auto px-6 w-full mt-16 md:mt-0">
           <div className="max-w-xl">
             <motion.div 
               initial={{ opacity: 0, y: 10 }}

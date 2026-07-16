@@ -457,10 +457,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className={`w-full max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between relative transition-all duration-300 ${isScrolled ? 'py-3' : 'pb-4 mt-2'}`}>
+      <div className={`w-full max-w-[1400px] mx-auto px-4 lg:px-12 flex items-center justify-between relative transition-all duration-300 ${isScrolled ? 'py-3' : 'pb-4 mt-2'}`}>
 
         {/* Logo */}
-        <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative z-[130]">
+        <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative">
           <CoskinnLogo isScrolled={isScrolled} />
         </Link>
 
@@ -493,7 +493,7 @@ export default function Navbar() {
         <div className="flex-1 lg:hidden"></div>
 
         {/* Icons */}
-        <div className="flex items-center justify-end gap-3 sm:gap-5 lg:gap-6 text-black/80 relative flex-shrink-0 z-[130]">
+        <div className="flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 text-black/80 relative flex-shrink-0">
           {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}

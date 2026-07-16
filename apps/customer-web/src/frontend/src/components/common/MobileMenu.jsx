@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronDown, X, Search, Heart, ShoppingBag, User } from 'lucide-react';
 import { skincareNavigation } from '../../constants/skincareNavigation';
 import { cosmeticsNavigation } from '../../constants/cosmeticsNavigation';
+import { useCart } from '../../context/CartContext';
 
 const MobileAccordion = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,7 @@ const MobileAccordion = ({ title, children }) => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
             <div className="pb-4 flex flex-col gap-3 px-4">
@@ -37,6 +39,8 @@ const MobileAccordion = ({ title, children }) => {
 
 export default function MobileMenu({ isOpen, onClose, theme }) {
   const menuRef = React.useRef(null);
+  const navigate = useNavigate();
+  const { setIsCartOpen } = useCart();
   
   const data = theme === 'skincare' ? skincareNavigation : cosmeticsNavigation;
 
@@ -68,7 +72,6 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
     };
 
     document.addEventListener('keydown', handleTabKey);
-    // Focus first element on open
     setTimeout(() => firstElement.focus(), 100);
 
     return () => {
@@ -85,91 +88,112 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110]"
+            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[110]"
           />
           
-          {/* Drawer - Sliding from Right */}
+          {/* Drawer - Sliding from Right with Tween easing, NO BOUNCE */}
           <motion.div 
             ref={menuRef}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 w-[85vw] max-w-[400px] h-full bg-white/95 backdrop-blur-2xl z-[120] shadow-2xl overflow-y-auto"
+            transition={{ type: 'tween', duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed top-0 right-0 w-[85vw] max-w-[400px] h-full bg-[#FFFDFD] z-[120] rounded-l-3xl shadow-[-10px_0_40px_rgba(0,0,0,0.08)] flex flex-col"
             role="dialog"
             aria-modal="true"
           >
-            <div className="p-6 pt-24 flex flex-col h-full">
-              {/* Header removed because the animated X is positioned globally in the Navbar on the top right */}
-              
-              <div className="flex flex-col gap-2 flex-1">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-black/5 shrink-0">
+              <span className="font-heading tracking-[0.2em] text-[#FF0069] font-bold text-xl uppercase">COSKINn</span>
+              <button onClick={onClose} className="p-2 -mr-2 text-black/60 hover:text-[#FF0069] transition-colors focus:outline-none">
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Scrollable Navigation Content */}
+            <div className="flex-1 overflow-y-auto px-6 py-2">
+              <div className="flex flex-col gap-1">
                 <Link to={`/${theme}`} onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">Home</Link>
                 
                 <MobileAccordion title="Shop">
                   {data.shop.map((section, idx) => (
                     <React.Fragment key={`shop-${idx}`}>
-                      <div className={`text-xs font-bold text-theme-primary uppercase tracking-widest ${idx > 0 ? 'mt-4' : 'mt-2'} mb-1`}>{section.title}</div>
+                      <div className={`text-xs font-bold text-[#FF0069] uppercase tracking-widest ${idx > 0 ? 'mt-4' : 'mt-2'} mb-1`}>{section.title}</div>
                       {section.links.map((link, lIdx) => (
                         <Link key={`shop-link-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
                       ))}
                     </React.Fragment>
                   ))}
-                  
-                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">{data.bundles.title}</div>
+                  <div className="text-xs font-bold text-[#FF0069] uppercase tracking-widest mt-4 mb-1">{data.bundles.title}</div>
                   {data.bundles.links.map((link, lIdx) => (
                     <Link key={`bundle-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
                   ))}
-                  <Link to={data.bundles.shopAllHref} onClick={onClose} className="text-theme-primary font-bold py-1 mt-2">{data.bundles.shopAllText}</Link>
+                  <Link to={data.bundles.shopAllHref} onClick={onClose} className="text-[#FF0069] font-bold py-1 mt-2">{data.bundles.shopAllText}</Link>
                 </MobileAccordion>
 
                 <MobileAccordion title="Categories">
                   {data.categories.map((section, idx) => (
                     <React.Fragment key={`cat-${idx}`}>
-                      <div className={`text-xs font-bold text-theme-primary uppercase tracking-widest ${idx > 0 ? 'mt-4' : 'mt-2'} mb-1`}>{section.title}</div>
+                      <div className={`text-xs font-bold text-[#FF0069] uppercase tracking-widest ${idx > 0 ? 'mt-4' : 'mt-2'} mb-1`}>{section.title}</div>
                       {section.links.map((link, lIdx) => (
                         <Link key={`cat-link-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
                       ))}
                     </React.Fragment>
                   ))}
-
-                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">{data.categoryHighlight.title}</div>
+                  <div className="text-xs font-bold text-[#FF0069] uppercase tracking-widest mt-4 mb-1">{data.categoryHighlight.title}</div>
                   {data.categoryHighlight.links.map((link, lIdx) => (
                     <Link key={`cathl-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
                   ))}
-
                   {data.categoryHighlight.highlightTag && (
                     <>
-                      <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-4 mb-1">{data.categoryHighlight.highlightTag}</div>
+                      <div className="text-xs font-bold text-[#FF0069] uppercase tracking-widest mt-4 mb-1">{data.categoryHighlight.highlightTag}</div>
                       <Link to="#" onClick={onClose} className="text-black/80 font-medium py-1">{data.categoryHighlight.highlightText}</Link>
                     </>
                   )}
                 </MobileAccordion>
 
                 <MobileAccordion title="Routine">
-                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-2 mb-1">Select Routine</div>
+                  <div className="text-xs font-bold text-[#FF0069] uppercase tracking-widest mt-2 mb-1">Select Routine</div>
                   {data.routines.map((routine, idx) => (
                     <Link key={`routine-${idx}`} to={routine.href} onClick={onClose} className="text-black/80 font-medium py-1">{routine.name}</Link>
                   ))}
-                  <Link to="/routine" onClick={onClose} className="text-theme-primary font-bold py-1 mt-2">Complete Routine →</Link>
-                </MobileAccordion>
-
-                <MobileAccordion title="Journal">
-                  <div className="text-xs font-bold text-theme-primary uppercase tracking-widest mt-2 mb-1">Discover</div>
-                  {data.journal.map((item, idx) => (
-                    <Link key={`journal-${idx}`} to={item.href} onClick={onClose} className="text-black/80 font-medium py-1">{item.name}</Link>
-                  ))}
+                  <Link to="/routine" onClick={onClose} className="text-[#FF0069] font-bold py-1 mt-2">Complete Routine →</Link>
                 </MobileAccordion>
 
                 <Link to="/about" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">About Us</Link>
+                <Link to="/journal" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">Journal</Link>
                 <Link to="/contact" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">Contact</Link>
               </div>
 
-              <div className="mt-8 pb-8">
-                <div className="flex bg-black/5 p-1 rounded-full text-sm font-bold">
-                  <button onClick={() => window.location.href='/skincare'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'skincare' ? 'bg-theme-primary text-white shadow-md' : 'text-black/70'}`}>Skincare</button>
-                  <button onClick={() => window.location.href='/cosmetics'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'cosmetics' ? 'bg-theme-primary text-white shadow-md' : 'text-black/70'}`}>Cosmetics</button>
+              <div className="mt-8 mb-6">
+                <div className="flex bg-[#FFF5F8] p-1 rounded-full text-sm font-bold border border-[#FF0069]/10">
+                  <button onClick={() => window.location.href='/skincare'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'skincare' ? 'bg-[#FF0069] text-white shadow-md' : 'text-black/70 hover:bg-[#FF0069]/5'}`}>Skincare</button>
+                  <button onClick={() => window.location.href='/cosmetics'} className={`flex-1 py-3 rounded-full transition-all ${theme === 'cosmetics' ? 'bg-[#FF0069] text-white shadow-md' : 'text-black/70 hover:bg-[#FF0069]/5'}`}>Cosmetics</button>
                 </div>
+              </div>
+            </div>
+
+            {/* Bottom Section Icons */}
+            <div className="px-6 py-6 border-t border-black/5 bg-[#FAFAFA] shrink-0">
+              <div className="grid grid-cols-4 gap-2">
+                 <button onClick={() => { onClose(); }} className="flex flex-col items-center gap-1.5 text-black/60 hover:text-[#FF0069] transition-colors p-2" aria-label="Search">
+                    <Search size={22} strokeWidth={1.5} />
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Search</span>
+                 </button>
+                 <button onClick={() => { onClose(); navigate('/account/wishlist'); }} className="flex flex-col items-center gap-1.5 text-black/60 hover:text-[#FF0069] transition-colors p-2" aria-label="Wishlist">
+                    <Heart size={22} strokeWidth={1.5} />
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Wishlist</span>
+                 </button>
+                 <button onClick={() => { onClose(); setIsCartOpen(true); }} className="flex flex-col items-center gap-1.5 text-black/60 hover:text-[#FF0069] transition-colors p-2" aria-label="Cart">
+                    <ShoppingBag size={22} strokeWidth={1.5} />
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Cart</span>
+                 </button>
+                 <button onClick={() => { onClose(); navigate('/account'); }} className="flex flex-col items-center gap-1.5 text-black/60 hover:text-[#FF0069] transition-colors p-2" aria-label="Account">
+                    <User size={22} strokeWidth={1.5} />
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Account</span>
+                 </button>
               </div>
             </div>
           </motion.div>

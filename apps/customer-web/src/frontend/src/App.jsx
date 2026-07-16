@@ -62,10 +62,42 @@ const DrySkinRoutinePage = React.lazy(() => import('./pages/routines/DrySkinRout
 const OilySkinRoutinePage = React.lazy(() => import('./pages/routines/OilySkinRoutinePage'));
 const CombinationSkinRoutinePage = React.lazy(() => import('./pages/routines/CombinationSkinRoutinePage'));
 
+// Journal Pages
+const SkincareBlogsPage = React.lazy(() => import('./pages/journal/SkincareBlogsPage'));
+const SkincareTipsPage = React.lazy(() => import('./pages/journal/SkincareTipsPage'));
+const IngredientGuidesPage = React.lazy(() => import('./pages/journal/IngredientGuidesPage'));
+const SkinEducationPage = React.lazy(() => import('./pages/journal/SkinEducationPage'));
+
+// Policy Pages
+const ShippingPolicyPage = React.lazy(() => import('./pages/policies/ShippingPolicyPage'));
+const ReturnsRefundsPage = React.lazy(() => import('./pages/policies/ReturnsRefundsPage'));
+const PrivacyPolicyPage = React.lazy(() => import('./pages/policies/PrivacyPolicyPage'));
+const TermsConditionsPage = React.lazy(() => import('./pages/policies/TermsConditionsPage'));
+const CookiePolicyPage = React.lazy(() => import('./pages/policies/CookiePolicyPage'));
+const AccessibilityPage = React.lazy(() => import('./pages/policies/AccessibilityPage'));
+const PaymentPolicyPage = React.lazy(() => import('./pages/policies/PaymentPolicyPage'));
+
+// Support Pages
+const HelpCenterPage = React.lazy(() => import('./pages/support/HelpCenterPage'));
+const FAQsPage = React.lazy(() => import('./pages/support/FAQsPage'));
+const TrackOrderPage = React.lazy(() => import('./pages/support/TrackOrderPage'));
+
+// About Pages
+const OurPromisePage = React.lazy(() => import('./pages/about/OurPromisePage'));
+const SustainabilityPage = React.lazy(() => import('./pages/about/SustainabilityPage'));
+const IngredientPhilosophyPage = React.lazy(() => import('./pages/about/IngredientPhilosophyPage'));
+const CareersPage = React.lazy(() => import('./pages/about/CareersPage'));
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
     <div className="w-12 h-12 rounded-full border-4 border-black/10 border-t-theme-primary animate-spin mb-4"></div>
     <p className="font-heading font-bold text-sm text-black uppercase tracking-widest">Loading COSKINn</p>
+  </div>
+);
+
+const PlaceholderPage = ({ title }) => (
+  <div className="min-h-[70vh] bg-[#FFFDFD] pt-40 pb-20 px-6 flex flex-col items-center justify-center text-center">
+    <h1 className="text-4xl lg:text-5xl font-heading font-black text-[#1B1B1B] mb-6">{title}</h1>
+    <p className="text-gray-500 font-medium max-w-lg mb-8">This page is currently under construction. Please check back later.</p>
   </div>
 );
 
@@ -87,7 +119,27 @@ const MainLayout = () => {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/routine" element={<RoutinePage />} />
             <Route path="/journal" element={<JournalPage />} />
+            <Route path="/journal/skincare-blogs" element={<SkincareBlogsPage />} />
+            <Route path="/journal/skincare-tips" element={<SkincareTipsPage />} />
+            <Route path="/journal/ingredient-guides" element={<IngredientGuidesPage />} />
+            <Route path="/journal/skin-education" element={<SkinEducationPage />} />
             <Route path="/account/*" element={<AccountPage />} />
+            
+            {/* Footer Pages */}
+            <Route path="/help-center" element={<HelpCenterPage />} />
+            <Route path="/faqs" element={<FAQsPage />} />
+            <Route path="/track-order" element={<TrackOrderPage />} />
+            <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
+            <Route path="/returns-refunds" element={<ReturnsRefundsPage />} />
+            <Route path="/our-promise" element={<OurPromisePage />} />
+            <Route path="/sustainability" element={<SustainabilityPage />} />
+            <Route path="/ingredient-philosophy" element={<IngredientPhilosophyPage />} />
+            <Route path="/careers" element={<CareersPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+            <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+            <Route path="/accessibility" element={<AccessibilityPage />} />
+            <Route path="/payment-policy" element={<PaymentPolicyPage />} />
             <Route path="/new-arrivals" element={<NewArrivalsPage />} />
             <Route path="/best-sellers" element={<BestSellersPage />} />
             <Route path="/award-winners" element={<AwardWinnersPage />} />

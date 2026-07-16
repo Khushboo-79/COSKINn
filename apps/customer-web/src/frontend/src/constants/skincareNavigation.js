@@ -84,9 +84,9 @@ export const skincareNavigation = {
     { name: "Sensitive Skin Routine", href: "/routine/sensitive-skin" },
   ],
   journal: [
-    { name: "Skincare Blogs", href: "/journal" },
-    { name: "Skincare Tips", href: "/journal" },
-    { name: "Ingredient Guides", href: "/journal" },
-    { name: "Skin Education", href: "/journal" },
+    { name: "Skincare Blogs", href: "/journal/skincare-blogs" },
+    { name: "Skincare Tips", href: "/journal/skincare-tips" },
+    { name: "Ingredient Guides", href: "/journal/ingredient-guides" },
+    { name: "Skin Education", href: "/journal/skin-education" },
   ]
 };
