@@ -10,10 +10,14 @@ import BottomNavBar from '../../../../constants/BottomNavBar';
 import ProfileHeader from '../../../../components/ProfileHeader';
 import { logout } from '../../../../redux/slices/authSlice';
 import api from '../../../../services/api';
+import { useSelector } from 'react-redux';
+import { Image } from 'react-native';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
 
   const handleTabPress = (tabId) => {
     if (tabId === 'home') navigation.navigate('Dashboard');
@@ -25,12 +29,16 @@ const AccountScreen = () => {
 
   const TopMenuItem = ({ title, onPress }) => (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={styles.topMenuItemContainer}>
-      <LinearGradient
-        colors={['#FF0069', '#FFD498']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.topMenuItemGradientBg}
-      />
+      {isCosmetics ? (
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: '#FFF0F5' }]} />
+      ) : (
+        <LinearGradient
+          colors={['#FF0069', '#FFD498']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.topMenuItemGradientBg}
+        />
+      )}
       <View style={styles.topMenuItemContent}>
         <Text style={styles.topMenuItemText}>{title}</Text>
         <Icon name="chevron-right" size={scaleh(20)} color="#1A1A1A" />
@@ -61,7 +69,7 @@ const AccountScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isCosmetics && { backgroundColor: '#FFC2D1' }]}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       {/* Reusable Profile Header */}
@@ -71,7 +79,7 @@ const AccountScreen = () => {
       />
 
       {/* Main Content Area overlapping the header slightly */}
-      <View style={styles.contentWrapper}>
+      <View style={[styles.contentWrapper, { backgroundColor: '#FFFFFF' }]}>
         <ScrollView 
           style={styles.scrollView} 
           contentContainerStyle={styles.scrollContent}
@@ -97,12 +105,12 @@ const AccountScreen = () => {
 
           {/* Sign Out Button */}
           <TouchableOpacity 
-            style={styles.signOutButton} 
+            style={[styles.signOutButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]} 
             activeOpacity={0.8}
             onPress={handleLogout}
           >
-            <Text style={styles.signOutText}>Sign Out</Text>
-            <Icon name="log-out" size={scaleh(18)} color="#FFFFFF" style={styles.signOutIcon} />
+            <Text style={[styles.signOutText, isCosmetics && { color: '#FF0069' }]}>Sign Out</Text>
+            <Icon name="log-out" size={scaleh(18)} color={isCosmetics ? '#FF0069' : '#FFFFFF'} style={styles.signOutIcon} />
           </TouchableOpacity>
 
         </ScrollView>
@@ -123,7 +131,7 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    // Background color is handled conditionally in the component
     borderTopLeftRadius: scaleh(30),
     borderTopRightRadius: scaleh(30),
     marginTop: scalev(-30), // Pulls the white content up over the gradient header

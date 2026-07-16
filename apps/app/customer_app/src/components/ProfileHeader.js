@@ -2,12 +2,20 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../constants/AppTheme';
 
 const ProfileHeader = ({ name, phone, onBackPress }) => {
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+
+  const gradientColors = isCosmetics 
+    ? ['#FFC2D1', '#FFC2D1'] 
+    : ['#FF0069', '#FFD498'];
+
   return (
     <LinearGradient
-      colors={['#FF0069', '#FFD498']}
+      colors={gradientColors}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.headerContainer}

@@ -16,8 +16,9 @@ const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
   const navBorderColor = isCosmetics ? '#FFC2D1' : AppTheme.colors.primary;
-  const gradientColor = isCosmetics ? '#FFC2D1' : 'rgba(255, 0, 106, 0.10)';
-  const activeIconColor = isCosmetics ? '#FF6B9E' : AppTheme.colors.primary; // Pink icon for active cosmetics tab
+  
+  // For Cosmetics, the active tab icon and text remain dark (#1a1a1a), only the spotlight appears.
+  const activeIconColor = isCosmetics ? '#1a1a1a' : AppTheme.colors.primary; 
 
   return (
     <View style={[styles.container, { borderColor: navBorderColor }]}>
@@ -37,16 +38,11 @@ const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
                 <Svg height="100%" width="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <Defs>
                     <SvgLinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                      <Stop offset="0" stopColor={gradientColor} />
-                      {isCosmetics ? (
-                        <Stop offset="0.47" stopColor={gradientColor} />
-                      ) : (
-                        <Stop offset="0" stopColor={gradientColor} />
-                      )}
-                      <Stop offset="1" stopColor="#FFFFFF" />
+                      <Stop offset="0" stopColor={isCosmetics ? '#FFE4EB' : 'rgba(255, 0, 106, 0.10)'} />
+                      <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
                     </SvgLinearGradient>
                   </Defs>
-                  <Polygon points="25,0 75,0 100,100 0,100" fill="url(#grad)" />
+                  <Polygon points="35,0 65,0 100,100 0,100" fill="url(#grad)" />
                 </Svg>
               </View>
             )}
@@ -118,6 +114,16 @@ const styles = StyleSheet.create({
   },
   activeLabel: {
     color: AppTheme.colors.primary,
+  },
+  topNotch: {
+    position: 'absolute',
+    top: -1.5,
+    alignSelf: 'center',
+    width: '30%',
+    height: scalev(4),
+    borderBottomLeftRadius: scaleh(2),
+    borderBottomRightRadius: scaleh(2),
+    zIndex: 2,
   },
 });
 
