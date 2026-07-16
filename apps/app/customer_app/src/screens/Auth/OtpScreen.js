@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useDispatch } from 'react-redux';
@@ -15,7 +15,31 @@ const OtpScreen = ({ navigation, route }) => {
   const OTP_LENGTH = 6;
   const [otpValues, setOtpValues] = useState(Array(OTP_LENGTH).fill(''));
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(60);
   const inputRefs = useRef([]);
+
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleResendOtp = async () => {
+    if (timer > 0) return;
+    try {
+      setTimer(60);
+      await api.post('/auth/send-otp', { phone });
+      Alert.alert('Success', 'A new OTP has been sent to your phone.');
+    } catch (error) {
+      console.error(error);
+      setTimer(0); // revert to 0 if failed so they can try again
+      Alert.alert('Error', error.response?.data?.message || 'Failed to resend OTP.');
+    }
+  };
 
   const focusNext = (index, value) => {
     const newOtpValues = [...otpValues];
@@ -150,9 +174,17 @@ const OtpScreen = ({ navigation, route }) => {
                 </LinearGradient>
               </TouchableOpacity>
 
-              <Text style={styles.footerText}>
-                Resend OTP in <Text style={styles.timerText}>00:50</Text>
-              </Text>
+              {timer > 0 ? (
+                <Text style={styles.footerText}>
+                  Resend OTP in <Text style={styles.timerText}>00:{timer < 10 ? `0${timer}` : timer}</Text>
+                </Text>
+              ) : (
+                <TouchableOpacity onPress={handleResendOtp} activeOpacity={0.7}>
+                  <Text style={[styles.footerText, { color: AppTheme.colors.primary, fontWeight: '600' }]}>
+                    Resend OTP
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
 

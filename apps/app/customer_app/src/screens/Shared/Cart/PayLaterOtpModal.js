@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
 const PayLaterOtpModal = ({ visible, onClose, onContinue }) => {
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
+
   return (
     <Modal
       visible={visible}
@@ -14,7 +19,7 @@ const PayLaterOtpModal = ({ visible, onClose, onContinue }) => {
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
-            <View style={styles.bottomSheetContainer}>
+            <View style={[styles.bottomSheetContainer, isCosmetics && { borderColor: primaryColor }]}>
               
               {/* Close Icon */}
               <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
@@ -32,7 +37,7 @@ const PayLaterOtpModal = ({ visible, onClose, onContinue }) => {
                   {[1, 2, 3, 4].map((item, index) => (
                     <TextInput 
                       key={index}
-                      style={styles.otpInput}
+                      style={[styles.otpInput, isCosmetics && { borderColor: '#333' }]}
                       keyboardType="number-pad"
                       maxLength={1}
                     />
@@ -41,12 +46,12 @@ const PayLaterOtpModal = ({ visible, onClose, onContinue }) => {
 
                 {/* Resend OTP */}
                 <Text style={styles.resendText}>
-                  Resend OTP in <Text style={styles.timerText}>28s</Text>
+                  Resend OTP in <Text style={[styles.timerText, isCosmetics && { color: primaryColor }]}>28s</Text>
                 </Text>
 
                 {/* Continue Button */}
-                <TouchableOpacity style={styles.continueBtn} onPress={onContinue}>
-                  <Text style={styles.continueBtnText}>Continue</Text>
+                <TouchableOpacity style={[styles.continueBtn, isCosmetics && { backgroundColor: primaryColor }]} onPress={onContinue}>
+                  <Text style={[styles.continueBtnText, isCosmetics && { color: '#000' }]}>Continue</Text>
                 </TouchableOpacity>
 
                 {/* Secured By */}

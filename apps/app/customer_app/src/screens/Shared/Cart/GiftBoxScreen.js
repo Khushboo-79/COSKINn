@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Feather';
 import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
@@ -8,7 +9,7 @@ import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 const GiftBoxScreen = ({ navigation }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
-  const primaryColor = isCosmetics ? '#FF0069' : AppTheme.colors.primary;
+  const themePrimaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
   const btnGradient = isCosmetics ? ['#FF0069', '#FFD498'] : [AppTheme.colors.cartBottomGradientStart, AppTheme.colors.cartBottomGradientEnd];
 
   // Option 1 = 'blank', Option 2 = 'personal'
@@ -67,7 +68,7 @@ const GiftBoxScreen = ({ navigation }) => {
             activeOpacity={0.8}
             onPress={() => setSelectedOption('blank')}
           >
-            <View style={[styles.radioCircle, selectedOption === 'blank' ? [styles.radioSelectedBlank, { borderColor: primaryColor }] : styles.radioUnselected]} />
+            <View style={[styles.radioCircle, selectedOption === 'blank' ? [styles.radioSelectedBlank, { borderColor: themePrimaryColor }] : styles.radioUnselected]} />
             <Text style={styles.optionText}>Send me a blank card</Text>
           </TouchableOpacity>
 
@@ -84,15 +85,37 @@ const GiftBoxScreen = ({ navigation }) => {
             activeOpacity={0.8}
             onPress={() => setSelectedOption('personal')}
           >
-            <View style={[styles.radioCircle, selectedOption === 'personal' ? [styles.radioSelectedPersonal, { backgroundColor: primaryColor }] : styles.radioUnselected]} />
+            {selectedOption === 'personal' && isCosmetics ? (
+              <View style={[styles.radioCircle, { borderColor: '#333', overflow: 'hidden' }]}>
+                <Svg height="100%" width="100%" viewBox="0 0 24 24">
+                  <Defs>
+                    <RadialGradient
+                      id="grad"
+                      cx="50%"
+                      cy="50%"
+                      rx="50%"
+                      ry="50%"
+                      fx="30%"
+                      fy="30%"
+                    >
+                      <Stop offset="0%" stopColor="#FFC2D1" />
+                      <Stop offset="100%" stopColor="#D81B60" />
+                    </RadialGradient>
+                  </Defs>
+                  <Circle cx="12" cy="12" r="12" fill="url(#grad)" />
+                </Svg>
+              </View>
+            ) : (
+              <View style={[styles.radioCircle, selectedOption === 'personal' ? [styles.radioSelectedPersonal, { backgroundColor: themePrimaryColor, borderColor: themePrimaryColor }] : styles.radioUnselected]} />
+            )}
             <Text style={styles.optionText}>Send a personal message</Text>
           </TouchableOpacity>
 
           {/* Message Input Box (Conditionally rendered) */}
           {selectedOption === 'personal' && (
-            <View style={[styles.messageInputWrapper, isCosmetics && { borderColor: primaryColor }]}>
+            <View style={styles.messageInputWrapper}>
               <TextInput
-                style={styles.messageInput}
+                style={[styles.messageInput, { borderColor: themePrimaryColor }]}
                 placeholder="Gift Message"
                 placeholderTextColor="#999"
                 multiline={true}
@@ -112,11 +135,11 @@ const GiftBoxScreen = ({ navigation }) => {
           <View style={styles.termsSection}>
             <Text style={styles.termsTitle}>Terms & Conditions:</Text>
             <View style={styles.bulletRow}>
-              <View style={[styles.bulletPoint, { backgroundColor: primaryColor }]} />
+              <View style={[styles.bulletPoint, { backgroundColor: themePrimaryColor }]} />
               <Text style={styles.termText}>Cash on delivery is disabled for gift orders</Text>
             </View>
             <View style={styles.bulletRow}>
-              <View style={[styles.bulletPoint, { backgroundColor: primaryColor }]} />
+              <View style={[styles.bulletPoint, { backgroundColor: themePrimaryColor }]} />
               <Text style={styles.termText}>Invoice for the package will be included in the package sent to the recipient</Text>
             </View>
           </View>
@@ -126,8 +149,9 @@ const GiftBoxScreen = ({ navigation }) => {
         {/* Bottom Bar Gradient Button */}
         <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.goBack()}>
           {isCosmetics ? (
-            <View style={[styles.proceedButton, { backgroundColor: '#FFC2D1' }]}>
-              <Text style={[styles.proceedButtonText, { color: '#000000' }]}>Proceed {'>'}</Text>
+            <View style={[styles.proceedButton, { backgroundColor: themePrimaryColor }]}>
+              <Text style={[styles.proceedButtonText, { color: '#000000', marginRight: scaleh(4) }]}>Proceed</Text>
+              <Icon name="chevron-right" size={scaleh(20)} color="#000" />
             </View>
           ) : (
             <LinearGradient
@@ -136,7 +160,8 @@ const GiftBoxScreen = ({ navigation }) => {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
-              <Text style={styles.proceedButtonText}>Proceed {'>'}</Text>
+              <Text style={[styles.proceedButtonText, { marginRight: scaleh(4) }]}>Proceed</Text>
+              <Icon name="chevron-right" size={scaleh(20)} color={AppTheme.colors.white} />
             </LinearGradient>
           )}
         </TouchableOpacity>
@@ -237,7 +262,7 @@ const styles = StyleSheet.create({
   orLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#DDD',
+    backgroundColor: '#525252ff',
   },
   orText: {
     marginHorizontal: scaleh(15),

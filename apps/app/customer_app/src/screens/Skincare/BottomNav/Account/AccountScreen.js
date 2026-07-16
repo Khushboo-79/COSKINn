@@ -1,14 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
 import BottomNavBar from '../../../../constants/BottomNavBar';
 import ProfileHeader from '../../../../components/ProfileHeader';
+import { logout } from '../../../../redux/slices/authSlice';
+import api from '../../../../services/api';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleTabPress = (tabId) => {
     if (tabId === 'home') navigation.navigate('Dashboard');
@@ -39,6 +44,21 @@ const AccountScreen = () => {
       <Text style={styles.moreMenuItemText}>{title}</Text>
     </TouchableOpacity>
   );
+
+  const handleLogout = async () => {
+    try {
+      // Call the backend logout API
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout API error:', error);
+      // We still proceed with local logout even if API fails
+    }
+    
+    // Clear local storage and reset auth state
+    await AsyncStorage.removeItem('access_token');
+    await AsyncStorage.removeItem('refresh_token');
+    dispatch(logout());
+  };
 
   return (
     <View style={styles.container}>
@@ -76,7 +96,11 @@ const AccountScreen = () => {
           </View>
 
           {/* Sign Out Button */}
-          <TouchableOpacity style={styles.signOutButton} activeOpacity={0.8}>
+          <TouchableOpacity 
+            style={styles.signOutButton} 
+            activeOpacity={0.8}
+            onPress={handleLogout}
+          >
             <Text style={styles.signOutText}>Sign Out</Text>
             <Icon name="log-out" size={scaleh(18)} color="#FFFFFF" style={styles.signOutIcon} />
           </TouchableOpacity>

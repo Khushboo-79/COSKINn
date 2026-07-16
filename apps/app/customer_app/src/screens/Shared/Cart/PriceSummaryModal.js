@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
 const PriceSummaryModal = ({ visible, onClose }) => {
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
+
   return (
     <Modal
       visible={visible}
@@ -14,7 +19,7 @@ const PriceSummaryModal = ({ visible, onClose }) => {
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
-            <View style={styles.bottomSheetContainer}>
+            <View style={[styles.bottomSheetContainer, isCosmetics && { borderColor: primaryColor }]}>
               
               {/* Header Row */}
               <View style={styles.headerRow}>
