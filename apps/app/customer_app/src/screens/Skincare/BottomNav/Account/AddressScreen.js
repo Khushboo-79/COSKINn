@@ -3,12 +3,28 @@ import {
   View, Text, StyleSheet, TouchableOpacity, TextInput, 
   ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, Modal
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
+import { useSelector } from 'react-redux';
+import { Image, ImageBackground } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+const CustomInput = ({ placeholder, value, onChangeText, isCosmetics }) => (
+  <View style={[styles.inputContainer, isCosmetics && { elevation: 2, shadowOpacity: 0.05, borderWidth: 0, backgroundColor: '#FFFFFF' }]}>
+    <TextInput
+      style={styles.input}
+      placeholder={placeholder}
+      placeholderTextColor="#888888"
+      value={value}
+      onChangeText={onChangeText}
+    />
+  </View>
+);
 
 const AddressScreen = () => {
   const navigation = useNavigation();
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
   const [showModal, setShowModal] = useState(true);
 
   // Form states
@@ -25,7 +41,7 @@ const AddressScreen = () => {
       animationType="slide"
       onRequestClose={() => setShowModal(false)}
     >
-      <View style={styles.modalOverlay}>
+      <View style={[styles.modalOverlay, isCosmetics && { backgroundColor: 'transparent' }]}>
         <View style={styles.bottomSheet}>
           
           <TouchableOpacity 
@@ -38,8 +54,8 @@ const AddressScreen = () => {
 
           {/* Decorative Map Graphic Area */}
           <View style={styles.modalGraphicContainer}>
-            <View style={styles.decorativeMapPin}>
-              <Icon name="map-pin" size={scaleh(40)} color={AppTheme.colors.primary} />
+            <View style={[styles.decorativeMapPin, isCosmetics && { backgroundColor: '#FFD1E3' }]}>
+              <Icon name="map-pin" size={scaleh(40)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} />
             </View>
           </View>
 
@@ -50,22 +66,22 @@ const AddressScreen = () => {
 
           <View style={styles.modalButtonRow}>
             <TouchableOpacity 
-              style={styles.addManuallyBtn} 
+              style={[styles.addManuallyBtn, isCosmetics && { borderColor: '#FFC2D1' }]} 
               onPress={() => setShowModal(false)}
               activeOpacity={0.8}
             >
-              <Text style={styles.addManuallyText}>Add manually</Text>
+              <Text style={[styles.addManuallyText, isCosmetics && { color: '#FF0069' }]}>Add manually</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-              style={styles.detectLocationBtn}
+              style={[styles.detectLocationBtn, isCosmetics && { backgroundColor: '#FFD1E3' }]}
               activeOpacity={0.8}
               onPress={() => {
                 // handle detect location logic
                 setShowModal(false);
               }}
             >
-              <Text style={styles.detectLocationText}>Detect location</Text>
+              <Text style={[styles.detectLocationText, isCosmetics && { color: '#1A1A1A' }]}>Detect location</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -73,20 +89,8 @@ const AddressScreen = () => {
     </Modal>
   );
 
-  const CustomInput = ({ placeholder, value, onChangeText }) => (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        placeholderTextColor="#888888"
-        value={value}
-        onChangeText={onChangeText}
-      />
-    </View>
-  );
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isCosmetics && { backgroundColor: '#FFF0F5' }]}>
       <SafeAreaView style={styles.safeArea}>
         
         {/* Header */}
@@ -106,49 +110,52 @@ const AddressScreen = () => {
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             
             {/* Current Location Box */}
-            <TouchableOpacity activeOpacity={0.8} style={styles.currentLocationBox}>
-              <View style={styles.targetIconWrapper}>
-                <Icon name="crosshair" size={scaleh(24)} color={AppTheme.colors.primary} />
+            <TouchableOpacity activeOpacity={0.8} style={[styles.currentLocationBox, isCosmetics && { backgroundColor: '#FFE5EC', borderWidth: 0 }]}>
+              <View style={[styles.targetIconWrapper, isCosmetics && { backgroundColor: '#FFC2D1' }]}>
+                <Icon name="crosshair" size={scaleh(24)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} />
               </View>
               <View style={styles.currentLocationTexts}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={styles.currentLocationTitle}>Use current Location </Text>
-                  <Icon name="chevron-right" size={scaleh(16)} color={AppTheme.colors.primary} />
+                  <Text style={[styles.currentLocationTitle, isCosmetics && { color: '#FF0069' }]}>Use current Location </Text>
+                  <Icon name="chevron-right" size={scaleh(16)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} />
                 </View>
                 <Text style={styles.currentLocationSubtitle}>For accurate delivery</Text>
               </View>
             </TouchableOpacity>
 
             {/* Address Inputs */}
-            <CustomInput placeholder="Pincode" value={pincode} onChangeText={setPincode} />
-            <CustomInput placeholder="House / Flat / Building No." value={house} onChangeText={setHouse} />
-            <CustomInput placeholder="Road Name / Area / Colony" value={road} onChangeText={setRoad} />
+            <CustomInput placeholder="Pincode" value={pincode} onChangeText={setPincode} isCosmetics={isCosmetics} />
+            <CustomInput placeholder="House / Flat / Building No." value={house} onChangeText={setHouse} isCosmetics={isCosmetics} />
+            <CustomInput placeholder="Road Name / Area / Colony" value={road} onChangeText={setRoad} isCosmetics={isCosmetics} />
             
             <Text style={styles.primaryInfoText}>This will be saved as your primary address.</Text>
-
+            
             <View style={styles.dividerLine} />
 
             {/* Contact Details */}
             <Text style={styles.sectionLabel}>Contact Name</Text>
-            <CustomInput placeholder="Contact Name" value={contactName} onChangeText={setContactName} />
+            <CustomInput placeholder="Contact Name" value={contactName} onChangeText={setContactName} isCosmetics={isCosmetics} />
             
-            <CustomInput placeholder="Phone Number" value={phone} onChangeText={setPhone} />
+            <CustomInput placeholder="Phone Number" value={phone} onChangeText={setPhone} isCosmetics={isCosmetics} />
 
             {/* Security Text */}
             <View style={styles.securityTextRow}>
               <Text style={styles.securityText}>
                 Your data is stored securely and shared only for the purpose of delivery.
               </Text>
-              <Icon name="shield" size={scaleh(20)} color={AppTheme.colors.primary} style={styles.shieldIcon} />
+              <Icon name="shield" size={scaleh(20)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} style={styles.shieldIcon} />
             </View>
 
           </ScrollView>
         </KeyboardAvoidingView>
 
         {/* Save Address Button */}
-        <View style={styles.bottomButtonContainer}>
-          <TouchableOpacity style={styles.saveButton} activeOpacity={0.8}>
-            <Text style={styles.saveButtonText}>Save Address</Text>
+        <View style={[styles.bottomButtonContainer, isCosmetics && { backgroundColor: 'transparent' }]}>
+          <TouchableOpacity 
+            style={[styles.saveButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]} 
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.saveButtonText, isCosmetics && { color: '#1A1A1A' }]}>Save Address</Text>
           </TouchableOpacity>
         </View>
 
@@ -305,7 +312,7 @@ const styles = StyleSheet.create({
   // Modal styles
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(255, 0, 105, 0.4)', // Pink semi-transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Standard dark translucent background
     justifyContent: 'flex-end',
   },
   bottomSheet: {
@@ -316,6 +323,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleh(20),
     paddingBottom: scalev(40),
     alignItems: 'center',
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
   },
   closeIconWrapper: {
     alignSelf: 'flex-start',

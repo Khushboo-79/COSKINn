@@ -4,12 +4,23 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
+import { useSelector } from 'react-redux';
+import { Image } from 'react-native';
 
 const OrdersListScreen = () => {
   const navigation = useNavigation();
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isCosmetics && { backgroundColor: '#FFFFFF' }]}>
+      {isCosmetics && (
+        <Image
+          source={require('../../../../images/makeup/CosmeticBackImg.webp')}
+          style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.3 }]}
+          resizeMode="cover"
+        />
+      )}
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       <SafeAreaView style={styles.safeArea}>
         
@@ -25,7 +36,7 @@ const OrdersListScreen = () => {
 
         {/* Content Area */}
         <LinearGradient
-          colors={['#FF006926', '#FFD49826']}
+          colors={isCosmetics ? ['transparent', 'transparent'] : ['#FF006926', '#FFD49826']}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.contentContainer}
@@ -34,7 +45,7 @@ const OrdersListScreen = () => {
           {/* Actually, it's easier to use the exact colors with 15% opacity straight in the hex code: #FF006926 and #FFD49826 */}
           
           <View style={styles.centerContent}>
-            <View style={styles.iconCircle}>
+            <View style={[styles.iconCircle, isCosmetics && { backgroundColor: '#FF0069', shadowColor: '#FF0069' }]}>
               <Icon name="frown" size={scaleh(40)} color="#FFFFFF" />
             </View>
             <Text style={styles.titleText}>No order found</Text>
@@ -42,13 +53,13 @@ const OrdersListScreen = () => {
           </View>
 
           {/* Start Shopping Button */}
-          <View style={styles.bottomButtonContainer}>
+          <View style={[styles.bottomButtonContainer, isCosmetics && { backgroundColor: 'transparent' }]}>
             <TouchableOpacity 
-              style={styles.shoppingButton} 
+              style={[styles.shoppingButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]} 
               activeOpacity={0.8}
               onPress={() => navigation.navigate('Shop')}
             >
-              <Text style={styles.shoppingButtonText}>Start Shopping</Text>
+              <Text style={[styles.shoppingButtonText, isCosmetics && { color: '#1A1A1A' }]}>Start Shopping</Text>
             </TouchableOpacity>
           </View>
         </LinearGradient>

@@ -4,9 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
+import { useSelector } from 'react-redux';
+import { Image } from 'react-native';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+  
   const [title, setTitle] = useState('Miss');
   
   const [name, setName] = useState('Khushboo Sharma');
@@ -22,21 +27,21 @@ const ProfileScreen = () => {
         onPress={() => setTitle(label)}
         activeOpacity={0.8}
       >
-        <View style={styles.radioOuter}>
-          {isSelected && <View style={styles.radioInner} />}
+        <View style={[styles.radioOuter, isCosmetics && { borderColor: '#FF0069' }]}>
+          {isSelected && <View style={[styles.radioInner, isCosmetics && { backgroundColor: '#FF0069' }]} />}
         </View>
-        <Text style={styles.radioLabel}>{label}</Text>
+        <Text style={[styles.radioLabel, isCosmetics && { color: '#FF0069' }]}>{label}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isCosmetics && { backgroundColor: '#FFC2D1' }]}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
       {/* Header with Gradient */}
       <LinearGradient
-        colors={['#FF0069', '#FFD498']}
+        colors={isCosmetics ? ['#FFC2D1', '#FFC2D1'] : ['#FF0069', '#FFD498']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.headerSection}
@@ -54,7 +59,7 @@ const ProfileScreen = () => {
         <View style={styles.avatarWrapper}>
           <View style={styles.avatarContainer}>
             <View style={styles.avatarInner}>
-              <Icon name="user" size={scaleh(40)} color={AppTheme.colors.primary} />
+              <Icon name="user" size={scaleh(40)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} />
             </View>
             <View style={styles.addOverlay}>
               <Text style={styles.addText}>ADD</Text>
@@ -66,7 +71,7 @@ const ProfileScreen = () => {
       {/* Form Content */}
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.formContainer}
+        style={[styles.formContainer, isCosmetics && { backgroundColor: '#FFFFFF' }]}
       >
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           
@@ -130,10 +135,13 @@ const ProfileScreen = () => {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Bottom Done Button */}
-      <View style={styles.bottomButtonContainer}>
-        <TouchableOpacity style={styles.doneButton} activeOpacity={0.8}>
-          <Text style={styles.doneButtonText}>Done</Text>
+      {/* Bottom Button */}
+      <View style={[styles.bottomButtonContainer, isCosmetics && { backgroundColor: 'transparent' }]}>
+        <TouchableOpacity 
+          style={[styles.doneButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]} 
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.doneButtonText, isCosmetics && { color: '#1A1A1A' }]}>Done</Text>
         </TouchableOpacity>
       </View>
 

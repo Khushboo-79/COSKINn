@@ -5,6 +5,10 @@ import Icon from 'react-native-vector-icons/Feather';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
 import BottomNavBar from '../../../../constants/BottomNavBar';
 import Header from '../../../../components/Header';
+import TopHeader from '../../../../components/TopHeader';
+import SearchBarRow from '../../../../components/SearchBarRow';
+import { useSelector } from 'react-redux';
+import { Image } from 'react-native';
 
 const dummyTransactions = Array.from({ length: 8 }, (_, i) => ({
   id: i.toString(),
@@ -17,6 +21,8 @@ const dummyTransactions = Array.from({ length: 8 }, (_, i) => ({
 
 const RewardsScreen = () => {
   const navigation = useNavigation();
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
 
   const handleTabPress = (tabId) => {
     if (tabId === 'home') navigation.navigate('Dashboard');
@@ -43,16 +49,30 @@ const RewardsScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <View style={[styles.container, isCosmetics && { backgroundColor: '#FFFFFF' }]}>
+      {isCosmetics && (
+        <Image
+          source={require('../../../../images/makeup/CosmeticBackImg.webp')}
+          style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.3 }]}
+          resizeMode="cover"
+        />
+      )}
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
-        <Header onBackPress={() => navigation.goBack()} />
+        {isCosmetics ? (
+          <View style={{ paddingTop: StatusBar.currentHeight || scalev(30) }}>
+            <TopHeader />
+            <SearchBarRow />
+          </View>
+        ) : (
+          <Header onBackPress={() => navigation.goBack()} />
+        )}
 
-        <View style={styles.pageTitleContainer}>
+        <View style={[styles.pageTitleContainer, isCosmetics && { backgroundColor: 'transparent' }]}>
           <Text style={styles.pageTitle}>My Rewards</Text>
         </View>
-        <View style={styles.divider} />
+        <View style={[styles.divider, isCosmetics && { backgroundColor: '#1a1a1a' }]} />
 
         <ScrollView style={styles.contentScroll} showsVerticalScrollIndicator={false}>
           

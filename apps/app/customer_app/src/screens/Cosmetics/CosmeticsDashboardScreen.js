@@ -307,7 +307,23 @@ const CosmeticsDashboardScreen = () => {
         </ScrollView>
       </SafeAreaView>
 
-      <BottomNavBar activeTab="home" />
+      <BottomNavBar 
+        activeTab="home" 
+        onTabPress={(tabId) => {
+          if (tabId === 'shop') {
+            navigation.navigate('Shop');
+          }
+          if (tabId === 'new') {
+            navigation.navigate('NewScreen');
+          }
+          if (tabId === 'rewards') {
+            navigation.navigate('RewardsScreen');
+          }
+          if (tabId === 'account') {
+            navigation.navigate('AccountScreen');
+          }
+        }} 
+      />
     </View>
   );
 };

@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import { scaleh, scalev } from '../../../../constants/AppTheme';
+import { useSelector } from 'react-redux';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -13,6 +14,8 @@ if (Platform.OS === 'android') {
 
 const FAQScreen = () => {
   const navigation = useNavigation();
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
 
   const [expandedId, setExpandedId] = useState('order-5');
 
@@ -81,14 +84,14 @@ const FAQScreen = () => {
                     style={styles.faqCardWrapper}
                   >
                     <LinearGradient
-                      colors={['#FF006926', '#FFD49826']}
+                      colors={isCosmetics ? ['#FFF0F5', '#FFF0F5'] : ['#FF006926', '#FFD49826']}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={styles.faqGradientBg}
                     >
                       <View style={styles.faqQuestionRow}>
                         <Text style={styles.faqQuestionText}>{item.question}</Text>
-                        <Icon name={isExpanded ? "minus" : "plus"} size={scaleh(18)} color="#333333" style={styles.faqIcon} />
+                        <Icon name={isExpanded ? "minus" : "plus"} size={scaleh(18)} color={isCosmetics ? "#FF0069" : "#333333"} style={styles.faqIcon} />
                       </View>
                       
                       {isExpanded && (

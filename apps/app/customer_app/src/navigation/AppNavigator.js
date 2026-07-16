@@ -34,7 +34,7 @@ import ViewAllSkinConcernsScreen from '../screens/Skincare/BottomNav/Shop/ViewAl
 import ViewAllIngredientsScreen from '../screens/Skincare/BottomNav/Shop/ViewAllIngredientsScreen';
 import ViewAllRoutinesScreen from '../screens/Skincare/BottomNav/Shop/ViewAllRoutinesScreen';
 import ViewAllNewArrivalsScreen from '../screens/Skincare/BottomNav/Shop/ViewAllNewArrivalsScreen';
-import NewScreen from '../screens/Skincare/BottomNav/New/NewScreen';
+import NewScreen from '../screens/Shared/New/NewScreen';
 import RewardsScreen from '../screens/Skincare/BottomNav/Rewards/RewardsScreen';
 import FilterScreen from '../screens/Skincare/BottomNav/Shop/FilterScreen';
 import AccountScreen from '../screens/Skincare/BottomNav/Account/AccountScreen';
@@ -43,6 +43,10 @@ import AddressScreen from '../screens/Skincare/BottomNav/Account/AddressScreen';
 import OrdersListScreen from '../screens/Skincare/BottomNav/Account/OrdersListScreen';
 
 import CosmeticsDashboardScreen from '../screens/Cosmetics/CosmeticsDashboardScreen';
+import CosmeticsShopScreen from '../screens/Cosmetics/Shop/ShopScreen';
+
+import CategoryDetailScreen from '../screens/Cosmetics/Shop/CategoryDetailScreen';
+import ProductListingScreen from '../screens/Cosmetics/Shop/ProductListingScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +65,19 @@ const CosmeticsNavigator = () => {
       <Stack.Screen name="WalletPayment" component={WalletPaymentScreen} />
       <Stack.Screen name="Netbanking" component={NetbankingScreen} />
       <Stack.Screen name="OrderConfirmed" component={OrderConfirmedScreen} />
+      <Stack.Screen name="Shop" component={CosmeticsShopScreen} />
+      <Stack.Screen name="CategoryDetail" component={CategoryDetailScreen} />
+      <Stack.Screen name="ProductListing" component={ProductListingScreen} />
+      <Stack.Screen name="NewScreen" component={NewScreen} />
+      <Stack.Screen name="RewardsScreen" component={RewardsScreen} />
+      <Stack.Screen name="AccountScreen" component={AccountScreen} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="AddressScreen" component={AddressScreen} />
+      <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
+      <Stack.Screen name="TermsAndConditionsScreen" component={TermsAndConditionsScreen} />
+      <Stack.Screen name="ReturnPolicyScreen" component={ReturnPolicyScreen} />
+      <Stack.Screen name="FAQScreen" component={FAQScreen} />
+      <Stack.Screen name="PrivacyScreen" component={PrivacyScreen} />
     </Stack.Navigator>
   );
 };
