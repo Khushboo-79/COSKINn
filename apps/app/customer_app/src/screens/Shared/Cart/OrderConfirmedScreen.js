@@ -9,23 +9,16 @@ import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 const OrderConfirmedScreen = ({ navigation }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
-  
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
+
   return (
     <View style={[styles.container, { backgroundColor: isCosmetics ? '#FFFFFF' : AppTheme.colors.white }]}>
       {isCosmetics && (
-        <>
-          <Image
-            source={require('../../../images/makeup/CosmeticBackImg.webp')}
-            style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.3 }]}
-            resizeMode="cover"
-          />
-          <LinearGradient
-            colors={['#FF006915', '#FF006905']}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-          />
-        </>
+        <Image
+          source={require('../../../images/makeup/CosmeticBackImg.webp')}
+          style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.2 }]}
+          resizeMode="cover"
+        />
       )}
       <SafeAreaView style={styles.safeArea}>
 
@@ -47,15 +40,15 @@ const OrderConfirmedScreen = ({ navigation }) => {
           </View>
 
           {/* Delivering To Card */}
-          <View style={styles.deliveringCard}>
+          <View style={[styles.deliveringCard, isCosmetics && { elevation: 0, shadowOpacity: 0, borderColor: primaryColor, backgroundColor: 'rgba(255, 255, 255, 0.7)' }]}>
             <Text style={styles.cardSubtitle}>Delivering To</Text>
             <Text style={styles.userName}>Ayushi Sinha - 1234567890</Text>
             <Text style={styles.addressText}>
               Cp, Noida, Delhi,160/2, AB Road, Ahilya Puri{'\n'}Rao, Mahu, Delhi - India
             </Text>
             <TouchableOpacity style={styles.editAddressBtn}>
-              <Text style={styles.editAddressText}>Edit Address</Text>
-              <Icon name="chevron-right" size={scaleh(16)} color={AppTheme.colors.primary} />
+              <Text style={[styles.editAddressText, isCosmetics && { color: primaryColor }]}>Edit Address</Text>
+              <Icon name="chevron-right" size={scaleh(16)} color={primaryColor} />
             </TouchableOpacity>
 
             <View style={styles.divider} />
@@ -64,7 +57,11 @@ const OrderConfirmedScreen = ({ navigation }) => {
               <View style={styles.orderDetailLeft}>
                 <View style={styles.productThumbContainer}>
                   {/* Mimic product thumb */}
-                  <View style={styles.productThumbCircle} />
+                  {isCosmetics ? (
+                    <Image source={require('../../../images/makeup/ProductImgs/Blush.webp')} style={{ width: scaleh(34), height: scaleh(34) }} resizeMode="contain" />
+                  ) : (
+                    <View style={styles.productThumbCircle} />
+                  )}
                 </View>
                 <Text style={styles.orderDetailText}>1 item - Order Price: ₹520</Text>
               </View>
@@ -75,14 +72,23 @@ const OrderConfirmedScreen = ({ navigation }) => {
           {/* Luxe Benefits */}
           <View style={styles.luxeContainer}>
             <Text style={styles.sectionTitle}>COSKINn - LUXE BENEFITS</Text>
-            <View style={styles.luxeCard}>
-              <View style={styles.luxeLeft}>
-                <Text style={styles.luxeLogo}>G</Text>
-                <Icon name="heart" size={scaleh(12)} color={AppTheme.colors.primary} style={styles.luxeHeart} />
+            <View style={[styles.luxeCard, isCosmetics && { elevation: 0, shadowOpacity: 0, borderColor: primaryColor, backgroundColor: 'rgba(255, 255, 255, 0.7)' }]}>
+              <View style={[styles.luxeLeft, isCosmetics && { position: 'relative', width: scaleh(32), height: scalev(32), justifyContent: 'center', alignItems: 'center' }]}>
+                {isCosmetics ? (
+                  <>
+                    <Image source={require('../../../images/Logo/logo.webp')} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
+
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.luxeLogo}>G</Text>
+                    <Icon name="heart" size={scaleh(15)} color={AppTheme.colors.primary} style={styles.luxeHeart} />
+                  </>
+                )}
               </View>
               <View style={styles.luxeContent}>
                 <Text style={styles.luxeText}>202 Reward points will be credited on order delivery</Text>
-                <Text style={styles.luxeLink}>Learn more about LUXE Benefits</Text>
+                <Text style={[styles.luxeLink, isCosmetics && { color: primaryColor }]}>Learn more about LUXE Benefits</Text>
               </View>
               <Icon name="info" size={scaleh(14)} color="#666" style={styles.infoIcon} />
             </View>
@@ -111,7 +117,7 @@ const OrderConfirmedScreen = ({ navigation }) => {
           <View style={styles.bottomSectionContent}>
 
             <Text style={styles.sectionLabel}>You will receive updates on</Text>
-            <View style={styles.updatesCard}>
+            <View style={[styles.updatesCard, isCosmetics && { elevation: 0, shadowOpacity: 0, borderColor: '#333', backgroundColor: 'rgba(255, 255, 255, 0.7)' }]}>
               <View style={styles.updatesRow}>
                 <Icon name="mail" size={scaleh(18)} color="#333" style={{ marginRight: scaleh(15) }} />
                 <Text style={styles.updatesText}>Ayshisinha@gmail.com</Text>
@@ -124,7 +130,7 @@ const OrderConfirmedScreen = ({ navigation }) => {
             </View>
 
             <Text style={styles.sectionLabel}>Products in this purchase</Text>
-            <View style={styles.productCard}>
+            <View style={[styles.productCard, isCosmetics && { elevation: 0, shadowOpacity: 0, borderColor: '#333', backgroundColor: 'rgba(255, 255, 255, 0.7)' }]}>
               <View style={styles.productTopRow}>
                 <View style={styles.productImagePlaceholder} />
                 <View style={styles.productInfo}>
@@ -147,7 +153,7 @@ const OrderConfirmedScreen = ({ navigation }) => {
             </View>
 
             {/* Payment Details */}
-            <View style={styles.paymentDetailsContainer}>
+            <View style={[styles.paymentDetailsContainer, isCosmetics && { backgroundColor: 'transparent' }]}>
               <Text style={styles.paymentDetailsTitle}>Payment Details</Text>
               <View style={styles.paymentRow}>
                 <Text style={styles.paymentLabel}>Bag Total (1 item)</Text>
@@ -224,13 +230,13 @@ const styles = StyleSheet.create({
     borderColor: '#FFF',
   },
   successTitle: {
-    fontSize: scaleh(20),
+    fontSize: scaleh(22),
     fontWeight: '400',
     color: '#000',
     marginBottom: scalev(5),
   },
   orderIdText: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#999',
   },
   deliveringCard: {
@@ -247,18 +253,18 @@ const styles = StyleSheet.create({
     marginBottom: scalev(20),
   },
   cardSubtitle: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#666',
     marginBottom: scalev(5),
   },
   userName: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     fontWeight: '600',
     color: '#000',
     marginBottom: scalev(5),
   },
   addressText: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#666',
     lineHeight: scalev(18),
     marginBottom: scalev(15),
@@ -270,7 +276,7 @@ const styles = StyleSheet.create({
   },
   editAddressText: {
     color: AppTheme.colors.primary,
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     fontWeight: '600',
     marginRight: scaleh(5),
   },
@@ -304,7 +310,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF9966',
   },
   orderDetailText: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     fontWeight: '600',
     color: '#000',
   },
@@ -313,7 +319,7 @@ const styles = StyleSheet.create({
     marginBottom: scalev(40),
   },
   sectionTitle: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#666',
     marginBottom: scalev(10),
   },
@@ -334,7 +340,7 @@ const styles = StyleSheet.create({
     marginRight: scaleh(15),
   },
   luxeLogo: {
-    fontSize: scaleh(30),
+    fontSize: scaleh(32),
     color: AppTheme.colors.primary,
     fontWeight: '300',
   },
@@ -348,13 +354,13 @@ const styles = StyleSheet.create({
     paddingRight: scaleh(10),
   },
   luxeText: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#333',
     lineHeight: scalev(16),
     marginBottom: scalev(5),
   },
   luxeLink: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: AppTheme.colors.primary,
   },
   infoIcon: {
@@ -370,7 +376,7 @@ const styles = StyleSheet.create({
     marginBottom: scalev(30),
   },
   adsText: {
-    fontSize: scaleh(30),
+    fontSize: scaleh(32),
     fontWeight: '300',
     color: '#000',
   },
@@ -392,12 +398,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   section2Title: {
-    fontSize: scaleh(16),
+    fontSize: scaleh(18),
     fontWeight: '400',
     color: '#000',
   },
   section2Subtitle: {
-    fontSize: scaleh(10),
+    fontSize: scaleh(12),
     color: '#999',
   },
   bottomSectionContent: {
@@ -405,7 +411,7 @@ const styles = StyleSheet.create({
     paddingTop: scalev(20),
   },
   sectionLabel: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     fontWeight: '600',
     color: '#000',
     marginBottom: scalev(10),
@@ -427,7 +433,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   updatesText: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     color: '#000',
   },
   productCard: {
@@ -456,13 +462,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   productName: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#333',
     lineHeight: scalev(16),
     marginBottom: scalev(5),
   },
   productSize: {
-    fontSize: scaleh(10),
+    fontSize: scaleh(12),
     color: '#999',
     marginBottom: scalev(10),
   },
@@ -471,7 +477,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deliveryText: {
-    fontSize: scaleh(10),
+    fontSize: scaleh(12),
     color: '#666',
     marginLeft: scaleh(5),
   },
@@ -481,7 +487,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   qtyText: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#333',
   },
   priceRow: {
@@ -489,13 +495,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   oldPrice: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#999',
     textDecorationLine: 'line-through',
     marginRight: scaleh(10),
   },
   newPrice: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     fontWeight: '700',
     color: '#000',
   },
@@ -506,7 +512,7 @@ const styles = StyleSheet.create({
     marginBottom: scalev(25),
   },
   paymentDetailsTitle: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     fontWeight: '600',
     color: '#000',
     marginBottom: scalev(15),
@@ -518,19 +524,19 @@ const styles = StyleSheet.create({
     marginBottom: scalev(5),
   },
   paymentLabel: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#333',
   },
   paymentValue: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(14),
     color: '#333',
   },
   youPayLabel: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     color: '#000',
   },
   youPayValue: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     color: '#000',
   },
   paymentMethodContainer: {

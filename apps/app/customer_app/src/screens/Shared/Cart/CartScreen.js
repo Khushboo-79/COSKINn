@@ -80,7 +80,7 @@ const CartScreen = ({ navigation }) => {
 
         <View style={styles.stepsRow}>
           <View style={styles.stepItem}>
-            <View style={[styles.iconCircle, styles.iconCircleActive, isCosmetics && { borderColor: primaryColor }]}>
+            <View style={[styles.iconCircle, styles.iconCircleActive, isCosmetics && { borderColor: AppTheme.colors.cosmeticsPrimary }]}>
               <Icon name="gift" size={scaleh(16)} color={primaryColor} />
               <View style={[styles.checkBadge, isCosmetics && { backgroundColor: '#4CAF50', borderWidth: 1, borderColor: '#FFF' }]}>
                 <Icon name="check" size={scaleh(8)} color={AppTheme.colors.white} />
@@ -148,8 +148,8 @@ const CartScreen = ({ navigation }) => {
         {cartData.map((item) => (
           <View key={item.id} style={styles.productCard}>
             <View style={styles.productImageWrapper}>
-              <Image source={item.bgImage} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />
-              <Image source={item.image} style={styles.prodImg} resizeMode="contain" />
+              {!isCosmetics && <Image source={item.bgImage} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />}
+              <Image source={isCosmetics ? require('../../../images/makeup/ProductImgs/Blush.webp') : item.image} style={isCosmetics ? [styles.prodImg, { width: '90%', height: '90%' }] : styles.prodImg} resizeMode="contain" />
             </View>
 
             <View style={styles.productDetails}>
@@ -176,7 +176,7 @@ const CartScreen = ({ navigation }) => {
         ))}
 
         {/* Accordions */}
-        <TouchableOpacity style={styles.accordionCard} onPress={() => navigation.navigate('Coupons')}>
+        <TouchableOpacity style={[styles.accordionCard, isCosmetics && { borderColor: AppTheme.colors.cosmeticsPrimary }]} onPress={() => navigation.navigate('Coupons')}>
           <Text style={styles.accordionTitle}>Coupons & Offers</Text>
           <View style={styles.accordionRight}>
             <Text style={[styles.viewAllText, { color: primaryColor }]}>View All</Text>
@@ -274,8 +274,8 @@ const CartScreen = ({ navigation }) => {
             {lastMinuteData.map((item, index) => (
               <View key={item.id} style={[styles.lastMinuteCard, index === 0 && { marginLeft: scaleh(20) }]}>
                 <View style={styles.lmImageWrapper}>
-                  <Image source={item.bgImage} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />
-                  <Image source={item.image} style={styles.lmProdImg} resizeMode="contain" />
+                  {!isCosmetics && <Image source={item.bgImage} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />}
+                  <Image source={isCosmetics ? require('../../../images/makeup/ProductImgs/Blush.webp') : item.image} style={isCosmetics ? [styles.lmProdImg, { width: '90%', height: '90%' }] : styles.lmProdImg} resizeMode="contain" />
                 </View>
                 <View style={styles.lmDetails}>
                   <Text style={styles.lmBrand}>COSKINn</Text>
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppTheme.colors.white,
     borderRadius: scaleh(10),
     borderWidth: 1,
-    borderColor: AppTheme.colors.primary,
+    borderColor: '#E0E0E0',
     marginBottom: scalev(20),
   },
   accordionTitle: {
@@ -826,7 +826,7 @@ const styles = StyleSheet.create({
     color: AppTheme.colors.primary,
   },
   lastMinuteSection: {
-    marginBottom: scalev(20),
+    marginBottom: scalev(30),
   },
   lastMinuteTitle: {
     fontSize: scaleh(16),
@@ -843,7 +843,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 1,
     backgroundColor: AppTheme.colors.white,
     borderRadius: scaleh(15),
     padding: scaleh(12),

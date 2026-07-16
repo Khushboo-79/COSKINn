@@ -2,9 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, Image, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
+import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
 const RazorpayModal = ({ visible, onClose }) => {
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
+
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -26,54 +32,71 @@ const RazorpayModal = ({ visible, onClose }) => {
       onRequestClose={onClose}
     >
       <TouchableWithoutFeedback onPress={onClose}>
-        <LinearGradient 
-          colors={['rgba(255, 0, 105, 0.8)', 'rgba(0, 0, 0, 0.8)']} 
+        <LinearGradient
+          colors={isCosmetics ? ['rgba(255, 194, 209, 0.8)', 'rgba(0, 0, 0, 0.8)'] : ['rgba(255, 0, 105, 0.8)', 'rgba(0, 0, 0, 0.8)']}
           style={styles.modalOverlay}
         >
           <TouchableWithoutFeedback>
-              <View style={[styles.bottomSheetContainer, isProcessing && { backgroundColor: '#FFFFFF' }]}>
-                {isProcessing ? (
-                  <View style={styles.processingContainer}>
-                    <Text style={styles.processingTitle}>Processing your payment...</Text>
-                    <Text style={styles.processingSub}>
-                      Please wait as we are confirming the transaction on our end
-                    </Text>
-                    
-                    <View style={styles.warningRow}>
-                      <Icon name="alert-triangle" size={scaleh(14)} color="#FF3366" />
-                      <Text style={styles.warningText}>Please don't refresh or click back</Text>
-                    </View>
+            <LinearGradient
+              colors={isProcessing || isCosmetics ? ['#FFFFFF', '#FFFFFF'] : ['#FFE6EF', '#FFE6EF']}
+              style={[styles.bottomSheetContainer, isCosmetics && { borderColor: primaryColor }]}
+            >
+              {isProcessing ? (
+                <View style={styles.processingContainer}>
+                  <Text style={styles.processingTitle}>Processing your payment...</Text>
+                  <Text style={styles.processingSub}>
+                    Please wait as we are confirming the transaction on our end
+                  </Text>
 
-                    <View style={styles.loaderWrapper}>
-                      <View style={styles.pinkGlowOuter}>
+                  <View style={styles.warningRow}>
+                    <Icon name="alert-triangle" size={scaleh(14)} color="#FF3366" />
+                    <Text style={styles.warningText}>Please don't refresh or click back</Text>
+                  </View>
+
+                  <View style={styles.loaderWrapper}>
+                    <View style={[styles.pinkGlowOuter, isCosmetics && { backgroundColor: 'rgba(255, 194, 209, 0.3)' }]}>
+                      {isCosmetics ? (
+                        <View style={{ width: scaleh(35), height: scaleh(35), borderRadius: scaleh(17.5), overflow: 'hidden' }}>
+                          <Svg height="100%" width="100%" viewBox="0 0 24 24">
+                            <Defs>
+                              <RadialGradient id="gradProcess" cx="50%" cy="50%" rx="50%" ry="50%" fx="30%" fy="30%">
+                                <Stop offset="0%" stopColor="#FFC2D1" />
+                                <Stop offset="100%" stopColor="#D81B60" />
+                              </RadialGradient>
+                            </Defs>
+                            <Circle cx="12" cy="12" r="12" fill="url(#gradProcess)" />
+                          </Svg>
+                        </View>
+                      ) : (
                         <View style={styles.pinkGlowInner} />
-                      </View>
-                    </View>
-
-                    <TouchableOpacity onPress={onClose}>
-                      <Text style={styles.cancelText}>
-                        Could not complete payment? <Text style={{fontWeight: '700'}}>Cancel</Text>
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View style={styles.contentContainer}>
-                    {/* Mimicking the Razorpay slanted '1' logo */}
-                    <View style={styles.logoWrapper}>
-                      <View style={styles.razorpayIconPlaceholder}>
-                        <View style={styles.whiteTriangle} />
-                        <View style={styles.blueBar} />
-                      </View>
-                    </View>
-
-                    <View style={styles.securedByContainer}>
-                      <Text style={styles.securedText}>Secured By</Text>
-                      <Text style={styles.razorpayText}>Razorpay</Text>
+                      )}
                     </View>
                   </View>
-                )}
 
-            </View>
+                  <TouchableOpacity onPress={onClose}>
+                    <Text style={styles.cancelText}>
+                      Could not complete payment? <Text style={{ fontWeight: '700' }}>Cancel</Text>
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={styles.contentContainer}>
+                  {/* Mimicking the Razorpay slanted '1' logo */}
+                  <View style={styles.logoWrapper}>
+                    <View style={styles.razorpayIconPlaceholder}>
+                      <View style={styles.whiteTriangle} />
+                      <View style={styles.blueBar} />
+                    </View>
+                  </View>
+
+                  <View style={styles.securedByContainer}>
+                    <Text style={styles.securedText}>Secured By</Text>
+                    <Text style={styles.razorpayText}>Razorpay</Text>
+                  </View>
+                </View>
+              )}
+
+            </LinearGradient>
           </TouchableWithoutFeedback>
         </LinearGradient>
       </TouchableWithoutFeedback>

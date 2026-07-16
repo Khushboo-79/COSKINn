@@ -35,6 +35,7 @@ export const AppTheme = {
     cartBottomGradientEnd: '#FFCA7A',
     profileGradientStart: '#FF0069',
     profileGradientEnd: '#FFD498',
+    cosmeticsPrimary: '#FFC2D1',
   },
   fonts: {
     logo: 'Expletus Sans', // Used for OSKINn

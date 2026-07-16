@@ -12,6 +12,7 @@ import RazorpayModal from './RazorpayModal';
 const WalletPaymentScreen = ({ navigation }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
 
   const [isEditContactModalVisible, setIsEditContactModalVisible] = useState(false);
   const [isPriceSummaryModalVisible, setIsPriceSummaryModalVisible] = useState(false);
@@ -32,46 +33,44 @@ const WalletPaymentScreen = ({ navigation }) => {
         <>
           <Image
             source={require('../../../images/makeup/CosmeticBackImg.webp')}
-            style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.3 }]}
+            style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.2 }]}
             resizeMode="cover"
-          />
-          <LinearGradient
-            colors={['#FF006915', '#FF006905']}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
           />
         </>
       )}
       <SafeAreaView style={styles.safeArea}>
-        
+
+        <LinearGradient
+          colors={isCosmetics ? [primaryColor, primaryColor] : ['#FF007A', '#FF9966']}
+        >
+          <Header transparent={true} onBackPress={() => navigation.goBack()} />
+        </LinearGradient>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent} bounces={false}>
-          
-          <LinearGradient 
-            colors={['#FF007A', '#FF9966']} 
+
+          <LinearGradient
+            colors={isCosmetics ? [primaryColor, primaryColor] : ['#FF007A', '#FF9966']}
             style={styles.gradientTopSection}
           >
-            <Header transparent={true} onBackPress={() => navigation.goBack()} />
 
             <View style={styles.summaryCardWrapper}>
               {/* Price Summary Card */}
-              <View style={styles.priceSummaryCard}>
+              <View style={[styles.priceSummaryCard, isCosmetics && { elevation: 0, shadowOpacity: 0 }]}>
                 <Text style={styles.priceSummaryTitle}>Price Summary</Text>
                 <Text style={styles.priceSummaryAmount}>₹480.46</Text>
               </View>
 
               {/* User Card */}
-              <TouchableOpacity style={styles.userCard} activeOpacity={0.8} onPress={() => setIsEditContactModalVisible(true)}>
+              <TouchableOpacity style={[styles.userCard, isCosmetics && { elevation: 0, shadowOpacity: 0 }]} activeOpacity={0.8} onPress={() => setIsEditContactModalVisible(true)}>
                 <View style={styles.userLeft}>
-                  <Icon name="user" size={scaleh(16)} color="#FF007A" style={{marginRight: scaleh(10)}} />
+                  <Icon name="user" size={scaleh(16)} color={isCosmetics ? primaryColor : "#FF007A"} style={{ marginRight: scaleh(10) }} />
                   <Text style={styles.userText}>Using as +91 1234567890</Text>
                 </View>
-                <Icon name="chevron-right" size={scaleh(16)} color="#FF007A" />
+                <Icon name="chevron-right" size={scaleh(16)} color={isCosmetics ? primaryColor : "#FF007A"} />
               </TouchableOpacity>
             </View>
           </LinearGradient>
 
-          <View style={styles.whiteBottomSection}>
+          <View style={[styles.whiteBottomSection, isCosmetics && { backgroundColor: 'transparent' }]}>
             <Text style={styles.sectionTitle}>Wallet</Text>
 
             <Text style={styles.subTitle}>Available Offers</Text>
@@ -81,12 +80,12 @@ const WalletPaymentScreen = ({ navigation }) => {
             </View>
 
             <Text style={styles.subTitle}>All Wallet Options</Text>
-            
+
             {/* Wallet Options List */}
-            <View style={styles.listContainer}>
+            <View style={[styles.listContainer, isCosmetics && { backgroundColor: '#FFFFFF' }]}>
               {walletOptions.map((wallet, index) => (
-                <TouchableOpacity 
-                  key={wallet.id} 
+                <TouchableOpacity
+                  key={wallet.id}
                   style={[styles.listItem, index === walletOptions.length - 1 && { borderBottomWidth: 0 }]}
                   activeOpacity={0.7}
                 >
@@ -119,30 +118,33 @@ const WalletPaymentScreen = ({ navigation }) => {
         </ScrollView>
 
         {/* Sticky Bottom Bar */}
-        <View style={styles.stickyBottomBar}>
-          <TouchableOpacity 
-            style={styles.bottomBarLeft} 
-            activeOpacity={0.8} 
+        <View style={[styles.stickyBottomBar, isCosmetics && { borderTopColor: primaryColor }]}>
+          <TouchableOpacity
+            style={styles.bottomBarLeft}
+            activeOpacity={0.8}
             onPress={() => setIsPriceSummaryModalVisible(true)}
           >
             <Text style={styles.bottomTotal}>₹699</Text>
-            <Text style={styles.bottomDetails}>View Details ^</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: scalev(2) }}>
+              <Text style={[styles.bottomDetails, { marginTop: 0 }]}>View Details </Text>
+              <Icon name="chevron-up" size={scaleh(12)} color="#666" />
+            </View>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.continueBtn, isCosmetics && { backgroundColor: '#FFC2D1' }]} activeOpacity={0.8} onPress={() => setIsRazorpayModalVisible(true)}>
-            <Text style={[styles.continueBtnText, isCosmetics && { color: '#000000' }]}>Continue</Text>
+          <TouchableOpacity style={[styles.continueBtn, isCosmetics && { backgroundColor: primaryColor }]} activeOpacity={0.8} onPress={() => setIsRazorpayModalVisible(true)}>
+            <Text style={styles.continueBtnText}>Continue</Text>
           </TouchableOpacity>
         </View>
 
         {/* Edit Contact Modal */}
-        <EditContactModal 
-          visible={isEditContactModalVisible} 
-          onClose={() => setIsEditContactModalVisible(false)} 
+        <EditContactModal
+          visible={isEditContactModalVisible}
+          onClose={() => setIsEditContactModalVisible(false)}
         />
 
         {/* Price Summary Modal */}
-        <PriceSummaryModal 
-          visible={isPriceSummaryModalVisible} 
-          onClose={() => setIsPriceSummaryModalVisible(false)} 
+        <PriceSummaryModal
+          visible={isPriceSummaryModalVisible}
+          onClose={() => setIsPriceSummaryModalVisible(false)}
         />
 
         {/* Razorpay Modal */}
@@ -247,19 +249,19 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     borderWidth: 1,
-    borderColor: '#999',
+    borderColor: '#2b2b2bff',
     borderRadius: scaleh(10),
     marginBottom: scalev(20),
     overflow: 'hidden',
   },
   listItem: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: scaleh(15),
+    alignItems: 'center',
     paddingVertical: scalev(18),
+    paddingHorizontal: scaleh(15),
     borderBottomWidth: 1,
-    borderBottomColor: '#999',
+    borderBottomColor: '#2b2b2bff',
   },
   listItemLeft: {
     flexDirection: 'column',

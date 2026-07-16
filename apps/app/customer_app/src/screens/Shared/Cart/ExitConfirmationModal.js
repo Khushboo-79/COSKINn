@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
 const ExitConfirmationModal = ({ visible, onClose, onContinuePayment, onExit }) => {
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
+
   return (
     <Modal
       visible={visible}
@@ -14,7 +19,7 @@ const ExitConfirmationModal = ({ visible, onClose, onContinuePayment, onExit }) 
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
-            <View style={styles.bottomSheetContainer}>
+            <View style={[styles.bottomSheetContainer, isCosmetics && { borderColor: primaryColor }]}>
               
               {/* Close Icon */}
               <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
@@ -28,13 +33,13 @@ const ExitConfirmationModal = ({ visible, onClose, onContinuePayment, onExit }) 
                 </Text>
 
                 {/* Continue to Payment Button (Outlined) */}
-                <TouchableOpacity style={styles.outlineBtn} onPress={onContinuePayment}>
+                <TouchableOpacity style={[styles.outlineBtn, isCosmetics && { borderColor: primaryColor }]} onPress={onContinuePayment}>
                   <Text style={styles.outlineBtnText}>Continue to payment</Text>
                 </TouchableOpacity>
 
                 {/* Yes, exit Button (Filled) */}
-                <TouchableOpacity style={styles.filledBtn} onPress={onExit}>
-                  <Text style={styles.filledBtnText}>Yes, exit</Text>
+                <TouchableOpacity style={[styles.filledBtn, isCosmetics && { backgroundColor: primaryColor }]} onPress={onExit}>
+                  <Text style={[styles.filledBtnText, isCosmetics && { color: '#000' }]}>Yes, exit</Text>
                 </TouchableOpacity>
 
                 {/* Secured By */}

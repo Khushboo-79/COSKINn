@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
 const EditContactModal = ({ visible, onClose }) => {
+  const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const isCosmetics = activeDomain === 'cosmetics';
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
+
   return (
     <Modal
       visible={visible}
@@ -26,7 +31,7 @@ const EditContactModal = ({ visible, onClose }) => {
                 <Text style={styles.subtitle}>Enter mobile & email to continue</Text>
 
                 {/* Mobile Input */}
-                <View style={styles.inputContainer}>
+                <View style={[styles.inputContainer, isCosmetics && { borderColor: '#333' }]}>
                   <TouchableOpacity style={styles.countryCode}>
                     <Text style={styles.countryCodeText}>+91</Text>
                     <Icon name="chevron-down" size={scaleh(16)} color="#333" style={{ marginLeft: scaleh(5) }} />
@@ -39,7 +44,7 @@ const EditContactModal = ({ visible, onClose }) => {
                 </View>
 
                 {/* Email Input */}
-                <View style={[styles.inputContainer, { marginTop: scalev(15) }]}>
+                <View style={[styles.inputContainer, { marginTop: scalev(15) }, isCosmetics && { borderColor: '#333' }]}>
                   <TextInput 
                     style={styles.textInputFull}
                     value="asdfghg@123gmail.com"
@@ -49,7 +54,7 @@ const EditContactModal = ({ visible, onClose }) => {
                 </View>
 
                 {/* Continue Button */}
-                <TouchableOpacity style={styles.continueBtn} onPress={onClose}>
+                <TouchableOpacity style={[styles.continueBtn, isCosmetics && { backgroundColor: primaryColor }]} onPress={onClose}>
                   <Text style={styles.continueBtnText}>Continue</Text>
                 </TouchableOpacity>
 

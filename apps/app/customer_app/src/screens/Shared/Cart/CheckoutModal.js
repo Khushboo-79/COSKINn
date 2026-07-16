@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback, TextInput, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -15,7 +16,7 @@ const addresses = [
 const CheckoutModal = ({ visible, onClose }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
-  const primaryColor = isCosmetics ? '#FF0069' : AppTheme.colors.primary;
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
 
   const navigation = useNavigation();
   // 'summary' or 'address'
@@ -55,8 +56,9 @@ const CheckoutModal = ({ visible, onClose }) => {
           <Text style={styles.cardTitle}>Ayushi, 345678</Text>
           <Text style={styles.cardDesc} numberOfLines={1}>Ibus stop, Mumbai, Bandra, Chauraha.....</Text>
         </View>
-        <TouchableOpacity onPress={() => setViewState('address')} style={styles.changeBtnWrapper}>
-          <Text style={styles.changeBtnText}>Change {'>'}</Text>
+        <TouchableOpacity onPress={() => setViewState('address')} style={[styles.changeBtnWrapper, { flexDirection: 'row', alignItems: 'center' }]}>
+          <Text style={[styles.changeBtnText, { color: primaryColor }]}>Change</Text>
+          <Icon name="chevron-right" size={scaleh(16)} color={primaryColor} />
         </TouchableOpacity>
       </View>
 
@@ -69,11 +71,12 @@ const CheckoutModal = ({ visible, onClose }) => {
           <Text style={styles.cardSubtitle}>Paying via</Text>
           <Text style={styles.cardTitle}>Cash on Delivery</Text>
         </View>
-        <TouchableOpacity style={styles.changeBtnWrapper} onPress={() => {
+        <TouchableOpacity style={[styles.changeBtnWrapper, { flexDirection: 'row', alignItems: 'center' }]} onPress={() => {
           handleClose();
           setTimeout(() => navigation.navigate('PaymentMethods'), 300);
         }}>
-          <Text style={styles.changeBtnText}>Change {'>'}</Text>
+          <Text style={[styles.changeBtnText, { color: primaryColor }]}>Change</Text>
+          <Icon name="chevron-right" size={scaleh(16)} color={primaryColor} />
         </TouchableOpacity>
       </View>
 
@@ -105,7 +108,7 @@ const CheckoutModal = ({ visible, onClose }) => {
           return (
             <TouchableOpacity
               key={item.id}
-              style={[styles.addressCard, isSelected && styles.addressCardSelected]}
+              style={[styles.addressCard, isSelected && (isCosmetics ? { borderColor: primaryColor, backgroundColor: '#FFF2F6' } : styles.addressCardSelected)]}
               onPress={() => setSelectedAddressId(item.id)}
               activeOpacity={0.9}
             >
@@ -114,9 +117,31 @@ const CheckoutModal = ({ visible, onClose }) => {
                 <Text style={styles.addressDetails} numberOfLines={1}>{item.details}</Text>
               </View>
               <View style={styles.addressRight}>
-                <View style={[styles.radioCircle, isSelected ? [styles.radioSelected, { backgroundColor: primaryColor }] : styles.radioUnselected]} />
+                {isSelected && isCosmetics ? (
+                  <View style={[styles.radioCircle, { borderColor: '#333', overflow: 'hidden' }]}>
+                    <Svg height="100%" width="100%" viewBox="0 0 24 24">
+                      <Defs>
+                        <RadialGradient
+                          id="gradAddress"
+                          cx="50%"
+                          cy="50%"
+                          rx="50%"
+                          ry="50%"
+                          fx="30%"
+                          fy="30%"
+                        >
+                          <Stop offset="0%" stopColor="#FFC2D1" />
+                          <Stop offset="100%" stopColor="#D81B60" />
+                        </RadialGradient>
+                      </Defs>
+                      <Circle cx="12" cy="12" r="12" fill="url(#gradAddress)" />
+                    </Svg>
+                  </View>
+                ) : (
+                  <View style={[styles.radioCircle, isSelected ? [styles.radioSelected, { backgroundColor: primaryColor }] : styles.radioUnselected]} />
+                )}
                 <TouchableOpacity style={{ marginTop: scalev(5) }}>
-                  <Text style={styles.editText}>Edit</Text>
+                  <Text style={[styles.editText, { color: primaryColor }]}>Edit</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -134,7 +159,7 @@ const CheckoutModal = ({ visible, onClose }) => {
       {/* Pincode Input */}
       <View style={styles.pincodeInputContainer}>
         <TextInput
-          style={styles.pincodeInput}
+          style={[styles.pincodeInput, { borderColor: primaryColor }]}
           placeholder="Enter pincode"
           placeholderTextColor="#999"
         />
@@ -152,7 +177,7 @@ const CheckoutModal = ({ visible, onClose }) => {
     >
       <TouchableWithoutFeedback onPress={handleClose}>
         <LinearGradient
-          colors={['rgba(255, 153, 196, 0.8)', 'rgba(0, 0, 0, 0.8)']}
+          colors={isCosmetics ? ['rgba(255, 194, 209, 0.8)', 'rgba(0, 0, 0, 0.8)'] : ['rgba(255, 0, 105, 0.8)', 'rgba(0, 0, 0, 0.8)']}
           style={styles.modalOverlay}
         >
           <TouchableWithoutFeedback>
@@ -259,7 +284,7 @@ const styles = StyleSheet.create({
   changeBtnText: {
     fontSize: scaleh(12),
     fontWeight: '700',
-    color: AppTheme.colors.primary,
+    // color is now applied dynamically inline
   },
   payButton: {
     backgroundColor: AppTheme.colors.primary,
@@ -329,8 +354,8 @@ const styles = StyleSheet.create({
   },
   editText: {
     fontSize: scaleh(12),
-    color: AppTheme.colors.primary,
     fontWeight: '600',
+    // color overridden inline
   },
   orDividerContainer: {
     flexDirection: 'row',
@@ -353,12 +378,12 @@ const styles = StyleSheet.create({
   },
   pincodeInput: {
     borderWidth: 1,
-    borderColor: AppTheme.colors.primary,
     borderRadius: scaleh(8),
     height: scalev(50),
     paddingHorizontal: scaleh(15),
     fontSize: scaleh(14),
     color: '#000',
+    // borderColor overridden inline
   }
 });
 

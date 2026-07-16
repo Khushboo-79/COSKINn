@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
+import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg';
 import { useSelector } from 'react-redux';
 import Header from '../../../components/Header';
 import RazorpayModal from './RazorpayModal';
@@ -12,7 +13,8 @@ import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 const PaymentMethodsScreen = ({ navigation }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
-  const primaryColor = isCosmetics ? '#FF0069' : AppTheme.colors.primary;
+  const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
+  const bannerGradient = isCosmetics ? ['#FFC2D1', '#FFE4E1'] : [AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd];
 
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [isShippingOpen, setIsShippingOpen] = useState(false);
@@ -64,7 +66,7 @@ const PaymentMethodsScreen = ({ navigation }) => {
 
           {/* Discount Banner */}
           <LinearGradient
-            colors={[AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd]}
+            colors={bannerGradient}
             style={styles.discountBanner}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -94,8 +96,10 @@ const PaymentMethodsScreen = ({ navigation }) => {
                 <View style={styles.summaryExpandedContent}>
                   <View style={styles.productRow}>
                     <View style={styles.productImageWrapper}>
-                      <Image source={require('../../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />
-                      <Image source={require('../../../images/bgImages/productImg.webp')} style={styles.productImg} resizeMode="contain" />
+                      {!isCosmetics && (
+                        <Image source={require('../../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />
+                      )}
+                      <Image source={isCosmetics ? require('../../../images/makeup/ProductImgs/Blush.webp') : require('../../../images/bgImages/productImg.webp')} style={styles.productImg} resizeMode="contain" />
                     </View>
                     <View style={styles.productDetails}>
                       <Text style={styles.productTitle} numberOfLines={2}>Vitamin C + E Sunscreen SPF 50 PA++++ with Ne..</Text>
@@ -111,8 +115,8 @@ const PaymentMethodsScreen = ({ navigation }) => {
                         <Icon name="trash-2" size={scaleh(16)} color="#1a1a1a" />
                       </TouchableOpacity>
                       <Text style={styles.quantityText}>1</Text>
-                      <TouchableOpacity style={styles.addBtn}>
-                        <Icon name="plus" size={scaleh(16)} color={AppTheme.colors.primary} />
+                      <TouchableOpacity style={[styles.addBtn, isCosmetics && styles.addBtnCosmetics]}>
+                        <Icon name="plus" size={scaleh(16)} color={isCosmetics ? '#1a1a1a' : AppTheme.colors.primary} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -158,8 +162,30 @@ const PaymentMethodsScreen = ({ navigation }) => {
 
               {isShippingOpen && (
                 <View style={styles.shippingExpandedContent}>
-                  <View style={styles.shippingOptionCard}>
-                    <View style={[styles.shippingRadioCircleSelected, { backgroundColor: primaryColor }]} />
+                  <View style={[styles.shippingOptionCard, isCosmetics && { borderColor: primaryColor, elevation: 0, shadowOpacity: 0, backgroundColor: AppTheme.colors.white }]}>
+                    {isCosmetics ? (
+                      <View style={[styles.shippingRadioCircleSelected, { borderColor: '#333', borderWidth: 1, backgroundColor: 'transparent', overflow: 'hidden' }]}>
+                        <Svg height="100%" width="100%" viewBox="0 0 24 24">
+                          <Defs>
+                            <RadialGradient
+                              id="gradShipping"
+                              cx="50%"
+                              cy="50%"
+                              rx="50%"
+                              ry="50%"
+                              fx="30%"
+                              fy="30%"
+                            >
+                              <Stop offset="0%" stopColor="#FFC2D1" />
+                              <Stop offset="100%" stopColor="#D81B60" />
+                            </RadialGradient>
+                          </Defs>
+                          <Circle cx="12" cy="12" r="12" fill="url(#gradShipping)" />
+                        </Svg>
+                      </View>
+                    ) : (
+                      <View style={[styles.shippingRadioCircleSelected, { backgroundColor: primaryColor }]} />
+                    )}
                     <View style={styles.shippingDetails}>
                       <Text style={styles.shippingRateText}>Standard Shipping Rate</Text>
                       <View style={styles.codAvailableRow}>
@@ -199,8 +225,8 @@ const PaymentMethodsScreen = ({ navigation }) => {
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.upiAppsContainer}>
               {['PhonePe', 'GPay', 'Paytm', 'Cred', 'Others'].map((app, index) => (
-                <TouchableOpacity key={index} style={styles.upiAppBtn}>
-                  <Text style={styles.upiAppText}>{app}</Text>
+                <TouchableOpacity key={index} style={[styles.upiAppBtn, isCosmetics && styles.upiAppBtnShadow]}>
+                  <Text style={[styles.upiAppText, isCosmetics && { color: '#1a1a1a', fontWeight: '500' }]}>{app}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -243,7 +269,7 @@ const PaymentMethodsScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           {/* 4. Wallets */}
-          <TouchableOpacity style={styles.paymentCard} activeOpacity={0.8} onPress={() => navigation.navigate('WalletPayment')}>
+          <TouchableOpacity style={[styles.paymentCard, isCosmetics && { elevation: 0, shadowOpacity: 0, backgroundColor: 'rgba(255, 255, 255, 0.6)' }]} activeOpacity={0.8} onPress={() => navigation.navigate('WalletPayment')}>
             <View style={styles.paymentCardTop}>
               <View style={styles.paymentCardLeft}>
                 <View>
@@ -263,7 +289,7 @@ const PaymentMethodsScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           {/* 5. Netbanking */}
-          <TouchableOpacity style={styles.paymentCard} activeOpacity={0.8} onPress={() => navigation.navigate('Netbanking')}>
+          <TouchableOpacity style={[styles.paymentCard, isCosmetics && { elevation: 0, shadowOpacity: 0, backgroundColor: 'rgba(255, 255, 255, 0.6)' }]} activeOpacity={0.8} onPress={() => navigation.navigate('Netbanking')}>
             <View style={styles.paymentCardTop}>
               <View style={styles.paymentCardLeft}>
                 <View>
@@ -283,7 +309,7 @@ const PaymentMethodsScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           {/* 6. Pay Later */}
-          <TouchableOpacity style={styles.paymentCard} activeOpacity={0.8} onPress={() => setIsPayLaterOtpVisible(true)}>
+          <TouchableOpacity style={[styles.paymentCard, isCosmetics && { elevation: 0, shadowOpacity: 0, backgroundColor: 'rgba(255, 255, 255, 0.6)' }]} activeOpacity={0.8} onPress={() => setIsPayLaterOtpVisible(true)}>
             <View style={styles.paymentCardTop}>
               <View style={styles.paymentCardLeft}>
                 <View>
@@ -568,6 +594,8 @@ const styles = StyleSheet.create({
   upiAppsContainer: {
     marginTop: scalev(20),
     paddingRight: scaleh(10),
+    paddingBottom: scalev(10),
+    paddingTop: scalev(5),
   },
   upiAppBtn: {
     width: scaleh(60),
@@ -580,6 +608,14 @@ const styles = StyleSheet.create({
     paddingBottom: scalev(10),
     marginRight: scaleh(10),
     backgroundColor: AppTheme.colors.white,
+  },
+  upiAppBtnShadow: {
+    borderColor: '#EFEFEF',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
   },
   upiAppText: {
     fontSize: scaleh(10),
@@ -674,6 +710,15 @@ const styles = StyleSheet.create({
     borderColor: AppTheme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  addBtnCosmetics: {
+    borderColor: '#FFC2D1',
+    backgroundColor: '#FFFFFF',
+    elevation: 3,
+    shadowColor: '#FFC2D1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
   },
   priceBreakdown: {
     paddingHorizontal: scaleh(5),

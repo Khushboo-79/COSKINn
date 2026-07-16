@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, ScrollView, FlatList, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
@@ -15,7 +16,7 @@ const couponsData = [
 const CouponsScreen = ({ navigation }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
-  const primaryColor = isCosmetics ? '#FF0069' : AppTheme.colors.primary;
+  const themePrimaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
 
   const [activeFilter, setActiveFilter] = useState('All');
 
@@ -27,7 +28,7 @@ const CouponsScreen = ({ navigation }) => {
       {/* Top Section */}
       <View style={styles.couponTop}>
         <View style={styles.couponIconWrapper}>
-          <Icon name="tag" size={scaleh(24)} color="#1a1a1a" />
+          <MaterialCommunityIcons name="ticket-outline" size={scaleh(28)} color="#333" />
         </View>
 
         <View style={styles.couponTextWrapper}>
@@ -36,7 +37,7 @@ const CouponsScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.lockIconWrapper}>
-          <Icon name="lock" size={scaleh(14)} color={AppTheme.colors.white} />
+          <MaterialCommunityIcons name="lock" size={scaleh(20)} color="#666" />
         </View>
       </View>
 
@@ -44,13 +45,17 @@ const CouponsScreen = ({ navigation }) => {
       <View style={styles.couponBottom}>
         <Text style={styles.couponCode}>{item.code}</Text>
         <TouchableOpacity>
-          <Text style={[styles.shopMoreText, { color: primaryColor }]}>{item.action}</Text>
+          <Text style={[styles.shopMoreText, { color: themePrimaryColor }]}>{item.action}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Side Cutouts (To give it a ticket shape) */}
-      <View style={[styles.cutout, styles.cutoutLeft]} />
-      <View style={[styles.cutout, styles.cutoutRight]} />
+      {/* Side Cutouts (To give it a ticket shape) - Only for Skincare */}
+      {!isCosmetics && (
+        <>
+          <View style={[styles.cutout, styles.cutoutLeft]} />
+          <View style={[styles.cutout, styles.cutoutRight]} />
+        </>
+      )}
     </View>
   );
 
@@ -79,14 +84,14 @@ const CouponsScreen = ({ navigation }) => {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 
           {/* Input Box */}
-          <View style={[styles.inputContainer, { borderColor: primaryColor }]}>
+          <View style={[styles.inputContainer, { borderColor: themePrimaryColor }]}>
             <TextInput
               style={styles.input}
               placeholder="Enter Coupon Code"
               placeholderTextColor="#999"
             />
             <TouchableOpacity style={styles.applyBtn}>
-              <Text style={[styles.applyText, isCosmetics && { color: primaryColor }]}>Apply</Text>
+              <Text style={styles.applyText}>Apply</Text>
             </TouchableOpacity>
           </View>
 
@@ -97,10 +102,10 @@ const CouponsScreen = ({ navigation }) => {
               return (
                 <TouchableOpacity
                   key={filter}
-                  style={[styles.filterPill, isActive ? { borderColor: primaryColor, backgroundColor: AppTheme.colors.white } : styles.filterPillInactive]}
+                  style={[styles.filterPill, isActive ? { borderColor: themePrimaryColor, backgroundColor: AppTheme.colors.white } : styles.filterPillInactive]}
                   onPress={() => setActiveFilter(filter)}
                 >
-                  <Text style={[styles.filterText, isActive ? { color: primaryColor } : styles.filterTextInactive]}>
+                  <Text style={[styles.filterText, isActive ? { color: isCosmetics ? '#000' : AppTheme.colors.primary } : styles.filterTextInactive]}>
                     {filter}
                   </Text>
                 </TouchableOpacity>
@@ -130,7 +135,7 @@ const CouponsScreen = ({ navigation }) => {
             <Text style={styles.savedText}>Saved so far</Text>
           </View>
 
-          <TouchableOpacity style={[styles.goBagButton, { backgroundColor: isCosmetics ? '#FFC2D1' : primaryColor }]} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={[styles.goBagButton, { backgroundColor: themePrimaryColor }]} onPress={() => navigation.goBack()}>
             <Text style={[styles.goBagText, isCosmetics && { color: '#000000' }]}>Go To Bag</Text>
             <Icon name="arrow-right" size={scaleh(20)} color={isCosmetics ? '#000000' : AppTheme.colors.white} style={{ marginLeft: scaleh(10) }} />
           </TouchableOpacity>
@@ -179,6 +184,7 @@ const styles = StyleSheet.create({
     borderRadius: scaleh(8),
     paddingHorizontal: scaleh(15),
     height: scalev(50),
+    backgroundColor: AppTheme.colors.white,
   },
   input: {
     flex: 1,
@@ -202,7 +208,7 @@ const styles = StyleSheet.create({
   filterPill: {
     paddingHorizontal: scaleh(15),
     paddingVertical: scalev(6),
-    borderRadius: scaleh(8),
+    borderRadius: scaleh(12),
     marginRight: scaleh(10),
     borderWidth: 1,
   },
@@ -211,8 +217,8 @@ const styles = StyleSheet.create({
     backgroundColor: AppTheme.colors.white,
   },
   filterPillInactive: {
-    borderColor: '#CCC',
-    backgroundColor: '#EBEBEB',
+    borderColor: '#EFEFEF',
+    backgroundColor: '#F5F5F5',
   },
   filterText: {
     fontSize: scaleh(12),
@@ -222,47 +228,41 @@ const styles = StyleSheet.create({
     color: AppTheme.colors.primary,
   },
   filterTextInactive: {
-    color: '#1a1a1a',
+    color: '#333',
   },
   brandCouponsHeader: {
     marginHorizontal: scaleh(20),
     marginBottom: scalev(15),
   },
   brandTitle: {
-    fontSize: scaleh(14),
+    fontSize: scaleh(16),
     fontWeight: '700',
-    color: '#000',
+    color: '#1a1a1a',
     marginBottom: scalev(4),
   },
   brandSubtitle: {
     fontSize: scaleh(12),
     color: '#666',
+    fontWeight: '500',
   },
   couponCard: {
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     backgroundColor: AppTheme.colors.white,
     marginHorizontal: scaleh(20),
     marginBottom: scalev(15),
-    borderRadius: scaleh(10),
-    borderWidth: 1,
-    borderColor: '#EFEFEF',
-    elevation: 3,
+    borderRadius: scaleh(12),
+    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 4,
     position: 'relative',
-    paddingVertical: scalev(15),
+    paddingVertical: scalev(20),
   },
   couponTop: {
     flexDirection: 'row',
     paddingHorizontal: scaleh(20),
     alignItems: 'center',
-    paddingBottom: scalev(10),
+    paddingBottom: scalev(15),
   },
   couponIconWrapper: {
     marginRight: scaleh(15),
@@ -271,20 +271,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   couponTitle: {
-    fontSize: scaleh(14),
-    fontWeight: '600',
-    color: '#999', // Matches grey text in image
+    fontSize: scaleh(15),
+    fontWeight: '700',
+    color: '#999', // Matches the lighter grey title in the image
   },
   couponDesc: {
-    fontSize: scaleh(11),
+    fontSize: scaleh(12),
     color: '#999',
-    marginTop: scalev(2),
+    fontWeight: '400',
+    marginTop: scalev(4),
   },
   lockIconWrapper: {
-    width: scaleh(20),
-    height: scaleh(20),
-    borderRadius: scaleh(10),
-    backgroundColor: '#666',
+    width: scaleh(24),
+    height: scaleh(24),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -293,36 +292,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: scaleh(20),
-    paddingTop: scalev(10),
+    paddingTop: scalev(15),
   },
   couponCode: {
-    fontSize: scaleh(9),
-    color: '#666',
-    fontWeight: '600',
+    fontSize: scaleh(11),
+    color: '#333',
+    fontWeight: '700',
   },
   shopMoreText: {
-    fontSize: scaleh(12),
-    color: AppTheme.colors.primary,
-    fontWeight: '600',
+    fontSize: scaleh(13),
+    color: AppTheme.colors.cosmeticsPrimary, // Keep it soft pink matching the reference
+    fontWeight: '400',
   },
   cutout: {
     position: 'absolute',
     width: scaleh(24),
     height: scaleh(24),
     borderRadius: scaleh(12),
-    backgroundColor: AppTheme.colors.white,
+    backgroundColor: AppTheme.colors.white, // Pure white to blend seamlessly with the screen background
     top: '50%',
     marginTop: -scaleh(12),
+    zIndex: 10,
   },
   cutoutLeft: {
     left: -scaleh(12),
     borderRightWidth: 1,
-    borderColor: '#EFEFEF',
+    borderColor: 'rgba(0,0,0,0.03)', // Extremely subtle inner shadow line
   },
   cutoutRight: {
     right: -scaleh(12),
     borderLeftWidth: 1,
-    borderColor: '#EFEFEF',
+    borderColor: 'rgba(0,0,0,0.03)',
   },
   bottomBar: {
     position: 'absolute',
