@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
 
-  async sendOrderConfirmation(userId: string, orderId: string, email?: string, phone?: string) {
+  async sendOrderConfirmation(userId: string, orderId: string, email?: string, phone?: string, mobileToken?: string) {
     this.logger.log(`[Notification Stub] Sending Order Confirmation for Order ${orderId}`);
     
     if (email) {
@@ -16,8 +16,21 @@ export class NotificationService {
     }
 
     // Firebase Cloud Messaging Push Notification stub
-    this.logger.log(`[Notification Stub] Push Notification sent to user ${userId}`);
+    if (mobileToken) {
+      this.logger.log(`[Notification Stub] Push Notification sent to mobile token ${mobileToken}`);
+    } else {
+      this.logger.log(`[Notification Stub] Push Notification sent to user ${userId}`);
+    }
 
+    return { success: true };
+  }
+
+  async sendPushNotification(userId: string, title: string, body: string, mobileToken?: string) {
+    if (mobileToken) {
+      this.logger.log(`[Notification Stub] Push: "${title}" sent to token ${mobileToken}`);
+    } else {
+      this.logger.log(`[Notification Stub] Push: "${title}" sent to user ${userId}`);
+    }
     return { success: true };
   }
 }

@@ -87,16 +87,17 @@ export class CustomerProfileController {
   async getAllCustomers(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-    @Query('search') search?: string
+    @Query('search') search?: string,
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE'
   ) {
-    return this.profileService.getAllCustomers(Number(page), Number(limit), search);
+    return this.profileService.getAllCustomers(Number(page), Number(limit), search, platform);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('admin/:id/360')
   @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
-  async getCustomer360(@Param('id') id: string) {
-    return this.profileService.getCustomer360(id);
+  async getCustomer360(@Param('id') id: string, @Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+    return this.profileService.getCustomer360(id, platform);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

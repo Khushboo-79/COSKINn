@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, UseGuards, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -11,8 +11,8 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('overview')
-  getOverview() {
-    return this.adminService.getOverview();
+  getOverview(@Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+    return this.adminService.getOverview(platform);
   }
 
   @Get('roles')

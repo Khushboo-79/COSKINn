@@ -12,9 +12,13 @@ export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
 
   // Category Methods
-  async findAllCategories() {
+  async findAllCategories(platform?: 'COSMETICS' | 'SKINCARE') {
+    const whereClause: any = { isDeleted: false };
+    if (platform) {
+      whereClause.platform = platform;
+    }
     return this.prisma.category.findMany({
-      where: { isDeleted: false },
+      where: whereClause,
       include: { subcategories: true },
       orderBy: { name: 'asc' },
     });

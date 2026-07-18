@@ -14,7 +14,7 @@ export class PurchaseOrderService {
     return this.prisma.purchaseOrder.create({
       data: {
         warehouseId: dto.warehouseId,
-        vendorId: dto.vendorId,
+        supplierId: dto.supplierId,
         status: dto.status || 'DRAFT',
       },
     });
@@ -22,14 +22,14 @@ export class PurchaseOrderService {
 
   async findAll() {
     return this.prisma.purchaseOrder.findMany({
-      include: { warehouse: true, grns: true },
+      include: { warehouse: true, grns: true, supplier: true },
     });
   }
 
   async findOne(id: string) {
     const po = await this.prisma.purchaseOrder.findUnique({
       where: { id },
-      include: { warehouse: true, grns: true },
+      include: { warehouse: true, grns: true, supplier: true },
     });
     if (!po) throw new NotFoundException('Purchase Order not found');
     return po;

@@ -22,8 +22,9 @@ export class ProductController {
   findAll(
     @Query('categoryId') categoryId?: string,
     @Query('search') search?: string,
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE',
   ) {
-    return this.productService.findAll(categoryId, search);
+    return this.productService.findAll(categoryId, search, platform);
   }
 
   @Get('marketing-feed')
@@ -55,8 +56,8 @@ export class ProductController {
   @Get('stats/reports')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
-  getReports() {
-    return this.productService.getReports();
+  getReports(@Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+    return this.productService.getReports(platform);
   }
 
   @Get(':id')
@@ -143,5 +144,19 @@ export class ProductController {
   @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER', 'MARKETING_MANAGER')
   updateSeo(@Param('id') id: string, @Body() seoData: { seoTitle?: string, seoDesc?: string, seoKeywords?: string }) {
     return this.productService.updateSeo(id, seoData);
+  }
+
+  @Post(':id/bundle-items')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  addBundleItem(@Param('id') id: string, @Body() data: { componentSku: string, quantity: number }) {
+    return this.productService.addBundleItem(id, data);
+  }
+
+  @Delete(':id/bundle-items/:componentSku')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  removeBundleItem(@Param('id') id: string, @Param('componentSku') sku: string) {
+    return this.productService.removeBundleItem(id, sku);
   }
 }

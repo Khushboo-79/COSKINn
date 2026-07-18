@@ -1,459 +1,179 @@
-# Complete API Testing Guide: COSKINn (Phases 1, 2 & 3)
+# Complete API Testing Guide: COSKINn (Phases 1-5 & Missing Features)
 
-This guide takes you through the entire eCommerce lifecycle. 
+This guide provides a comprehensive Postman testing plan for the entire COSKINn eCommerce lifecycle. Every API across all modules from Auth to Endpoints is covered here.
 > **Note:** Ensure your backend is running locally (`npm run start:dev`). All endpoints are prefixed with `/api`.
 
 ---
 
-## 🏗️ PART 1: Admin & Catalog Setup (Phase 1)
+## 🔐 1. AUTH & CUSTOMER DOMAIN
 
-### 1. Admin Login (Trigger OTP)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/auth/login`
-- **Body (JSON):**
-```json
-{
-  "email": "admin@coskinn.com",
-  "password": "admin123"
-}
-```
-**Expected Output:**
-```json
-{
-  "message": "Password accepted. OTP sent to registered phone number.",
-  "nextStep": "verify-otp",
-  "phone": "+919876543210"
-}
-```
-*(Check your terminal running the backend. The 6-digit OTP will be logged there!)*
+### Admin & Staff Login
+- **Trigger OTP:** `POST /api/auth/login` | Body: `{ "email": "admin@coskinn.com", "password": "admin" }`
+- **Verify OTP:** `POST /api/auth/verify-otp` | Body: `{ "phone": "+91...", "otp": "123456", "isAdminLogin": true }` -> Returns `access_token` (AdminToken)
+- **Get Me:** `GET /api/auth/me` | Headers: `Authorization: Bearer <AdminToken>`
 
-### 2. Verify Admin OTP & Get Token
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/auth/verify-otp`
-- **Body (JSON):**
-```json
-{
-  "phone": "<ADMIN_PHONE_FROM_PREVIOUS_RESPONSE>",
-  "otp": "<6_DIGIT_OTP_FROM_TERMINAL>",
-  "isAdminLogin": true
-}
-```
-**Expected Output:**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1...",
-  "refresh_token": "def456..."
-}
-```
-*(Copy the `access_token` from the response. You will use this in the `Authorization: Bearer <token>` header for all Admin requests).*
+### Customer Login
+- **Send OTP:** `POST /api/auth/send-otp` | Body: `{ "phone": "+919876543210" }`
+- **Verify OTP:** `POST /api/auth/verify-otp` | Body: `{ "phone": "+919876543210", "otp": "1234", "isAdminLogin": false }` -> Returns `access_token` (CustomerToken)
 
-### 3. Create a Category (Admin)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/categories`
-- **Headers:** `Authorization: Bearer <AdminToken>`
-- **Body (JSON):**
-```json
-{
-  "name": "Haircare",
-  "slug": "haircare",
-  "description": "Premium haircare products"
-}
-```
-**Expected Output:**
-```json
-{
-  "id": "e45b98...",
-  "name": "Haircare",
-  "slug": "haircare",
-  "createdAt": "2026-07-08T10:00:00.000Z"
-}
-```
-*(Copy the generated `id` for the category).*
-
-### 4. Create a Product (Admin)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/product`
-- **Headers:** `Authorization: Bearer <AdminToken>`
-- **Body (JSON):**
-```json
-{
-  "name": "Nourishing Hair Oil",
-  "slug": "nourishing-hair-oil",
-  "sku": "HAIR-OIL-BASE",
-  "description": "For strong, shiny hair.",
-  "categoryId": "<CATEGORY_ID_FROM_STEP_3>",
-  "mrp": 1499.00,
-  "discountPrice": 1199.00
-}
-```
-**Expected Output:**
-```json
-{
-  "id": "p789xyz...",
-  "name": "Nourishing Hair Oil",
-  "slug": "nourishing-hair-oil"
-}
-```
-*(Copy the generated `id` for the product).*
-
-### 5. Add a Product Variant (Admin)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/product/<PRODUCT_ID_FROM_STEP_4>/variant`
-- **Headers:** `Authorization: Bearer <AdminToken>`
-- **Body (JSON):**
-```json
-{
-  "sku": "HAIR-OIL-100ML",
-  "name": "100ml Bottle",
-  "netQuantity": "100ml",
-  "mrp": 1499.00,
-  "price": 1199.00
-}
-```
-**Expected Output:**
-```json
-{
-  "id": "v123abc...",
-  "sku": "HAIR-OIL-100ML",
-  "price": 1199
-}
-```
-*(Copy the generated variant `id`).*
+### Customer Profiles & Addresses
+- **Get Profile:** `GET /api/customer/profile` | Headers: `Authorization: Bearer <CustomerToken>`
+- **Update Profile:** `PUT /api/customer/profile` | Body: `{ "skinType": "OILY", "skinConcerns": ["ACNE"] }`
+- **Create Address:** `POST /api/customer/addresses` | Body: `{ "fullName": "Jane", "phone": "+919...", "addressLine1": "123 St", "city": "Mumbai", "pincode": "400001" }`
+- **Get Addresses:** `GET /api/customer/addresses`
 
 ---
 
-## 🛒 PART 2: Customer Shopping Flow (Phase 2)
+## 🛍️ 2. PRODUCT CATALOG DOMAIN (AdminToken Required for POST/PUT/DELETE)
 
-### 6. Customer Login (Send OTP)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/auth/send-otp`
-- **Body (JSON):**
-```json
-{
-  "phone": "+919876543210",
-  "isAdminLogin": false
-}
-```
-**Expected Output:**
-```json
-{
-  "message": "OTP sent successfully"
-}
-```
-*(Check your terminal. A 4-digit OTP will be logged).*
+### Categories
+- **Create:** `POST /api/categories` | Body: `{ "name": "Skincare", "slug": "skincare", "productLine": "SKINCARE" }`
+- **List:** `GET /api/categories?productLine=SKINCARE`
+- **Update/Delete:** `PATCH /api/categories/:id` | `DELETE /api/categories/:id`
 
-### 7. Customer Verify OTP & Get Token
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/auth/verify-otp`
-- **Body (JSON):**
-```json
-{
-  "phone": "+919876543210",
-  "otp": "<4_DIGIT_OTP_FROM_TERMINAL>",
-  "isAdminLogin": false
-}
-```
-**Expected Output:**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1...",
-  "refresh_token": "abc123..."
-}
-```
-*(Copy the `access_token`. This is your `CustomerToken` for the next steps).*
+### Products & Bundles
+- **Create Product:** `POST /api/product` | Body: `{ "name": "Vitamin C Serum", "slug": "vit-c", "categoryId": "...", "mrp": 500, "productLine": "SKINCARE" }`
+- **Create Variant:** `POST /api/product/:id/variant` | Body: `{ "sku": "VIT-C-30ML", "name": "30ml", "mrp": 500, "price": 400 }`
+- **Add Bundle Item:** `POST /api/product/:id/bundle-items` | Body: `{ "componentSku": "COMP-SKU", "quantity": 1 }`
+- **Remove Bundle Item:** `DELETE /api/product/:id/bundle-items/:sku`
+- **List All (Admin):** `GET /api/product`
 
-### 8. View Home Dashboard & Search
-*(No Auth Required)*
-- **Home:** `GET http://localhost:3000/api/home`
-- **Search:** `GET http://localhost:3000/api/products/search?q=hair`
+### Public Catalog (No Auth Required)
+- **Get All Products:** `GET /api/products?segment=SKINCARE`
+- **Get By ID/Slug:** `GET /api/products/:id`
+- **Search:** `GET /api/products/search?q=serum&segment=SKINCARE`
+- **Home Dashboard:** `GET /api/home?segment=SKINCARE`
+- **SEO Metadata:** `GET /api/seo/product/:slug` | `GET /api/seo/category/:slug`
 
-### 9. Add Item to Cart (Customer)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/cart/items`
-- **Headers:** `Authorization: Bearer <CustomerToken>`
-- **Body (JSON):**
-```json
-{
-  "productId": "<PRODUCT_ID>",
-  "variantId": "<VARIANT_ID>",
-  "quantity": 2
-}
-```
-**Expected Output:**
-```json
-{
-  "id": "c123...",
-  "userId": "u123...",
-  "items": [
-    {
-      "productId": "p789xyz...",
-      "quantity": 2
-    }
-  ]
-}
-```
-
-### 10. View Cart Totals (Customer)
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/cart`
-- **Headers:** `Authorization: Bearer <CustomerToken>`
-**Expected Output:**
-```json
-{
-  "items": [...],
-  "totalMrp": 2998,
-  "totalDiscountPrice": 2398,
-  "totalSavings": 600
-}
-```
-
-### 11. Add Delivery Address (Customer)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/customer/addresses`
-- **Headers:** `Authorization: Bearer <CustomerToken>`
-- **Body (JSON):**
-```json
-{
-  "fullName": "Jane Doe",
-  "phone": "+919876543210",
-  "addressLine1": "123 Coskinn Avenue",
-  "city": "Mumbai",
-  "state": "Maharashtra",
-  "pincode": "400001",
-  "isDefault": true
-}
-```
-**Expected Output:**
-```json
-{
-  "id": "addr999...",
-  "fullName": "Jane Doe",
-  "city": "Mumbai"
-}
-```
-*(Copy the generated address `id`).*
+### Product Reviews
+- **Submit Review:** `POST /api/products/:id/reviews` | Headers: `<CustomerToken>` | Body: `{ "rating": 5, "title": "Great", "content": "..." }`
+- **Moderate Reviews (Admin):** `GET /api/product-review?status=PENDING`
+- **Approve Review (Admin):** `PATCH /api/product-review/:id/approve`
 
 ---
 
-## 💳 PART 3: Checkout, Payment & Fulfillment (Phase 2)
+## 📦 3. INVENTORY & WAREHOUSE DOMAIN (AdminToken Required)
 
-### 12. Create Order / Checkout (Customer)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/orders`
-- **Headers:** `Authorization: Bearer <CustomerToken>`
-- **Body (JSON):**
-```json
-{
-  "addressId": "<ADDRESS_ID_FROM_STEP_11>",
-  "paymentMode": "ONLINE"
-}
-```
-**Expected Output:**
-```json
-{
-  "id": "ord123...",
-  "status": "DRAFT",
-  "totalAmount": 2398,
-  "razorpayOrderId": "order_xyz123"
-}
-```
-*(This clears your cart and creates an Order in `DRAFT` status. Copy the generated order `id`).*
+### Warehouse & Serviceability
+- **Create Warehouse:** `POST /api/warehouse` | Body: `{ "name": "Mumbai Hub" }`
+- **List Warehouses:** `GET /api/warehouse`
+- **Create Serviceable Pincode:** `POST /api/serviceable-pincode` | Body: `{ "code": "400001", "city": "Mumbai" }`
+- **Check Serviceability (Public):** `GET /api/serviceable-pincode/check/400001`
 
-### 13. Simulate Payment Success (Webhook bypass)
-*(This simulates Razorpay telling our server the payment was successful).*
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/payments/webhook`
-- **Headers:** `x-razorpay-signature: mock_signature`
-- **Body (JSON):**
-```json
-{
-  "event": "payment.captured",
-  "payload": {
-    "payment": {
-      "entity": {
-        "order_id": "<RAZORPAY_ORDER_ID_FROM_STEP_12>",
-        "status": "captured"
-      }
-    }
-  }
-}
-```
-**Expected Output:**
-```json
-{
-  "received": true
-}
-```
-*(If successful, you will see a notification trigger in the backend terminal, and the order status becomes `PLACED`).*
+### Inventory & Suppliers
+- **Create Supplier:** `POST /api/supplier` | Body: `{ "name": "ABC Labs", "email": "contact@abc.com" }`
+- **Get Global Stock:** `GET /api/inventory/global-stock`
+- **Get SKU Stock:** `GET /api/inventory/stock/:sku` (Dynamically calculates bundle inventory too!)
+- **Stock In (Manual):** `POST /api/inventory/stock-in` | Body: `{ "warehouseId": "...", "sku": "VIT-C-30ML", "quantity": 100 }`
+- **Stock Out (Manual):** `POST /api/inventory/stock-out`
 
-### 14. Download PDF Invoice (Customer)
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/orders/<ORDER_ID_FROM_STEP_12>/invoice`
-- **Headers:** `Authorization: Bearer <CustomerToken>`
-**Expected Output:**
-```json
-{
-  "pdfUrl": "/invoices/INV-ord123.pdf"
-}
-```
-*(You can physically check the `backend/public/invoices/` folder for the newly generated PDF).*
-
-### 15. Manage Orders (Admin)
-*(Switch back to your `AdminToken` from Step 2).*
-- **List Placed Orders:** 
-  `GET http://localhost:3000/api/admin/orders?status=PLACED`
-  *(Headers: `Authorization: Bearer <AdminToken>`)*
-
-- **Mark Order as Shipped:**
-  - **Method:** `PUT`
-  - **URL:** `http://localhost:3000/api/admin/orders/<ORDER_ID_FROM_STEP_12>/status`
-  - **Headers:** `Authorization: Bearer <AdminToken>`
-  - **Body (JSON):**
-    ```json
-    {
-      "status": "SHIPPED"
-    }
-    ```
-  **Expected Output:**
-  ```json
-  {
-    "id": "ord123...",
-    "status": "SHIPPED",
-    "shippedAt": "2026-07-08T11:00:00.000Z"
-  }
-  ```
-*(You have now fully processed a customer's order from start to finish!)*
----
-
-# Phase 4: Promotional & Monetary Ecosystem
-
-### 16. Get Wallet Balance
-Check your current wallet balance (this might include a Sign-Up Bonus if you created a new account after Phase 4!).
-- **Method:** GET
-- **URL:** http://localhost:3000/api/wallet
-- **Headers:** Authorization: Bearer <CustomerToken>
-
-**Expected Output:**
-`json
-{
-  "id": "...",
-  "userId": "...",
-  "balance": 100,
-  "transactions": [
-    {
-      "type": "CREDIT",
-      "amount": 100,
-      "reference": "Sign-up Bonus"
-    }
-  ]
-}
-`
-
-### 17. Generate Referral Code
-Generate a unique referral code to share with friends.
-- **Method:** POST
-- **URL:** http://localhost:3000/api/referral/generate
-- **Headers:** Authorization: Bearer <CustomerToken>
-
-**Expected Output:**
-`json
-{
-  "referralCode": "X1Y2Z3",
-  "referrerId": "..."
-}
-`
-
-### 18. Get Cart with Offers and Balances
-The Cart now automatically evaluates Best-Offers and returns your wallet and reward points balances.
-- **Method:** GET
-- **URL:** http://localhost:3000/api/cart
-- **Headers:** Authorization: Bearer <CustomerToken>
-
-**Expected Output:**
-`json
-{
-  "summary": {
-    "totalMrp": 5000,
-    "totalDiscountPrice": 4500,
-    "offerDiscount": 0,
-    "finalTotal": 4500,
-    "walletBalance": 100,
-    "rewardPointsBalance": 0
-  }
-}
-`
-
-### 19. Place Order using Reward Points
-You can now redeem reward points during checkout. (1 Point = ?1 Discount).
-- **Method:** POST
-- **URL:** http://localhost:3000/api/orders
-- **Headers:** Authorization: Bearer <CustomerToken>
-- **Body (JSON):**
-  `json
-  {
-    "addressId": "<ADDRESS_ID_FROM_STEP_7>",
-    "paymentMode": "ONLINE",
-    "pointsToRedeem": 50
-  }
-  `
-*(Note: Attempting to redeem more points than you own will throw an Insufficient Balance error).*
-
+### Purchase Orders (PO)
+- **Create PO:** `POST /api/purchase-order` | Body: `{ "warehouseId": "...", "supplierId": "..." }`
+- **Create GRN (Goods Received Note):** `POST /api/purchase-order/grn` | Body: `{ "purchaseOrderId": "...", "items": [{ "sku": "VIT-C-30ML", "quantity": 50 }] }` -> (Auto triggers Stock-In)
 
 ---
-## PHASE 5: Internal Panels & Content (Admin / CRM / CMS)
 
-These endpoints generally require the **Admin Token** from Step 2 with roles like SUPER_ADMIN, HR, FINANCE, SUPPORT, or CONTENT_MANAGER.
+## 🛒 4. SHOPPING, CART & WISHLIST (CustomerToken Required)
 
-### 20. Tax & Finance
-- **Get HSN Codes** (GET /api/admin/tax/hsn)
-- **Get Tax Rates** (GET /api/admin/tax/rates)
-- **Get Finance Ledgers** (GET /api/admin/finance/ledgers)
-- **Create Journal Entry** (POST /api/admin/finance/journal-entries)
-  - **Body**: { "ledgerId": "LEDGER_ID", "type": "CREDIT", "amount": 1000 }
+### Wishlist
+- **Toggle Item:** `POST /api/wishlist/:productId`
+- **View Wishlist:** `GET /api/wishlist`
 
-### 21. GST Invoice & Credit Notes
-- **Download GST Invoice** (GET /api/orders/:id/invoice) - *Requires Auth*
-- **Create Credit Note** (POST /api/admin/invoices/:id/credit-note)
-  - **Body**: { "amount": 500, "reason": "Damaged goods return" }
+### Cart
+- **Add to Cart:** `POST /api/cart/items` | Body: `{ "productId": "...", "variantId": "...", "quantity": 1 }`
+- **Update Quantity:** `PUT /api/cart/items/:id` | Body: `{ "quantity": 2 }`
+- **View Cart:** `GET /api/cart` (Returns Best-Offer discounts & Wallet balances automatically)
+- **Remove Item:** `DELETE /api/cart/items/:id`
 
-### 22. HR Module (Employees & Payroll)
-- **Get Employees** (GET /api/admin/hr/employees)
-- **Create Employee** (POST /api/admin/hr/employees)
-  - **Body**: { "name": "John Doe", "email": "john@example.com", "role": "MANAGER", "department": "SALES", "salary": 50000 }
-- **Mark Attendance** (POST /api/admin/hr/attendance)
-  - **Body**: { "employeeId": "EMP_ID", "status": "PRESENT" }
-- **Generate Payroll Slip** (POST /api/admin/hr/payroll)
-  - **Body**: { "employeeId": "EMP_ID", "month": 10, "year": 2023 }
+---
 
-### 23. CRM & Support Tickets
-- **Create Ticket** (POST /api/support/tickets)
-  - **Body**: { "userId": "USER_ID", "subject": "Order delayed", "priority": "HIGH" }
-- **Get Ticket Messages** (GET /api/support/tickets/:id/messages)
-- **Admin: Close Ticket** (POST /api/admin/support/tickets/:id/close)
+## 💳 5. CHECKOUT, PAYMENTS & ORDERS
 
-### 24. Marketing Campaigns & Banners
-- **Create Campaign** (POST /api/marketing/campaigns)
-  - **Body**: { "name": "Diwali Sale", "type": "EMAIL" }
-- **Get Abandoned Carts** (GET /api/marketing/abandoned-carts?recovered=false)
-- **Get Banners** (GET /api/marketing/banners)
+### Checkout (CustomerToken)
+- **Create Order:** `POST /api/orders` | Body: `{ "addressId": "...", "paymentMode": "ONLINE", "pointsToRedeem": 50 }` -> Returns `razorpayOrderId`
+- **View My Orders:** `GET /api/orders`
+- **Download Invoice:** `GET /api/orders/:id/invoice`
 
-### 25. CMS (Content / Blogs / FAQs)
-- **Create Article (Admin)** (POST /api/admin/content/articles)
-  - **Body**: { "title": "Top 10 Skincare Tips", "slug": "top-10-skincare", "type": "TIP", "contentJson": "{...}" }
-- **Get Published Articles (Public)** (GET /api/content/articles?type=TIP)
-- **Get FAQs (Public)** (GET /api/content/faqs)
+### Payments (Webhooks)
+- **Razorpay Success Webhook:** `POST /api/payments/webhook` | Headers: `x-razorpay-signature` | Body: `{ "event": "payment.captured", "payload": { "payment": { "entity": { "order_id": "...", "status": "captured" } } } }` -> (Converts Draft order to Placed)
 
-### 26. Product Manager Panel (Internal)
-- **Get Product Stats & Reports**
-  - **Method:** `GET`
-  - **URL:** `http://localhost:3000/api/product/stats/reports`
-  - **Headers:** `Authorization: Bearer <Admin Token>`
-- **Get All Reviews (Moderation)**
-  - **Method:** `GET`
-  - **URL:** `http://localhost:3000/api/product-review?status=PENDING`
-  - **Headers:** `Authorization: Bearer <Admin Token>`
-- **Approve Review**
-  - **Method:** `PATCH`
-  - **URL:** `http://localhost:3000/api/product-review/:reviewId/approve`
-  - **Headers:** `Authorization: Bearer <Admin Token>`
+### Order Management & Shipping (AdminToken)
+- **List All Orders:** `GET /api/admin/orders?status=PLACED`
+- **Update Status:** `PUT /api/admin/orders/:id/status` | Body: `{ "status": "SHIPPED" }`
+- **Track Shipment (Public):** `GET /api/shipping/track/:orderId`
 
+---
+
+## 🔄 6. RETURNS & REFUNDS (CustomerToken & AdminToken)
+
+- **Request Return (Customer):** `POST /api/return` | Body: `{ "orderId": "...", "items": [...], "reason": "Damaged" }`
+- **Approve Return (Admin):** `PATCH /api/return/:id/approve`
+- **Initiate Refund (Admin):** `POST /api/refund/initiate` | Body: `{ "orderId": "...", "amount": 500 }`
+
+---
+
+## 🎁 7. PROMOTIONS, OFFERS & LOYALTY
+
+### Coupons & Offers (AdminToken to Create)
+- **Create Coupon:** `POST /api/coupon` | Body: `{ "code": "WELCOME10", "discountPercent": 10 }`
+- **Create Offer:** `POST /api/offer` | Body: `{ "name": "Diwali Sale", "discountType": "PERCENTAGE", "discountValue": 15 }`
+- **Apply Coupon (Customer):** `POST /api/cart/apply-coupon` | Body: `{ "code": "WELCOME10" }`
+
+### Loyalty: Wallet, Points, Bonus & Referral (CustomerToken)
+- **Get Wallet Balance:** `GET /api/wallet`
+- **Get Reward Points:** `GET /api/reward-point`
+- **Generate Referral Code:** `POST /api/referral/generate`
+- **Get Membership Tier:** `GET /api/membership/status`
+- **View Available Bonuses:** `GET /api/bonus/available`
+
+---
+
+## 📊 8. ADMIN PANELS, HR & FINANCE (AdminToken Required)
+
+### Tax & Finance
+- **Get HSN Codes / Tax Rates:** `GET /api/tax/hsn` | `GET /api/tax/rates`
+- **Get Finance Ledgers:** `GET /api/finance-report/ledgers`
+- **Generate Sales Report:** `GET /api/finance-report/sales?startDate=...&endDate=...`
+
+### HR Module
+- **List Employees:** `GET /api/hr/employees`
+- **Create Employee:** `POST /api/hr/employees` | Body: `{ "name": "John", "role": "MANAGER", "salary": 50000 }`
+- **Mark Attendance:** `POST /api/hr/attendance`
+- **Generate Payroll:** `POST /api/hr/payroll` | Body: `{ "employeeId": "...", "month": 10, "year": 2026 }`
+
+### CMS & Content
+- **Create Article:** `POST /api/content/articles` | Body: `{ "title": "Tips", "segment": "SKINCARE" }`
+- **Get Articles (Public):** `GET /api/content/articles?segment=SKINCARE`
+- **Create FAQ:** `POST /api/content/faqs` | Body: `{ "question": "?", "answer": "!" }`
+
+### Audit & Security
+- **View Audit Logs:** `GET /api/audit/logs` (Auditor Role Required)
+
+---
+
+## 📈 9. MARKETING & ENGAGEMENT (AdminToken Required)
+
+- **Create Campaign:** `POST /api/marketing/campaigns` | Body: `{ "name": "Summer Sale", "targetSegment": "SKINCARE" }`
+- **Create Banner:** `POST /api/marketing/banners` | Body: `{ "imageUrl": "...", "targetSegment": "SKINCARE" }`
+- **Get Banners (Public):** `GET /api/marketing/banners?segment=SKINCARE`
+- **Send Push Notification:** `POST /api/notification/push` | Body: `{ "userId": "...", "title": "Sale!", "body": "...", "mobileToken": "..." }`
+- **Abandoned Cart Logs:** `GET /api/engagement/abandoned-carts`
+
+---
+
+## ⚖️ 10. SUPPORT, COMPLIANCE & APP CONFIG
+
+### Customer Support
+- **Create Ticket (Customer):** `POST /api/support/tickets` | Body: `{ "subject": "Issue", "priority": "HIGH" }`
+- **Reply to Ticket (Admin):** `POST /api/support/tickets/:id/messages`
+- **Close Ticket (Admin):** `PATCH /api/support/tickets/:id/close`
+
+### Compliance (DPDP Act 2023)
+- **Record Consent (Customer):** `POST /api/compliance/consent` | Body: `{ "push": true, "email": true, "sms": false, "whatsapp": true }`
+- **Create Data Request (Customer):** `POST /api/compliance/data-request` | Body: `{ "requestType": "EXPORT" }`
+- **Manage Data Requests (Admin):** `GET /api/compliance/admin/data-requests`
+- **Update Request Status (Admin):** `PATCH /api/compliance/data-request/:id/status` | Body: `{ "status": "FULFILLED" }`
+
+### App Versions (Force Updates)
+- **Configure Version (Admin):** `POST /api/app-version` | Body: `{ "platform": "android", "latestVersion": "1.0.1", "minVersion": "1.0.0", "forceUpdate": false }`
+- **Check Version (Public):** `GET /api/app-version/check?platform=android&version=1.0.0`

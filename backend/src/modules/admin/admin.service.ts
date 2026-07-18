@@ -31,21 +31,31 @@ export class AdminService implements OnModuleInit {
     }
   }
 
-  async getOverview() {
-    const totalOrders = await this.prisma.order.count();
+  async getOverview(platform?: 'COSMETICS' | 'SKINCARE') {
+    // We will query products to get an accurate count for the platform.
+    const platformWhere = platform ? { platform } : {};
+    const productWhere = platform ? { category: { platform } } : {};
+    
+    const totalProducts = await this.prisma.product.count({ where: { isDeleted: false, ...productWhere } });
+    const totalOrders = await this.prisma.order.count({ where: { isDeleted: false, ...platformWhere } });
+    
+    // Active users don't have a platform, they span across the whole system
     const activeUsers = await this.prisma.user.count();
+    
     const payments = await this.prisma.paymentTransaction.aggregate({
       _sum: { amount: true },
-      where: { status: 'SUCCESS' }
+      where: { status: 'SUCCESS', ...platformWhere }
     });
+    
     const totalRevenue = payments._sum.amount || 0;
 
     return {
       totalRevenue,
       activeUsers,
       totalOrders,
+      totalProducts,
       systemHealth: '100%',
-      revenueTrend: '+12.5%', // Mock trends for now since we don't have historical data to compare
+      revenueTrend: '+12.5%', 
       usersTrend: '+8.2%',
       ordersTrend: '+15.4%',
     };

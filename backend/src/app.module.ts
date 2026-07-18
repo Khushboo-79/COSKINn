@@ -22,7 +22,6 @@ import { EngagementModule } from './modules/engagement/engagement.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { InvoiceModule } from './modules/invoice/invoice.module';
-
 import { ScheduleModule } from '@nestjs/schedule';
 import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.module';
 import { WarehouseModule } from './modules/warehouse/warehouse.module';
@@ -40,6 +39,10 @@ import { AuditModule } from './modules/audit/audit.module';
 import { FinanceReportModule } from './modules/finance-report/finance-report.module';
 import { ContentModule } from './modules/content/content.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { SupplierModule } from './modules/supplier/supplier.module';
+import { ServiceablePincodeModule } from './modules/serviceable-pincode/serviceable-pincode.module';
+import { ComplianceModule } from './modules/compliance/compliance.module';
+import { AppVersionModule } from './modules/app-version/app-version.module';
 
 @Module({
   imports: [
@@ -80,7 +83,11 @@ import { AdminModule } from './modules/admin/admin.module';
     AuditModule,
     FinanceReportModule,
     ContentModule,
-    AdminModule
+    AdminModule,
+    SupplierModule,
+    ServiceablePincodeModule,
+    ComplianceModule,
+    AppVersionModule
   ],
   controllers: [AppController],
   providers: [AppService],

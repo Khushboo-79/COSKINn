@@ -1,0 +1,1 @@
+const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); async function main() { await prisma.user.update({ where: { email: 'admin@coskinn.com' }, data: { phone: '+919999999999' } }); console.log('Updated admin phone'); } main().catch(console.error).finally(() => prisma.$disconnect());

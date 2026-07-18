@@ -50,6 +50,10 @@ model User {
   assignedTickets   SupportTicket[]      @relation("AssignedTickets")
   abandonedCartLogs AbandonedCartLog[]
 
+  consents          CustomerConsent?
+  dataRequests      DataRequest[]
+  staff2fa          Staff2fa?
+
   @@map("users")
 }
 
@@ -57,6 +61,7 @@ model Role {
   id          String   @id @default(uuid())
   name        String   @unique // e.g., 'customer', 'admin', 'product-manager'
   description String?
+  panelAccess String[] @default([]) // Which of the 11 panels this role can access
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -247,16 +252,29 @@ enum ProductStatus {
   REJECTED
 }
 
+enum PlatformType {
+  COSMETICS
+  SKINCARE
+}
+
+enum ProductLine {
+  SKINCARE
+  MAKEUP
+  BOTH
+}
+
 model Category {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  slug        String   @unique
+  id          String       @id @default(uuid())
+  platform    PlatformType @default(COSMETICS)
+  productLine ProductLine  @default(BOTH)
+  name        String       @unique
+  slug        String       @unique
   description String?
   imageUrl    String?
-  isActive    Boolean  @default(true)
-  isDeleted   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean      @default(true)
+  isDeleted   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   subcategories Subcategory[]
   products      Product[]
@@ -303,6 +321,8 @@ model Product {
   returnPolicy        String?
   testReportRef       String?
   status              ProductStatus @default(DRAFT)
+  productLine         ProductLine   @default(BOTH)
+  isCrossSegment      Boolean       @default(false)
   rejectionReason     String?
   isDeleted           Boolean       @default(false)
   deletedAt           DateTime?
@@ -327,6 +347,7 @@ model Product {
 
   wishlistItems WishlistItem[]
   cartItems     CartItem[]
+  bundleItems   ProductBundleItem[] @relation("BundleItems")
 
   @@map("products")
 }
@@ -485,23 +506,10 @@ model Warehouse {
   movements      StockMovement[]
   adjustments    StockAdjustment[]
   purchaseOrders PurchaseOrder[]
+  transfersFrom  StockTransfer[]   @relation("TransferFrom")
+  transfersTo    StockTransfer[]   @relation("TransferTo")
 
   @@map("warehouses")
-}
-
-model Supplier {
-  id           String   @id @default(uuid())
-  name         String
-  contactEmail String?
-  contactPhone String?
-  address      String?
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  purchaseOrders PurchaseOrder[]
-
-  @@map("suppliers")
 }
 
 model WarehouseBin {
@@ -511,21 +519,24 @@ model WarehouseBin {
   description String?
   createdAt   DateTime @default(now())
 
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouse Warehouse        @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  stocks    InventoryStock[]
 
   @@map("warehouse_bins")
 }
 
 model InventoryStock {
-  id          String   @id @default(uuid())
-  warehouseId String
-  sku         String
-  quantity    Int      @default(0)
-  reservedQty Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(uuid())
+  warehouseId   String
+  sku           String
+  quantity      Int      @default(0)
+  reservedQty   Int      @default(0)
+  binLocationId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouse   Warehouse     @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  binLocation WarehouseBin? @relation(fields: [binLocationId], references: [id])
 
   @@unique([warehouseId, sku])
   @@map("inventory_stock")
@@ -592,16 +603,30 @@ model ExpiredStock {
 model PurchaseOrder {
   id          String   @id @default(uuid())
   warehouseId String
-  vendorId    String?
-  vendor      Supplier?           @relation(fields: [vendorId], references: [id])
+  supplierId  String?
   status      String // 'DRAFT', 'ISSUED', 'PARTIAL', 'RECEIVED'
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   warehouse Warehouse           @relation(fields: [warehouseId], references: [id])
+  supplier  Supplier?           @relation(fields: [supplierId], references: [id])
   grns      GoodsReceivedNote[]
+  items     PurchaseOrderItem[]
 
   @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id              String   @id @default(uuid())
+  purchaseOrderId String
+  sku             String
+  requestedQty    Int
+  unitPrice       Float
+  createdAt       DateTime @default(now())
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+  @@map("purchase_order_items")
 }
 
 model GoodsReceivedNote {
@@ -610,9 +635,53 @@ model GoodsReceivedNote {
   receivedDate    DateTime @default(now())
   createdAt       DateTime @default(now())
 
-  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrder PurchaseOrder           @relation(fields: [purchaseOrderId], references: [id])
+  items         GoodsReceivedNoteItem[]
 
   @@map("goods_received_notes")
+}
+
+model GoodsReceivedNoteItem {
+  id          String   @id @default(uuid())
+  grnId       String
+  sku         String
+  receivedQty Int
+  acceptedQty Int      @default(0)
+  rejectedQty Int      @default(0)
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  grn GoodsReceivedNote @relation(fields: [grnId], references: [id], onDelete: Cascade)
+
+  @@map("goods_received_note_items")
+}
+
+model StockTransfer {
+  id              String   @id @default(uuid())
+  fromWarehouseId String
+  toWarehouseId   String
+  status          String // 'PENDING', 'SHIPPED', 'COMPLETED', 'CANCELLED'
+  requestedBy     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  fromWarehouse Warehouse           @relation("TransferFrom", fields: [fromWarehouseId], references: [id])
+  toWarehouse   Warehouse           @relation("TransferTo", fields: [toWarehouseId], references: [id])
+  items         StockTransferItem[]
+
+  @@map("stock_transfers")
+}
+
+model StockTransferItem {
+  id         String   @id @default(uuid())
+  transferId String
+  sku        String
+  quantity   Int
+  createdAt  DateTime @default(now())
+
+  transfer StockTransfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+
+  @@map("stock_transfer_items")
 }
 
 // ==========================================
@@ -649,7 +718,8 @@ model CartItem {
 }
 
 model Order {
-  id          String    @id @default(uuid())
+  id          String       @id @default(uuid())
+  platform    PlatformType @default(COSMETICS)
   userId      String
   status      String // 'DRAFT', 'PLACED', 'PACKED', 'SHIPPED', 'DELIVERED', 'CANCELLED'
   totalAmount Float
@@ -830,7 +900,8 @@ model Refund {
 // ==========================================
 
 model PaymentTransaction {
-  id              String   @id @default(uuid())
+  id              String       @id @default(uuid())
+  platform        PlatformType @default(COSMETICS)
   razorpayOrderId String?
   amount          Float
   status          String
@@ -897,17 +968,18 @@ model Settlement {
 // ==========================================
 
 model Banner {
-  id        String    @id @default(uuid())
-  title     String
-  imageUrl  String
-  linkUrl   String?
-  position  String // 'hero', 'mid-page', 'footer'
-  isActive  Boolean   @default(true)
-  startDate DateTime?
-  endDate   DateTime?
-  sortOrder Int       @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String      @id @default(uuid())
+  title         String
+  imageUrl      String
+  linkUrl       String?
+  position      String // 'hero', 'mid-page', 'footer'
+  targetSegment ProductLine @default(BOTH)
+  isActive      Boolean     @default(true)
+  startDate     DateTime?
+  endDate       DateTime?
+  sortOrder     Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@map("banners")
 }
@@ -1182,7 +1254,7 @@ model Employee {
 model LeaveRequest {
   id         String   @id @default(uuid())
   employeeId String
-  type       String   // 'Sick Leave', 'Vacation', 'Casual Leave', 'Work From Home'
+  type       String // 'Sick Leave', 'Vacation', 'Casual Leave', 'Work From Home'
   fromDate   DateTime
   toDate     DateTime
   days       Int
@@ -1240,20 +1312,20 @@ model AuditLog {
 
 // --- CRM & Support ---
 model SupportTicket {
-  id                       String   @id @default(uuid())
+  id                       String    @id @default(uuid())
   userId                   String
   assignedToId             String?
   subject                  String
   category                 String?
-  status                   String   @default("OPEN") // 'OPEN', 'CLOSED', 'ESCALATED'
-  priority                 String   @default("NORMAL")
+  status                   String    @default("OPEN") // 'OPEN', 'CLOSED', 'ESCALATED'
+  priority                 String    @default("NORMAL")
   slaFirstResponseDeadline DateTime?
   slaResolutionDeadline    DateTime?
   firstResponseAt          DateTime?
   resolvedAt               DateTime?
-  slaBreached              Boolean  @default(false)
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  slaBreached              Boolean   @default(false)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
   user       User            @relation("UserTickets", fields: [userId], references: [id])
   assignedTo User?           @relation("AssignedTickets", fields: [assignedToId], references: [id])
@@ -1276,13 +1348,14 @@ model TicketMessage {
 }
 
 model MarketingCampaign {
-  id          String    @id @default(uuid())
-  name        String
-  type        String // 'EMAIL', 'PUSH', 'SMS'
-  status      String    @default("DRAFT") // 'DRAFT', 'SCHEDULED', 'SENT'
-  audience    String? // Segment identifier
-  scheduledAt DateTime?
-  createdAt   DateTime  @default(now())
+  id            String      @id @default(uuid())
+  name          String
+  type          String // 'EMAIL', 'PUSH', 'SMS'
+  status        String      @default("DRAFT") // 'DRAFT', 'SCHEDULED', 'SENT'
+  audience      String? // Segment identifier
+  targetSegment ProductLine @default(BOTH)
+  scheduledAt   DateTime?
+  createdAt     DateTime    @default(now())
 
   @@map("marketing_campaigns")
 }
@@ -1303,30 +1376,32 @@ model AbandonedCartLog {
 
 // --- Content Management (CMS) ---
 model ContentArticle {
-  id           String   @id @default(uuid())
+  id           String      @id @default(uuid())
   title        String
-  slug         String   @unique
+  slug         String      @unique
   type         String // 'BLOG', 'TIP'
   contentJson  String // Structured JSON content
+  segment      ProductLine @default(BOTH)
   heroImageUrl String?
   seoTitle     String?
   seoDesc      String?
   seoKeywords  String?
-  published    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  published    Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   @@map("content_articles")
 }
 
 model Faq {
-  id         String   @id @default(uuid())
+  id         String      @id @default(uuid())
   question   String
   answer     String
   category   String?
-  orderIndex Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  segment    ProductLine @default(BOTH)
+  orderIndex Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@map("faqs")
 }
@@ -1352,4 +1427,109 @@ model OrderSettings {
   createdAt        DateTime @default(now())
 
   @@map("order_settings")
+}
+
+// ==========================================
+// NEW MODELS (Phase 1 Enhancements)
+// ==========================================
+
+model Supplier {
+  id            String   @id @default(uuid())
+  name          String
+  gstin         String?
+  contactPerson String?
+  email         String?
+  phone         String?
+  address       String?
+  paymentTerms  String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+model ServiceablePincode {
+  id        String   @id @default(uuid())
+  pincode   String   @unique
+  city      String?
+  state     String?
+  isCod     Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("serviceable_pincodes")
+}
+
+model ProductBundleItem {
+  id              String   @id @default(uuid())
+  bundleProductId String
+  componentSku    String
+  quantity        Int      @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  bundleProduct   Product  @relation("BundleItems", fields: [bundleProductId], references: [id], onDelete: Cascade)
+  
+  @@unique([bundleProductId, componentSku])
+  @@map("product_bundle_items")
+}
+
+model CustomerConsent {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  push      Boolean  @default(true)
+  email     Boolean  @default(true)
+  sms       Boolean  @default(true)
+  whatsapp  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("customer_consents")
+}
+
+model DataRequest {
+  id           String    @id @default(uuid())
+  userId       String
+  requestType  String    // 'EXPORT', 'DELETE'
+  status       String    @default("PENDING") // 'PENDING', 'PROCESSING', 'FULFILLED', 'REJECTED'
+  exceptions   String?   // e.g. "financial/tax records retained"
+  requestedAt  DateTime  @default(now())
+  fulfilledAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("data_requests")
+}
+
+model AppVersion {
+  id            String   @id @default(uuid())
+  platform      String   // 'ios', 'android'
+  minVersion    String
+  latestVersion String
+  forceUpdate   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([platform])
+  @@map("app_versions")
+}
+
+model Staff2fa {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  totpSecret  String
+  isVerified  Boolean  @default(false)
+  backupCodes String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("staff_2fa")
 }

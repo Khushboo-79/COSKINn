@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Query } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { StockMovementDto } from './dto/inventory.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -33,8 +33,8 @@ export class InventoryController {
   @Get('stock')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER')
-  getGlobalStock() {
-    return this.inventoryService.getGlobalStock();
+  getGlobalStock(@Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+    return this.inventoryService.getGlobalStock(platform);
   }
 
   @Get('stock/:sku')
@@ -42,6 +42,13 @@ export class InventoryController {
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER')
   getStockForSku(@Param('sku') sku: string) {
     return this.inventoryService.getStockForSku(sku);
+  }
+
+  @Get('transfers')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER')
+  getTransfers() {
+    return this.inventoryService.getTransfers();
   }
 
   @Post('stock-in')
@@ -110,7 +117,7 @@ export class InventoryController {
   @Post('purchase-orders')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
-  createPurchaseOrder(@Body() dto: { warehouseId: string, vendorId?: string, status: string }) {
+  createPurchaseOrder(@Body() dto: { warehouseId: string, status: string }) {
     return this.inventoryService.createPurchaseOrder(dto);
   }
 
@@ -122,30 +129,6 @@ export class InventoryController {
     @Body() dto: { status: string, items?: { sku: string, quantity: number }[] }
   ) {
     return this.inventoryService.updatePurchaseOrder(id, dto);
-  }
-
-  @Get('suppliers')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
-  getSuppliers() {
-    return this.inventoryService.getSuppliers();
-  }
-
-  @Post('suppliers')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
-  createSupplier(@Body() dto: { name: string, contactEmail?: string, contactPhone?: string, address?: string }) {
-    return this.inventoryService.createSupplier(dto);
-  }
-
-  @Post('suppliers/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
-  updateSupplier(
-    @Param('id') id: string,
-    @Body() dto: any
-  ) {
-    return this.inventoryService.updateSupplier(id, dto);
   }
 
   @Get('returns')
