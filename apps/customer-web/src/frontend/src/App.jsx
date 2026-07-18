@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
@@ -196,6 +197,10 @@ const MainLayout = () => {
 export default function App() {
   return (
     <AuthProvider>
+      <Helmet>
+        <title>COSKINn | Premium Skincare & Cosmetics</title>
+        <meta name="description" content="Discover premium skincare and cosmetics. Shop clean, ethical, and effective beauty products for your daily routine." />
+      </Helmet>
       <ToastProvider>
         <CartProvider>
           <WishlistProvider>
