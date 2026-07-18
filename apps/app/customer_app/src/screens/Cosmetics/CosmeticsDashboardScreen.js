@@ -107,7 +107,7 @@ const CosmeticsDashboardScreen = () => {
       <View style={styles.origHeartIconContainer}>
         <Ionicons name="heart-outline" size={scaleh(16)} color="#666" />
       </View>
-      <Image source={item?.images?.[0] ? { uri: item.images[0] } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
+      <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
       <View style={styles.origCardDetails}>
         <Text style={styles.origProductNameFull} numberOfLines={3}>{item?.name || 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with\nNew-Age UV Filters'}</Text>
 
