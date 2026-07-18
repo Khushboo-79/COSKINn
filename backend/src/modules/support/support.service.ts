@@ -3,7 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class SupportService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async createTicket(userId: string, subject: string, priority: string = 'NORMAL', category?: string) {
     const now = new Date();
@@ -17,8 +17,8 @@ export class SupportService {
 
   async getTickets(status?: string) {
     const where = status && status !== 'ALL' ? { status } : {};
-    return this.prisma.supportTicket.findMany({ 
-      where, 
+    return this.prisma.supportTicket.findMany({
+      where,
       include: { user: true, assignedTo: true },
       orderBy: { createdAt: 'desc' }
     });
@@ -39,7 +39,7 @@ export class SupportService {
     if (senderRole === 'ADMIN' && !ticket.firstResponseAt) {
       const firstResponseAt = new Date();
       const slaBreached = ticket.slaFirstResponseDeadline ? firstResponseAt > ticket.slaFirstResponseDeadline : false;
-      
+
       await this.prisma.supportTicket.update({
         where: { id: ticketId },
         data: { firstResponseAt, slaBreached: ticket.slaBreached || slaBreached }
@@ -65,8 +65,8 @@ export class SupportService {
 
     return this.prisma.supportTicket.update({
       where: { id: ticketId },
-      data: { 
-        status: 'CLOSED', 
+      data: {
+        status: 'CLOSED',
         resolvedAt,
         slaBreached: ticket.slaBreached || slaBreached
       }
