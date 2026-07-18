@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, FlatList, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
@@ -9,6 +9,7 @@ import TopHeader from '../../components/TopHeader';
 import SearchBarRow from '../../components/SearchBarRow';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleDomain } from '../../redux/slices/appSlice';
+import { fetchProducts } from '../../redux/slices/productSlice';
 
 const { width } = Dimensions.get('window');
 const bannerWidth = width - scaleh(40); // Screen width minus padding
@@ -17,7 +18,12 @@ const DashboardScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app.activeDomain);
+  const { items: products, loading } = useSelector(state => state.product);
   const isThemeDark = activeDomain === 'skincare';
+
+  useEffect(() => {
+    dispatch(fetchProducts({ category: 'skincare' })); // Fetch skincare products
+  }, [dispatch]);
   const [activeMainBannerIndex, setActiveMainBannerIndex] = useState(0);
   const mainBannerData = [1, 2, 3, 4, 5, 6];
 
@@ -157,40 +163,57 @@ const DashboardScreen = () => {
           </View>
 
           {/* 2. Product Banner Section */}
-          <View style={{ paddingHorizontal: scaleh(20), width: '100%', marginBottom: scalev(40) }}>
-            <View style={[styles.productBanner, { overflow: 'hidden' }]}>
-              {/* Background gradient */}
-              <LinearGradient
-                colors={['#FFD1E3', '#FFF2E6']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
+          <View style={{ width: '100%', marginBottom: scalev(40) }}>
+            <FlatList
+              data={products}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+              contentContainerStyle={{ paddingHorizontal: scaleh(20) }}
+              renderItem={({ item }) => (
+                <View style={[styles.productBanner, { overflow: 'hidden', width: scaleh(300), marginRight: scaleh(20) }]}>
+                  {/* Background gradient */}
+                  <LinearGradient
+                    colors={['#FFD1E3', '#FFF2E6']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={StyleSheet.absoluteFill}
+                  />
 
-              {/* Orange slices background image */}
-              <Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '30%', height: '30%', left: '40%', top: '5%', opacity: 0.9 }]} resizeMode="cover" />
+                  {/* Orange slices background image */}
+                  <Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '30%', height: '30%', left: '40%', top: '5%', opacity: 0.9 }]} resizeMode="cover" />
 
-              <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
-                <Image source={require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
-              </View>
+                  <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
+                    <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
+                  </View>
 
-              <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]}>Vitamin C + E Moisturizer for</Text>
-              <Text style={[styles.productTitleHighlight, { fontSize: scaleh(18) }]}>Glowing Skin</Text>
-              <Text style={[styles.productSubtitle, { fontSize: scaleh(12), color: '#1a1a1a', fontWeight: '600', marginBottom: scalev(20) }]}>Normal, Oily 7 Combination Skin</Text>
+                  <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]} numberOfLines={2}>
+                    {item.name || 'Vitamin C + E Moisturizer'}
+                  </Text>
+                  <Text style={[styles.productSubtitle, { fontSize: scaleh(12), color: '#1a1a1a', fontWeight: '600', marginBottom: scalev(20), marginTop: scalev(5) }]} numberOfLines={1}>
+                    {item.subtitle || 'Normal, Oily & Combination Skin'}
+                  </Text>
 
-              <View style={[styles.sizePill, { borderColor: '#FF0069', paddingVertical: scalev(6), paddingHorizontal: scaleh(20) }]}>
-                <Text style={[styles.sizePillText, { fontSize: scaleh(14), fontWeight: '700' }]}>60ml</Text>
-              </View>
+                  <View style={[styles.sizePill, { borderColor: '#FF0069', paddingVertical: scalev(6), paddingHorizontal: scaleh(20) }]}>
+                    <Text style={[styles.sizePillText, { fontSize: scaleh(14), fontWeight: '700' }]}>{item.size || '60ml'}</Text>
+                  </View>
 
-              <View style={[styles.priceActionContainer, { borderColor: '#FF0069', height: scalev(50), width: scaleh(220), borderRadius: scaleh(15) }]}>
-                <View style={[styles.priceSection, { borderRightColor: '#FF0069' }]}>
-                  <Text style={[styles.priceText, { fontSize: scaleh(18) }]}>₹899</Text>
+                  <View style={[styles.priceActionContainer, { borderColor: '#FF0069', height: scalev(50), width: '100%', borderRadius: scaleh(15) }]}>
+                    <View style={[styles.priceSection, { borderRightColor: '#FF0069' }]}>
+                      <Text style={[styles.priceText, { fontSize: scaleh(18) }]}>₹{item.price || '899'}</Text>
+                    </View>
+                    <TouchableOpacity style={styles.addToCartSection}>
+                      <Text style={[styles.addToCartText, { color: '#FF0069', fontWeight: '800', fontSize: scaleh(14) }]}>Add to Cart</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.addToCartSection}>
-                  <Text style={[styles.addToCartText, { color: '#FF0069', fontWeight: '800', fontSize: scaleh(14) }]}>Add to Cart</Text>
+              )}
+              ListEmptyComponent={() => (
+                <View style={{ width: width - scaleh(40), alignItems: 'center', justifyContent: 'center', height: scalev(200) }}>
+                  <Text>{loading ? 'Loading Products...' : 'No products found.'}</Text>
                 </View>
-              </View>
-            </View>
+              )}
+            />
           </View>
 
           {/* 3. Main Combo Banner Carousel */}

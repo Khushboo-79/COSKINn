@@ -81,7 +81,15 @@ export class CatalogService {
     }
 
     if (filters.category) {
-      where.category = { slug: filters.category };
+      if (filters.category === 'cosmetics') {
+        where.category = { slug: { in: ['cosmetics', 'lipsticks', 'blushes', 'eyeshadows', 'mascaras', 'concealers', 'highlighters', 'bronzers', 'hybrid-tints'] } };
+      } else if (filters.category === 'skincare') {
+        where.category = { slug: { in: ['skincare', 'sunscreens', 'cleansers', 'serums', 'moisturizers', 'toners'] } };
+      } else if (filters.category.includes(',')) {
+        where.category = { slug: { in: filters.category.split(',') } };
+      } else {
+        where.category = { slug: filters.category };
+      }
     }
 
     if (filters.skinType) {

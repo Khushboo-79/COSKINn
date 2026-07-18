@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, Image, FlatList, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -7,6 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Rabbit, TreePine } from 'lucide-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../../redux/slices/productSlice';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
 import BottomNavBar from '../../constants/BottomNavBar';
 import TopHeader from '../../components/TopHeader';
@@ -31,7 +32,12 @@ const CosmeticsDashboardScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app.activeDomain);
+  const { items: products, loading } = useSelector(state => state.product);
   const isThemeDark = activeDomain === 'skincare';
+
+  useEffect(() => {
+    dispatch(fetchProducts({ category: 'cosmetics' })); // Fetch cosmetics products
+  }, [dispatch]);
 
   const [activeComboBannerIndex, setActiveComboBannerIndex] = React.useState(0);
   const comboBannerData = [
@@ -96,14 +102,14 @@ const CosmeticsDashboardScreen = () => {
     </View>
   );
 
-  const renderNewlyLaunchedCard = () => (
-    <View style={styles.origProductCard}>
+  const renderNewlyLaunchedCard = ({ item }) => (
+    <View style={[styles.origProductCard, { marginRight: scaleh(15) }]}>
       <View style={styles.origHeartIconContainer}>
         <Ionicons name="heart-outline" size={scaleh(16)} color="#666" />
       </View>
-      <Image source={require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
+      <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
       <View style={styles.origCardDetails}>
-        <Text style={styles.origProductNameFull}>Vitamin C + E Sunscreen{'\n'}SPF 50 PA++++ with{'\n'}New-Age UV Filters</Text>
+        <Text style={styles.origProductNameFull} numberOfLines={3}>{item?.name || 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with\nNew-Age UV Filters'}</Text>
 
         <View style={styles.origSkinTypeRow}>
           <Ionicons name="checkmark-circle-outline" size={scaleh(12)} color="#FF0069" />
@@ -140,7 +146,7 @@ const CosmeticsDashboardScreen = () => {
           </View>
         </View>
 
-        <Text style={styles.origPriceCurrentLarge}>₹899</Text>
+        <Text style={styles.origPriceCurrentLarge}>₹{item?.price || '899'}</Text>
       </View>
 
       <View style={styles.origCardFooter}>
@@ -268,9 +274,20 @@ const CosmeticsDashboardScreen = () => {
           </View>
 
           {/* Bottom Cards Row */}
-          <View style={styles.tallCardsRow}>
-            {renderNewlyLaunchedCard()}
-            {renderNewlyLaunchedCard()}
+          <View style={{ marginBottom: scalev(20) }}>
+            <FlatList
+              data={products}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+              contentContainerStyle={{ paddingHorizontal: scaleh(20) }}
+              renderItem={renderNewlyLaunchedCard}
+              ListEmptyComponent={() => (
+                <View style={{ width: width - scaleh(40), alignItems: 'center', justifyContent: 'center', height: scalev(200) }}>
+                  <Text>{loading ? 'Loading Products...' : 'No products found.'}</Text>
+                </View>
+              )}
+            />
           </View>
 
           {/* Trust Badges Section */}
