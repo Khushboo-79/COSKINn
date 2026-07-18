@@ -5,67 +5,56 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class ComplianceService {
   constructor(private prisma: PrismaService) {}
 
-  async recordConsent(userId: string, data: { push: boolean; email: boolean; sms: boolean; whatsapp: boolean }) {
+  // Consents
+  async updateConsent(userId: string, data: { push?: boolean; email?: boolean; sms?: boolean; whatsapp?: boolean }) {
     return this.prisma.customerConsent.upsert({
       where: { userId },
-      update: {
-        push: data.push,
-        email: data.email,
-        sms: data.sms,
-        whatsapp: data.whatsapp,
-      },
+      update: data,
       create: {
         userId,
-        push: data.push,
-        email: data.email,
-        sms: data.sms,
-        whatsapp: data.whatsapp,
+        push: data.push ?? true,
+        email: data.email ?? true,
+        sms: data.sms ?? true,
+        whatsapp: data.whatsapp ?? true,
       },
     });
   }
 
-  async getConsents(userId: string) {
-    return this.prisma.customerConsent.findUnique({
-      where: { userId },
-    });
+  async getConsent(userId: string) {
+    let consent = await this.prisma.customerConsent.findUnique({ where: { userId } });
+    if (!consent) {
+      consent = await this.prisma.customerConsent.create({
+        data: { userId }
+      });
+    }
+    return consent;
   }
 
-  async createDataRequest(userId: string, data: { requestType: 'EXPORT' | 'DELETE' }) {
+  // Data Requests
+  async createDataRequest(userId: string, requestType: 'EXPORT' | 'DELETE') {
     return this.prisma.dataRequest.create({
       data: {
         userId,
-        requestType: data.requestType,
+        requestType,
         status: 'PENDING',
       },
     });
   }
 
-  async getDataRequests(userId: string) {
+  async getAdminDataRequests() {
     return this.prisma.dataRequest.findMany({
-      where: { userId },
+      include: { user: { select: { email: true, phone: true, firstName: true } } },
       orderBy: { requestedAt: 'desc' },
     });
   }
 
-  async updateDataRequestStatus(id: string, data: { status: 'PENDING' | 'PROCESSING' | 'FULFILLED' | 'REJECTED'; exceptions?: string }) {
-    const req = await this.prisma.dataRequest.findUnique({ where: { id } });
-    if (!req) throw new NotFoundException('Data request not found');
-    
+  async updateDataRequestStatus(id: string, status: string) {
     return this.prisma.dataRequest.update({
       where: { id },
       data: {
-        status: data.status,
-        exceptions: data.exceptions,
-        fulfilledAt: (data.status === 'FULFILLED' || data.status === 'REJECTED') ? new Date() : null,
+        status,
+        fulfilledAt: status === 'FULFILLED' ? new Date() : null,
       },
     });
   }
-
-  async getAllDataRequests() {
-    return this.prisma.dataRequest.findMany({
-      include: { user: { select: { id: true, firstName: true, lastName: true, email: true } } },
-      orderBy: { requestedAt: 'desc' },
-    });
-  }
 }
-

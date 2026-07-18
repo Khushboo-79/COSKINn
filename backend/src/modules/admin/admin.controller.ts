@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, UseGuards, Query, Param } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -18,6 +18,11 @@ export class AdminController {
   @Get('roles')
   getRoles() {
     return this.adminService.getRoles();
+  }
+
+  @Put('roles/:id/panels')
+  updateRolePanelAccess(@Param('id') id: string, @Body() body: { panelAccess: string[] }) {
+    return this.adminService.updateRolePanelAccess(id, body.panelAccess);
   }
 
   @Get('users')
