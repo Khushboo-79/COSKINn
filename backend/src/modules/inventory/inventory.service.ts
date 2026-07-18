@@ -103,7 +103,7 @@ export class InventoryService {
     });
   }
 
-  async stockIn(dto: StockMovementDto) {
+  async stockIn(dto: StockMovementDto, txClient?: any) {
     // Verify Warehouse exists
     const warehouse = await this.prisma.warehouse.findUnique({
       where: { id: dto.warehouseId },
@@ -114,6 +114,23 @@ export class InventoryService {
     }
 
     // Wrap in a transaction to ensure ledger and stock stay in sync
+    const prismaClient = txClient || this.prisma;
+    
+    // If we're already in a transaction (txClient is provided), we might not want to nest a $transaction call if Prisma throws.
+    // However, Prisma handles nested $transactions by just executing them if using interactive transactions, 
+    // or we can just skip wrapping if txClient is provided.
+    if (txClient) {
+      const movement = await txClient.stockMovement.create({
+        data: { warehouseId: dto.warehouseId, sku: dto.sku, type: 'IN', quantity: dto.quantity, reference: dto.reference || 'Manual Stock In' }
+      });
+      const stock = await txClient.inventoryStock.upsert({
+        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
+        create: { warehouseId: dto.warehouseId, sku: dto.sku, quantity: dto.quantity, reservedQty: 0 },
+        update: { quantity: { increment: dto.quantity } }
+      });
+      return { movement, stock };
+    }
+
     return this.prisma.$transaction(async (prisma) => {
       // 1. Create the stock movement ledger entry
       const movement = await prisma.stockMovement.create({

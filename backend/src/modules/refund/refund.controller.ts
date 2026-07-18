@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
 import { RefundService } from './refund.service';
 import { ProcessRefundDto } from './dto/refund.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -8,6 +8,13 @@ import { Roles } from '../../common/decorators/roles.decorator';
 @Controller('refunds')
 export class RefundController {
   constructor(private readonly refundService: RefundService) {}
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'FINANCE')
+  @Get('admin/all')
+  getAllRefunds() {
+    return this.refundService.getAllRefunds();
+  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'FINANCE')

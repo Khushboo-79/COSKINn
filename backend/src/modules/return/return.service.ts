@@ -2,12 +2,14 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../../prisma/prisma.service';
 import { RequestReturnDto, ProcessReturnDto, ReturnQcDto } from './dto/return.dto';
 import { InventoryService } from '../inventory/inventory.service';
+import { RefundService } from '../refund/refund.service';
 
 @Injectable()
 export class ReturnService {
   constructor(
     private prisma: PrismaService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private refundService: RefundService
   ) {}
 
   async findAll(status?: string) {
@@ -91,12 +93,17 @@ export class ReturnService {
               sku: item.sku,
               quantity: item.quantity,
               reference: `Return QC Pass: ${returnReq.id}`
-            });
+            }, tx);
           }
         }
         
-        // Trigger refund (mock)
-        // await this.paymentService.triggerRefund(...)
+        // Trigger actual refund
+        // Return doesn't store 'amount' directly, it refunds the items. But we can assume it refunds the full order for this MVP.
+        // Or we can calculate it from returnReq.items if prices were stored. Assuming full refund for simplicity if it's the whole order.
+        await this.refundService.processRefund({
+          orderId: returnReq.orderId,
+          amount: returnReq.order.finalAmount
+        }, returnReq.refundType as 'WALLET' | 'ORIGINAL_SOURCE');
         
         return tx.return.update({
           where: { id },

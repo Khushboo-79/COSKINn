@@ -9,6 +9,7 @@ const navItems = [
   { name: 'Inventory', path: '/inventory', icon: Archive },
   { name: 'Orders', path: '/orders', icon: ShoppingCart },
   { name: 'Finance', path: '/finance', icon: DollarSign },
+  { name: 'HR', path: '/hr', icon: Users },
   { name: 'Audit Logs', path: '/audit', icon: Activity },
 ];
 

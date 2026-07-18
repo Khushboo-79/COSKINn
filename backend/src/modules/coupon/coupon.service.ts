@@ -48,4 +48,26 @@ export class CouponService {
       newTotal: cartTotal - discountAmount
     };
   }
+
+  // --- ADMIN METHODS ---
+
+  async createCoupon(data: any) {
+    return this.prisma.coupon.create({ data });
+  }
+
+  async getAdminCoupons() {
+    return this.prisma.coupon.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async updateCoupon(id: string, data: any) {
+    const coupon = await this.prisma.coupon.findUnique({ where: { id } });
+    if (!coupon) throw new NotFoundException('Coupon not found');
+    
+    return this.prisma.coupon.update({
+      where: { id },
+      data
+    });
+  }
 }

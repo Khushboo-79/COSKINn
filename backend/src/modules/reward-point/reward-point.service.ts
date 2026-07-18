@@ -15,6 +15,20 @@ export class RewardPointService {
     return agg._sum.points || 0;
   }
 
+  async getMyLedger(userId: string) {
+    return this.prisma.rewardPointsLedger.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async getAdminLedger() {
+    return this.prisma.rewardPointsLedger.findMany({
+      include: { user: { select: { id: true, firstName: true, email: true } } },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
   async earnPoints(userId: string, amountSpent: number, orderId: string) {
     // 1 point per ₹150 spent
     const pointsToEarn = Math.floor(amountSpent / 150);

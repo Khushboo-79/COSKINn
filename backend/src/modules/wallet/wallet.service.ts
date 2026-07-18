@@ -20,6 +20,15 @@ export class WalletService {
     return wallet;
   }
 
+  async getAdminTransactions() {
+    return this.prisma.walletTransaction.findMany({
+      include: {
+        wallet: { include: { user: { select: { id: true, firstName: true, email: true } } } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
   async creditWallet(userId: string, amount: number, reference: string, txClient?: any) {
     if (amount <= 0) throw new BadRequestException('Amount must be positive');
 
