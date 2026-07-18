@@ -40,6 +40,8 @@ const DailyEssentialsPage = React.lazy(() => import('./pages/DailyEssentialsPage
 const AcneBlemishesPage = React.lazy(() => import('./pages/AcneBlemishesPage'));
 
 const WeekendCollectionPage = React.lazy(() => import('./pages/WeekendCollectionPage'));
+const MagneticLipstickCollectionPage = React.lazy(() => import('./pages/collections/MagneticLipstickCollectionPage'));
+const PrecisionLipLinerCollectionPage = React.lazy(() => import('./pages/collections/PrecisionLipLinerCollectionPage'));
 
 // Category Pages
 const HydrationPage = React.lazy(() => import('./pages/categories/HydrationPage'));
@@ -104,10 +106,11 @@ const PlaceholderPage = ({ title }) => (
 const MainLayout = () => {
   const location = useLocation();
   const isCheckout = location.pathname === '/checkout';
+  const isProductPage = location.pathname.startsWith('/product/');
 
   return (
     <div className="relative min-h-screen flex flex-col">
-      {!isCheckout && <Navbar />}
+      {!isCheckout && !isProductPage && <Navbar />}
       {!isCheckout && <CartDrawer />}
       <div className="flex-1">
         <Suspense fallback={<GlobalLoader />}>
@@ -160,6 +163,8 @@ const MainLayout = () => {
             <Route path="/shop/body-lips/pocket-perfume" element={<PocketPerfumePage />} />
             <Route path="/shop/bundles/glow-kit" element={<GlowKitPage />} />
             <Route path="/shop/collections/daily-essentials" element={<DailyEssentialsPage />} />
+            <Route path="/collections/magnetic-lipstick" element={<MagneticLipstickCollectionPage />} />
+            <Route path="/collections/precision-lip-liner" element={<PrecisionLipLinerCollectionPage />} />
             <Route path="/categories/acne-blemishes" element={<AcneBlemishesPage />} />
             <Route path="/shop/collections/weekend-collection" element={<WeekendCollectionPage />} />
             <Route path="/categories/hydration" element={<HydrationPage />} />

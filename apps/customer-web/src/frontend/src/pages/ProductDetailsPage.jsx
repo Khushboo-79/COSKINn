@@ -7,6 +7,8 @@ import { useWishlist } from '../context/WishlistContext';
 import Footer from '../components/common/Footer';
 import { Heart, ShoppingBag, Star, ShieldCheck, ChevronRight, Truck, RefreshCcw, Share2, Plus, Minus, CheckCircle, ChevronDown, ChevronUp, ThumbsUp } from 'lucide-react';
 import { skincareProducts } from '../constants/skincareProducts';
+import { cosmeticsProducts } from '../constants/cosmeticsProducts';
+import CosmeticsProductDetailsPage from './CosmeticsProductDetailsPage';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
@@ -19,20 +21,31 @@ export default function ProductDetailsPage() {
   const [mainImage, setMainImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
-  
+
   // Custom states for new sections
   const [showStickyBar, setShowStickyBar] = useState(false);
   const buyButtonRef = useRef(null);
   const [activeFaq, setActiveFaq] = useState(null);
   const [reviewFilter, setReviewFilter] = useState('Most Helpful');
-  
-  // Before & After slider state
-  const [sliderPos, setSliderPos] = useState(50);
-  const sliderRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
+
+  // Before & After toggle state
+  const [showAfterImage, setShowAfterImage] = useState(true);
+
+  const [productType, setProductType] = useState(null);
 
   useEffect(() => {
-    const foundProduct = skincareProducts.find(p => p.id === parseInt(id));
+    const parsedId = parseInt(id);
+    let foundProduct = skincareProducts.find(p => p.id === parsedId);
+    
+    if (foundProduct) {
+      setProductType('skincare');
+    } else {
+      foundProduct = cosmeticsProducts.find(p => p.id === parsedId);
+      if (foundProduct) {
+        setProductType('cosmetics');
+      }
+    }
+
     if (foundProduct) {
       setProduct(foundProduct);
       setMainImage(foundProduct.images[0]);
@@ -55,27 +68,16 @@ export default function ProductDetailsPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Slider Mouse Logic
-  const handleSliderMove = (e) => {
-    if (!isDragging || !sliderRef.current) return;
-    const rect = sliderRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-    const percent = (x / rect.width) * 100;
-    setSliderPos(percent);
-  };
-
-  const handleSliderTouch = (e) => {
-    if (!sliderRef.current) return;
-    const rect = sliderRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width));
-    const percent = (x / rect.width) * 100;
-    setSliderPos(percent);
-  };
+  // (Removed drag slider logic)
 
   if (!product) return null;
 
-  const relatedProducts = skincareProducts.filter(p => 
-    p.id !== product.id && 
+  if (productType === 'cosmetics') {
+    return <CosmeticsProductDetailsPage product={product} />;
+  }
+
+  const relatedProducts = skincareProducts.filter(p =>
+    p.id !== product.id &&
     (product.subcategory ? p.subcategory === product.subcategory : p.category === product.category)
   ).slice(0, 4);
 
@@ -86,11 +88,11 @@ export default function ProductDetailsPage() {
 
   return (
     <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text mt-[60px] pb-20">
-      
+
       {/* Sticky Purchase Bar */}
       <AnimatePresence>
         {showStickyBar && (
-          <motion.div 
+          <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
@@ -104,7 +106,7 @@ export default function ProductDetailsPage() {
                 <div className="text-theme-primary font-bold">₹{product.price}</div>
               </div>
             </div>
-            
+
             <div className="flex flex-1 md:flex-none justify-between items-center gap-4">
               <div className="flex items-center justify-between border-2 border-black/10 rounded-full px-4 w-28 shrink-0 h-12 bg-white">
                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1 hover:text-theme-primary"><Minus className="w-4 h-4" /></button>
@@ -131,7 +133,7 @@ export default function ProductDetailsPage() {
       {/* Main Product Section */}
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
-          
+
           {/* Left Column: Image Gallery */}
           <div className="w-full lg:w-1/2 flex flex-col-reverse md:flex-row gap-4 lg:sticky lg:top-24 h-max z-10">
             {/* Thumbnails */}
@@ -314,283 +316,7 @@ export default function ProductDetailsPage() {
           </div>
         </div>
       </div>
-
-      {/* --- ADVANCED PDP SECTIONS (Only render if data exists) --- */}
-      
-      {/* 1. Benefits Section */}
-      {product.benefits && product.detailedIngredients && (
-        <section className="max-w-7xl mx-auto px-6 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-heading font-bold text-black mb-4">Why You'll Love It</h2>
-            <p className="text-gray-600">Formulated for results. Designed for luxury.</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {product.benefits.map((benefit, idx) => (
-              <motion.div 
-                key={idx}
-                whileHover={{ y: -5 }}
-                className="bg-[#FF0069]/5 rounded-3xl p-6 flex flex-col items-center justify-center text-center border border-[#FF0069]/10"
-              >
-                <div className="w-12 h-12 bg-[#FF0069]/10 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle className="text-[#FF0069]" size={24} />
-                </div>
-                <h4 className="font-bold text-black">{benefit}</h4>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 2. Ingredients Section */}
-      {product.detailedIngredients && (
-        <section className="bg-gray-50 py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-heading font-bold text-black mb-4">Hero Ingredients</h2>
-              <p className="text-gray-600">The science behind the glow.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {product.detailedIngredients.map((ing, idx) => (
-                <div key={idx} className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-shadow border border-gray-100 group">
-                  <h3 className="text-xl font-heading font-bold text-black mb-3 group-hover:text-[#FF0069] transition-colors">{ing.name}</h3>
-                  <p className="text-gray-600 mb-4">{ing.benefit}</p>
-                  <div className="inline-block px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-500">
-                    For {ing.skinType}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 3. How To Use Timeline */}
-      {product.howToUse && Array.isArray(product.howToUse) && (
-        <section className="max-w-7xl mx-auto px-6 py-16">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-heading font-bold text-black mb-4">How To Use</h2>
-            <p className="text-gray-600">Follow these steps for the perfect cleanse.</p>
-          </div>
-          <div className="relative">
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 rounded-full"></div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-              {product.howToUse.map((step, idx) => (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  key={idx} 
-                  className="relative flex flex-col items-center text-center"
-                >
-                  <div className="w-16 h-16 bg-white border-4 border-[#FF0069] rounded-full flex items-center justify-center text-xl font-black text-[#FF0069] relative z-10 mb-6 shadow-[0_0_20px_rgba(255,0,105,0.2)]">
-                    {idx + 1}
-                  </div>
-                  <h4 className="text-lg font-bold text-black mb-2">{step.title}</h4>
-                  <p className="text-gray-600 text-sm">{step.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 4. Before & After Slider */}
-      {product.beforeAfter && (
-        <section className="bg-black py-20 text-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-heading font-bold mb-4 text-white">Real Results</h2>
-              <p className="text-gray-400">4 Weeks of consistent use.</p>
-            </div>
-            
-            <div className="max-w-3xl mx-auto">
-              <div 
-                ref={sliderRef}
-                className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden select-none cursor-ew-resize bg-gray-900"
-                onMouseMove={handleSliderMove}
-                onMouseDown={() => setIsDragging(true)}
-                onMouseUp={() => setIsDragging(false)}
-                onMouseLeave={() => setIsDragging(false)}
-                onTouchMove={handleSliderTouch}
-              >
-                {/* After Image (Background) */}
-                <div className="absolute inset-0">
-                  <img src={product.beforeAfter.after} alt="After" className="w-full h-full object-cover filter brightness-110" draggable="false" />
-                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-sm font-bold">After</div>
-                </div>
-
-                {/* Before Image (Foreground, Clipped) */}
-                <div 
-                  className="absolute inset-0 border-r-4 border-white"
-                  style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
-                >
-                  <img src={product.beforeAfter.before} alt="Before" className="w-full h-full object-cover filter grayscale contrast-125" draggable="false" />
-                  <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-md px-4 py-1 rounded-full text-sm font-bold">Before</div>
-                </div>
-
-                {/* Slider Handle */}
-                <div 
-                  className="absolute top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-2xl z-10 pointer-events-none"
-                  style={{ left: `calc(${sliderPos}% - 20px)` }}
-                >
-                  <div className="w-6 h-6 flex justify-between items-center text-gray-400">
-                    <ChevronRight className="rotate-180" size={16}/>
-                    <ChevronRight size={16}/>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 5. Build Your Routine */}
-      {product.routine && (
-        <section className="max-w-7xl mx-auto px-6 py-20 border-b border-gray-100">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-heading font-bold text-black mb-4">Build Your Routine</h2>
-            <p className="text-gray-600">Maximize your glow with these perfect pairings.</p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row items-stretch justify-center gap-4 overflow-x-auto hide-scrollbar snap-x">
-            {product.routine.map((item, idx) => (
-              <div key={idx} className="flex flex-col md:flex-row items-center snap-start shrink-0">
-                <div className="bg-gray-50 rounded-3xl p-6 flex flex-col items-center text-center w-64 hover:shadow-xl transition-all border border-gray-100">
-                  <div className="text-[#FF0069] font-bold text-sm uppercase tracking-widest mb-4">Step {idx + 1}</div>
-                  <div className="font-bold text-black text-lg mb-2">{item.step}</div>
-                  <div className="text-sm text-gray-500">{item.product}</div>
-                </div>
-                {idx < product.routine.length - 1 && (
-                  <div className="text-gray-300 md:px-4 py-4 md:py-0">
-                    <Plus className="w-8 h-8" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 6. Customer Reviews */}
-      {product.customerReviews && (
-        <section className="max-w-7xl mx-auto px-6 py-16">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-100 pb-6">
-            <div>
-              <h2 className="text-3xl font-heading font-bold text-black mb-4">Verified Reviews</h2>
-              <div className="flex items-center gap-2">
-                <div className="flex text-yellow-400">
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                </div>
-                <span className="font-bold text-black text-lg">{product.rating}</span>
-                <span className="text-gray-500 text-sm">Based on {product.reviews} Reviews</span>
-              </div>
-            </div>
-            
-            <div className="mt-6 md:mt-0">
-              <select 
-                value={reviewFilter} 
-                onChange={(e) => setReviewFilter(e.target.value)}
-                className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-[#FF0069] focus:border-[#FF0069] block w-full p-3 outline-none font-bold"
-              >
-                <option>Most Helpful</option>
-                <option>Newest</option>
-                <option>5 Stars</option>
-                <option>4 Stars</option>
-                <option>3 Stars</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {product.customerReviews.map((review, idx) => (
-              <div key={idx} className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h4 className="font-bold text-black flex items-center gap-2">
-                      {review.user} <CheckCircle size={14} className="text-green-500" />
-                    </h4>
-                    <span className="text-xs text-gray-400">{review.date}</span>
-                  </div>
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-current' : 'fill-transparent text-gray-300'}`} />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-gray-700 mb-6">{review.text}</p>
-                <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-[#FF0069] transition-colors font-medium">
-                  <ThumbsUp size={16} /> Helpful ({review.helpful})
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 7. FAQ */}
-      {product.faqs && (
-        <section className="max-w-3xl mx-auto px-6 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-heading font-bold text-black mb-4">Common Questions</h2>
-          </div>
-          <div className="space-y-4">
-            {product.faqs.map((faq, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
-                <button 
-                  onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
-                  className="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none"
-                >
-                  <span className="font-bold text-black">{faq.q}</span>
-                  {activeFaq === idx ? <ChevronUp className="text-[#FF0069]" /> : <ChevronDown className="text-gray-400" />}
-                </button>
-                <AnimatePresence>
-                  {activeFaq === idx && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-5 text-gray-600 leading-relaxed"
-                    >
-                      {faq.a}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 8. Why Choose COSKINn Features */}
-      {product.detailedIngredients && (
-        <section className="bg-pink-50/50 py-16 border-t border-b border-pink-100">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-6 text-center">
-              {[
-                { label: "Cruelty Free" },
-                { label: "Paraben Free" },
-                { label: "Vegan" },
-                { label: "Dermatologist Tested" },
-                { label: "Eco Friendly" },
-                { label: "Made For Indian Skin" }
-              ].map((f, i) => (
-                <motion.div key={i} whileHover={{ y: -5 }} className="flex flex-col items-center gap-3">
-                  <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-[#FF0069]">
-                    <ShieldCheck size={20} />
-                  </div>
-                  <span className="text-xs font-bold text-gray-700">{f.label}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
+      {/* Editorial sections moved to Collection Page */}
       {/* Related Products Carousel */}
       <div className="w-full bg-white py-24">
         <div className="max-w-7xl mx-auto px-6">

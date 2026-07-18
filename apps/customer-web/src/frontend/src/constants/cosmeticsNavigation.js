@@ -1,89 +1,76 @@
 export const cosmeticsNavigation = {
   shop: [
     {
-      title: "Trending",
+      title: "Lips",
       links: [
-        { name: "New Arrivals", href: "/new-arrivals" },
-        { name: "Best Sellers", href: "#" },
-        { name: "Viral Products", href: "#" },
-        { name: "Sets & Palettes", href: "#" },
+        { name: "COSKINn Magnetic Lipstick", href: "/collections/magnetic-lipstick" },
+        { name: "COSKINn Precision Lip Liner", href: "/collections/precision-lip-liner" },
+        { name: "COSKINn Lip Blur", href: "/product/307" },
+        { name: "COSKINn Mango Lip Balm SPF 30", href: "/product/308" },
       ]
     },
     {
-      title: "Face Makeup",
+      title: "Eyes",
       links: [
-        { name: "COSKINn Blush", href: "#" },
-        { name: "COSKINn Blur Lip & Cheek", href: "#" },
+        { name: "COSKINn Lift & Curl Mascara", href: "/product/303" },
+        { name: "COSKINn Eyeshadow Palette", href: "/product/304" },
       ]
     },
     {
-      title: "Eyes & Lips",
+      title: "Face",
       links: [
-        { name: "COSKINn Magnetic Lipstick", href: "#" },
-        { name: "COSKINn Lip Liner", href: "#" },
-        { name: "COSKINn Mascara", href: "#" },
-        { name: "COSKINn Eyeshadow Palette", href: "#" },
+        { name: "COSKINn Velvet Blush", href: "/product/302" },
       ]
     }
   ],
   bundles: {
-    title: "Accessories",
-    description: "Premium tools for perfect application.",
+    title: "Tools & Fragrance",
+    description: "Premium tools and signature scents for a complete experience.",
     links: [
-      { name: "COSKINn Makeup Brushes", href: "#" },
-      { name: "COSKINn Brush Holder", href: "#" },
+      { name: "COSKINn Professional Makeup Brush Set", href: "/product/305" },
+      { name: "COSKINn Brush Holder", href: "/product/309" },
+      { name: "COSKINn Pocket Perfume Collection", href: "/product/310" },
     ],
     shopAllText: "Shop All Cosmetics →",
-    shopAllHref: "#"
+    shopAllHref: "/shop"
   },
   categories: [
     {
-      title: "Skin Concerns",
+      title: "Makeup Collections",
       links: [
-        { name: "Acne & Blemishes", href: "/categories/acne-blemishes" },
-        { name: "Dry Skin", href: "/shop-all-skincare?category=Dry+Skin" },
-        { name: "Oily Skin", href: "/shop-all-skincare?category=Oily+Skin" },
-        { name: "Sensitive Skin", href: "/shop-all-skincare?category=Sensitive+Skin" },
-        { name: "Pigmentation", href: "/shop-all-skincare?category=Pigmentation" },
-        { name: "Dull Skin", href: "/shop-all-skincare?category=Dull+Skin" },
-        { name: "Uneven Skin Tone", href: "/shop-all-skincare?category=Uneven+Skin+Tone" },
-        { name: "Fine Lines & Ageing", href: "/shop-all-skincare?category=Fine+Lines+%26+Ageing" }
+        { name: "Face Essentials", href: "/categories/face" },
+        { name: "Eye Collection", href: "/categories/eyes" },
+        { name: "Lip Collection", href: "/categories/lips" },
       ]
     },
     {
-      title: "Skin Goals",
+      title: "Extras",
       links: [
-        { name: "Hydration", href: "/shop-all-skincare?category=Hydration" },
-        { name: "Brightening", href: "/shop-all-skincare?category=Brightening" },
-        { name: "Glow Boost", href: "/shop-all-skincare?category=Glow+Boost" },
-        { name: "Sun Protection", href: "/shop-all-skincare?category=Sun+Protection" },
-        { name: "Repair & Recovery", href: "/shop-all-skincare?category=Repair+%26+Recovery" },
-        { name: "Barrier Care", href: "/shop-all-skincare?category=Barrier+Care" },
-        { name: "Oil Control", href: "/shop-all-skincare?category=Oil+Control" }
+        { name: "Beauty Accessories", href: "/categories/accessories" },
+        { name: "Signature Fragrances", href: "/categories/fragrance" }
       ]
     }
   ],
   categoryHighlight: {
     title: "Discover",
     links: [
-      { name: "Shop All Products →", href: "/shop-all-skincare" }
+      { name: "Shop All Cosmetics →", href: "/shop" }
     ],
-    highlightTag: "Personalized",
-    highlightText: "Find the perfect match for your skin type."
+    highlightTag: "Signature",
+    highlightText: "Experience the COSKINn Velvet Blush."
   },
   routines: [
-    { name: "Everyday Makeup", href: "/routine" },
-    { name: "Office Look", href: "/routine" },
-    { name: "Soft Glam", href: "/routine" },
-    { name: "Party Glam", href: "/routine" },
-    { name: "Bridal Look", href: "/routine" },
-    { name: "No Makeup Makeup", href: "/routine" },
+    { name: "Beauty Prep", href: "/routine?step=prep" },
+    { name: "Face Essentials", href: "/routine?step=base" },
+    { name: "Eye Collection", href: "/routine?step=eyes" },
+    { name: "Lip Collection", href: "/routine?step=lips" },
+    { name: "Beauty Accessories & Fragrance", href: "/routine?step=finish" },
   ],
   journal: [
-    { name: "Makeup Tutorials", href: "/journal" },
-    { name: "Beauty Trends", href: "/journal" },
-    { name: "Makeup Tips", href: "/journal" },
-    { name: "Product Launches", href: "/journal" },
-    { name: "Cosmetic Guides", href: "/journal" },
+    { name: "Makeup Guides", href: "/journal/guides" },
+    { name: "Product Tutorials", href: "/journal/tutorials" },
+    { name: "Beauty Tips", href: "/journal/tips" },
+    { name: "New Collections", href: "/journal/collections" },
+    { name: "Beauty Trends", href: "/journal/trends" },
   ]
 };
