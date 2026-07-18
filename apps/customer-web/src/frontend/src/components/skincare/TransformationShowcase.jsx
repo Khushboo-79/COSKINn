@@ -46,16 +46,16 @@ export default function TransformationShowcase() {
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center mb-24">
           
           {/* Left Column: Editorial Image */}
-          <div className="w-full lg:w-5/12 relative">
+          <div className="w-full lg:w-5/12 relative max-w-[450px] mx-auto lg:mx-0">
             <motion.div 
-              className="relative w-full aspect-[4/5] rounded-t-full overflow-hidden bg-white"
-              style={{ boxShadow: `0 25px 60px -15px ${skincareColors.primary}20` }}
+              className="relative w-full aspect-[3/4] rounded-[3rem] overflow-hidden bg-white"
+              style={{ boxShadow: `0 30px 60px -15px ${skincareColors.primary}30` }}
             >
               <motion.img 
                 style={{ y: imgY }}
                 src={editorialImage} 
                 alt="COSKINn Skin Transformation" 
-                className="w-full h-[120%] object-cover object-center absolute top-[-10%]"
+                className="w-full h-[115%] object-cover object-center absolute top-[-7.5%]"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
@@ -93,7 +93,6 @@ export default function TransformationShowcase() {
                 Visible Skin <br />
                 <span className="italic relative inline-block mt-2">
                   Transformation
-                  <span className="absolute bottom-2 md:bottom-3 left-0 w-full h-2 md:h-3 opacity-20 -z-10" style={{ backgroundColor: skincareColors.primary }}></span>
                 </span>
               </h2>
             </motion.div>

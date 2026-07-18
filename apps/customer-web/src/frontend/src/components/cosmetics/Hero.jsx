@@ -1,180 +1,269 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, useTransform, useSpring } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
-import { Sparkles, ShieldCheck, Heart } from 'lucide-react';
-
-// Premium cosmetics campaign images for the crossfade
-import img1 from '../../assets/images/luxury_hero_banner.webp';
-import img2 from '../../assets/images/cosmetics_after_model.webp';
-import img3 from '../../assets/images/cat_mascara_model.webp';
-import img4 from '../../assets/images/cat_blush_model.webp';
-import img5 from '../../assets/images/cat_magnetic_lipstick.webp';
-
-const HERO_IMAGES = [
-  { src: img1, position: 'object-[center_right] xl:object-[center_top]' },
-  { src: img2, position: 'object-[center_top]' },
-  { src: img3, position: 'object-center' },
-  { src: img4, position: 'object-[center_top]' },
-  { src: img5, position: 'object-[center_bottom]' }
-];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0 }
-};
+import { ArrowRight, Sparkles, Heart, ShieldCheck, Clock, Gem } from 'lucide-react';
+import heroImage from '../../assets/images/cosmetics_hero_cluster.png';
 
 export default function Hero() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const containerRef = useRef(null);
 
-  // Elegant, seamless auto-crossfade every 5 seconds
+  // Scroll Parallax removed
+
+  // 4. Mouse Parallax setup
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
+    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - left) / width - 0.5;
+    const y = (e.clientY - top) / height - 0.5;
+    setMousePosition({ x, y });
+  };
+
+  const mouseX = useSpring(mousePosition.x * 20, { stiffness: 50, damping: 20 });
+  const mouseY = useSpring(mousePosition.y * 20, { stiffness: 50, damping: 20 });
+
+  const imageX = useTransform(mouseX, value => value * -0.5); // Image moves slightly 
+  const imageY = useTransform(mouseY, value => value * -0.5);
+  const textX = useTransform(mouseX, value => value * -0.2);  // Text moves less
+  const textY = useTransform(mouseY, value => value * -0.2);
+
+  // 10. Luxury Light Particles
+  const [particles, setParticles] = useState([]);
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    setParticles(Array.from({ length: 15 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 3 + 1,
+      duration: Math.random() * 20 + 20,
+      delay: Math.random() * 5
+    })));
   }, []);
 
   return (
-    <section className="relative w-full h-screen min-h-[750px] lg:min-h-[850px] overflow-hidden flex items-center" style={{ backgroundColor: cosmeticColors.secondary }}>
-      
-      {/* Edge-to-Edge Premium Editorial Image Layer */}
-      {/* Added overflow-hidden to prevent scaling images from bleeding past the gradient and creating a vertical line */}
-      <div className="absolute top-0 right-0 w-full lg:w-[75%] h-full z-0 bg-white overflow-hidden">
-        
-        {/* Seamless Fade Gradient: White/Secondary Color -> Transparent */}
-        <div 
-          className="absolute inset-0 z-10 pointer-events-none"
-          style={{ background: `linear-gradient(to right, ${cosmeticColors.secondary} 0%, ${cosmeticColors.secondary}99 30%, transparent 100%)` }}
-        ></div>
-        
-        {/* Mobile bottom fade to ensure text readability */}
-        <div 
-          className="absolute inset-0 z-10 pointer-events-none lg:hidden"
-          style={{ background: `linear-gradient(to top, ${cosmeticColors.secondary} 0%, ${cosmeticColors.secondary}99 40%, transparent 100%)` }}
-        ></div>
-        
-        {/* Smooth Image Crossfade with Preloading (Overlapping Fade) */}
-        {HERO_IMAGES.map((item, idx) => {
-          const isActive = currentIndex === idx;
-          const isPrevious = (currentIndex - 1 + HERO_IMAGES.length) % HERO_IMAGES.length === idx;
+    <motion.section
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      style={{ backgroundColor: '#FCF8F9' }}
+      className="relative w-full min-h-[90vh] lg:min-h-[850px] overflow-hidden flex items-center transform-gpu"
+    >
 
-          return (
-            <motion.img 
-              key={idx}
-              src={item.src} 
-              alt="COSKINn Premium Cosmetics Campaign" 
-              className={`absolute top-0 right-0 w-full h-full object-cover ${item.position}`}
-              initial={false}
-              animate={{ 
-                // The incoming image fades to 1. The previous image STAYS at 1 to prevent background flashing.
-                opacity: isActive ? 1 : (isPrevious ? 1 : 0), 
-                // Subtle scale and soft blur fade as requested for luxury cinematic feel
-                scale: isActive ? 1.03 : 1.0,
-                filter: isActive ? 'blur(0px)' : 'blur(8px)',
-                // The incoming image is placed on top of the previous image
-                zIndex: isActive ? 5 : (isPrevious ? 0 : -1)
-              }}
-              transition={{ 
-                // Only the incoming image has a fade duration. Previous image drops instantly to 0 when no longer previous.
-                opacity: { duration: isActive ? 1.5 : 0, ease: "easeInOut" }, 
-                filter: { duration: isActive ? 1.5 : 0, ease: "easeOut" },
-                scale: { duration: 6, ease: "linear" } 
-              }}
-            />
-          );
-        })}
-      </div>
+      {/* 
+        =========================================
+        5. Background Motion
+        =========================================
+      */}
+      <motion.div
+        animate={{ opacity: [0.3, 0.5, 0.3] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
+      >
+        <div
+          className="absolute top-[-20%] left-[-10%] w-[60%] h-[70%] rounded-[100%] blur-[100px]"
+          style={{ background: cosmeticColors.primary }}
+        />
+        <div
+          className="absolute right-[5%] top-[10%] w-[50vw] h-[80vh] border-[1px] rounded-full opacity-20"
+          style={{ borderColor: cosmeticColors.accent }}
+        />
+      </motion.div>
 
-      {/* Content Layer (Seamlessly sits over the faded left edge of the image) */}
-      <div className="container mx-auto px-6 lg:px-12 relative z-20 h-full flex items-center pt-40 lg:pt-52 pb-20 pointer-events-none">
-        
-        {/* Content restricted to the left half, preventing overlap with the crisp part of the image */}
-        <div className="w-full lg:w-[55%] flex flex-col items-start text-left pointer-events-auto">
+      {/* 
+        =========================================
+        10. Luxury Light Particles
+        =========================================
+      */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {particles.map(p => (
           <motion.div
-            initial="hidden"
-            animate="visible"
-            transition={{ staggerChildren: 0.15, duration: 0.8, ease: "easeOut" }}
-            className="w-full"
-          >
-            {/* Minimal Premium Badge */}
-            <motion.div variants={fadeUp} className="mb-6 inline-flex">
-              <span 
-                className="px-5 py-2.5 rounded-full border bg-white/60 backdrop-blur-md shadow-sm text-[11px] font-black tracking-[0.2em] uppercase" 
-                style={{ borderColor: cosmeticColors.primary, color: cosmeticColors.accent }}
-              >
-                The Signature Collection
-              </span>
-            </motion.div>
-
-            {/* Luxury Heading */}
-            <motion.h1 
-              variants={fadeUp}
-              className="text-5xl md:text-7xl lg:text-[85px] xl:text-[95px] leading-[1.02] font-black mb-6 tracking-tight text-[#1b1b1b]"
-              style={{ fontFamily: fonts.cosmetics.heading }}
-            >
-              Define Your <br/>
-              <span 
-                className="text-transparent bg-clip-text" 
-                style={{ backgroundImage: `linear-gradient(to right, ${cosmeticColors.accent}, ${cosmeticColors.primary})` }}
-              >
-                Radiance.
-              </span>
-            </motion.h1>
-
-            {/* Concise Editorial Copy */}
-            <motion.p 
-              variants={fadeUp}
-              className="text-lg md:text-xl text-gray-700 mb-10 max-w-[500px] leading-relaxed font-medium drop-shadow-sm"
-              style={{ fontFamily: fonts.cosmetics.body }}
-            >
-              Discover high-performance cosmetics that merge bold pigment with lightweight, skin-loving ingredients. Designed for the modern glow.
-            </motion.p>
-
-            {/* Action Buttons (Strictly Cosmetics Colors, NO Black) */}
-            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
-              <motion.button 
-                whileHover={{ scale: 1.02, boxShadow: `0 15px 35px -10px ${cosmeticColors.accent}` }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-auto px-10 py-5 rounded-full text-white font-bold tracking-[0.15em] uppercase text-sm transition-all flex items-center justify-center gap-3 group shadow-[0_10px_30px_rgba(255,143,177,0.3)]"
-                style={{ backgroundColor: cosmeticColors.accent, fontFamily: fonts.cosmetics.heading }}
-              >
-                Shop Cosmetics
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
-              </motion.button>
-              
-              <motion.button 
-                whileHover={{ backgroundColor: cosmeticColors.primary, color: cosmeticColors.secondary, borderColor: cosmeticColors.primary }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-auto px-10 py-5 rounded-full font-bold tracking-[0.15em] uppercase text-sm border-[2px] transition-all flex items-center justify-center bg-white/40 backdrop-blur-md"
-                style={{ borderColor: cosmeticColors.accent, color: cosmeticColors.accent, fontFamily: fonts.cosmetics.heading }}
-              >
-                Explore Looks
-              </motion.button>
-            </motion.div>
-
-            {/* Subtle Trust Indicators */}
-            <motion.div variants={fadeUp} className="mt-16 flex flex-wrap items-center justify-start gap-8 lg:gap-12 pt-8">
-              {[
-                { icon: <Heart size={22} />, text: "Cruelty Free" },
-                { icon: <ShieldCheck size={22} />, text: "Dermatologist Tested" },
-                { icon: <Sparkles size={22} />, text: "100% Vegan" }
-              ].map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-3 group">
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-110 shadow-sm border" 
-                    style={{ backgroundColor: cosmeticColors.primary, color: cosmeticColors.secondary, borderColor: cosmeticColors.secondary }}
-                  >
-                    {item.icon}
-                  </div>
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center max-w-[80px] leading-tight">
-                    {item.text}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
-          </motion.div>
-        </div>
+            key={p.id}
+            initial={{ y: `${p.y}vh`, x: `${p.x}vw`, opacity: 0 }}
+            animate={{
+              y: [`${p.y}vh`, `${p.y - 20}vh`],
+              opacity: [0, 0.3, 0]
+            }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="absolute rounded-full bg-white blur-[1px]"
+            style={{ width: p.size, height: p.size }}
+          />
+        ))}
       </div>
-    </section>
+
+      {/* 
+        =========================================
+        HERO IMAGE (Requirement 2, 3, 4)
+        =========================================
+      */}
+      <motion.div
+        style={{ x: imageX, y: imageY }}
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="absolute top-0 right-0 w-full lg:w-[65%] h-full pointer-events-none z-0"
+      >
+        {/* 2. Luxury Product Floating Effect */}
+        <motion.div
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          className="w-full h-full relative"
+        >
+          {/* 3. Soft Product Glow */}
+          <motion.div
+            animate={{ opacity: [0, 0.3, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 bg-white/30 blur-3xl mix-blend-overlay"
+          />
+          <img
+            src={heroImage}
+            alt="COSKINn Luxury Cosmetics Collection"
+            className="w-full h-full object-cover object-[center_right]"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)'
+            }}
+          />
+        </motion.div>
+      </motion.div>
+
+      {/* 
+        =========================================
+        CONTENT COMPOSITION (Requirement 1)
+        =========================================
+      */}
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-2 h-full pt-28 pb-16 lg:py-0 items-center pointer-events-auto">
+
+        {/* --- LEFT SIDE: TYPOGRAPHY & BUTTONS --- */}
+        <motion.div
+          style={{ x: textX, y: textY }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            visible: { transition: { staggerChildren: 0.15 } }
+          }}
+          className="flex flex-col justify-center w-full max-w-xl z-20"
+        >
+          {/* Badge */}
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 15 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+            }}
+            className="flex items-center gap-2 mb-6"
+          >
+            <span className="text-[10px] md:text-xs tracking-[0.25em] font-bold uppercase flex items-center gap-2" style={{ color: cosmeticColors.accent }}>
+              New Collection <Sparkles size={14} />
+            </span>
+          </motion.div>
+
+          {/* Heading */}
+          <motion.h1
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } }
+            }}
+            className="text-5xl md:text-6xl lg:text-[5rem] xl:text-[5.5rem] font-normal text-gray-900 leading-[1.1] mb-6"
+            style={{ fontFamily: fonts.cosmetics.heading }}
+          >
+            Reveal Your <br />
+            <span className="italic" style={{ color: cosmeticColors.accent, fontWeight: 300 }}>
+              Natural Glow
+            </span>
+          </motion.h1>
+
+          {/* Description */}
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+            }}
+            className="text-base md:text-lg text-gray-700 font-medium max-w-md leading-[1.7] mb-10"
+            style={{ fontFamily: fonts.cosmetics.body }}
+          >
+            High-performance cosmetics that enhance your natural beauty with elegance and confidence.
+          </motion.p>
+
+          {/* 6. & 7. CTA Button Animations */}
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+            }}
+            className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-12"
+          >
+            {/* Primary Button */}
+            <button
+              className="w-full sm:w-auto px-8 py-3.5 text-white rounded-full transition-transform duration-500 hover:-translate-y-1 relative overflow-hidden group shadow-[0_10px_25px_-5px_rgba(255,143,177,0.5)]"
+              style={{ background: `linear-gradient(90deg, ${cosmeticColors.accent} 0%, ${cosmeticColors.primary} 100%)` }}
+            >
+              <span className="relative z-10 text-[11px] md:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center gap-2">
+                Shop Cosmetics
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </span>
+              {/* 7. Premium Shine Effect */}
+              <motion.div
+                animate={{ x: ['-200%', '300%'] }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4, ease: "linear" }}
+                className="absolute inset-0 w-[30%] bg-white/30 -skew-x-12 z-0"
+              />
+              <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-in-out" />
+            </button>
+
+            {/* Secondary Button */}
+            <button
+              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-transparent text-gray-900 border border-gray-300 transition-all duration-500 hover:-translate-y-1 hover:border-gray-500 hover:bg-white"
+            >
+              <span className="text-[11px] md:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center">
+                Explore Collection
+              </span>
+            </button>
+          </motion.div>
+
+          {/* Trust Badges */}
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+            }}
+            className="grid grid-cols-2 gap-x-4 gap-y-6 max-w-lg"
+          >
+            <div className="flex items-center gap-3 group cursor-default">
+              <Heart size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+              <div className="flex flex-col">
+                <span className="text-[11px] font-bold text-gray-900 leading-tight">Cruelty Free</span>
+                <span className="text-[10px] text-gray-500">Love Animals</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 group cursor-default">
+              <ShieldCheck size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+              <div className="flex flex-col">
+                <span className="text-[11px] font-bold text-gray-900 leading-tight">Dermatologist Tested</span>
+                <span className="text-[10px] text-gray-500">Gentle on Skin</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 group cursor-default">
+              <Sparkles size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+              <div className="flex flex-col">
+                <span className="text-[11px] font-bold text-gray-900 leading-tight">Long Lasting</span>
+                <span className="text-[10px] text-gray-500">All Day Wear</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 group cursor-default">
+              <Gem size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+              <div className="flex flex-col">
+                <span className="text-[11px] font-bold text-gray-900 leading-tight">Premium Quality</span>
+                <span className="text-[10px] text-gray-500">Made With Care</span>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <div className="hidden lg:block pointer-events-none" />
+      </div>
+    </motion.section>
   );
 }

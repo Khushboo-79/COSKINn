@@ -1,283 +1,100 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkle } from 'lucide-react';
 
-import catMagneticLipstick from '../../assets/images/cat_magnetic_lipstick.webp';
-import catBlush from '../../assets/images/cat_blush.webp';
-import catBlur from '../../assets/images/cat_blur.webp';
-import catEyeshadowPalette from '../../assets/images/cat_eyeshadow_palette.webp';
-import catMascara from '../../assets/images/cat_mascara.webp';
-import catLipLiner from '../../assets/images/cat_lip_liner.webp';
+import imgLipstick from '../../assets/images/cat_magnetic_lipstick.webp';
+import imgLipLiner from '../../assets/images/cat_lip_liner.webp';
+import imgLipBlur from '../../assets/images/cat_blur.webp';
+import imgMascara from '../../assets/images/cat_mascara.webp';
+import imgEyeshadow from '../../assets/images/cat_eyeshadow_palette.webp';
+import imgBlush from '../../assets/images/cat_blush.webp';
+import imgBrushes from '../../assets/images/cat_makeup_brushes.webp';
+// Using a generic cosmetic image for Brush Holder since there is no specific one
+import imgBrushHolder from '../../assets/images/cat_makeup_brushes.webp'; 
+import imgPerfume from '../../assets/images/pocket_perfume.webp';
 
 const categories = [
-  {
-    id: 1,
-    title: "COSKINn Magnetic Lipstick",
-    description: "Intense color with a flawless satin finish. A true statement of everyday luxury.",
-    image: catMagneticLipstick,
-  },
-  {
-    id: 2,
-    title: "COSKINn Velvet Blush",
-    description: "A soft, radiant flush of color.",
-    image: catBlush,
-  },
-  {
-    id: 3,
-    title: "COSKINn Blur Stick",
-    description: "Weightless matte color for everywhere.",
-    image: catBlur,
-  },
-  {
-    id: 4,
-    title: "COSKINn Palette",
-    description: "High-pigment shimmer and matte shades.",
-    image: catEyeshadowPalette,
-  },
-  {
-    id: 5,
-    title: "COSKINn Mascara",
-    description: "Dramatic lift and separation.",
-    image: catMascara,
-  },
-  {
-    id: 6,
-    title: "COSKINn Lip Liner",
-    description: "Define and shape with perfection.",
-    image: catLipLiner,
-  }
+  { id: 1, title: "Lipstick", image: imgLipstick, link: "/shop/lipstick" },
+  { id: 2, title: "Lip Liner", image: imgLipLiner, link: "/shop/lip-liner" },
+  { id: 3, title: "Lip Blur", image: imgLipBlur, link: "/shop/lip-blur" },
+  { id: 4, title: "Mascara", image: imgMascara, link: "/shop/mascara" },
+  { id: 5, title: "Eyeshadow Palette", image: imgEyeshadow, link: "/shop/eyeshadow" },
+  { id: 6, title: "Blush", image: imgBlush, link: "/shop/blush" },
+  { id: 7, title: "Makeup Brushes", image: imgBrushes, link: "/shop/brushes" },
+  { id: 8, title: "Brush Holder", image: imgBrushHolder, link: "/shop/brush-holder" },
+  { id: 9, title: "Pocket Perfume", image: imgPerfume, link: "/shop/perfume" },
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: "easeOut" } }
-};
-
 export default function FeaturedCategories() {
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+
   return (
-    <section className="relative w-full pb-24 lg:pb-32 bg-white overflow-hidden -mt-10 lg:-mt-20">
-      <div className="container mx-auto px-6 lg:px-12 relative z-10 pt-0">
+    <section className="py-20 bg-white" ref={containerRef}>
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
+        
+        {/* Section Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex items-center justify-center gap-3 mb-16"
+        >
+          <Sparkle size={14} style={{ color: cosmeticColors.accent, opacity: 0.6 }} />
+          <h2 
+            className="text-2xl md:text-3xl lg:text-4xl text-gray-900 font-medium tracking-wide uppercase"
+            style={{ fontFamily: fonts.cosmetics.heading }}
+          >
+            Featured Categories
+          </h2>
+          <Sparkle size={14} style={{ color: cosmeticColors.accent, opacity: 0.6 }} />
+        </motion.div>
 
-        {/* --- BLOCK 1: Hero Category & Section Header --- */}
-        <div className="flex flex-col-reverse lg:flex-row items-center lg:items-stretch justify-between gap-12 lg:gap-20 mb-16 lg:mb-20">
-          
-          {/* Left Side: Header & Text Anchor */}
-          <div className="w-full lg:w-[50%] flex flex-col justify-between">
-            {/* Main Header anchored at the top left */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={fadeUp}
-              className="mb-16 lg:mb-0"
-            >
-              <span 
-                className="inline-block mb-8 px-6 py-2.5 rounded-full border bg-white text-[11px] font-black tracking-[0.2em] uppercase shadow-sm"
-                style={{ borderColor: cosmeticColors.primary, color: cosmeticColors.accent }}
+        {/* Horizontal Scrolling Container */}
+        <div className="w-full overflow-hidden">
+          <div className="flex overflow-x-auto gap-8 lg:gap-12 pb-8 pt-4 px-4 -mx-4 snap-x snap-mandatory hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {categories.map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
+                className="flex flex-col items-center group cursor-pointer snap-start shrink-0"
               >
-                Our Collection
-              </span>
-              <h2 
-                className="text-5xl md:text-6xl lg:text-[75px] font-black text-[#1b1b1b] tracking-tight mb-8 leading-[1.05]"
-                style={{ fontFamily: fonts.cosmetics.heading }}
-              >
-                The COSKINn <br/> Collection
-              </h2>
-              <p 
-                className="text-lg md:text-xl text-gray-600 max-w-lg font-medium leading-relaxed"
-                style={{ fontFamily: fonts.cosmetics.body }}
-              >
-                Discover our meticulously crafted line of luxury cosmetics, designed to elevate your everyday glamour with unparalleled elegance.
-              </p>
-            </motion.div>
-
-            {/* Category Title anchored at the bottom */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={fadeUp}
-              className="lg:pb-10 mt-12 lg:mt-32"
-            >
-              <h3 
-                className="text-3xl md:text-5xl text-[#1b1b1b] font-bold mb-4" 
-                style={{ fontFamily: fonts.cosmetics.heading }}
-              >
-                {categories[0].title}
-              </h3>
-              <p 
-                className="text-gray-600 text-lg md:text-xl font-medium tracking-wide mb-8 max-w-md" 
-                style={{ fontFamily: fonts.cosmetics.body }}
-              >
-                {categories[0].description}
-              </p>
-              <button 
-                className="group flex items-center gap-3 text-sm font-bold uppercase tracking-widest transition-colors"
-                style={{ color: cosmeticColors.accent }}
-              >
-                <span>Explore</span>
-                <div 
-                  className="w-10 h-10 rounded-full border flex items-center justify-center transition-all group-hover:scale-110 shadow-sm" 
-                  style={{ borderColor: cosmeticColors.primary, color: cosmeticColors.accent }}
-                >
-                  <ArrowRight size={16} />
+                {/* Circular Image Container (Premium Card Design Maintained) */}
+                <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full bg-[#FFF5F7] mb-6 overflow-hidden relative shadow-sm border border-pink-50/50 flex items-center justify-center">
+                  <motion.img 
+                    src={category.image} 
+                    alt={`COSKINn ${category.title}`}
+                    className="w-[110%] h-[110%] object-cover object-center group-hover:-translate-y-1 group-hover:scale-[1.03] transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
+                  />
                 </div>
-              </button>
-            </motion.div>
+
+                {/* Title & Link */}
+                <h3 
+                  className="text-lg md:text-xl text-gray-900 font-medium tracking-wider mb-2 transition-colors duration-300 group-hover:text-[#FF0069] text-center"
+                  style={{ fontFamily: fonts.cosmetics.heading }}
+                >
+                  {category.title}
+                </h3>
+                
+                <div className="flex items-center justify-center gap-1 text-sm font-medium transition-transform duration-300 group-hover:translate-x-1" style={{ color: cosmeticColors.primary }}>
+                  Shop Now <ArrowRight size={14} />
+                </div>
+              </motion.div>
+            ))}
           </div>
-
-          {/* Right Side: Hero Portrait Image */}
-          <motion.div 
-            className="w-full lg:w-[45%] flex justify-end"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-          >
-            <div className="w-full max-w-[550px] aspect-[3/4] relative rounded-[32px] overflow-hidden group cursor-pointer"
-                 style={{ boxShadow: `0 30px 60px -15px ${cosmeticColors.primary}80` }}>
-              <motion.img 
-                src={categories[0].image} 
-                alt={categories[0].title}
-                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.04]"
-              />
-            </div>
-          </motion.div>
-
-        </div>
-
-        {/* --- BLOCK 2: Asymmetrical Dual Feature --- */}
-        <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-12 lg:gap-24 mb-16 lg:mb-20">
-          
-          {/* Left Feature (Offset lower on desktop) */}
-          <motion.div 
-            className="w-full lg:w-[40%] flex flex-col lg:mt-32"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-          >
-            <div className="w-full aspect-[4/5] relative rounded-[32px] overflow-hidden group cursor-pointer mb-8"
-                 style={{ boxShadow: `0 25px 50px -12px ${cosmeticColors.primary}70` }}>
-              <motion.img 
-                src={categories[1].image} 
-                alt={categories[1].title}
-                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.04]"
-              />
-            </div>
-            <h3 className="text-2xl lg:text-3xl font-bold text-[#1b1b1b] mb-2" style={{ fontFamily: fonts.cosmetics.heading }}>
-              {categories[1].title}
-            </h3>
-            <p className="text-gray-500 text-lg font-medium tracking-wide" style={{ fontFamily: fonts.cosmetics.body }}>
-              {categories[1].description}
-            </p>
-          </motion.div>
-
-          {/* Right Feature (Offset higher) */}
-          <motion.div 
-            className="w-full lg:w-[40%] flex flex-col"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-          >
-            <div className="w-full aspect-square relative rounded-[32px] overflow-hidden group cursor-pointer mb-8"
-                 style={{ boxShadow: `0 25px 50px -12px ${cosmeticColors.primary}70` }}>
-              <motion.img 
-                src={categories[2].image} 
-                alt={categories[2].title}
-                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.04]"
-              />
-            </div>
-            <h3 className="text-2xl lg:text-3xl font-bold text-[#1b1b1b] mb-2" style={{ fontFamily: fonts.cosmetics.heading }}>
-              {categories[2].title}
-            </h3>
-            <p className="text-gray-500 text-lg font-medium tracking-wide" style={{ fontFamily: fonts.cosmetics.body }}>
-              {categories[2].description}
-            </p>
-          </motion.div>
-
-        </div>
-
-        {/* --- BLOCK 3: Masonry Cluster Showcase --- */}
-        <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-10">
-          
-          {/* Small Landscape (Palette) */}
-          <motion.div 
-            className="w-full lg:w-[35%] flex flex-col lg:mt-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-          >
-            <div className="w-full aspect-[4/3] relative rounded-[32px] overflow-hidden group cursor-pointer mb-6"
-                 style={{ boxShadow: `0 20px 40px -10px ${cosmeticColors.primary}60` }}>
-              <motion.img 
-                src={categories[3].image} 
-                alt={categories[3].title}
-                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.04]"
-              />
-            </div>
-            <h3 className="text-xl lg:text-2xl font-bold text-[#1b1b1b] mb-2" style={{ fontFamily: fonts.cosmetics.heading }}>
-              {categories[3].title}
-            </h3>
-            <p className="text-gray-500 font-medium tracking-wide" style={{ fontFamily: fonts.cosmetics.body }}>
-              {categories[3].description}
-            </p>
-          </motion.div>
-
-          {/* Tall Portrait (Mascara) */}
-          <motion.div 
-            className="w-full lg:w-[30%] flex flex-col"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-          >
-            <div className="w-full aspect-[3/5] relative rounded-[32px] overflow-hidden group cursor-pointer mb-6"
-                 style={{ boxShadow: `0 20px 40px -10px ${cosmeticColors.primary}60` }}>
-              <motion.img 
-                src={categories[4].image} 
-                alt={categories[4].title}
-                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.04]"
-              />
-            </div>
-            <h3 className="text-xl lg:text-2xl font-bold text-[#1b1b1b] mb-2" style={{ fontFamily: fonts.cosmetics.heading }}>
-              {categories[4].title}
-            </h3>
-            <p className="text-gray-500 font-medium tracking-wide" style={{ fontFamily: fonts.cosmetics.body }}>
-              {categories[4].description}
-            </p>
-          </motion.div>
-
-          {/* Square (Lip Liner) */}
-          <motion.div 
-            className="w-full lg:w-[35%] flex flex-col lg:mt-32"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-          >
-            <div className="w-full aspect-square relative rounded-[32px] overflow-hidden group cursor-pointer mb-6"
-                 style={{ boxShadow: `0 20px 40px -10px ${cosmeticColors.primary}60` }}>
-              <motion.img 
-                src={categories[5].image} 
-                alt={categories[5].title}
-                className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.04]"
-              />
-            </div>
-            <h3 className="text-xl lg:text-2xl font-bold text-[#1b1b1b] mb-2" style={{ fontFamily: fonts.cosmetics.heading }}>
-              {categories[5].title}
-            </h3>
-            <p className="text-gray-500 font-medium tracking-wide" style={{ fontFamily: fonts.cosmetics.body }}>
-              {categories[5].description}
-            </p>
-          </motion.div>
-
         </div>
 
       </div>
+      
+      {/* Hide scrollbar styles using a scoped style tag as fallback */}
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 }

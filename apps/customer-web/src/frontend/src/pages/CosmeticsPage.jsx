@@ -2,6 +2,7 @@ import React from 'react';
 import Hero from '../components/cosmetics/Hero';
 import CosmeticsAbout from '../components/cosmetics/CosmeticsAbout';
 import FeaturedCategories from '../components/cosmetics/FeaturedCategories';
+import PromotionalBanners from '../components/cosmetics/PromotionalBanners';
 import WhyChooseUs from '../components/cosmetics/WhyChooseUs';
 import BeforeAndAfter from '../components/cosmetics/BeforeAndAfter';
 import BuildYourRoutine from '../components/cosmetics/BuildYourRoutine';
@@ -13,6 +14,7 @@ export default function CosmeticsPage() {
       <Hero />
       <CosmeticsAbout />
       <FeaturedCategories />
+      <PromotionalBanners />
       <WhyChooseUs />
       <BeforeAndAfter />
       <BuildYourRoutine />

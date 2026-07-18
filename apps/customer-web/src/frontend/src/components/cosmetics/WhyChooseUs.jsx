@@ -1,213 +1,169 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
-import editorialImage from '../../assets/images/cosmetics_editorial_lifestyle.png';
+import { ArrowRight, Sparkle } from 'lucide-react';
 
-const products = [
-  { name: "COSKINn Magnetic Lipstick", feature: "High Pigment Formula" },
-  { name: "COSKINn Velvet Blush", feature: "Smooth Blendability" },
-  { name: "COSKINn Lift & Curl Mascara", feature: "Long Lasting Wear" },
-  { name: "COSKINn Eyeshadow Palette", feature: "Skin Loving Ingredients" },
-  { name: "COSKINn Precision Lip Liner", feature: "Lightweight Finish" },
+import img1 from '../../assets/images/why_choose_us_1784312696420.png';
+import img2 from '../../assets/images/routine_glow_1784312658823.png';
+import img3 from '../../assets/images/after_makeup_1784312726460.png';
+import img4 from '../../assets/images/about_editorial_1784312706240.png';
+
+const features = [
+  { 
+    id: 1, 
+    title: "Premium Ingredients", 
+    desc: "Sourced globally for maximum efficacy. Crafted to bring out your absolute best.",
+    image: img1
+  },
+  { 
+    id: 2, 
+    title: "Dermatologically Tested", 
+    desc: "Safe, gentle, and rigorously proven for all skin types including sensitive skin.",
+    image: img2
+  },
+  { 
+    id: 3, 
+    title: "Long Lasting Results", 
+    desc: "Weightless formulas that stay flawless from morning coffee to midnight.",
+    image: img3
+  },
+  { 
+    id: 4, 
+    title: "Cruelty Free & Vegan", 
+    desc: "Ethical beauty without compromise. We absolutely never test on animals.",
+    image: img4
+  },
 ];
 
 export default function WhyChooseUs() {
   const containerRef = useRef(null);
-  
-  // Parallax configuration
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
-  const shape1Y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
-  const shape2Y = useTransform(scrollYProgress, [0, 1], ["15%", "-15%"]);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section 
-      ref={containerRef}
-      className="relative w-full overflow-hidden flex flex-col items-center justify-center py-16 md:py-20 lg:py-24"
-      style={{ 
-        fontFamily: fonts.cosmetics.body,
-        background: `linear-gradient(135deg, ${cosmeticColors.secondary} 0%, ${cosmeticColors.primary}20 50%, ${cosmeticColors.secondary} 100%)`
-      }}
-    >
-      {/* Background: Subtle Abstract Textures & Layered Shapes */}
-      <motion.div 
-        className="absolute top-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full mix-blend-multiply opacity-50 pointer-events-none"
-        style={{ 
-          background: `radial-gradient(circle at center, ${cosmeticColors.primary}40 0%, transparent 70%)`,
-          y: shape1Y
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-[-10%] left-[-20%] w-[60vw] h-[60vw] rounded-[30%] mix-blend-multiply opacity-40 pointer-events-none rotate-[20deg]"
-        style={{ 
-          background: `radial-gradient(circle at center, ${cosmeticColors.primary}30 0%, transparent 70%)`,
-          y: shape2Y
-        }}
-      />
-      <div className="absolute inset-0 bg-white/30 backdrop-blur-[100px] pointer-events-none" />
+    <section className="py-20 bg-white relative overflow-hidden" ref={containerRef}>
+      
+      {/* Decorative Soft Background Glow */}
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gradient-to-t from-[#FFF0F4] to-transparent rounded-full blur-[120px] -z-10 pointer-events-none" />
 
-      {/* Main Container */}
-      <div className="container mx-auto px-6 md:px-12 lg:px-16 xl:px-20 relative z-10">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
         
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
           
-          {/* Left Column: Premium Lifestyle Editorial Image */}
-          <div className="w-full lg:w-5/12 relative h-full flex flex-col justify-center">
-            <motion.div 
-              className="relative w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden"
-              style={{ 
-                y: imageY, 
-                boxShadow: `0 25px 60px -15px ${cosmeticColors.primary}60` 
-              }}
-            >
-              <img 
-                src={editorialImage}
-                alt="COSKINn Luxury Cosmetics Editorial"
-                className="w-full h-full object-cover scale-[1.02]"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
-            </motion.div>
+          {/* Left Side: Interactive Feature List */}
+          <div className="w-full lg:w-[45%] flex flex-col justify-center">
             
-            {/* Elegant Brand Tag */}
             <motion.div 
-              className="absolute -bottom-10 md:-bottom-12 -right-4 md:-right-10 bg-white p-8 md:p-10 z-20 flex flex-col justify-center"
-              style={{
-                boxShadow: `0 20px 40px -10px ${cosmeticColors.primary}30`,
-                borderTop: `3px solid ${cosmeticColors.primary}`
-              }}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="mb-12"
             >
-              <h3 className="text-3xl md:text-4xl font-normal tracking-[0.15em] text-gray-900 mb-2" style={{ fontFamily: fonts.cosmetics.heading }}>COSKINn</h3>
-              <span className="text-[10px] md:text-xs tracking-[0.3em] uppercase font-bold" style={{ color: cosmeticColors.primary }}>Maison De Beauté</span>
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkle size={14} style={{ color: cosmeticColors.primary }} />
+                <span className="text-[#FF0069] text-xs font-bold tracking-[0.2em] uppercase">The Standard</span>
+              </div>
+              <h2 
+                className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight uppercase"
+                style={{ fontFamily: fonts.cosmetics.heading }}
+              >
+                Why Choose <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF0069] to-[#FF8A66]">COSKINn</span>
+              </h2>
             </motion.div>
+
+            <div className="flex flex-col">
+              {features.map((feature, index) => {
+                const isActive = activeIndex === index;
+                
+                return (
+                  <motion.div
+                    key={feature.id}
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
+                    transition={{ duration: 0.6, delay: 0.1 * index, ease: "easeOut" }}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className="group cursor-pointer py-6 border-b border-gray-100 flex items-start gap-6 relative"
+                  >
+                    {/* Active indicator line */}
+                    <div 
+                      className={`absolute left-0 top-0 bottom-0 w-1 bg-[#FF0069] transition-all duration-500 rounded-r-md ${isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'}`} 
+                    />
+
+                    <span 
+                      className={`text-2xl font-light transition-colors duration-500 pl-4 ${isActive ? 'text-[#FF0069]' : 'text-gray-300'}`}
+                      style={{ fontFamily: fonts.cosmetics.heading }}
+                    >
+                      0{index + 1}
+                    </span>
+                    
+                    <div className="flex-1">
+                      <h3 
+                        className={`text-xl md:text-2xl font-bold transition-colors duration-300 mb-2 ${isActive ? 'text-gray-900' : 'text-gray-400'}`} 
+                        style={{ fontFamily: fonts.cosmetics.heading }}
+                      >
+                        {feature.title}
+                      </h3>
+                      
+                      {/* Animated Description Reveal */}
+                      <AnimatePresence>
+                        {isActive && (
+                          <motion.p 
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.4, ease: "easeInOut" }}
+                            className="text-sm text-gray-500 font-medium leading-relaxed pr-4 overflow-hidden"
+                          >
+                            {feature.desc}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    <div className={`hidden md:flex items-center justify-center w-10 h-10 rounded-full transition-all duration-500 transform ${isActive ? 'bg-[#FF0069] text-white rotate-45' : 'border border-gray-200 text-transparent'}`}>
+                      <ArrowRight size={18} />
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Right Column: Editorial Storytelling & Product Highlights */}
-          <motion.div 
-            className="w-full lg:w-7/12 flex flex-col justify-center mt-12 lg:mt-0"
-            style={{ y: contentY }}
-          >
-            {/* Typography Hierarchy Section */}
-            <div className="mb-14">
-              <motion.span 
-                className="block text-xs md:text-sm tracking-[0.4em] uppercase mb-4 font-bold"
-                style={{ color: cosmeticColors.primary }}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-              >
-                The Art of Beauty
-              </motion.span>
-              <motion.h2 
-                className="text-4xl md:text-6xl lg:text-7xl font-normal leading-[1.1] text-gray-900 mb-6"
-                style={{ fontFamily: fonts.cosmetics.heading }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.15 }}
-              >
-                Uncompromising <br className="hidden md:block" />
-                <span className="italic relative inline-block mt-1">
-                  Luxury
-                  <span className="absolute bottom-2 left-0 w-full h-2 md:h-3 opacity-30 -z-10" style={{ backgroundColor: cosmeticColors.primary }}></span>
-                </span>
-              </motion.h2>
-              <motion.p 
-                className="text-lg md:text-xl text-gray-600 font-light leading-relaxed max-w-2xl tracking-wide"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              >
-                Elevate your daily ritual with our meticulously crafted formulations. High-pigment brilliance and weightless perfection, exclusively designed for you.
-              </motion.p>
-            </div>
-
-            {/* Luxury Feature Panels - Products */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-14">
-              {products.map((product, index) => (
-                <motion.div 
-                  key={index}
-                  className="bg-white p-6 md:p-8 flex flex-col justify-center group relative overflow-hidden transition-colors duration-500"
-                  style={{
-                    boxShadow: `0 10px 30px -15px ${cosmeticColors.primary}40`,
-                    border: `1px solid ${cosmeticColors.primary}15`
-                  }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.6, delay: 0.4 + (index * 0.1) }}
-                  whileHover={{ 
-                    y: -4,
-                    boxShadow: `0 20px 40px -10px ${cosmeticColors.primary}70`,
-                    borderColor: `${cosmeticColors.primary}40`
-                  }}
-                >
-                  <span className="text-[10px] md:text-[11px] tracking-[0.2em] uppercase font-bold mb-3 block" style={{ color: cosmeticColors.primary }}>
-                    {product.feature}
-                  </span>
-                  <h4 className="text-lg md:text-xl font-medium text-gray-900 leading-snug" style={{ fontFamily: fonts.cosmetics.heading }}>
-                    {product.name}
-                  </h4>
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl opacity-0 group-hover:opacity-5 transition-opacity duration-700 pointer-events-none" style={{ backgroundImage: `linear-gradient(to bottom left, ${cosmeticColors.primary}, transparent)` }}></div>
-                </motion.div>
-              ))}
-              
-              {/* Highlight Accent Panel */}
-              <motion.div 
-                className="p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group"
-                style={{
-                  backgroundColor: cosmeticColors.primary,
-                  boxShadow: `0 15px 35px -10px ${cosmeticColors.primary}70`
-                }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: 0.9 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <h4 className="text-2xl md:text-3xl font-normal text-white mb-2" style={{ fontFamily: fonts.cosmetics.heading }}>Cruelty Free</h4>
-                <p className="text-[11px] md:text-xs text-white/90 font-bold uppercase tracking-[0.2em]">& Dermatologist Tested</p>
-              </motion.div>
-            </div>
-
-            {/* Premium CTA Button */}
+          {/* Right Side: Dynamic Image Reveal */}
+          <div className="w-full lg:w-[55%] flex items-center justify-center relative py-10 lg:py-0">
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 1 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+              transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="w-full max-w-[420px] aspect-[4/5] relative"
             >
-              <button 
-                className="relative overflow-hidden group px-10 md:px-14 py-5 md:py-6 text-white transition-all duration-700 hover:-translate-y-1"
-                style={{
-                  backgroundColor: cosmeticColors.primary,
-                  boxShadow: `0 15px 40px -10px ${cosmeticColors.primary}90`
-                }}
-              >
-                <span className="relative z-10 text-xs md:text-sm tracking-[0.25em] uppercase font-bold flex items-center justify-center gap-4">
-                  Shop the Collection
-                  <svg className="w-4 h-4 transform group-hover:translate-x-2 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+              <div className="w-full h-full rounded-[32px] overflow-hidden shadow-[0_30px_60px_-15px_rgba(255,0,105,0.15)] relative bg-white">
+                {features.map((feature, index) => (
+                  <div 
+                    key={feature.id}
+                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${activeIndex === index ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                  >
+                    <img 
+                      src={feature.image} 
+                      alt={feature.title}
+                      className={`w-full h-full object-cover transition-transform duration-[3s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${activeIndex === index ? 'scale-100' : 'scale-105'}`}
+                    />
+                    {/* Subtle vignette/gradient over images to make them blend beautifully */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
+                  </div>
+                ))}
+              </div>
+              
+              {/* Clean minimalist floating badge */}
+              <div className="absolute -bottom-4 right-8 z-20 bg-white px-6 py-3.5 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-[#FF0069] animate-pulse" />
+                <span className="text-xs font-bold tracking-widest uppercase text-gray-900">
+                  {features[activeIndex].title}
                 </span>
-                <div className="absolute inset-0 bg-white/20 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700 ease-in-out"></div>
-              </button>
+              </div>
             </motion.div>
-
-          </motion.div>
+          </div>
 
         </div>
       </div>
