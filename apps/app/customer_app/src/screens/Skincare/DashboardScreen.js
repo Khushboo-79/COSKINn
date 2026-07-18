@@ -184,7 +184,7 @@ const DashboardScreen = () => {
                   <Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '30%', height: '30%', left: '40%', top: '5%', opacity: 0.9 }]} resizeMode="cover" />
 
                   <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
-                    <Image source={item.images && item.images[0] ? { uri: item.images[0] } : require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
+                    <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
                   </View>
 
                   <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]} numberOfLines={2}>
