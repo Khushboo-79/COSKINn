@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 import { ArrowUpRight } from 'lucide-react';
-import aboutImg from '../../assets/images/about_editorial_1784312706240.png';
+import aboutImg from '../../assets/images/about_editorial_1784312706240.webp';
 
 export default function CosmeticsAbout() {
   const containerRef = useRef(null);

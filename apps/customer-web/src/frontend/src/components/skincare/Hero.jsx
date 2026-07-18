@@ -84,6 +84,7 @@ export default function Hero() {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
+      if (window.innerWidth < 1024) return; // Disable parallax on mobile
       // Normalize from -1 to 1
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = (e.clientY / window.innerHeight) * 2 - 1;
@@ -133,7 +134,7 @@ export default function Hero() {
             <motion.img
               key={activeTheme.id}
               src={activeTheme.bg}
-              initial={{ opacity: 0 }}
+              initial={bgIndex === 0 ? false : { opacity: 0 }}
               animate={{ opacity: 0.95 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -157,7 +158,7 @@ export default function Hero() {
           <AnimatePresence mode="popLayout">
             <motion.div
               key={activeTheme.id}
-              initial={{ opacity: 0, y: 15 }}
+              initial={bgIndex === 0 ? false : { opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.8, ease: "easeInOut" }}

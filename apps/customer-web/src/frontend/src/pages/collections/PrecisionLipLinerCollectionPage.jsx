@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Heart, Star, ShoppingBag, Plus } from 'lucide-react';
 import Footer from '../../components/common/Footer';
-import modelImage from '../../assets/images/cat_lips_1784312601813.png';
-import linerImg from '../../assets/images/cosmetics_editorial_lifestyle.png';
+import modelImage from '../../assets/images/cat_lips_1784312601813.webp';
+import linerImg from '../../assets/images/cosmetics_editorial_lifestyle.webp';
 
 export default function PrecisionLipLinerCollectionPage() {
   const navigate = useNavigate();

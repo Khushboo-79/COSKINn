@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Footer from '../../components/common/Footer';
 import { Sparkles, Droplets, CheckCircle, Star, Plus } from 'lucide-react';
-import lipstickHeroImg from '../../assets/images/cosmetics_editorial_lifestyle.png';
+import lipstickHeroImg from '../../assets/images/cosmetics_editorial_lifestyle.webp';
 import lipstickSide from '../../assets/images/cat_magnetic_lipstick.webp';
 import lipstickModel from '../../assets/images/cosmetics_before_model.webp';
 import lipstickAfter from '../../assets/images/cosmetics_after_model.webp';

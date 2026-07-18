@@ -3,10 +3,10 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 import { ArrowRight, Sparkle } from 'lucide-react';
 
-import img1 from '../../assets/images/why_choose_us_1784312696420.png';
-import img2 from '../../assets/images/routine_glow_1784312658823.png';
-import img3 from '../../assets/images/after_makeup_1784312726460.png';
-import img4 from '../../assets/images/about_editorial_1784312706240.png';
+import img1 from '../../assets/images/why_choose_us_1784312696420.webp';
+import img2 from '../../assets/images/routine_glow_1784312658823.webp';
+import img3 from '../../assets/images/after_makeup_1784312726460.webp';
+import img4 from '../../assets/images/about_editorial_1784312706240.webp';
 
 const features = [
   { 

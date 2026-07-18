@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useTransform, useSpring } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 import { ArrowRight, Sparkles, Heart, ShieldCheck, Clock, Gem } from 'lucide-react';
-import heroImage from '../../assets/images/cosmetics_hero_cluster.png';
+import heroImage from '../../assets/images/cosmetics_hero_cluster.webp';
 
 export default function Hero() {
   const containerRef = useRef(null);

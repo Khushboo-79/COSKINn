@@ -28,7 +28,7 @@ const AWARD_PRODUCTS = [
     discount: '25% OFF',
     rating: 4.9,
     reviews: 2450,
-    image: '/src/assets/images/niacinamide_serum.webp',
+    image: new URL('../assets/images/niacinamide_serum.webp', import.meta.url).href,
     badge: '🏆 Editor\'s Pick',
     highlight: 'Clinically proven to reduce blemishes by 82% in just 4 weeks.'
   },
@@ -41,7 +41,7 @@ const AWARD_PRODUCTS = [
     discount: '22% OFF',
     rating: 4.8,
     reviews: 3120,
-    image: '/src/assets/images/sunscreen_spf50.webp',
+    image: new URL('../assets/images/sunscreen_spf50.webp', import.meta.url).href,
     badge: '🏆 Best Sunscreen',
     highlight: 'Zero white cast, ultra-lightweight formula loved by dermatologists.'
   },
@@ -54,7 +54,7 @@ const AWARD_PRODUCTS = [
     discount: '23% OFF',
     rating: 4.8,
     reviews: 2100,
-    image: '/src/assets/images/daily_moisturiser.webp',
+    image: new URL('../assets/images/daily_moisturiser.webp', import.meta.url).href,
     badge: '👩⚕️ Dermatologist Choice',
     highlight: 'Provides 72-hour deep hydration without clogging pores.'
   },
@@ -67,7 +67,7 @@ const AWARD_PRODUCTS = [
     discount: '28% OFF',
     rating: 4.9,
     reviews: 4200,
-    image: '/src/assets/images/gentle_cleanser.webp',
+    image: new URL('../assets/images/gentle_cleanser.webp', import.meta.url).href,
     badge: '❤️ Customer Favorite',
     highlight: 'Voted #1 daily cleanser for sensitive and acne-prone skin.'
   },
@@ -80,7 +80,7 @@ const AWARD_PRODUCTS = [
     discount: '23% OFF',
     rating: 4.9,
     reviews: 1800,
-    image: '/src/assets/images/overnight_mask.webp',
+    image: new URL('../assets/images/overnight_mask.webp', import.meta.url).href,
     badge: '✨ Beauty Innovator',
     highlight: 'Wake up with a visibly glowing, plump complexion.'
   },
@@ -93,7 +93,7 @@ const AWARD_PRODUCTS = [
     discount: '22% OFF',
     rating: 4.7,
     reviews: 950,
-    image: '/src/assets/images/cleansing_balm.webp',
+    image: new URL('../assets/images/cleansing_balm.webp', import.meta.url).href,
     badge: '🌿 Clean Beauty',
     highlight: 'Melt away waterproof makeup instantly with clean ingredients.'
   },
@@ -106,7 +106,7 @@ const AWARD_PRODUCTS = [
     discount: '25% OFF',
     rating: 4.6,
     reviews: 1120,
-    image: '/src/assets/images/face_mist.webp',
+    image: new URL('../assets/images/face_mist.webp', import.meta.url).href,
     badge: '🏆 Refreshing Formula',
     highlight: 'Instant hydration boost, perfect for setting makeup.'
   },
@@ -119,7 +119,7 @@ const AWARD_PRODUCTS = [
     discount: '18% OFF',
     rating: 4.7,
     reviews: 890,
-    image: '/src/assets/images/under_eye_patches.webp',
+    image: new URL('../assets/images/under_eye_patches.webp', import.meta.url).href,
     badge: '🏆 Best Eye Treatment',
     highlight: 'Visibly reduces dark circles and puffiness in 15 minutes.'
   }

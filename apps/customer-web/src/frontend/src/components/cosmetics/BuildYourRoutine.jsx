@@ -3,10 +3,10 @@ import { motion, useInView } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 import { ArrowRight, Sparkle } from 'lucide-react';
 
-import routinePrep from '../../assets/images/routine_prep_1784312636157.png';
-import routinePrime from '../../assets/images/routine_prime_1784312648965.png';
-import routineGlow from '../../assets/images/routine_glow_1784312658823.png';
-import routineFinish from '../../assets/images/routine_finish_1784312670197.png';
+import routinePrep from '../../assets/images/routine_prep_1784312636157.webp';
+import routinePrime from '../../assets/images/routine_prime_1784312648965.webp';
+import routineGlow from '../../assets/images/routine_glow_1784312658823.webp';
+import routineFinish from '../../assets/images/routine_finish_1784312670197.webp';
 
 const steps = [
   {

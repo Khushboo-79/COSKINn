@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Search, ChevronDown, CheckCircle2, XCircle, Beaker } from 'lucide-react';
 import Footer from '../../components/common/Footer';
-import heroImg from '../../assets/images/journal_ingredients_hero.png';
+import heroImg from '../../assets/images/journal_ingredients_hero.webp';
 
 export default function IngredientGuidesPage() {
   const [searchQuery, setSearchQuery] = useState('');
