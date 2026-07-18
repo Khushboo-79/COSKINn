@@ -1,254 +1,100 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
+import { ArrowRight, Sparkle } from 'lucide-react';
 
-import catMagneticLipstick from '../../assets/images/cat_magnetic_lipstick.webp';
-import catMakeupBrushes from '../../assets/images/cat_makeup_brushes.webp';
-import catEyeshadowPalette from '../../assets/images/cat_eyeshadow_palette.webp';
-import catHolographic from '../../assets/images/cat_holographic.webp';
-import catBlush from '../../assets/images/cat_blush.webp';
-import catLipLiner from '../../assets/images/cat_lip_liner.webp';
-import catBlur from '../../assets/images/cat_blur.webp';
-import catMascara from '../../assets/images/cat_mascara.webp';
+import imgLipstick from '../../assets/images/cat_magnetic_lipstick.webp';
+import imgLipLiner from '../../assets/images/cat_lip_liner.webp';
+import imgLipBlur from '../../assets/images/cat_blur.webp';
+import imgMascara from '../../assets/images/cat_mascara.webp';
+import imgEyeshadow from '../../assets/images/cat_eyeshadow_palette.webp';
+import imgBlush from '../../assets/images/cat_blush.webp';
+import imgBrushes from '../../assets/images/cat_makeup_brushes.webp';
+// Using a generic cosmetic image for Brush Holder since there is no specific one
+import imgBrushHolder from '../../assets/images/cat_makeup_brushes.webp'; 
+import imgPerfume from '../../assets/images/pocket_perfume.webp';
 
 const categories = [
-  {
-    id: 1,
-    title: "Magnetic Lipstick",
-    description: "Intense color with a flawless satin finish.",
-    image: catMagneticLipstick,
-    className: "col-span-1 md:col-span-2 md:row-span-2 h-[400px] md:h-[600px]",
-  },
-  {
-    id: 2,
-    title: "Luminous Blush",
-    description: "A soft, radiant flush of color.",
-    image: catBlush,
-    className: "col-span-1 md:col-span-1 md:row-span-1 h-[300px] md:h-[290px]",
-  },
-  {
-    id: 3,
-    title: "Lip & Cheek Blur",
-    description: "Weightless matte color for everywhere.",
-    image: catBlur,
-    className: "col-span-1 md:col-span-1 md:row-span-1 h-[300px] md:h-[290px]",
-  },
-  {
-    id: 4,
-    title: "Holographic Edition",
-    description: "Iridescent luxury for the bold.",
-    image: catHolographic,
-    className: "col-span-1 md:col-span-2 md:row-span-1 h-[300px] md:h-[290px]",
-    isComingSoon: true,
-  },
-  {
-    id: 5,
-    title: "Eyeshadow Palette",
-    description: "High-pigment shimmer and matte shades.",
-    image: catEyeshadowPalette,
-    className: "col-span-1 md:col-span-2 md:row-span-2 h-[400px] md:h-[600px]",
-  },
-  {
-    id: 6,
-    title: "Volume Mascara",
-    description: "Dramatic lift and separation.",
-    image: catMascara,
-    className: "col-span-1 md:col-span-1 md:row-span-2 h-[400px] md:h-[600px]",
-  },
-  {
-    id: 7,
-    title: "Precision Lip Liner",
-    description: "Define and shape with perfection.",
-    image: catLipLiner,
-    className: "col-span-1 md:col-span-1 md:row-span-1 h-[300px] md:h-[290px]",
-  },
-  {
-    id: 8,
-    title: "Luxury Brushes",
-    description: "Premium tools for flawless application.",
-    image: catMakeupBrushes,
-    className: "col-span-1 md:col-span-1 md:row-span-1 h-[300px] md:h-[290px]",
-  }
+  { id: 1, title: "Lipstick", image: imgLipstick, link: "/shop/lipstick" },
+  { id: 2, title: "Lip Liner", image: imgLipLiner, link: "/shop/lip-liner" },
+  { id: 3, title: "Lip Blur", image: imgLipBlur, link: "/shop/lip-blur" },
+  { id: 4, title: "Mascara", image: imgMascara, link: "/shop/mascara" },
+  { id: 5, title: "Eyeshadow Palette", image: imgEyeshadow, link: "/shop/eyeshadow" },
+  { id: 6, title: "Blush", image: imgBlush, link: "/shop/blush" },
+  { id: 7, title: "Makeup Brushes", image: imgBrushes, link: "/shop/brushes" },
+  { id: 8, title: "Brush Holder", image: imgBrushHolder, link: "/shop/brush-holder" },
+  { id: 9, title: "Pocket Perfume", image: imgPerfume, link: "/shop/perfume" },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-};
-
 export default function FeaturedCategories() {
-  return (
-    <section 
-      className="relative w-full py-24 md:py-32 bg-[#fafafa] overflow-hidden"
-      style={{ fontFamily: fonts.cosmetics.body }}
-    >
-      {/* Background Soft Glows */}
-      <div 
-        className="absolute top-0 left-0 w-[40vw] h-[40vw] rounded-full mix-blend-multiply filter blur-[150px] opacity-30 pointer-events-none"
-        style={{ backgroundColor: cosmeticColors.secondary }}
-      />
-      <div 
-        className="absolute bottom-0 right-0 w-[50vw] h-[50vw] rounded-full mix-blend-multiply filter blur-[150px] opacity-20 pointer-events-none"
-        style={{ backgroundColor: cosmeticColors.primary }}
-      />
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
+  return (
+    <section className="py-20 bg-white" ref={containerRef}>
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
         
         {/* Section Header */}
         <motion.div 
-          className="text-center mb-16 md:mb-24"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex items-center justify-center gap-3 mb-16"
         >
+          <Sparkle size={14} style={{ color: cosmeticColors.accent, opacity: 0.6 }} />
           <h2 
-            className="text-5xl md:text-6xl font-bold mb-6 text-black tracking-tight"
+            className="text-2xl md:text-3xl lg:text-4xl text-gray-900 font-medium tracking-wide uppercase"
             style={{ fontFamily: fonts.cosmetics.heading }}
           >
-            The Collection
+            Featured Categories
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-light">
-            Discover our meticulously crafted line of luxury cosmetics, designed to elevate your everyday glamour with unparalleled elegance.
-          </p>
+          <Sparkle size={14} style={{ color: cosmeticColors.accent, opacity: 0.6 }} />
         </motion.div>
 
-        {/* Editorial Grid */}
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          {categories.map((category) => (
-            <motion.div 
-              key={category.id}
-              variants={itemVariants}
-              whileHover="hover"
-              className={`relative rounded-[2rem] overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-shadow duration-500 bg-white ${category.className}`}
-            >
-              {/* Image Background */}
-              <div className="absolute inset-0 w-full h-full">
-                <motion.img 
-                  src={category.image} 
-                  alt={category.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                  variants={{
-                    hover: { scale: 1.05 }
-                  }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                />
-              </div>
+        {/* Horizontal Scrolling Container */}
+        <div className="w-full overflow-hidden">
+          <div className="flex overflow-x-auto gap-8 lg:gap-12 pb-8 pt-4 px-4 -mx-4 snap-x snap-mandatory hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {categories.map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
+                className="flex flex-col items-center group cursor-pointer snap-start shrink-0"
+              >
+                {/* Circular Image Container (Premium Card Design Maintained) */}
+                <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full bg-[#FFF5F7] mb-6 overflow-hidden relative shadow-sm border border-pink-50/50 flex items-center justify-center">
+                  <motion.img 
+                    src={category.image} 
+                    alt={`COSKINn ${category.title}`}
+                    className="w-[110%] h-[110%] object-cover object-center group-hover:-translate-y-1 group-hover:scale-[1.03] transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
+                  />
+                </div>
 
-              {/* Holographic Special Effects */}
-              {category.isComingSoon && (
-                <motion.div 
-                  className="absolute inset-0 opacity-50 mix-blend-overlay pointer-events-none"
-                  style={{
-                    background: `linear-gradient(120deg, transparent, rgba(255,255,255,0.8), transparent)`
-                  }}
-                  animate={{
-                    x: ['-100%', '200%']
-                  }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                />
-              )}
-
-              {/* Gradient Overlay for Text Readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
-              
-              {/* Hover Light Reflection */}
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 pointer-events-none"
-                variants={{
-                  hover: { opacity: 1, x: ['-100%', '100%'] }
-                }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
-              />
-
-              {/* Content Box */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                
-                {category.isComingSoon && (
-                  <div className="absolute top-6 right-6">
-                    <span 
-                      className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-white backdrop-blur-md bg-white/20 border border-white/30"
-                      style={{ color: cosmeticColors.accent }}
-                    >
-                      Coming Soon
-                    </span>
-                  </div>
-                )}
-                
-                <motion.div
-                  variants={{
-                    hover: { y: -5 }
-                  }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                {/* Title & Link */}
+                <h3 
+                  className="text-lg md:text-xl text-gray-900 font-medium tracking-wider mb-2 transition-colors duration-300 group-hover:text-[#FF0069] text-center"
+                  style={{ fontFamily: fonts.cosmetics.heading }}
                 >
-                  <h3 
-                    className="text-3xl md:text-4xl text-white font-bold mb-2 drop-shadow-md"
-                    style={{ fontFamily: fonts.cosmetics.heading }}
-                  >
-                    {category.title}
-                  </h3>
-                  
-                  <motion.p 
-                    className="text-white/80 font-light text-base md:text-lg mb-4"
-                    variants={{
-                      hover: { opacity: 1, y: 0 }
-                    }}
-                    initial={{ opacity: 0.7 }}
-                  >
-                    {category.description}
-                  </motion.p>
-                  
-                  {/* Explore Link */}
-                  <motion.div 
-                    className="flex items-center gap-2 overflow-hidden"
-                    variants={{
-                      hover: { opacity: 1 }
-                    }}
-                    initial={{ opacity: 0 }}
-                  >
-                    <span 
-                      className="text-sm font-bold uppercase tracking-widest"
-                      style={{ color: cosmeticColors.secondary }}
-                    >
-                      Explore
-                    </span>
-                    <motion.div 
-                      className="h-[1px] bg-current"
-                      style={{ backgroundColor: cosmeticColors.secondary }}
-                      variants={{
-                        hover: { width: "40px" }
-                      }}
-                      initial={{ width: "0px" }}
-                      transition={{ duration: 0.4, delay: 0.1 }}
-                    />
-                  </motion.div>
-                </motion.div>
+                  {category.title}
+                </h3>
                 
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-        
+                <div className="flex items-center justify-center gap-1 text-sm font-medium transition-transform duration-300 group-hover:translate-x-1" style={{ color: cosmeticColors.primary }}>
+                  Shop Now <ArrowRight size={14} />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
       </div>
+      
+      {/* Hide scrollbar styles using a scoped style tag as fallback */}
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 }

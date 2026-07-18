@@ -8,12 +8,11 @@ export const skincareColors = {
 };
 
 export const cosmeticColors = {
-  primary: "#FF0069",      // Hot Pink
-  secondary: "#FFD498",    // Soft Peach
-  accent: "#FFFFFF",       // Pure White
-  gradientStart: "#FF0069",
-  gradientEnd: "#FFD498",
-
+  primary: "#FFC2D1",      // Soft Pink
+  secondary: "#FFFFFF",    // White
+  accent: "#FF8FB1",       // Dark Pink Accent
+  gradientStart: "#FFC2D1",
+  gradientEnd: "#FFFFFF",
 };
 
 export const fonts = {
