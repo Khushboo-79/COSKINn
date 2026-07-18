@@ -1,179 +1,177 @@
-# Complete API Testing Guide: COSKINn (Phases 1-5 & Missing Features)
+# Complete API Testing Guide: COSKINn (Full Master Plan)
 
-This guide provides a comprehensive Postman testing plan for the entire COSKINn eCommerce lifecycle. Every API across all modules from Auth to Endpoints is covered here.
+This guide provides a comprehensive Postman testing plan for the entire COSKINn eCommerce lifecycle. Every implemented API across all modules from Auth to Endpoints is covered here with complete request inputs and expected responses.
+
 > **Note:** Ensure your backend is running locally (`npm run start:dev`). All endpoints are prefixed with `/api`.
+> **Headers:** For all protected routes, include `Authorization: Bearer <token>`
 
 ---
 
 ## 🔐 1. AUTH & CUSTOMER DOMAIN
 
 ### Admin & Staff Login
-- **Trigger OTP:** `POST /api/auth/login` | Body: `{ "email": "admin@coskinn.com", "password": "admin" }`
-- **Verify OTP:** `POST /api/auth/verify-otp` | Body: `{ "phone": "+91...", "otp": "123456", "isAdminLogin": true }` -> Returns `access_token` (AdminToken)
-- **Get Me:** `GET /api/auth/me` | Headers: `Authorization: Bearer <AdminToken>`
+**Trigger OTP**
+- `POST /api/auth/login`
+- **Body:** `{ "email": "admin@coskinn.com", "password": "admin" }`
+- **Output:** `{ "success": true, "message": "OTP sent to your phone" }`
+
+**Verify OTP & Get Token**
+- `POST /api/auth/verify-otp`
+- **Body:** `{ "phone": "+919999999999", "otp": "123456", "isAdminLogin": true }`
+- **Output:** `{ "access_token": "eyJhbG...", "user": { "id": "uuid", "role": "SUPER_ADMIN" } }`
 
 ### Customer Login
-- **Send OTP:** `POST /api/auth/send-otp` | Body: `{ "phone": "+919876543210" }`
-- **Verify OTP:** `POST /api/auth/verify-otp` | Body: `{ "phone": "+919876543210", "otp": "1234", "isAdminLogin": false }` -> Returns `access_token` (CustomerToken)
+**Send OTP**
+- `POST /api/auth/send-otp`
+- **Body:** `{ "phone": "+919876543210" }`
+- **Output:** `{ "success": true, "message": "OTP Sent" }`
 
-### Customer Profiles & Addresses
-- **Get Profile:** `GET /api/customer/profile` | Headers: `Authorization: Bearer <CustomerToken>`
-- **Update Profile:** `PUT /api/customer/profile` | Body: `{ "skinType": "OILY", "skinConcerns": ["ACNE"] }`
-- **Create Address:** `POST /api/customer/addresses` | Body: `{ "fullName": "Jane", "phone": "+919...", "addressLine1": "123 St", "city": "Mumbai", "pincode": "400001" }`
-- **Get Addresses:** `GET /api/customer/addresses`
-
----
-
-## 🛍️ 2. PRODUCT CATALOG DOMAIN (AdminToken Required for POST/PUT/DELETE)
-
-### Categories
-- **Create:** `POST /api/categories` | Body: `{ "name": "Skincare", "slug": "skincare", "productLine": "SKINCARE" }`
-- **List:** `GET /api/categories?productLine=SKINCARE`
-- **Update/Delete:** `PATCH /api/categories/:id` | `DELETE /api/categories/:id`
-
-### Products & Bundles
-- **Create Product:** `POST /api/product` | Body: `{ "name": "Vitamin C Serum", "slug": "vit-c", "categoryId": "...", "mrp": 500, "productLine": "SKINCARE" }`
-- **Create Variant:** `POST /api/product/:id/variant` | Body: `{ "sku": "VIT-C-30ML", "name": "30ml", "mrp": 500, "price": 400 }`
-- **Add Bundle Item:** `POST /api/product/:id/bundle-items` | Body: `{ "componentSku": "COMP-SKU", "quantity": 1 }`
-- **Remove Bundle Item:** `DELETE /api/product/:id/bundle-items/:sku`
-- **List All (Admin):** `GET /api/product`
-
-### Public Catalog (No Auth Required)
-- **Get All Products:** `GET /api/products?segment=SKINCARE`
-- **Get By ID/Slug:** `GET /api/products/:id`
-- **Search:** `GET /api/products/search?q=serum&segment=SKINCARE`
-- **Home Dashboard:** `GET /api/home?segment=SKINCARE`
-- **SEO Metadata:** `GET /api/seo/product/:slug` | `GET /api/seo/category/:slug`
-
-### Product Reviews
-- **Submit Review:** `POST /api/products/:id/reviews` | Headers: `<CustomerToken>` | Body: `{ "rating": 5, "title": "Great", "content": "..." }`
-- **Moderate Reviews (Admin):** `GET /api/product-review?status=PENDING`
-- **Approve Review (Admin):** `PATCH /api/product-review/:id/approve`
+**Verify OTP & Get Token**
+- `POST /api/auth/verify-otp`
+- **Body:** `{ "phone": "+919876543210", "otp": "1234", "isAdminLogin": false }`
+- **Output:** `{ "access_token": "eyJhbG...", "profile": { "id": "uuid", "phone": "+91..." } }`
 
 ---
 
-## 📦 3. INVENTORY & WAREHOUSE DOMAIN (AdminToken Required)
+## 🛍️ 2. PRODUCT CATALOG DOMAIN
 
-### Warehouse & Serviceability
-- **Create Warehouse:** `POST /api/warehouse` | Body: `{ "name": "Mumbai Hub" }`
-- **List Warehouses:** `GET /api/warehouse`
-- **Create Serviceable Pincode:** `POST /api/serviceable-pincode` | Body: `{ "code": "400001", "city": "Mumbai" }`
-- **Check Serviceability (Public):** `GET /api/serviceable-pincode/check/400001`
+### Categories (Admin Token)
+**Create Category**
+- `POST /api/categories`
+- **Body:** `{ "name": "Skincare", "slug": "skincare", "productLine": "SKINCARE" }`
+- **Output:** `{ "id": "uuid", "name": "Skincare", "productLine": "SKINCARE" }`
 
-### Inventory & Suppliers
-- **Create Supplier:** `POST /api/supplier` | Body: `{ "name": "ABC Labs", "email": "contact@abc.com" }`
-- **Get Global Stock:** `GET /api/inventory/global-stock`
-- **Get SKU Stock:** `GET /api/inventory/stock/:sku` (Dynamically calculates bundle inventory too!)
-- **Stock In (Manual):** `POST /api/inventory/stock-in` | Body: `{ "warehouseId": "...", "sku": "VIT-C-30ML", "quantity": 100 }`
-- **Stock Out (Manual):** `POST /api/inventory/stock-out`
+### Products (Admin Token)
+**Create Product**
+- `POST /api/product`
+- **Body:** `{ "name": "Vitamin C Serum", "slug": "vit-c", "categoryId": "uuid", "mrp": 500, "productLine": "SKINCARE" }`
+- **Output:** `{ "id": "uuid", "name": "Vitamin C Serum", "status": "DRAFT" }`
 
-### Purchase Orders (PO)
-- **Create PO:** `POST /api/purchase-order` | Body: `{ "warehouseId": "...", "supplierId": "..." }`
-- **Create GRN (Goods Received Note):** `POST /api/purchase-order/grn` | Body: `{ "purchaseOrderId": "...", "items": [{ "sku": "VIT-C-30ML", "quantity": 50 }] }` -> (Auto triggers Stock-In)
-
----
-
-## 🛒 4. SHOPPING, CART & WISHLIST (CustomerToken Required)
-
-### Wishlist
-- **Toggle Item:** `POST /api/wishlist/:productId`
-- **View Wishlist:** `GET /api/wishlist`
-
-### Cart
-- **Add to Cart:** `POST /api/cart/items` | Body: `{ "productId": "...", "variantId": "...", "quantity": 1 }`
-- **Update Quantity:** `PUT /api/cart/items/:id` | Body: `{ "quantity": 2 }`
-- **View Cart:** `GET /api/cart` (Returns Best-Offer discounts & Wallet balances automatically)
-- **Remove Item:** `DELETE /api/cart/items/:id`
+### Public Catalog (No Auth)
+**Get Products (with Segment Filter)**
+- `GET /api/products?segment=SKINCARE`
+- **Output:** `[ { "id": "uuid", "name": "Vitamin C Serum", "variants": [...] } ]`
 
 ---
 
-## 💳 5. CHECKOUT, PAYMENTS & ORDERS
+## 📦 3. INVENTORY & WAREHOUSE DOMAIN (Admin Token)
 
-### Checkout (CustomerToken)
-- **Create Order:** `POST /api/orders` | Body: `{ "addressId": "...", "paymentMode": "ONLINE", "pointsToRedeem": 50 }` -> Returns `razorpayOrderId`
-- **View My Orders:** `GET /api/orders`
-- **Download Invoice:** `GET /api/orders/:id/invoice`
+### Warehouse 
+**Create Warehouse**
+- `POST /api/warehouse`
+- **Body:** `{ "name": "Mumbai Hub" }`
+- **Output:** `{ "id": "uuid", "name": "Mumbai Hub", "bins": [] }`
 
-### Payments (Webhooks)
-- **Razorpay Success Webhook:** `POST /api/payments/webhook` | Headers: `x-razorpay-signature` | Body: `{ "event": "payment.captured", "payload": { "payment": { "entity": { "order_id": "...", "status": "captured" } } } }` -> (Converts Draft order to Placed)
+### Inventory Stock 
+**Global Stock Overview**
+- `GET /api/inventory/global-stock`
+- **Output:** `[ { "sku": "VIT-C", "available": 150, "reserved": 10 } ]`
 
-### Order Management & Shipping (AdminToken)
-- **List All Orders:** `GET /api/admin/orders?status=PLACED`
-- **Update Status:** `PUT /api/admin/orders/:id/status` | Body: `{ "status": "SHIPPED" }`
-- **Track Shipment (Public):** `GET /api/shipping/track/:orderId`
-
----
-
-## 🔄 6. RETURNS & REFUNDS (CustomerToken & AdminToken)
-
-- **Request Return (Customer):** `POST /api/return` | Body: `{ "orderId": "...", "items": [...], "reason": "Damaged" }`
-- **Approve Return (Admin):** `PATCH /api/return/:id/approve`
-- **Initiate Refund (Admin):** `POST /api/refund/initiate` | Body: `{ "orderId": "...", "amount": 500 }`
+**Stock In**
+- `POST /api/inventory/stock-in`
+- **Body:** `{ "warehouseId": "uuid", "sku": "VIT-C", "quantity": 100 }`
+- **Output:** `{ "success": true, "transactionId": "uuid" }`
 
 ---
 
-## 🎁 7. PROMOTIONS, OFFERS & LOYALTY
+## 🛒 4. CART & WISHLIST (Customer Token)
 
-### Coupons & Offers (AdminToken to Create)
-- **Create Coupon:** `POST /api/coupon` | Body: `{ "code": "WELCOME10", "discountPercent": 10 }`
-- **Create Offer:** `POST /api/offer` | Body: `{ "name": "Diwali Sale", "discountType": "PERCENTAGE", "discountValue": 15 }`
-- **Apply Coupon (Customer):** `POST /api/cart/apply-coupon` | Body: `{ "code": "WELCOME10" }`
+**Add to Cart**
+- `POST /api/cart/items`
+- **Body:** `{ "productId": "uuid", "variantId": "uuid", "quantity": 1 }`
+- **Output:** `{ "id": "cart_id", "items": [...], "subTotal": 500 }`
 
-### Loyalty: Wallet, Points, Bonus & Referral (CustomerToken)
-- **Get Wallet Balance:** `GET /api/wallet`
-- **Get Reward Points:** `GET /api/reward-point`
-- **Generate Referral Code:** `POST /api/referral/generate`
-- **Get Membership Tier:** `GET /api/membership/status`
-- **View Available Bonuses:** `GET /api/bonus/available`
+**Apply Coupon**
+- `POST /api/cart/apply-coupon`
+- **Body:** `{ "code": "WELCOME10" }`
+- **Output:** `{ "discountApplied": 50, "finalTotal": 450 }`
 
 ---
 
-## 📊 8. ADMIN PANELS, HR & FINANCE (AdminToken Required)
+## 💳 5. CHECKOUT & ORDERS (Customer Token)
 
-### Tax & Finance
-- **Get HSN Codes / Tax Rates:** `GET /api/tax/hsn` | `GET /api/tax/rates`
-- **Get Finance Ledgers:** `GET /api/finance-report/ledgers`
-- **Generate Sales Report:** `GET /api/finance-report/sales?startDate=...&endDate=...`
+**Create Order**
+- `POST /api/orders`
+- **Body:** `{ "addressId": "uuid", "paymentMode": "ONLINE", "pointsToRedeem": 0 }`
+- **Output:** `{ "orderId": "uuid", "razorpayOrderId": "order_rcpt123", "amount": 450 }`
 
-### HR Module
-- **List Employees:** `GET /api/hr/employees`
-- **Create Employee:** `POST /api/hr/employees` | Body: `{ "name": "John", "role": "MANAGER", "salary": 50000 }`
-- **Mark Attendance:** `POST /api/hr/attendance`
-- **Generate Payroll:** `POST /api/hr/payroll` | Body: `{ "employeeId": "...", "month": 10, "year": 2026 }`
-
-### CMS & Content
-- **Create Article:** `POST /api/content/articles` | Body: `{ "title": "Tips", "segment": "SKINCARE" }`
-- **Get Articles (Public):** `GET /api/content/articles?segment=SKINCARE`
-- **Create FAQ:** `POST /api/content/faqs` | Body: `{ "question": "?", "answer": "!" }`
-
-### Audit & Security
-- **View Audit Logs:** `GET /api/audit/logs` (Auditor Role Required)
+**Razorpay Webhook (Internal Testing)**
+- `POST /api/payments/webhook`
+- **Headers:** `x-razorpay-signature: <hash>`
+- **Body:** `{ "event": "payment.captured", "payload": { "payment": { "entity": { "order_id": "order_rcpt123", "status": "captured" } } } }`
+- **Output:** `{ "received": true }` (Order status changes from DRAFT to PLACED)
 
 ---
 
-## 📈 9. MARKETING & ENGAGEMENT (AdminToken Required)
+## 🔄 6. RETURNS & REFUNDS
 
-- **Create Campaign:** `POST /api/marketing/campaigns` | Body: `{ "name": "Summer Sale", "targetSegment": "SKINCARE" }`
-- **Create Banner:** `POST /api/marketing/banners` | Body: `{ "imageUrl": "...", "targetSegment": "SKINCARE" }`
-- **Get Banners (Public):** `GET /api/marketing/banners?segment=SKINCARE`
-- **Send Push Notification:** `POST /api/notification/push` | Body: `{ "userId": "...", "title": "Sale!", "body": "...", "mobileToken": "..." }`
-- **Abandoned Cart Logs:** `GET /api/engagement/abandoned-carts`
+**Request Return (Customer Token)**
+- `POST /api/return`
+- **Body:** `{ "orderId": "uuid", "items": [{ "sku": "VIT-C", "quantity": 1 }], "reason": "Damaged" }`
+- **Output:** `{ "returnId": "uuid", "status": "PENDING_APPROVAL" }`
+
+**Initiate Refund (Admin Token)**
+- `POST /api/refund/initiate`
+- **Body:** `{ "orderId": "uuid", "amount": 450, "refundDestination": "SOURCE" }`
+- **Output:** `{ "refundId": "uuid", "razorpayRefundId": "rfnd_123", "status": "PROCESSED" }`
 
 ---
 
-## ⚖️ 10. SUPPORT, COMPLIANCE & APP CONFIG
+## 🎁 7. PROMOTIONS & LOYALTY
 
-### Customer Support
-- **Create Ticket (Customer):** `POST /api/support/tickets` | Body: `{ "subject": "Issue", "priority": "HIGH" }`
-- **Reply to Ticket (Admin):** `POST /api/support/tickets/:id/messages`
-- **Close Ticket (Admin):** `PATCH /api/support/tickets/:id/close`
+**Get Wallet Balance (Customer Token)**
+- `GET /api/wallet`
+- **Output:** `{ "balance": 1500, "transactions": [...] }`
 
-### Compliance (DPDP Act 2023)
-- **Record Consent (Customer):** `POST /api/compliance/consent` | Body: `{ "push": true, "email": true, "sms": false, "whatsapp": true }`
-- **Create Data Request (Customer):** `POST /api/compliance/data-request` | Body: `{ "requestType": "EXPORT" }`
-- **Manage Data Requests (Admin):** `GET /api/compliance/admin/data-requests`
-- **Update Request Status (Admin):** `PATCH /api/compliance/data-request/:id/status` | Body: `{ "status": "FULFILLED" }`
+**Create Coupon (Admin Token)**
+- `POST /api/coupon`
+- **Body:** `{ "code": "SUMMER20", "discountPercent": 20, "maxDiscount": 500, "minOrderValue": 1000 }`
+- **Output:** `{ "id": "uuid", "code": "SUMMER20", "active": true }`
 
-### App Versions (Force Updates)
-- **Configure Version (Admin):** `POST /api/app-version` | Body: `{ "platform": "android", "latestVersion": "1.0.1", "minVersion": "1.0.0", "forceUpdate": false }`
-- **Check Version (Public):** `GET /api/app-version/check?platform=android&version=1.0.0`
+---
+
+## 📊 8. HR & FINANCE (Admin Token)
+
+**Finance Overview**
+- `GET /api/admin/finance/overview`
+- **Output:** `{ "revenue": 1250000, "revenueTrend": "+12.5%", "profit": 350000, "pendingPayments": 45000, "refunds": 12000, "taxes": 225000 }`
+
+**HR Employees List**
+- `GET /api/admin/hr/employees`
+- **Output:** `[ { "id": "uuid", "name": "John Doe", "role": "product-manager", "salary": 75000, "status": "Active" } ]`
+
+**HR Leave Requests**
+- `GET /api/admin/hr/leaves`
+- **Output:** `[ { "id": "uuid", "employee": { "name": "Jane" }, "type": "Sick", "status": "Pending", "days": 2 } ]`
+
+---
+
+## 📈 9. MARKETING (Admin Token)
+
+**Create Push Notification**
+- `POST /api/notification/push`
+- **Body:** `{ "userId": "uuid", "title": "Flash Sale!", "body": "50% off on Skincare", "mobileToken": "token123" }`
+- **Output:** `{ "success": true, "messageId": "msg_123" }`
+
+---
+
+## ⚙️ CURRENT API STATUS (Remaining Gaps vs Mocks)
+
+### **Remaining APIs to Build (approx. 9 endpoints):**
+1. **DPDP Act / Data-rights:** Export & Delete requests (`POST /api/compliance/data-request`).
+2. **Consent Center:** Push/SMS/WhatsApp opt-ins.
+3. **Serviceability Master:** CRUD for Pincode/COD zones.
+4. **Bundle / Kit Configurator:** APIs to map components to bundles (`POST /api/product/bundles`).
+5. **Supplier Master Data:** CRUD for Warehousing POs.
+6. **Mobile App Versioning:** Force update configurations (`GET /api/app-version`).
+7. **Global Return Policy Default:** Admin settings.
+8. **RBAC Panel Access Config:** Setting which internal panels a role can access.
+9. **Staff 2FA (TOTP):** Admin multi-factor auth setup.
+
+### **Current Mocks in Use (approx. 6 areas):**
+1. **ShadowFox API:** Shipping rate and AWB generation are mocked locally.
+2. **AWS S3 / Cloudinary:** Media uploads are saved locally in the `uploads/` folder instead of the cloud.
+3. **Razorpay Refunds:** Live refund settlements are bypassed; wallet refunds work dynamically, but source refunds just update DB state.
+4. **Marketing Crons:** Push notifications log to the console instead of firing actual Firebase FCM queries.
+5. **HR/Finance Overview Trends:** Percentage trends (`+12.5%`) and active daily counts are currently hardcoded mock data.
+6. **Catalog Best Sellers:** Feed endpoints are mocked using generic categories instead of ML-driven recommendation logic.
