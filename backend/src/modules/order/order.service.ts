@@ -161,11 +161,12 @@ export class OrderService {
 
   // --- ADMIN METHODS ---
 
-  async getAdminOrders(filters: { status?: string, paymentMode?: string, email?: string, mobile?: string }) {
+  async getAdminOrders(filters: { status?: string; paymentMode?: string; email?: string; mobile?: string; platform?: 'COSMETICS' | 'SKINCARE' }) {
     const where: any = {};
-    
     if (filters.status) where.status = filters.status;
     if (filters.paymentMode) where.paymentMode = filters.paymentMode;
+    if (filters.platform) where.platform = filters.platform;
+
     if (filters.email || filters.mobile) {
       where.user = {};
       if (filters.email) where.user.email = { contains: filters.email, mode: 'insensitive' };

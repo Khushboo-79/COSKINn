@@ -29,19 +29,74 @@ export class InventoryService {
     });
   }
 
-  async getGlobalStock() {
-    // Returns available stock per SKU per warehouse
+  async getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE') {
+    let skuList: string[] | undefined = undefined;
+
+    if (platform) {
+      const variants = await this.prisma.productVariant.findMany({
+        where: { product: { category: { platform } } },
+        select: { sku: true }
+      });
+      skuList = variants.map(v => v.sku);
+    }
+
     const stocks = await this.prisma.inventoryStock.findMany({
+      where: skuList ? { sku: { in: skuList } } : undefined,
       include: {
         warehouse: true,
       },
     });
-    
-    // Also fetch damaged and expired stock summaries if needed, but for Day 13 we just need available vs reserved
-    return stocks;
+
+    // Grouping by SKU for the global stock view
+    const globalStockMap = new Map();
+    for (const stock of stocks) {
+      if (!globalStockMap.has(stock.sku)) {
+        globalStockMap.set(stock.sku, {
+          sku: stock.sku,
+          totalQuantity: 0,
+          totalReservedQty: 0,
+          warehouses: []
+        });
+      }
+      
+      const gStock = globalStockMap.get(stock.sku);
+      gStock.totalQuantity += stock.quantity;
+      gStock.totalReservedQty += stock.reservedQty;
+      gStock.warehouses.push(stock.warehouse.name);
+    }
+
+    return Array.from(globalStockMap.values());
   }
 
   async getStockForSku(sku: string) {
+    const variant = await this.prisma.productVariant.findUnique({
+      where: { sku },
+      include: { product: { include: { bundleItems: true } } }
+    });
+
+    if (variant && variant.product && variant.product.bundleItems && variant.product.bundleItems.length > 0) {
+      let minAvailable = Infinity;
+      for (const item of variant.product.bundleItems) {
+        const componentStocks = await this.prisma.inventoryStock.findMany({ where: { sku: item.componentSku } });
+        const totalAvail = componentStocks.reduce((sum, s) => sum + s.quantity - s.reservedQty, 0);
+        const possibleBundles = Math.floor(totalAvail / item.quantity);
+        if (possibleBundles < minAvailable) {
+           minAvailable = possibleBundles;
+        }
+      }
+      
+      return [{
+         id: 'virtual-bundle',
+         warehouseId: 'virtual',
+         sku,
+         quantity: minAvailable === Infinity ? 0 : minAvailable,
+         reservedQty: 0,
+         createdAt: new Date(),
+         updatedAt: new Date(),
+         warehouse: { id: 'virtual', name: 'Virtual Bundle Warehouse', code: 'VIRTUAL', address: 'N/A', isActive: true, createdAt: new Date(), updatedAt: new Date() }
+      }];
+    }
+
     return this.prisma.inventoryStock.findMany({
       where: { sku },
       include: { warehouse: true }
@@ -183,6 +238,17 @@ export class InventoryService {
     });
   }
 
+  async getTransfers() {
+    return this.prisma.stockTransfer.findMany({
+      include: {
+        fromWarehouse: true,
+        toWarehouse: true,
+        items: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
   async transferStock(dto: import('./dto/inventory.dto').StockTransferDto) {
     return this.prisma.$transaction(async (prisma) => {
       const fromStock = await prisma.inventoryStock.findUnique({
@@ -216,12 +282,26 @@ export class InventoryService {
       // Log movements
       await prisma.stockMovement.createMany({
         data: [
-          { warehouseId: dto.fromWarehouseId, sku: dto.sku, type: 'OUT', quantity: dto.quantity, reference: `Transfer to ${dto.toWarehouseId}` },
-          { warehouseId: dto.toWarehouseId, sku: dto.sku, type: 'IN', quantity: dto.quantity, reference: `Transfer from ${dto.fromWarehouseId}` }
+          { warehouseId: dto.fromWarehouseId, sku: dto.sku, type: 'OUT', quantity: dto.quantity, reference: `TRANSFER-TO-${dto.toWarehouseId}` },
+          { warehouseId: dto.toWarehouseId, sku: dto.sku, type: 'IN', quantity: dto.quantity, reference: `TRANSFER-FROM-${dto.fromWarehouseId}` },
         ]
       });
 
-      return { success: true };
+      // Create Stock Transfer Record
+      const transfer = await prisma.stockTransfer.create({
+        data: {
+          fromWarehouseId: dto.fromWarehouseId,
+          toWarehouseId: dto.toWarehouseId,
+          status: 'COMPLETED',
+          items: {
+            create: [
+              { sku: dto.sku, quantity: dto.quantity }
+            ]
+          }
+        }
+      });
+
+      return { success: true, message: 'Stock transferred successfully', transfer };
     });
   }
 
@@ -364,10 +444,6 @@ export class InventoryService {
       items: wh.stocks.reduce((acc, curr) => acc + curr.quantity, 0)
     }));
 
-    const totalSuppliers = await this.prisma.supplier.count({
-      where: { isActive: true }
-    });
-
     // 4. Recent Activity
     const recentActivityRaw = await this.prisma.stockMovement.findMany({
       take: 5,
@@ -404,7 +480,7 @@ export class InventoryService {
       recentActivity,
       warehouseSummary,
       suppliersData: {
-        totalSuppliers: totalSuppliers || 0,
+        totalSuppliers: 0,
         openPos: pendingPos,
         goodsInTransit: 0
       }
@@ -414,18 +490,16 @@ export class InventoryService {
   async getPurchaseOrders() {
     return this.prisma.purchaseOrder.findMany({
       include: {
-        warehouse: true,
-        vendor: true
+        warehouse: true
       },
       orderBy: { createdAt: 'desc' }
     });
   }
 
-  async createPurchaseOrder(dto: { warehouseId: string, vendorId?: string, status: string }) {
+  async createPurchaseOrder(dto: { warehouseId: string, status: string }) {
     return this.prisma.purchaseOrder.create({
       data: {
         warehouseId: dto.warehouseId,
-        vendorId: dto.vendorId,
         status: dto.status || 'DRAFT'
       }
     });
@@ -466,32 +540,6 @@ export class InventoryService {
     return this.prisma.purchaseOrder.update({
       where: { id },
       data: { status: dto.status }
-    });
-  }
-
-  // --- Suppliers ---
-  async getSuppliers() {
-    return this.prisma.supplier.findMany({
-      orderBy: { name: 'asc' }
-    });
-  }
-
-  async createSupplier(dto: { name: string, contactEmail?: string, contactPhone?: string, address?: string }) {
-    return this.prisma.supplier.create({
-      data: {
-        name: dto.name,
-        contactEmail: dto.contactEmail,
-        contactPhone: dto.contactPhone,
-        address: dto.address,
-        isActive: true
-      }
-    });
-  }
-
-  async updateSupplier(id: string, dto: any) {
-    return this.prisma.supplier.update({
-      where: { id },
-      data: dto
     });
   }
 

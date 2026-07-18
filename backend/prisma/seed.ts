@@ -48,6 +48,7 @@ async function main() {
       const admin = await prisma.user.create({
         data: {
           email: adminEmail,
+          phone: '+919039567767',
           firstName: 'Super',
           lastName: 'Admin',
           passwordHash,
@@ -60,7 +61,11 @@ async function main() {
       });
       console.log('Super Admin user created:', admin.email);
     } else {
-      console.log('Super Admin user already exists:', existingAdmin.email);
+      await prisma.user.update({
+        where: { email: adminEmail },
+        data: { phone: '+919039567767' }
+      });
+      console.log('Super Admin user already exists, updated phone number for:', existingAdmin.email);
     }
   }
 

@@ -53,9 +53,10 @@ export class OrderController {
     @Query('status') status?: string,
     @Query('paymentMode') paymentMode?: string,
     @Query('email') email?: string,
-    @Query('mobile') mobile?: string
+    @Query('mobile') mobile?: string,
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE'
   ) {
-    return this.orderService.getAdminOrders({ status, paymentMode, email, mobile });
+    return this.orderService.getAdminOrders({ status, paymentMode, email, mobile, platform });
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

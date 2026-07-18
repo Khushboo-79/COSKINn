@@ -86,7 +86,7 @@ export class CustomerProfileService {
     });
   }
 
-  async getAllCustomers(page: number, limit: number, search?: string) {
+  async getAllCustomers(page: number, limit: number, search?: string, platform?: 'COSMETICS' | 'SKINCARE') {
     const skip = (page - 1) * limit;
     const whereClause: Prisma.UserWhereInput = search ? {
       OR: [
@@ -96,6 +96,12 @@ export class CustomerProfileService {
         { lastName: { contains: search, mode: 'insensitive' } }
       ]
     } : {};
+
+    if (platform) {
+      whereClause.orders = {
+        some: { platform }
+      };
+    }
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
@@ -134,7 +140,7 @@ export class CustomerProfileService {
     };
   }
 
-  async getCustomer360(userId: string) {
+  async getCustomer360(userId: string, platform?: 'COSMETICS' | 'SKINCARE') {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -152,6 +158,7 @@ export class CustomerProfileService {
           }
         },
         orders: {
+          where: platform ? { platform } : undefined,
           orderBy: { createdAt: 'desc' },
           take: 10,
           include: {

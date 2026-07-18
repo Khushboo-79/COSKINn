@@ -8,7 +8,7 @@ export class SeoService {
   async getProductSeo(slug: string) {
     const product = await this.prisma.product.findUnique({
       where: { slug },
-      select: { seoTitle: true, seoDesc: true, seoKeywords: true, name: true, description: true }
+      select: { seoTitle: true, seoDesc: true, seoKeywords: true, name: true, description: true, productLine: true, isCrossSegment: true }
     });
     
     if (!product) throw new NotFoundException('Product not found');
@@ -17,14 +17,16 @@ export class SeoService {
     return {
       title: product.seoTitle || product.name,
       description: product.seoDesc || product.description?.substring(0, 160),
-      keywords: product.seoKeywords || ''
+      keywords: product.seoKeywords || '',
+      segment: product.productLine,
+      isCrossSegment: product.isCrossSegment
     };
   }
 
   async getCategorySeo(slug: string) {
     const category = await this.prisma.category.findUnique({
       where: { slug },
-      select: { name: true, description: true }
+      select: { name: true, description: true, productLine: true }
     });
     
     if (!category) throw new NotFoundException('Category not found');
@@ -32,7 +34,8 @@ export class SeoService {
     return {
       title: `${category.name} | COSKINn`,
       description: category.description || `Browse our collection of ${category.name}`,
-      keywords: category.name.toLowerCase()
+      keywords: category.name.toLowerCase(),
+      segment: category.productLine
     };
   }
 

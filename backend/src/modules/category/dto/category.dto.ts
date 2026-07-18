@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsEnum } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
@@ -18,6 +18,10 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsEnum(['COSMETICS', 'SKINCARE'])
+  platform?: 'COSMETICS' | 'SKINCARE';
 }
 
 export class UpdateCategoryDto {
@@ -40,6 +44,10 @@ export class UpdateCategoryDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsEnum(['COSMETICS', 'SKINCARE'])
+  platform?: 'COSMETICS' | 'SKINCARE';
 }
 
 export class CreateSubcategoryDto {

@@ -7,12 +7,15 @@ import { Readable } from 'stream';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(categoryId?: string, search?: string) {
+  async findAll(categoryId?: string, search?: string, platform?: 'COSMETICS' | 'SKINCARE') {
     const where: any = { isDeleted: false };
     
     if (categoryId) where.categoryId = categoryId;
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
+    }
+    if (platform) {
+      where.category = { platform };
     }
 
     return this.prisma.product.findMany({
@@ -36,13 +39,25 @@ export class ProductService {
   async findAllPublic(
     page: number, 
     limit: number, 
-    filters?: { minPrice?: number, maxPrice?: number, skinType?: string, fruit?: string, concern?: string, sortBy?: string }
+    filters?: { minPrice?: number, maxPrice?: number, skinType?: string, fruit?: string, concern?: string, sortBy?: string, platform?: 'COSMETICS' | 'SKINCARE', segment?: 'SKINCARE' | 'MAKEUP' | 'BOTH' }
   ) {
     const skip = (page - 1) * limit;
     
     // Build dynamic where clause
     const where: any = { isDeleted: false, status: 'LIVE' };
     
+    if (filters?.segment && filters.segment !== 'BOTH') {
+      where.OR = [
+        { productLine: filters.segment },
+        { productLine: 'BOTH' },
+        { isCrossSegment: true }
+      ];
+    }
+
+    if (filters?.platform) {
+      where.category = { platform: filters.platform };
+    }
+
     if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
       where.discountPrice = {};
       if (filters.minPrice !== undefined) where.discountPrice.gte = filters.minPrice;
@@ -89,18 +104,33 @@ export class ProductService {
     };
   }
 
-  async search(query: string) {
+  async search(query: string, segment?: string) {
     // Uses PostgreSQL full text search natively through Prisma preview feature
     const searchQuery = query.split(' ').map(term => `${term}:*`).join(' & ');
+    
+    const where: any = {
+      isDeleted: false,
+      status: 'LIVE',
+      OR: [
+        { name: { search: searchQuery } },
+        { description: { search: searchQuery } },
+      ],
+    };
+
+    if (segment && segment !== 'BOTH') {
+      where.AND = [
+        {
+          OR: [
+            { productLine: segment },
+            { productLine: 'BOTH' },
+            { isCrossSegment: true }
+          ]
+        }
+      ];
+    }
+
     return this.prisma.product.findMany({
-      where: {
-        isDeleted: false,
-        status: 'LIVE',
-        OR: [
-          { name: { search: searchQuery } },
-          { description: { search: searchQuery } },
-        ],
-      },
+      where,
       include: {
         variants: true,
         images: { orderBy: { sortOrder: 'asc' }, take: 1 },
@@ -108,9 +138,17 @@ export class ProductService {
     });
   }
 
-  async findByCategory(categoryId: string) {
+  async findByCategory(categoryId: string, segment?: string) {
+    const where: any = { categoryId, isDeleted: false, status: 'LIVE' };
+    if (segment && segment !== 'BOTH') {
+      where.OR = [
+        { productLine: segment },
+        { productLine: 'BOTH' },
+        { isCrossSegment: true }
+      ];
+    }
     return this.prisma.product.findMany({
-      where: { categoryId, isDeleted: false, status: 'LIVE' },
+      where,
       include: {
         variants: true,
         images: { orderBy: { sortOrder: 'asc' }, take: 1 },
@@ -118,13 +156,21 @@ export class ProductService {
     });
   }
 
-  async findByConcern(concernId: string) {
+  async findByConcern(concernId: string, segment?: string) {
+    const where: any = {
+      isDeleted: false,
+      status: 'LIVE',
+      concerns: { some: { id: concernId } }
+    };
+    if (segment && segment !== 'BOTH') {
+      where.OR = [
+        { productLine: segment },
+        { productLine: 'BOTH' },
+        { isCrossSegment: true }
+      ];
+    }
     return this.prisma.product.findMany({
-      where: {
-        isDeleted: false,
-        status: 'LIVE',
-        concerns: { some: { id: concernId } }
-      },
+      where,
       include: {
         variants: true,
         images: { orderBy: { sortOrder: 'asc' }, take: 1 },
@@ -132,13 +178,21 @@ export class ProductService {
     });
   }
 
-  async findByFruit(fruitName: string) {
+  async findByFruit(fruitName: string, segment?: string) {
+    const where: any = {
+      isDeleted: false,
+      status: 'LIVE',
+      ingredients: { some: { name: { equals: fruitName, mode: 'insensitive' } } }
+    };
+    if (segment && segment !== 'BOTH') {
+      where.OR = [
+        { productLine: segment },
+        { productLine: 'BOTH' },
+        { isCrossSegment: true }
+      ];
+    }
     return this.prisma.product.findMany({
-      where: {
-        isDeleted: false,
-        status: 'LIVE',
-        ingredients: { some: { name: { equals: fruitName, mode: 'insensitive' } } }
-      },
+      where,
       include: {
         variants: true,
         images: { orderBy: { sortOrder: 'asc' }, take: 1 },
@@ -844,8 +898,9 @@ export class ProductService {
     });
   }
 
-  async getReports() {
+  async getReports(platform?: 'COSMETICS' | 'SKINCARE') {
     const products = await this.prisma.product.findMany({
+      where: platform ? { category: { platform } } : undefined,
       include: {
         category: true,
         variants: true
@@ -892,5 +947,57 @@ export class ProductService {
       categoryDistribution: Object.entries(categoryMap).map(([name, value]) => ({ name, value })),
       pricingTiers: Object.entries(priceTiers).map(([name, count]) => ({ name, count }))
     };
+  }
+
+  // --- Bundle Logic --- //
+
+  async addBundleItem(productId: string, data: { componentSku: string, quantity: number }) {
+    await this.findOne(productId); // Ensure bundle product exists
+    const result = await this.prisma.productBundleItem.upsert({
+      where: { bundleProductId_componentSku: { bundleProductId: productId, componentSku: data.componentSku } },
+      update: { quantity: data.quantity },
+      create: { bundleProductId: productId, componentSku: data.componentSku, quantity: data.quantity }
+    });
+    await this.recalculateBundlePrice(productId);
+    return result;
+  }
+
+  async removeBundleItem(productId: string, componentSku: string) {
+    const result = await this.prisma.productBundleItem.delete({
+      where: { bundleProductId_componentSku: { bundleProductId: productId, componentSku } }
+    });
+    await this.recalculateBundlePrice(productId);
+    return result;
+  }
+
+  async recalculateBundlePrice(productId: string) {
+    const bundleItems = await this.prisma.productBundleItem.findMany({
+      where: { bundleProductId: productId }
+    });
+    
+    if (bundleItems.length === 0) return;
+
+    let totalMrp = 0;
+    let totalPrice = 0;
+    for (const item of bundleItems) {
+      const component = await this.prisma.productVariant.findUnique({ where: { sku: item.componentSku } });
+      if (component) {
+        totalMrp += (component.mrp * item.quantity);
+        totalPrice += (component.price * item.quantity);
+      }
+    }
+    
+    await this.prisma.product.update({
+      where: { id: productId },
+      data: { mrp: totalMrp, discountPrice: totalPrice }
+    });
+    
+    const defaultVariant = await this.prisma.productVariant.findFirst({ where: { productId } });
+    if (defaultVariant) {
+       await this.prisma.productVariant.update({
+         where: { id: defaultVariant.id },
+         data: { mrp: totalMrp, price: totalPrice }
+       });
+    }
   }
 }

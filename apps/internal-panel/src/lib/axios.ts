@@ -1,69 +1,51 @@
 import axios from 'axios';
 
-// Create a custom axios instance
+// Mock interceptor for UI development
+// This fakes the backend response so we can build the UI before APIs are ready
 export const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Adjust if backend runs on a different port/prefix
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: '/api',
 });
 
-// Request Interceptor: Attach the token to every request if it exists
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('internal_panel_token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+api.interceptors.request.use(async (config) => {
+  // Simulate network latency
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return config;
+});
 
-// Response Interceptor: Handle 401 Unauthorized globally for token refresh
+// Mock Responses for Admin RBAC
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const { config } = error;
+    
+    // Mock Roles
+    if (config.url === '/admin/config/roles' && config.method === 'get') {
+      return Promise.resolve({
+        data: [
+          { id: '1', name: 'super-admin', description: 'Full system access', userCount: 2 },
+          { id: '2', name: 'product-manager', description: 'Manage catalog and stock intake', userCount: 4 },
+          { id: '3', name: 'finance', description: 'Access to reports and tax settings', userCount: 1 },
+          { id: '4', name: 'inventory-staff', description: 'Manage stock adjustments', userCount: 8 }
+        ]
+      });
+    }
 
-    // If 401 and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      const refreshToken = localStorage.getItem('internal_panel_refresh_token');
-      
-      if (refreshToken) {
-        try {
-          const res = await axios.post('http://localhost:3000/api/auth/refresh', {
-            refreshToken,
-          });
-          
-          if (res.data.access_token) {
-            localStorage.setItem('internal_panel_token', res.data.access_token);
-            // Optionally update refresh token if the backend rotates it
-            if (res.data.refresh_token) {
-              localStorage.setItem('internal_panel_refresh_token', res.data.refresh_token);
-            }
-            
-            // Retry the original request with new token
-            originalRequest.headers['Authorization'] = `Bearer ${res.data.access_token}`;
-            return api(originalRequest);
-          }
-        } catch (refreshError) {
-          // Refresh failed, clear tokens and redirect to login
-          localStorage.removeItem('internal_panel_token');
-          localStorage.removeItem('internal_panel_refresh_token');
-          window.dispatchEvent(new Event('auth-expired'));
-          return Promise.reject(refreshError);
-        }
-      } else {
-        // No refresh token, emit event
-        window.dispatchEvent(new Event('auth-expired'));
-      }
+    // Mock Users
+    if (config.url === '/admin/config/users' && config.method === 'get') {
+      return Promise.resolve({
+        data: [
+          { id: 'u1', name: 'Admin One', email: 'admin@coskinn.com', roleId: '1', roleName: 'super-admin', status: 'ACTIVE' },
+          { id: 'u2', name: 'PM User', email: 'pm@coskinn.com', roleId: '2', roleName: 'product-manager', status: 'ACTIVE' },
+          { id: 'u3', name: 'Finance User', email: 'finance@coskinn.com', roleId: '3', roleName: 'finance', status: 'INACTIVE' }
+        ]
+      });
     }
     
+    // Return mock success for mutations
+    if (config.method === 'post' || config.method === 'put' || config.method === 'delete') {
+      return Promise.resolve({ data: { success: true } });
+    }
+
     return Promise.reject(error);
   }
 );

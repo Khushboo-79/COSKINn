@@ -5,31 +5,57 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class HomeService {
   constructor(private prisma: PrismaService) {}
 
-  async getHomeDashboard() {
-    // Parallelize the queries for maximum performance
-    const [categories, fruitIngredients, newestProducts] = await Promise.all([
+  async getHomeDashboard(segment?: string) {
+    const categoryWhere: any = { isActive: true, isDeleted: false };
+    const productWhere: any = { isDeleted: false, status: 'LIVE' };
+    
+    if (segment && segment !== 'BOTH') {
+      categoryWhere.OR = [
+        { productLine: segment },
+        { productLine: 'BOTH' }
+      ];
+      
+      productWhere.AND = [
+        {
+          OR: [
+            { productLine: segment },
+            { productLine: 'BOTH' },
+            { isCrossSegment: true }
+          ]
+        }
+      ];
+    }
+
+    const [categories, newestProducts, allIngredients] = await Promise.all([
       this.prisma.category.findMany({
-        where: { isActive: true, isDeleted: false },
+        where: categoryWhere,
         select: { id: true, name: true, slug: true, imageUrl: true },
         take: 8
       }),
-      // For fruit/concern rail, we query distinct ingredients that are used in LIVE products
-      this.prisma.productIngredient.groupBy({
-        by: ['name'],
-        _count: { productId: true },
-        orderBy: { _count: { productId: 'desc' } },
-        take: 6
-      }),
       this.prisma.product.findMany({
-        where: { isDeleted: false, status: 'LIVE' },
+        where: productWhere,
         include: {
           variants: true,
           images: { orderBy: { sortOrder: 'asc' }, take: 1 },
         },
         orderBy: { createdAt: 'desc' },
         take: 6
+      }),
+      this.prisma.productIngredient.findMany({
+        where: { product: productWhere },
+        select: { name: true }
       })
     ]);
+
+    const ingredientCountMap: Record<string, number> = {};
+    for (const ing of allIngredients) {
+      ingredientCountMap[ing.name] = (ingredientCountMap[ing.name] || 0) + 1;
+    }
+    
+    const fruitIngredients = Object.entries(ingredientCountMap)
+      .map(([name, count]) => ({ name, productCount: count }))
+      .sort((a, b) => b.productCount - a.productCount)
+      .slice(0, 6);
 
     // Stub for hero banners until Day 62
     const heroBanners = [
@@ -44,7 +70,7 @@ export class HomeService {
     return {
       heroBanners,
       categoryRail: categories,
-      fruitIngredientRail: fruitIngredients.map(f => ({ name: f.name, productCount: f._count.productId })),
+      fruitIngredientRail: fruitIngredients,
       newArrivals: newestProducts
     };
   }

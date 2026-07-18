@@ -8,7 +8,7 @@ export class CreatePurchaseOrderDto {
 
   @IsString()
   @IsOptional()
-  vendorId?: string;
+  supplierId?: string;
 
   @IsString()
   @IsOptional()
