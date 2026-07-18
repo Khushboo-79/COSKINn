@@ -11,6 +11,24 @@ export class ReferralService {
     private walletService: WalletService
   ) {}
 
+  async getOrCreateMyReferralCode(userId: string) {
+    let referral = await this.prisma.referral.findFirst({
+      where: { referrerId: userId, refereeId: null }
+    });
+
+    if (!referral) {
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      referral = await this.prisma.referral.create({
+        data: {
+          referrerId: userId,
+          referralCode: code,
+        }
+      });
+    }
+
+    return referral;
+  }
+
   async generateReferralCode(userId: string) {
     // Generate a new 6 character alphanumeric code
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();

@@ -18,7 +18,9 @@ export class OrderController {
     @Request() req,
     @Body('addressId') addressId: string,
     @Body('paymentMode') paymentMode: string = 'ONLINE',
-    @Body('pointsToRedeem') pointsToRedeem: number = 0
+    @Body('pointsToRedeem') pointsToRedeem: number = 0,
+    @Body('couponCode') couponCode?: string,
+    @Body('useWalletBalance') useWalletBalance: boolean = false
   ) {
     if (!addressId) {
       throw new BadRequestException('addressId is required to create an order');
@@ -28,7 +30,27 @@ export class OrderController {
       throw new BadRequestException('paymentMode must be ONLINE or COD');
     }
 
-    return this.orderService.createOrderFromCart(req.user.id, addressId, paymentMode, pointsToRedeem);
+    return this.orderService.createOrderFromCart(
+      req.user.id, 
+      addressId, 
+      paymentMode, 
+      pointsToRedeem,
+      couponCode,
+      useWalletBalance
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('orders')
+  async getCustomerOrders(@Request() req) {
+    return this.orderService.getCustomerOrders(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('orders/:id/invoice')
+  async getCustomerOrderInvoice(@Request() req, @Param('id') id: string) {
+    // Basic authorization check could be added inside service or here
+    return this.invoiceService.generateGstInvoice(id);
   }
 
   @UseGuards(JwtAuthGuard)

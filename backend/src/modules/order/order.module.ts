@@ -8,6 +8,8 @@ import { BonusModule } from '../bonus/bonus.module';
 import { ReferralModule } from '../referral/referral.module';
 import { OfferModule } from '../offer/offer.module';
 import { InvoiceModule } from '../invoice/invoice.module';
+import { CouponModule } from '../coupon/coupon.module';
+import { WalletModule } from '../wallet/wallet.module';
 
 @Module({
   imports: [
@@ -17,7 +19,9 @@ import { InvoiceModule } from '../invoice/invoice.module';
     BonusModule,
     ReferralModule,
     OfferModule,
-    InvoiceModule
+    InvoiceModule,
+    CouponModule,
+    WalletModule
   ],
   controllers: [OrderController],
   providers: [OrderService],

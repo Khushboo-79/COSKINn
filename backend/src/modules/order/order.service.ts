@@ -5,6 +5,8 @@ import { RewardPointService } from '../reward-point/reward-point.service';
 import { BonusService } from '../bonus/bonus.service';
 import { ReferralService } from '../referral/referral.service';
 import { OfferService } from '../offer/offer.service';
+import { CouponService } from '../coupon/coupon.service';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class OrderService {
@@ -14,10 +16,19 @@ export class OrderService {
     private rewardPointService: RewardPointService,
     private bonusService: BonusService,
     private referralService: ReferralService,
-    private offerService: OfferService
+    private offerService: OfferService,
+    private couponService: CouponService,
+    private walletService: WalletService
   ) {}
 
-  async createOrderFromCart(userId: string, addressId: string, paymentMode: string, pointsToRedeem: number = 0) {
+  async createOrderFromCart(
+    userId: string, 
+    addressId: string, 
+    paymentMode: string, 
+    pointsToRedeem: number = 0,
+    couponCode?: string,
+    useWalletBalance: boolean = false
+  ) {
     // 1. Fetch the user's cart and address
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
@@ -73,18 +84,47 @@ export class OrderService {
       if (finalAmount < 0) finalAmount = 0;
     }
 
+    let appliedCouponId: string | null = null;
+    let walletDeduction = 0;
+
+    // Validate Coupon
+    if (couponCode) {
+      const couponResult = await this.couponService.applyCoupon(userId, couponCode);
+      finalAmount -= couponResult.discountAmount;
+      if (finalAmount < 0) finalAmount = 0;
+      
+      const coupon = await this.prisma.coupon.findUnique({ where: { code: couponCode } });
+      if (coupon) appliedCouponId = coupon.id;
+    }
+
+    // Validate Wallet
+    if (useWalletBalance && finalAmount > 0) {
+      const wallet = await this.walletService.getWallet(userId);
+      if (wallet.balance > 0) {
+        walletDeduction = Math.min(wallet.balance, finalAmount);
+        finalAmount -= walletDeduction;
+      }
+    }
+
+    // Zero-Dollar Checkout Check
+    let orderStatus = paymentMode === 'ONLINE' ? 'DRAFT' : 'PLACED';
+    if (finalAmount === 0) {
+      orderStatus = 'PLACED'; // Override if fully paid by points/wallet/coupon
+    }
+
     // 3. Create the order using a transaction
     const orderData = await this.prisma.$transaction(async (tx) => {
       const order = await tx.order.create({
         data: {
           userId,
-          status: paymentMode === 'ONLINE' ? 'DRAFT' : 'PLACED',
+          status: orderStatus,
           totalAmount,
-          discountAmt,
+          discountAmt: totalAmount - finalAmount, // Update discount to include coupon/wallet if you want, or keep separate. Let's just track finalAmount.
           taxAmount,
           shippingFee,
           finalAmount,
-          paymentMode,
+          paymentMode: finalAmount === 0 ? 'WALLET' : paymentMode,
+          couponId: appliedCouponId,
           
           // Create the order address snapshot
           address: {
@@ -149,6 +189,14 @@ export class OrderService {
         await this.inventoryService.reserveStock(item.sku, item.quantity, tx);
       }
 
+      // 6. Consume Coupon
+      if (appliedCouponId) {
+        await tx.coupon.update({
+          where: { id: appliedCouponId },
+          data: { usedCount: { increment: 1 } }
+        });
+      }
+
       return order;
     });
 
@@ -156,7 +204,27 @@ export class OrderService {
       await this.rewardPointService.redeemPoints(userId, pointsToRedeem, orderData.id);
     }
 
+    if (walletDeduction > 0) {
+      await this.walletService.debitWallet(userId, walletDeduction, `Paid for Order ${orderData.id}`);
+    }
+
     return orderData;
+  }
+
+  // --- CUSTOMER METHODS ---
+
+  async getCustomerOrders(userId: string) {
+    return this.prisma.order.findMany({
+      where: { userId },
+      include: {
+        items: {
+          include: { variant: { include: { product: { include: { images: { take: 1 } } } } } }
+        },
+        address: true,
+        payments: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
   }
 
   // --- ADMIN METHODS ---
