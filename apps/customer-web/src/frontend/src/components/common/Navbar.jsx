@@ -341,6 +341,7 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => navigate(-1)} 
+                aria-label="Go back"
                 className="flex items-center gap-1 font-bold text-sm text-black hover:text-[#FF0069] transition-colors"
               >
                 <ArrowLeft size={18} />
@@ -363,22 +364,25 @@ export default function Navbar() {
             <div className="flex items-center justify-end gap-5 lg:gap-6 text-black/80">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
+                aria-label="Open search"
                 className="hover:text-[#FF0069] transition flex items-center justify-center"
               >
                 <Search size={22} strokeWidth={1.5} />
               </button>
               <button
                 onClick={handleWishlistClick}
+                aria-label="Open wishlist"
                 className="hover:text-[#FF0069] transition flex items-center justify-center"
               >
                 <Heart size={22} strokeWidth={1.5} />
               </button>
               <button 
                 onClick={openCart} 
+                aria-label="Open cart"
                 className="relative hover:text-[#FF0069] transition flex items-center"
               >
                 <ShoppingBag size={22} strokeWidth={1.5} />
-                <span className="absolute -top-1 -right-2 bg-theme-secondary text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
+                <span className="absolute -top-1 -right-2 bg-[#FF8FB1] text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
               </button>
             </div>
           </div>
@@ -440,20 +444,21 @@ export default function Navbar() {
           <div className="flex items-center gap-2"></div>
 
           {/* Pill Theme Switcher */}
-          <div className="flex bg-white/40 p-1 rounded-full text-xs font-semibold backdrop-blur-sm">
+          <div className="flex bg-white/40 p-1 rounded-full text-xs font-semibold backdrop-blur-sm border border-white/60 shadow-sm">
             <button
               onClick={() => handleThemeSwitch('skincare')}
-              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-[#FF8FB1] text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
               Skincare
             </button>
             <button
               onClick={() => handleThemeSwitch('cosmetics')}
-              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-theme-primary text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-[#FF8FB1] text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
-              Cosmetics
+              Makeup
             </button>
           </div>
+
         </div>
       </div>
 
@@ -497,6 +502,7 @@ export default function Navbar() {
           {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
+            aria-label="Open search"
             className="hover:text-theme-primary transition flex items-center justify-center p-1"
           >
             <Search size={22} strokeWidth={1.5} />
@@ -505,6 +511,7 @@ export default function Navbar() {
           {/* Wishlist Icon (Mobile only) */}
           <button
             onClick={handleWishlistClick}
+            aria-label="Open wishlist"
             className="hover:text-theme-primary transition flex items-center justify-center p-1 lg:hidden"
           >
             <Heart size={22} strokeWidth={1.5} />
@@ -519,6 +526,7 @@ export default function Navbar() {
           >
             <button
               onClick={handleToggleClick}
+              aria-label="User profile"
               className={`hover:text-theme-primary transition p-1 rounded-full flex items-center gap-2 ${isDropdownOpen ? 'bg-black/5' : ''}`}
             >
               {user ? (
@@ -572,10 +580,11 @@ export default function Navbar() {
           <button 
             onClick={openCart} 
             onMouseEnter={() => prefetchPage('checkout')}
+            aria-label="Open cart"
             className="relative hover:text-theme-primary transition flex items-center"
           >
             <ShoppingBag size={22} strokeWidth={1.5} />
-            <span className="absolute -top-1 -right-2 bg-theme-secondary text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
+            <span className="absolute -top-1 -right-2 bg-[#FF8FB1] text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
           </button>
 
           {/* Hamburger Menu */}

@@ -12,7 +12,7 @@ import patchesImg from '../assets/images/under_eye_patches.webp';
 import patchesLifestyleImg from '../assets/images/under_eye_patches_lifestyle.webp';
 import patchesBackImg from '../assets/images/under_eye_patches_back.webp';
 import patchesSideImg from '../assets/images/under_eye_patches_side.webp';
-import patchesModelImg from '../assets/images/premium_under_eye_model_transparent.png';
+import patchesModelImg from '../assets/images/premium_under_eye_model_transparent.webp';
 
 const MASK_IMG = patchesImg || 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=800&auto=format&fit=crop';
 const GALLERY = [patchesImg, patchesLifestyleImg, patchesBackImg, patchesSideImg];

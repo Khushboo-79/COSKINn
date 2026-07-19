@@ -26,7 +26,7 @@ const ALL_PRODUCTS = [
     rating: 4.9,
     reviews: 2450,
     category: 'Serums',
-    image: '/src/assets/images/niacinamide_serum.webp',
+    image: new URL('../assets/images/niacinamide_serum.webp', import.meta.url).href,
     badge: 'BEST SELLER',
     isNew: false,
     popularity: 100
@@ -41,7 +41,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 3120,
     category: 'Sunscreen',
-    image: '/src/assets/images/sunscreen_spf50.webp',
+    image: new URL('../assets/images/sunscreen_spf50.webp', import.meta.url).href,
     badge: 'TOP RATED',
     isNew: false,
     popularity: 98
@@ -56,7 +56,7 @@ const ALL_PRODUCTS = [
     rating: 4.7,
     reviews: 1840,
     category: 'Sunscreen',
-    image: '/src/assets/images/body_sunscreen.webp',
+    image: new URL('../assets/images/body_sunscreen.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 90
@@ -71,7 +71,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 1560,
     category: 'Sunscreen',
-    image: '/src/assets/images/tinted_sunscreen.webp',
+    image: new URL('../assets/images/tinted_sunscreen.webp', import.meta.url).href,
     badge: 'CUSTOMER FAVORITE',
     isNew: true,
     popularity: 88
@@ -86,7 +86,7 @@ const ALL_PRODUCTS = [
     rating: 4.9,
     reviews: 4200,
     category: 'Cleansers',
-    image: '/src/assets/images/gentle_cleanser.webp',
+    image: new URL('../assets/images/gentle_cleanser.webp', import.meta.url).href,
     badge: 'BEST SELLER',
     isNew: false,
     popularity: 99
@@ -101,7 +101,7 @@ const ALL_PRODUCTS = [
     rating: 4.7,
     reviews: 950,
     category: 'Cleansers',
-    image: '/src/assets/images/cleansing_balm.webp',
+    image: new URL('../assets/images/cleansing_balm.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 85
@@ -116,7 +116,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 2100,
     category: 'Moisturisers',
-    image: '/src/assets/images/daily_moisturiser.webp',
+    image: new URL('../assets/images/daily_moisturiser.webp', import.meta.url).href,
     badge: 'DERMATOLOGIST RECOMMENDED',
     isNew: false,
     popularity: 95
@@ -131,7 +131,7 @@ const ALL_PRODUCTS = [
     rating: 4.9,
     reviews: 1800,
     category: 'Masks',
-    image: '/src/assets/images/overnight_mask.webp',
+    image: new URL('../assets/images/overnight_mask.webp', import.meta.url).href,
     badge: 'TOP RATED',
     isNew: false,
     popularity: 92
@@ -146,7 +146,7 @@ const ALL_PRODUCTS = [
     rating: 4.6,
     reviews: 1120,
     category: 'Face Care',
-    image: '/src/assets/images/face_mist.webp',
+    image: new URL('../assets/images/face_mist.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 80
@@ -161,7 +161,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 3500,
     category: 'Lip Care',
-    image: '/src/assets/images/lip_balm.webp',
+    image: new URL('../assets/images/lip_balm.webp', import.meta.url).href,
     badge: 'BEST SELLER',
     isNew: false,
     popularity: 97
@@ -176,7 +176,7 @@ const ALL_PRODUCTS = [
     rating: 4.7,
     reviews: 890,
     category: 'Masks',
-    image: '/src/assets/images/under_eye_patches.webp',
+    image: new URL('../assets/images/under_eye_patches.webp', import.meta.url).href,
     badge: 'NEW',
     isNew: true,
     popularity: 82
@@ -191,7 +191,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 1450,
     category: 'Face Care', // Mapping to Face Care just for the "All" vs Others filtering simplicity if we don't have Body Care filter
-    image: '/src/assets/images/hand_cream.webp',
+    image: new URL('../assets/images/hand_cream.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 86

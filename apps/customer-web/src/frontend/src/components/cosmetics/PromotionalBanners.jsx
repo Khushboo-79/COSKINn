@@ -4,8 +4,8 @@ import { cosmeticColors, fonts } from '../../constants/theme';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import imgSkincarePromo from '../../assets/images/routine_prep_1784312636157.png';
-import imgMakeupPromo from '../../assets/images/cosmetics_hero_cluster.png';
+import imgSkincarePromo from '../../assets/images/routine_prep_1784312636157.webp';
+import imgMakeupPromo from '../../assets/images/cosmetics_hero_cluster.webp';
 
 export default function PromotionalBanners() {
   const containerRef = useRef(null);

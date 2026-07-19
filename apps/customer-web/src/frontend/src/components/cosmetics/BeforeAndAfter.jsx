@@ -3,8 +3,8 @@ import { motion, useInView } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 import { Sparkle } from 'lucide-react';
 
-import beforeImg from '../../assets/images/before_makeup_1784312716727.png';
-import afterImg from '../../assets/images/after_makeup_1784312726460.png';
+import beforeImg from '../../assets/images/before_makeup_1784312716727.webp';
+import afterImg from '../../assets/images/after_makeup_1784312726460.webp';
 
 const comparisons = [
   {

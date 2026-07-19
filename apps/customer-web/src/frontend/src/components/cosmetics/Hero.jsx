@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useTransform, useSpring } from 'framer-motion';
 import { cosmeticColors, fonts } from '../../constants/theme';
 import { ArrowRight, Sparkles, Heart, ShieldCheck, Clock, Gem } from 'lucide-react';
-import heroImage from '../../assets/images/cosmetics_hero_cluster.png';
+import heroImage from '../../assets/images/cosmetics_hero_cluster.webp';
 
 export default function Hero() {
   const containerRef = useRef(null);
@@ -104,7 +104,7 @@ export default function Hero() {
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
-        className="absolute top-0 right-0 w-full lg:w-[65%] h-full pointer-events-none z-0"
+        className="hidden lg:block absolute top-0 right-0 w-[65%] h-full pointer-events-none z-0"
       >
         {/* 2. Luxury Product Floating Effect */}
         <motion.div
@@ -135,9 +135,9 @@ export default function Hero() {
         CONTENT COMPOSITION (Requirement 1)
         =========================================
       */}
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-2 h-full pt-28 pb-16 lg:py-0 items-center pointer-events-auto">
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-2 h-full pt-[100px] lg:pt-0 pb-10 lg:pb-0 items-center pointer-events-auto">
 
-        {/* --- LEFT SIDE: TYPOGRAPHY & BUTTONS --- */}
+        {/* --- DESKTOP ONLY SIDE: TYPOGRAPHY & BUTTONS --- */}
         <motion.div
           style={{ x: textX, y: textY }}
           initial="hidden"
@@ -145,7 +145,7 @@ export default function Hero() {
           variants={{
             visible: { transition: { staggerChildren: 0.15 } }
           }}
-          className="flex flex-col justify-center w-full max-w-xl z-20"
+          className="hidden lg:flex flex-col justify-center w-full max-w-xl z-20 mt-4 lg:mt-0"
         >
           {/* Badge */}
           <motion.div
@@ -153,9 +153,9 @@ export default function Hero() {
               hidden: { opacity: 0, y: 15 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
             }}
-            className="flex items-center gap-2 mb-6"
+            className="flex items-center gap-2 mb-4 lg:mb-6"
           >
-            <span className="text-[10px] md:text-xs tracking-[0.25em] font-bold uppercase flex items-center gap-2" style={{ color: cosmeticColors.accent }}>
+            <span className="text-[10px] lg:text-xs tracking-[0.25em] font-bold uppercase flex items-center gap-2" style={{ color: cosmeticColors.accent }}>
               New Collection <Sparkles size={14} />
             </span>
           </motion.div>
@@ -166,11 +166,11 @@ export default function Hero() {
               hidden: { opacity: 0, y: 20 },
               visible: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } }
             }}
-            className="text-5xl md:text-6xl lg:text-[5rem] xl:text-[5.5rem] font-normal text-gray-900 leading-[1.1] mb-6"
+            className="text-[42px] md:text-6xl lg:text-[5rem] xl:text-[5.5rem] font-normal text-gray-900 leading-[1.1] mb-4 lg:mb-6"
             style={{ fontFamily: fonts.cosmetics.heading }}
           >
             Reveal Your <br />
-            <span className="italic" style={{ color: cosmeticColors.accent, fontWeight: 300 }}>
+            <span className="italic text-[44px] md:text-6xl lg:text-[5rem] xl:text-[5.5rem]" style={{ color: cosmeticColors.accent, fontWeight: 300 }}>
               Natural Glow
             </span>
           </motion.h1>
@@ -181,30 +181,28 @@ export default function Hero() {
               hidden: { opacity: 0, y: 20 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
             }}
-            className="text-base md:text-lg text-gray-700 font-medium max-w-md leading-[1.7] mb-10"
+            className="text-[15px] lg:text-lg text-gray-700 font-medium max-w-md leading-[1.6] lg:leading-[1.7] mb-6 lg:mb-10"
             style={{ fontFamily: fonts.cosmetics.body }}
           >
             High-performance cosmetics that enhance your natural beauty with elegance and confidence.
           </motion.p>
 
-          {/* 6. & 7. CTA Button Animations */}
+          {/* CTA Buttons */}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 20 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
             }}
-            className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-12"
+            className="flex flex-col sm:flex-row items-center gap-3 lg:gap-4 w-full sm:w-auto mb-6 lg:mb-12"
           >
-            {/* Primary Button */}
             <button
-              className="w-full sm:w-auto px-8 py-3.5 text-white rounded-full transition-transform duration-500 hover:-translate-y-1 relative overflow-hidden group shadow-[0_10px_25px_-5px_rgba(255,143,177,0.5)]"
+              className="w-full sm:w-auto px-8 py-3.5 lg:py-3.5 text-white rounded-full transition-transform duration-500 hover:-translate-y-1 relative overflow-hidden group shadow-[0_10px_25px_-5px_rgba(255,143,177,0.5)]"
               style={{ background: `linear-gradient(90deg, ${cosmeticColors.accent} 0%, ${cosmeticColors.primary} 100%)` }}
             >
-              <span className="relative z-10 text-[11px] md:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center gap-2">
+              <span className="relative z-10 text-[13px] lg:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center gap-2">
                 Shop Cosmetics
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </span>
-              {/* 7. Premium Shine Effect */}
               <motion.div
                 animate={{ x: ['-200%', '300%'] }}
                 transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4, ease: "linear" }}
@@ -213,11 +211,10 @@ export default function Hero() {
               <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-in-out" />
             </button>
 
-            {/* Secondary Button */}
             <button
               className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-transparent text-gray-900 border border-gray-300 transition-all duration-500 hover:-translate-y-1 hover:border-gray-500 hover:bg-white"
             >
-              <span className="text-[11px] md:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center">
+              <span className="text-[13px] lg:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center">
                 Explore Collection
               </span>
             </button>
@@ -229,38 +226,151 @@ export default function Hero() {
               hidden: { opacity: 0, y: 20 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
             }}
-            className="grid grid-cols-2 gap-x-4 gap-y-6 max-w-lg"
+            className="grid grid-cols-2 gap-x-2 lg:gap-x-4 gap-y-4 lg:gap-y-6 max-w-lg"
           >
-            <div className="flex items-center gap-3 group cursor-default">
-              <Heart size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
+              <Heart size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-gray-900 leading-tight">Cruelty Free</span>
-                <span className="text-[10px] text-gray-500">Love Animals</span>
+                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Cruelty Free</span>
+                <span className="text-[9px] lg:text-[10px] text-gray-500">Love Animals</span>
               </div>
             </div>
-            <div className="flex items-center gap-3 group cursor-default">
-              <ShieldCheck size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
+              <ShieldCheck size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-gray-900 leading-tight">Dermatologist Tested</span>
-                <span className="text-[10px] text-gray-500">Gentle on Skin</span>
+                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Dermatologist Tested</span>
+                <span className="text-[9px] lg:text-[10px] text-gray-500">Gentle on Skin</span>
               </div>
             </div>
-            <div className="flex items-center gap-3 group cursor-default">
-              <Sparkles size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
+              <Sparkles size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-gray-900 leading-tight">Long Lasting</span>
-                <span className="text-[10px] text-gray-500">All Day Wear</span>
+                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Long Lasting</span>
+                <span className="text-[9px] lg:text-[10px] text-gray-500">All Day Wear</span>
               </div>
             </div>
-            <div className="flex items-center gap-3 group cursor-default">
-              <Gem size={20} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110" />
+            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
+              <Gem size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-gray-900 leading-tight">Premium Quality</span>
-                <span className="text-[10px] text-gray-500">Made With Care</span>
+                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Premium Quality</span>
+                <span className="text-[9px] lg:text-[10px] text-gray-500">Made With Care</span>
               </div>
             </div>
           </motion.div>
         </motion.div>
+
+        {/* 
+          =========================================
+          MOBILE ONLY DEDICATED LAYOUT
+          =========================================
+        */}
+        <div className="flex lg:hidden flex-col items-center w-full z-20 pt-16 pb-12 relative text-center">
+          
+          {/* Subtle Mobile Particles */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <motion.div animate={{ opacity: [0.3, 0.8, 0.3], scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-10 left-10 w-1.5 h-1.5 bg-white rounded-full blur-[1px]" />
+            <motion.div animate={{ opacity: [0.2, 0.6, 0.2] }} transition={{ duration: 5, repeat: Infinity }} className="absolute top-40 right-6 w-2 h-2 bg-pink-200 rounded-full blur-[2px]" />
+            <motion.div animate={{ opacity: [0.4, 0.9, 0.4] }} transition={{ duration: 3, repeat: Infinity }} className="absolute bottom-40 left-8 w-1 h-1 bg-white rounded-full" />
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[90vw] h-[30vh] bg-white/20 blur-[60px] rounded-full" />
+          </div>
+
+          <div className="relative z-10 flex flex-col items-center w-full">
+            
+            {/* Label */}
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="mb-6">
+              <span className="text-[10px] tracking-[0.25em] font-bold uppercase flex items-center justify-center gap-2" style={{ color: cosmeticColors.accent }}>
+                New Collection <Sparkles size={12} />
+              </span>
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.1, ease: "easeOut" }}
+              className="text-[44px] font-normal text-gray-900 leading-[1.05] mb-5"
+              style={{ fontFamily: fonts.cosmetics.heading }}
+            >
+              Reveal Your <br />
+              <span className="italic text-[48px]" style={{ color: cosmeticColors.accent, fontWeight: 300 }}>
+                Natural Glow
+              </span>
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="text-[15px] text-gray-700 font-medium max-w-[280px] leading-[1.6] mb-8"
+              style={{ fontFamily: fonts.cosmetics.body }}
+            >
+              Luxury cosmetics crafted to enhance beauty.
+            </motion.p>
+
+            {/* Buttons */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              className="flex flex-col items-center w-full max-w-[280px] gap-6 mb-2"
+            >
+              <button
+                className="w-full py-4 text-white rounded-full transition-transform duration-500 hover:-translate-y-1 relative overflow-hidden shadow-[0_15px_30px_-10px_rgba(255,143,177,0.6)]"
+                style={{ background: `linear-gradient(90deg, ${cosmeticColors.accent} 0%, ${cosmeticColors.primary} 100%)` }}
+              >
+                <span className="relative z-10 text-[12px] tracking-[0.15em] font-bold uppercase flex items-center justify-center">
+                  Shop Cosmetics
+                </span>
+                <motion.div animate={{ x: ['-200%', '300%'] }} transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4, ease: "linear" }} className="absolute inset-0 w-[30%] bg-white/30 -skew-x-12 z-0" />
+              </button>
+              
+              <button className="text-[12px] tracking-[0.1em] font-bold uppercase text-gray-500 flex items-center gap-1 hover:text-gray-900 transition-colors">
+                Explore Collection <ArrowRight size={14} />
+              </button>
+            </motion.div>
+
+            {/* Floating Luxury Image Composition */}
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.5, delay: 0.4, ease: "easeOut" }}
+              className="w-full relative mt-8 mb-12 flex justify-center items-center"
+            >
+              <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="w-[120%] max-w-[450px] relative z-10 flex justify-center -ml-4">
+                {/* 
+                  mix-blend-multiply dissolves the white bounding box of the image, 
+                  making the products appear seamlessly floating on the editorial background 
+                */}
+                <img
+                  src={heroImage}
+                  alt="Floating Cosmetics"
+                  className="w-full h-auto object-contain mix-blend-multiply"
+                />
+                {/* Back glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-white/70 blur-[40px] rounded-full -z-10" />
+                {/* Ground shadow simulation */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[60%] h-6 bg-[#FF0069]/10 blur-xl rounded-full -z-10" />
+              </motion.div>
+            </motion.div>
+
+            {/* 2x2 Minimal Feature Grid */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+              className="grid grid-cols-2 gap-x-8 gap-y-10 w-full max-w-[320px]"
+            >
+              <div className="flex flex-col items-center gap-2.5">
+                <Heart size={20} strokeWidth={1} className="text-gray-900" />
+                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Cruelty Free</span>
+              </div>
+              <div className="flex flex-col items-center gap-2.5">
+                <ShieldCheck size={20} strokeWidth={1} className="text-gray-900" />
+                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Dermatologist<br/>Tested</span>
+              </div>
+              <div className="flex flex-col items-center gap-2.5">
+                <Sparkles size={20} strokeWidth={1} className="text-gray-900" />
+                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Long Lasting</span>
+              </div>
+              <div className="flex flex-col items-center gap-2.5">
+                <Gem size={20} strokeWidth={1} className="text-gray-900" />
+                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Premium<br/>Quality</span>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
 
         <div className="hidden lg:block pointer-events-none" />
       </div>

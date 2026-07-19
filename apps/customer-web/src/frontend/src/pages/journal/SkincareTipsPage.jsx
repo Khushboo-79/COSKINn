@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Sun, Moon, Calendar, CheckCircle2, XCircle, ArrowRight, Sparkles } from 'lucide-react';
 import Footer from '../../components/common/Footer';
-import heroImg from '../../assets/images/journal_tips_hero.png';
+import heroImg from '../../assets/images/journal_tips_hero.webp';
 
 export default function SkincareTipsPage() {
   const [activeTab, setActiveTab] = useState('Morning');

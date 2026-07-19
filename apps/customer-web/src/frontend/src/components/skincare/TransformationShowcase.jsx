@@ -5,7 +5,7 @@ import cleanserImg from '../../assets/images/strawberry_glow_cleanser.webp';
 import serumImg from '../../assets/images/niacinamide_serum.webp';
 import moisturizerImg from '../../assets/images/daily_moisturiser.webp';
 import sunscreenImg from '../../assets/images/vitamin_c_sunscreen.webp';
-import editorialImage from '../../assets/images/skincare_transformation_face.png';
+import editorialImage from '../../assets/images/skincare_transformation_face.webp';
 
 const routineProducts = [
   { step: "01", name: "COSKINn Strawberry Glow Cleanser", benefit: "Purifies & brightens the skin canvas", image: cleanserImg },

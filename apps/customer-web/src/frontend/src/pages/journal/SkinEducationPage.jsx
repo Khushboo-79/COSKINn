@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { BookOpen, Shield, Droplets, Sun, CheckCircle2, XCircle, ChevronDown } from 'lucide-react';
 import Footer from '../../components/common/Footer';
-import heroImg from '../../assets/images/journal_education_hero.png';
+import heroImg from '../../assets/images/journal_education_hero.webp';
 
 export default function SkinEducationPage() {
   const [activeFaq, setActiveFaq] = useState(null);
