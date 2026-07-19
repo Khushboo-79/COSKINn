@@ -43,6 +43,7 @@ import { SupplierModule } from './modules/supplier/supplier.module';
 import { ServiceablePincodeModule } from './modules/serviceable-pincode/serviceable-pincode.module';
 import { ComplianceModule } from './modules/compliance/compliance.module';
 import { AppVersionModule } from './modules/app-version/app-version.module';
+import { LocationModule } from './modules/location/location.module';
 
 @Module({
   imports: [
@@ -87,7 +88,8 @@ import { AppVersionModule } from './modules/app-version/app-version.module';
     SupplierModule,
     ServiceablePincodeModule,
     ComplianceModule,
-    AppVersionModule
+    AppVersionModule,
+    LocationModule
   ],
   controllers: [AppController],
   providers: [AppService],

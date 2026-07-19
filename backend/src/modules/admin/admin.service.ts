@@ -71,6 +71,13 @@ export class AdminService implements OnModuleInit {
     });
   }
 
+  async updateRolePanelAccess(roleId: string, panelAccess: string[]) {
+    return this.prisma.role.update({
+      where: { id: roleId },
+      data: { panelAccess }
+    });
+  }
+
   async getUsers() {
     return this.prisma.user.findMany({
       where: {

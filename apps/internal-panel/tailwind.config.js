@@ -1,19 +1,27 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
-      colors: {
-        brand: {
-          DEFAULT: '#FF0069',
-          light: '#FFD498',
-        }
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
       },
-      backgroundImage: {
-        'brand-gradient': 'linear-gradient(to right, #FF0069, #FFD498)',
+      colors: {
+        primary: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          900: '#0c4a6e',
+        },
+        background: '#f8fafc',
+        surface: '#ffffff',
       }
     },
   },
   plugins: [],
 }
-

@@ -1,45 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { ComplianceService } from './compliance.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 
-@Controller('compliance')
-@UseGuards(JwtAuthGuard)
+@Controller('api/compliance')
 export class ComplianceController {
   constructor(private readonly complianceService: ComplianceService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('consent')
-  recordConsent(@Request() req, @Body() data: { push: boolean; email: boolean; sms: boolean; whatsapp: boolean }) {
-    return this.complianceService.recordConsent(req.user.id, data);
+  async updateConsent(@Req() req, @Body() body: any) {
+    return this.complianceService.updateConsent(req.user.id, body);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('consent')
-  getConsents(@Request() req) {
-    return this.complianceService.getConsents(req.user.id);
+  async getConsent(@Req() req) {
+    return this.complianceService.getConsent(req.user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('data-request')
-  createDataRequest(@Request() req, @Body() data: { requestType: 'EXPORT' | 'DELETE' }) {
-    return this.complianceService.createDataRequest(req.user.id, data);
+  async createDataRequest(@Req() req, @Body() body: { requestType: 'EXPORT' | 'DELETE' }) {
+    return this.complianceService.createDataRequest(req.user.id, body.requestType);
   }
 
-  @Get('data-request')
-  getDataRequests(@Request() req) {
-    return this.complianceService.getDataRequests(req.user.id);
-  }
-
-  @Patch('data-request/:id/status')
-  @UseGuards(RolesGuard)
-  @Roles('SUPER_ADMIN', 'COMPLIANCE_OFFICER')
-  updateDataRequestStatus(@Param('id') id: string, @Body() data: { status: 'PENDING' | 'PROCESSING' | 'FULFILLED' | 'REJECTED'; exceptions?: string }) {
-    return this.complianceService.updateDataRequestStatus(id, data);
-  }
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN')
   @Get('admin/data-requests')
-  @UseGuards(RolesGuard)
-  @Roles('SUPER_ADMIN', 'COMPLIANCE_OFFICER')
-  getAllDataRequests() {
-    return this.complianceService.getAllDataRequests();
+  async getAdminDataRequests() {
+    return this.complianceService.getAdminDataRequests();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN')
+  @Patch('admin/data-requests/:id/status')
+  async updateDataRequestStatus(@Param('id') id: string, @Body() body: { status: string }) {
+    return this.complianceService.updateDataRequestStatus(id, body.status);
   }
 }
