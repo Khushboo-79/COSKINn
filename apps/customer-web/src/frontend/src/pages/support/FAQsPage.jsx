@@ -3,42 +3,48 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, MessageCircle, Mail } from 'lucide-react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
-
-const FAQ_DATA = [
-  {
-    category: "Orders & Shipping",
-    items: [
-      { q: "How long does shipping take?", a: "Standard shipping takes 3-5 business days. Express shipping takes 1-2 business days." },
-      { q: "Do you ship internationally?", a: "Currently, we only ship within India. We hope to expand globally soon!" },
-      { q: "Can I change my order after placing it?", a: "We process orders very quickly. If you need to make a change, please email us within 1 hour of placing the order." }
-    ]
-  },
-  {
-    category: "Products & Ingredients",
-    items: [
-      { q: "Are your products cruelty-free?", a: "Yes! COSKINn is 100% cruelty-free and we never test on animals." },
-      { q: "Are your products safe for sensitive skin?", a: "Our products are dermatologist-tested and formulated to be gentle, but we always recommend a patch test first if you have hypersensitive skin." },
-      { q: "Where can I find the full ingredient list?", a: "Full ingredient lists are available on every individual product page under the 'Ingredients' tab." }
-    ]
-  },
-  {
-    category: "Returns & Exchanges",
-    items: [
-      { q: "What is your return policy?", a: "We offer a 7-day return policy for unused products in their original packaging." },
-      { q: "How long do refunds take?", a: "Refunds typically process within 5-7 business days after we receive your returned item." }
-    ]
-  }
-];
+import apiClient from '../../utils/apiClient';
 
 export default function FAQsPage() {
-  const [activeCategory, setActiveCategory] = useState("Orders & Shipping");
+  const [activeCategory, setActiveCategory] = useState("");
   const [activeFaq, setActiveFaq] = useState(null);
+  const [faqData, setFaqData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchFaqs = async () => {
+      try {
+        const response = await apiClient.get('/content/faqs');
+        const faqs = response.data || [];
+        
+        // Group by category
+        const grouped = faqs.reduce((acc, faq) => {
+          const cat = faq.category || "General";
+          if (!acc[cat]) acc[cat] = [];
+          acc[cat].push({ q: faq.question, a: faq.answer });
+          return acc;
+        }, {});
+
+        const groupedArray = Object.keys(grouped).map(key => ({
+          category: key,
+          items: grouped[key]
+        }));
+        
+        setFaqData(groupedArray);
+        if (groupedArray.length > 0) {
+          setActiveCategory(groupedArray[0].category);
+        }
+      } catch (error) {
+        console.error("Failed to load FAQs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFaqs();
   }, []);
 
-  const currentFaqs = FAQ_DATA.find(c => c.category === activeCategory)?.items || [];
+  const currentFaqs = faqData.find(c => c.category === activeCategory)?.items || [];
 
   return (
     <div className="min-h-screen bg-[#FFFDFD] flex flex-col">
@@ -80,22 +86,26 @@ export default function FAQsPage() {
             {/* Sidebar Categories */}
             <div className="w-full lg:w-64 shrink-0">
               <div className="flex overflow-x-auto lg:flex-col gap-2 pb-4 lg:pb-0 hide-scrollbar lg:sticky lg:top-32">
-                {FAQ_DATA.map((cat, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setActiveCategory(cat.category);
-                      setActiveFaq(null);
-                    }}
-                    className={`whitespace-nowrap px-6 py-4 rounded-2xl font-bold text-sm tracking-widest uppercase transition-all duration-300 text-left ${
-                      activeCategory === cat.category 
-                        ? 'bg-[#FF2D7A] text-white shadow-md' 
-                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-[#1B1B1B]'
-                    }`}
-                  >
-                    {cat.category}
-                  </button>
-                ))}
+                {loading ? (
+                  <div className="text-gray-400 text-sm font-bold uppercase animate-pulse">Loading Categories...</div>
+                ) : (
+                  faqData.map((cat, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setActiveCategory(cat.category);
+                        setActiveFaq(null);
+                      }}
+                      className={`whitespace-nowrap px-6 py-4 rounded-2xl font-bold text-sm tracking-widest uppercase transition-all duration-300 text-left ${
+                        activeCategory === cat.category 
+                          ? 'bg-[#FF2D7A] text-white shadow-md' 
+                          : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-[#1B1B1B]'
+                      }`}
+                    >
+                      {cat.category}
+                    </button>
+                  ))
+                )}
               </div>
             </div>
 

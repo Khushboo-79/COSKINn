@@ -61,16 +61,7 @@ export default function ProductCard({ product, onQuickView }) {
           <Heart className={`w-4 h-4 ${inWishlist ? 'fill-[#FF2D7A] text-[#FF2D7A]' : 'text-gray-400 hover:text-[#FF2D7A]'}`} />
         </button>
 
-        {onQuickView && (
-          <button 
-            onClick={(e) => { e.preventDefault(); onQuickView(product); }}
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-md text-[#1B1B1B] text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-full shadow-lg flex items-center gap-2 transition-all duration-300 hover:bg-[#FF2D7A] hover:text-white ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'}`}
-          >
-            <Eye size={14} /> Quick View
-          </button>
-        )}
-
-        <Link to={`/product/${product.id}`} className="absolute inset-0 z-10 flex items-center justify-center">
+        <Link to={`/product/${product.slug || product.id}`} className="absolute inset-0 z-10 flex items-center justify-center">
           <motion.img 
             src={productImg} 
             alt={product.name} 
@@ -93,7 +84,7 @@ export default function ProductCard({ product, onQuickView }) {
           <span className="text-xs text-gray-500 font-medium">({product.reviews || 0})</span>
         </div>
 
-        <Link to={`/product/${product.id}`} className="block">
+        <Link to={`/product/${product.slug || product.id}`} className="block">
           {brand && (
             <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
               {brand}

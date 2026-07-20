@@ -211,20 +211,35 @@ export class OrderService {
     return orderData;
   }
 
-  // --- CUSTOMER METHODS ---
-
-  async getCustomerOrders(userId: string) {
+  async getOrders(userId: string) {
     return this.prisma.order.findMany({
       where: { userId },
       include: {
-        items: {
-          include: { variant: { include: { product: { include: { images: { take: 1 } } } } } }
-        },
+        items: { include: { variant: { include: { product: true } } } },
         address: true,
-        payments: true
+        statusHistory: true,
       },
       orderBy: { createdAt: 'desc' }
     });
+  }
+
+  async getOrderByIdForCustomer(userId: string, id: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: { include: { variant: { include: { product: true } } } },
+        address: true,
+        statusHistory: {
+          orderBy: { createdAt: 'asc' }
+        }
+      }
+    });
+
+    if (!order || order.userId !== userId) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return order;
   }
 
   // --- ADMIN METHODS ---

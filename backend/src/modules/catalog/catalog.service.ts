@@ -69,7 +69,7 @@ export class CatalogService {
 
   async getProducts(filters: any) {
     const page = Number(filters.page) || 1;
-    const limit = 12;
+    const limit = Number(filters.limit) || 12;
     const skip = (page - 1) * limit;
 
     const where: any = { status: 'LIVE' };

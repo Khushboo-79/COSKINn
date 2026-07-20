@@ -1,39 +1,38 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import apiClient from '../utils/apiClient';
+import { useAuth } from './AuthContext';
 
 const OrderContext = createContext();
 
 export function OrderProvider({ children }) {
-  const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem('coskinn_orders');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed.filter(order => order.id !== 'ORD-999999') : [];
-      } catch (e) {
-        return [];
-      }
+  const { user } = useAuth();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchOrders = async () => {
+    if (!user) {
+      setOrders([]);
+      return;
     }
-    return [];
-  });
+    setLoading(true);
+    try {
+      const res = await apiClient.get('/orders');
+      setOrders(res.data);
+    } catch (err) {
+      console.error("Failed to fetch orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem('coskinn_orders', JSON.stringify(orders));
-  }, [orders]);
+    fetchOrders();
+  }, [user]);
 
   const placeOrder = (orderData) => {
-    const newOrder = {
-      ...orderData,
-      status: 'Order Confirmed', // Initial status
-      timeline: [
-        { status: 'Order Placed', date: 'Today', time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), desc: 'Your order has been received.', done: true },
-        { status: 'Order Confirmed', date: 'Today', time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), desc: 'Your order has been confirmed.', done: true },
-        { status: 'Packed', date: '-', time: '-', desc: 'Pending', done: false },
-        { status: 'Shipped', date: '-', time: '-', desc: 'Pending', done: false },
-        { status: 'Out For Delivery', date: '-', time: '-', desc: 'Pending', done: false },
-        { status: 'Delivered', date: '-', time: '-', desc: 'Pending', done: false },
-      ]
-    };
-    setOrders(prev => [newOrder, ...prev]);
+    // With backend integration, placeOrder just needs to refresh the orders list
+    // because checkout form directly posts to /orders
+    fetchOrders();
   };
 
   const updateOrderStatus = (orderId, newStatus, newTimeline) => {
@@ -55,10 +54,12 @@ export function OrderProvider({ children }) {
 
   const memoizedContextValue = useMemo(() => ({
     orders, 
+    loading,
     placeOrder, 
     updateOrderStatus, 
-    getOrderById
-  }), [orders]);
+    getOrderById,
+    refreshOrders: fetchOrders
+  }), [orders, loading]);
 
   return (
     <OrderContext.Provider value={memoizedContextValue}>
