@@ -3,7 +3,8 @@ import { View, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useSelector } from 'react-redux';
-import { scaleh, scalev } from '../constants/AppTheme';
+import { scaleh, scalev, AppTheme } from '../constants/AppTheme';
+import { Text } from 'react-native';
 
 const SearchBarRow = () => {
   const navigation = useNavigation();
@@ -11,6 +12,9 @@ const SearchBarRow = () => {
   const isCosmetics = activeDomain === 'cosmetics';
   const searchBorderColor = isCosmetics ? '#FFC2D1' : '#E5E5E5'; // Light pink for makeup
   const searchBgColor = '#FFFFFF';
+  
+  const cartItems = useSelector(state => state.cart.items);
+  const cartCount = cartItems?.length || 0;
 
   return (
     <View style={styles.searchRow}>
@@ -30,7 +34,14 @@ const SearchBarRow = () => {
         <Image source={require('../images/icons/Wishlist.webp')} style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} resizeMode="contain" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.headerIconBtn} onPress={() => navigation.navigate('Cart')}>
-        <Image source={require('../images/icons/Cart.webp')} style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} resizeMode="contain" />
+        <View>
+          <Image source={require('../images/icons/Cart.webp')} style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} resizeMode="contain" />
+          {cartCount > 0 && (
+            <View style={styles.badgeContainer}>
+              <Text style={styles.badgeText}>{cartCount}</Text>
+            </View>
+          )}
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -70,6 +81,23 @@ const styles = StyleSheet.create({
   },
   headerIconBtn: {
     padding: scaleh(5),
+  },
+  badgeContainer: {
+    position: 'absolute',
+    top: -scalev(5),
+    right: -scaleh(5),
+    backgroundColor: '#FF0069',
+    borderRadius: scaleh(10),
+    minWidth: scaleh(16),
+    height: scalev(16),
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: scaleh(4),
+  },
+  badgeText: {
+    color: '#FFF',
+    fontSize: scaleh(10),
+    fontWeight: '700',
   },
 });
 

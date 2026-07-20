@@ -117,6 +117,12 @@ export class AuthService {
 
     // Call Twilio Verify API
     try {
+      // Developer Bypass: Skip Twilio in local testing to save cost/avoid delivery issues
+      if (process.env.NODE_ENV !== 'production') {
+        this.logger.debug(`[DEV MODE] Skipped Twilio SMS for ${phone}. Use master OTP: 123456`);
+        return { message: 'OTP sent successfully (Dev Mode)', expires_in_minutes: 10 };
+      }
+
       await client.verify.v2
         .services(serviceSid)
         .verifications.create({ to: phone, channel: 'sms' });
@@ -153,12 +159,17 @@ export class AuthService {
 
     // Call Twilio Verify API to check the code
     try {
-      const verificationCheck = await client.verify.v2
-        .services(serviceSid)
-        .verificationChecks.create({ to: phone, code: otp });
+      // Developer Bypass: Accept master OTP in local testing
+      if (process.env.NODE_ENV !== 'production' && otp === '123456') {
+        this.logger.debug(`[DEV MODE] Master OTP accepted for ${phone}`);
+      } else {
+        const verificationCheck = await client.verify.v2
+          .services(serviceSid)
+          .verificationChecks.create({ to: phone, code: otp });
 
-      if (verificationCheck.status !== 'approved') {
-        throw new BadRequestException('Invalid or expired OTP');
+        if (verificationCheck.status !== 'approved') {
+          throw new BadRequestException('Invalid or expired OTP');
+        }
       }
     } catch (error) {
       if (error instanceof BadRequestException) {

@@ -1,11 +1,23 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Dimensions, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Dimensions, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedAddress } from '../redux/slices/addressSlice';
 import { scaleh, scalev } from '../constants/AppTheme';
 
 const { height } = Dimensions.get('window');
 
 const LocationBottomSheet = ({ visible, onClose }) => {
+  const dispatch = useDispatch();
+  const addresses = useSelector(state => state.address?.items) || [];
+  const selectedAddress = useSelector(state => state.address?.selectedAddress);
+
+  const handleSelectAddress = (addr) => {
+    dispatch(setSelectedAddress(addr));
+    onClose();
+  };
+
   return (
     <Modal
       visible={visible}
@@ -16,7 +28,7 @@ const LocationBottomSheet = ({ visible, onClose }) => {
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
-            <KeyboardAvoidingView 
+            <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
               style={styles.bottomSheetContainer}
             >
@@ -24,7 +36,7 @@ const LocationBottomSheet = ({ visible, onClose }) => {
               <View style={styles.headerRow}>
                 <Text style={styles.headerTitle}>Select Delivery Location</Text>
                 <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-                  <Icon name="x" size={scaleh(18)} color="#000" />
+                  <FeatherIcon name="x" size={scaleh(18)} color="#000000ff" />
                 </TouchableOpacity>
               </View>
 
@@ -47,7 +59,7 @@ const LocationBottomSheet = ({ visible, onClose }) => {
               {/* Use Current Location */}
               <TouchableOpacity style={styles.currentLocationRow}>
                 <View style={styles.currentLocationLeft}>
-                  <Icon name="crosshair" size={scaleh(18)} color="#1a1a1a" />
+                  <Icon name="gps-fixed" size={scaleh(18)} color="#FF6B9E" />
                   <Text style={styles.currentLocationText}>Use my current location</Text>
                 </View>
                 <Icon name="chevron-right" size={scaleh(18)} color="#1a1a1a" />
@@ -55,16 +67,26 @@ const LocationBottomSheet = ({ visible, onClose }) => {
 
               <View style={styles.divider} />
 
-              {/* Saved Address */}
-              <TouchableOpacity style={styles.addressRow}>
-                <View style={styles.addressInfo}>
-                  <Text style={styles.addressTitle}>Ayushi, 345678</Text>
-                  <Text style={styles.addressSub} numberOfLines={1}>Ibus stop, Mumbai, Bandra, Chauraha...</Text>
-                </View>
-                <View style={styles.radioOuter}>
-                  <View style={styles.radioInner} />
-                </View>
-              </TouchableOpacity>
+              {/* Saved Addresses */}
+              <ScrollView style={{ maxHeight: height * 0.4 }} showsVerticalScrollIndicator={false}>
+                {addresses.map((addr) => {
+                  const isSelected = selectedAddress?.id === addr.id;
+                  return (
+                    <View key={addr.id}>
+                      <TouchableOpacity style={styles.addressRow} onPress={() => handleSelectAddress(addr)}>
+                        <View style={styles.addressInfo}>
+                          <Text style={styles.addressTitle}>{addr.fullName || 'User'}, {addr.pincode}</Text>
+                          <Text style={styles.addressSub} numberOfLines={1}>{addr.addressLine1}, {addr.city}</Text>
+                        </View>
+                        <View style={[styles.radioOuter, isSelected && { borderColor: '#FF6B9E' }]}>
+                          {isSelected && <View style={styles.radioInner} />}
+                        </View>
+                      </TouchableOpacity>
+                      <View style={styles.divider} />
+                    </View>
+                  );
+                })}
+              </ScrollView>
 
             </KeyboardAvoidingView>
           </TouchableWithoutFeedback>

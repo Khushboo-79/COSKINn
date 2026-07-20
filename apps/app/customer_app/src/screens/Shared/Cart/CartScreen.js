@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchCart, updateCartItem, removeFromCart } from '../../../redux/slices/cartSlice';
 import Header from '../../../components/Header';
 import CartEmpty from './CartEmpty';
 import CheckoutModal from './CheckoutModal';
@@ -53,11 +54,23 @@ const lastMinuteData = [
 ];
 
 const CartScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
 
-  // Toggle this state to see the empty vs filled UI
-  const [cartItems, setCartItems] = useState([1]);
+  const cartItems = useSelector(state => state.cart.items) || [];
+  
+  React.useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
+
+  const cartTotal = cartItems.reduce((acc, item) => acc + (item.product?.discountPrice || item.product?.mrp || 0) * item.quantity, 0);
+  const cartMRP = cartItems.reduce((acc, item) => acc + (item.product?.mrp || 0) * item.quantity, 0);
+  const discount = cartMRP - cartTotal;
+  const shipping = cartTotal > 0 ? 5 : 0;
+  const finalTotal = cartTotal + shipping;
+  const selectedCount = cartItems.length;
+
   const [rewardPoints, setRewardPoints] = useState(false);
   const [isPriceDetailsOpen, setIsPriceDetailsOpen] = useState(false);
   const [isCheckoutVisible, setIsCheckoutVisible] = useState(false);
@@ -129,7 +142,7 @@ const CartScreen = ({ navigation }) => {
 
         {/* Title Row */}
         <View style={styles.cartTitleRow}>
-          <Text style={styles.cartTitleText}>YOUR CART <Text style={styles.cartTitleCount}>(1)</Text></Text>
+          <Text style={styles.cartTitleText}>YOUR CART <Text style={styles.cartTitleCount}>({selectedCount})</Text></Text>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="x" size={scaleh(24)} color="#1a1a1a" />
           </TouchableOpacity>
@@ -138,39 +151,53 @@ const CartScreen = ({ navigation }) => {
         {renderProgressGifts()}
 
         <View style={styles.bagItemsHeaderRow}>
-          <Text style={styles.bagItemsText}>Bag Items <Text style={styles.bagItemsSub}>(1/1 selected)</Text></Text>
+          <Text style={styles.bagItemsText}>Bag Items <Text style={styles.bagItemsSub}>({selectedCount}/{selectedCount} selected)</Text></Text>
           <TouchableOpacity>
             <Icon name="trash-2" size={scaleh(20)} color={primaryColor} />
           </TouchableOpacity>
         </View>
 
         {/* Product Card */}
-        {cartData.map((item) => (
+        {cartItems.map((item) => (
           <View key={item.id} style={styles.productCard}>
             <View style={styles.productImageWrapper}>
-              {!isCosmetics && <Image source={item.bgImage} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />}
-              <Image source={isCosmetics ? require('../../../images/makeup/ProductImgs/Blush.webp') : item.image} style={isCosmetics ? [styles.prodImg, { width: '90%', height: '90%' }] : styles.prodImg} resizeMode="contain" />
+              {!isCosmetics && <Image source={require('../../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />}
+              <Image source={item.product?.images?.[0]?.url ? { uri: item.product.images[0].url } : (isCosmetics ? require('../../../images/makeup/ProductImgs/Blush.webp') : require('../../../images/bgImages/productImg.webp'))} style={isCosmetics ? [styles.prodImg, { width: '90%', height: '90%' }] : styles.prodImg} resizeMode="contain" />
             </View>
 
             <View style={styles.productDetails}>
-              <Text style={styles.productTitle} numberOfLines={2}>{item.title}</Text>
-              <Text style={styles.productSize}>Size: {item.size}</Text>
-              <Text style={styles.productDelivery}>{item.delivery}</Text>
+              <Text style={styles.productTitle} numberOfLines={2}>{item.product?.name}</Text>
+              <Text style={styles.productSize}>Size: {item.product?.netQuantity || 'Standard'}</Text>
+              <Text style={styles.productDelivery}>Delivery by Tomorrow</Text>
 
               <View style={styles.priceRow}>
-                <Text style={styles.productPrice}>₹{item.price}</Text>
-                <Text style={styles.productOriginalPrice}>₹{item.originalPrice}</Text>
+                <Text style={styles.productPrice}>₹{item.product?.discountPrice || item.product?.mrp}</Text>
+                {item.product?.discountPrice && <Text style={styles.productOriginalPrice}>₹{item.product?.mrp}</Text>}
               </View>
             </View>
 
             <View style={styles.actionColumn}>
-              <TouchableOpacity style={styles.actionBtn}>
+              <TouchableOpacity style={styles.deleteBtn} onPress={() => dispatch(removeFromCart(item.id))}>
                 <Icon name="trash-2" size={scaleh(16)} color="#1a1a1a" />
               </TouchableOpacity>
-              <Text style={styles.qtyText}>{item.quantity}</Text>
-              <TouchableOpacity style={styles.actionBtn}>
-                <Icon name="plus" size={scaleh(16)} color={primaryColor} />
-              </TouchableOpacity>
+              <View style={styles.qtyRow}>
+                <TouchableOpacity 
+                  style={styles.qtyActionBtn} 
+                  onPress={() => {
+                    if (item.quantity > 1) {
+                      dispatch(updateCartItem({ itemId: item.id, quantity: item.quantity - 1 }));
+                    } else {
+                      dispatch(removeFromCart(item.id));
+                    }
+                  }}
+                >
+                  <Icon name="minus" size={scaleh(14)} color="#1a1a1a" />
+                </TouchableOpacity>
+                <Text style={styles.qtyText}>{item.quantity}</Text>
+                <TouchableOpacity style={styles.qtyActionBtn} onPress={() => dispatch(updateCartItem({ itemId: item.id, quantity: item.quantity + 1 }))}>
+                  <Icon name="plus" size={scaleh(14)} color={primaryColor} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         ))}
@@ -227,7 +254,7 @@ const CartScreen = ({ navigation }) => {
               </View>
             </View>
             <View style={styles.priceDetailsRight}>
-              <Text style={styles.priceDetailsTotal}>₹699</Text>
+              <Text style={styles.priceDetailsTotal}>₹{finalTotal}</Text>
               <Icon name={isPriceDetailsOpen ? "chevron-up" : "chevron-down"} size={scaleh(20)} color="#1a1a1a" style={{ marginLeft: scaleh(10) }} />
             </View>
           </TouchableOpacity>
@@ -235,23 +262,23 @@ const CartScreen = ({ navigation }) => {
           {isPriceDetailsOpen && (
             <View style={styles.priceDetailsExpanded}>
               <View style={styles.priceRowItem}>
-                <Text style={styles.priceRowLabel}>Bag Total (1 item)</Text>
-                <Text style={styles.priceRowValue}>₹1099</Text>
+                <Text style={styles.priceRowLabel}>Bag Total ({selectedCount} item)</Text>
+                <Text style={styles.priceRowValue}>₹{cartMRP}</Text>
               </View>
               <View style={styles.priceRowItem}>
                 <Text style={styles.priceRowLabel}>Bag Discount</Text>
-                <Text style={[styles.priceRowValue, { color: AppTheme.colors.success }]}>₹110</Text>
+                <Text style={[styles.priceRowValue, { color: AppTheme.colors.success }]}>₹{discount}</Text>
               </View>
               <View style={styles.priceRowItem}>
                 <Text style={styles.priceRowLabel}>Shipping & Platform Fee</Text>
                 <Text style={styles.priceRowValue}>
-                  <Text style={styles.strikethroughPrice}>₹75</Text> ₹5
+                  <Text style={styles.strikethroughPrice}>₹75</Text> ₹{shipping}
                 </Text>
               </View>
 
               <View style={[styles.priceRowItem, { marginTop: scalev(15) }]}>
                 <Text style={styles.priceRowLabel}>You pay</Text>
-                <Text style={[styles.priceRowValue, { fontWeight: '700' }]}>₹994</Text>
+                <Text style={[styles.priceRowValue, { fontWeight: '700' }]}>₹{finalTotal}</Text>
               </View>
             </View>
           )}
@@ -309,16 +336,16 @@ const CartScreen = ({ navigation }) => {
           end={{ x: 1, y: 0 }}
         >
           <Text style={[styles.savingText, isCosmetics && { color: '#000000' }]}>
-            You are saving <Text style={[styles.savingAmount, isCosmetics && { color: '#28a745' }]}>₹99</Text>
+            You are saving <Text style={[styles.savingAmount, isCosmetics && { color: '#28a745' }]}>₹{discount}</Text>
           </Text>
         </LinearGradient>
         <View style={styles.checkoutRow}>
           <View style={styles.totalSection}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.totalPrice}>₹699</Text>
+              <Text style={styles.totalPrice}>₹{finalTotal}</Text>
               <Icon name="info" size={scaleh(12)} color="#666" style={{ marginLeft: scaleh(5) }} />
             </View>
-            <Text style={styles.totalItems}>1 Item selected</Text>
+            <Text style={styles.totalItems}>{selectedCount} Item selected</Text>
           </View>
           <TouchableOpacity onPress={() => setIsCheckoutVisible(true)}>
             {isCosmetics ? (
@@ -597,15 +624,22 @@ const styles = StyleSheet.create({
   },
   actionColumn: {
     justifyContent: 'space-between',
-    alignItems: 'center',
-    width: scaleh(30),
+    alignItems: 'flex-end',
   },
-  actionBtn: {
-    width: scaleh(30),
-    height: scaleh(30),
-    borderRadius: scaleh(8),
+  deleteBtn: {
+    padding: scaleh(5),
+    marginBottom: scalev(15),
+  },
+  qtyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    borderRadius: scaleh(8),
+  },
+  qtyActionBtn: {
+    paddingHorizontal: scaleh(8),
+    paddingVertical: scalev(5),
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -5,7 +5,9 @@ import Icon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../../components/Header';
 import WishlistEmpty from './WishlistEmpty';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleWishlist } from '../../../redux/slices/wishlistSlice';
+import { addToCart, updateCartItem, removeFromCart } from '../../../redux/slices/cartSlice';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
 const filledData = [
@@ -37,8 +39,10 @@ const filledData = [
   },
 ];
 const WishlistScreen = () => {
-  const [wishlistItems, setWishlistItems] = useState([1]); // Toggle this for empty vs filled
+  const wishlistItems = useSelector(state => state.wishlist.items);
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const cartItems = useSelector(state => state.cart.items) || [];
+  const dispatch = useDispatch();
   const isCosmetics = activeDomain === 'cosmetics';
 
   const renderFilled = () => (
@@ -46,22 +50,27 @@ const WishlistScreen = () => {
       <Text style={[styles.pageTitle, { color: isCosmetics ? '#1A1A1A' : AppTheme.colors.textDark }]}>YOUR WISHLIST</Text>
       
       <FlatList
-        data={filledData}
-        keyExtractor={item => item.id.toString()}
+        data={wishlistItems.filter(item => item.product)}
+        keyExtractor={item => item.id ? item.id.toString() : item.productId.toString()}
         numColumns={2}
         columnWrapperStyle={isCosmetics ? styles.rowCosmetics : styles.row}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => {
+          const product = item.product;
+          const cartItem = cartItems?.find(c => c.productId === product.id);
           if (isCosmetics) {
             return (
               <View style={styles.tallCard}>
-                <View style={styles.heartIconContainer}>
-                  <Ionicons name="heart-outline" size={scaleh(16)} color="#666" />
-                </View>
-                <Image source={item.cosmeticImage} style={styles.cardProductImage} resizeMode="contain" />
+                <TouchableOpacity 
+                  style={styles.heartIconContainer}
+                  onPress={() => dispatch(toggleWishlist(product.id))}
+                >
+                  <Ionicons name="heart" size={scaleh(16)} color="#FF0069" />
+                </TouchableOpacity>
+                <Image source={product.images?.[0]?.url ? { uri: product.images[0].url } : require('../../../images/makeup/ProductImgs/Blush.webp')} style={styles.cardProductImage} resizeMode="contain" />
                 <View style={styles.cardDetailsCosmetics}>
-                  <Text style={styles.productNameFull}>{item.title}</Text>
+                  <Text style={styles.productNameFull} numberOfLines={2}>{product.name}</Text>
                   
                   <View style={styles.skinTypeRowCosmetics}>
                     <Ionicons name="checkmark-circle-outline" size={scaleh(12)} color="#FF0069" />
@@ -71,35 +80,64 @@ const WishlistScreen = () => {
                   <View style={styles.ratingRowCosmetics}>
                     <View style={styles.ratingBadge}>
                       <Ionicons name="star" size={scaleh(10)} color="#FFF" />
-                      <Text style={styles.ratingTextCosmetics}> {item.rating}</Text>
+                      <Text style={styles.ratingTextCosmetics}> 4.8</Text>
                     </View>
-                    <Text style={styles.reviewCount}>{item.reviews}</Text>
+                    <Text style={styles.reviewCount}>(1k+)</Text>
                   </View>
 
                   <View style={styles.sizePillCosmetics}>
-                    <Text style={styles.sizeTextCosmetics}>{item.size}</Text>
+                    <Text style={styles.sizeTextCosmetics}>{product.netQuantity || 'Standard'}</Text>
                   </View>
 
                   <View style={styles.promoTextRow}>
                     <Ionicons name="close-circle-outline" size={scaleh(10)} color="#FF8BA7" />
-                    <Text style={styles.promoText}> {item.offer}</Text>
+                    <Text style={styles.promoText}> Upto 20% OFF + Free Gifts</Text>
                   </View>
 
                   <View style={styles.cashbackBadge}>
-                    <Text style={styles.cashbackTextCosmetics}>%  {item.cashback}</Text>
+                    <Text style={styles.cashbackTextCosmetics}>%  Get 5% Cashback</Text>
                   </View>
 
-                  <Text style={styles.priceCurrentLarge}>{item.price}</Text>
+                  <Text style={styles.priceCurrentLarge}>₹{product.discountPrice || product.mrp}</Text>
                 </View>
 
                 <View style={styles.cardFooter}>
-                  <TouchableOpacity style={styles.footerHeartBtn}>
-                    <Ionicons name="heart" size={scaleh(16)} color="#FF0069" style={{ fill: '#FF0069' }} />
+                  <TouchableOpacity style={styles.footerHeartBtn} onPress={() => dispatch(toggleWishlist(product.id))}>
+                    <Ionicons name="heart" size={scaleh(16)} color="#FF0069" />
                   </TouchableOpacity>
                   <View style={styles.footerDivider} />
-                  <TouchableOpacity style={styles.footerCartBtn}>
-                    <Text style={styles.footerCartText}>ADD TO CART</Text>
-                  </TouchableOpacity>
+                  <View style={styles.origAddToCartWrapper}>
+                    {cartItem ? (
+                      <View style={styles.quantityControl}>
+                        <TouchableOpacity 
+                          style={styles.qtyBtn}
+                          onPress={() => {
+                            if (cartItem.quantity > 1) {
+                              dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                            } else {
+                              dispatch(removeFromCart(cartItem.id));
+                            }
+                          }}
+                        >
+                          <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
+                        </TouchableOpacity>
+                        <Text style={styles.qtyText}>{cartItem.quantity}</Text>
+                        <TouchableOpacity 
+                          style={styles.qtyBtn}
+                          onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
+                        >
+                          <Icon name="plus" size={scaleh(16)} color="#FF0069" />
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
+                      <TouchableOpacity 
+                        style={styles.footerCartBtn}
+                        onPress={() => dispatch(addToCart({ productId: product.id }))}
+                      >
+                        <Text style={styles.footerCartText}>ADD TO CART</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
               </View>
             );
@@ -113,12 +151,11 @@ const WishlistScreen = () => {
                   colors={[AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd]}
                   style={StyleSheet.absoluteFill}
                 />
-                <Image source={item.bgImage} style={[StyleSheet.absoluteFill, { width: '130%', height: '130%', left: '-15%', top: '-15%', opacity: 0.9 }]} resizeMode="cover" />
-                <Image source={item.image} style={styles.productImage} resizeMode="contain" />
+                <Image source={product.images?.[0]?.url ? { uri: product.images[0].url } : require('../../../images/bgImages/productImg.webp')} style={styles.productImage} resizeMode="contain" />
               </View>
               
               <View style={styles.detailsSection}>
-                <Text style={styles.title} numberOfLines={3}>{item.title}</Text>
+                <Text style={styles.title} numberOfLines={2}>{product.name}</Text>
                 
                 <View style={styles.skinTypeRow}>
                   <Icon name="check-circle" size={scaleh(12)} color={AppTheme.colors.primary} />
@@ -128,38 +165,67 @@ const WishlistScreen = () => {
                 <View style={styles.ratingRow}>
                   <View style={styles.ratingBox}>
                     <Icon name="star" size={scaleh(10)} color={AppTheme.colors.white} />
-                    <Text style={styles.ratingText}>{item.rating}</Text>
+                    <Text style={styles.ratingText}>4.8</Text>
                   </View>
-                  <Text style={styles.reviewsText}>{item.reviews}</Text>
+                  <Text style={styles.reviewsText}>(1k+)</Text>
                 </View>
                 
                 <View style={styles.sizePill}>
-                  <Text style={styles.sizeText}>{item.size}</Text>
+                  <Text style={styles.sizeText}>{product.netQuantity || 'Standard'}</Text>
                 </View>
                 
                 <View style={styles.offerPill}>
                   <Icon name="tag" size={scaleh(10)} color={AppTheme.colors.primary} />
-                  <Text style={styles.offerText}>{item.offer}</Text>
+                  <Text style={styles.offerText}>Upto 20% OFF + Free Gifts</Text>
                 </View>
                 
                 <View style={styles.cashbackPill}>
                   <View style={styles.percentCircle}>
                     <Text style={styles.percentText}>%</Text>
                   </View>
-                  <Text style={styles.cashbackText}>{item.cashback}</Text>
+                  <Text style={styles.cashbackText}>Get 5% Cashback</Text>
                 </View>
                 
-                <Text style={styles.price}>{item.price}</Text>
+                <Text style={styles.price}>₹{product.discountPrice || product.mrp}</Text>
               </View>
               
               <View style={styles.bottomAction}>
-                <TouchableOpacity style={styles.heartButton}>
-                  <Icon name="heart" size={scaleh(18)} color={AppTheme.colors.primary} />
+                <TouchableOpacity style={styles.heartButton} onPress={() => dispatch(toggleWishlist(product.id))}>
+                  <Ionicons name="heart" size={scaleh(20)} color={AppTheme.colors.primary} />
                 </TouchableOpacity>
                 <View style={styles.separator} />
-                <TouchableOpacity style={styles.cartButton}>
-                  <Text style={styles.cartButtonText}>ADD TO CART</Text>
-                </TouchableOpacity>
+                <View style={styles.skincareAddToCartWrapper}>
+                  {cartItem ? (
+                    <View style={styles.quantityControl}>
+                      <TouchableOpacity 
+                        style={styles.qtyBtn}
+                        onPress={() => {
+                          if (cartItem.quantity > 1) {
+                            dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                          } else {
+                            dispatch(removeFromCart(cartItem.id));
+                          }
+                        }}
+                      >
+                        <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
+                      </TouchableOpacity>
+                      <Text style={styles.qtyText}>{cartItem.quantity}</Text>
+                      <TouchableOpacity 
+                        style={styles.qtyBtn}
+                        onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
+                      >
+                        <Icon name="plus" size={scaleh(16)} color={AppTheme.colors.primary} />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity 
+                      style={styles.cartButton}
+                      onPress={() => dispatch(addToCart({ productId: product.id }))}
+                    >
+                      <Text style={styles.cartButtonText}>ADD TO CART</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           );
@@ -377,6 +443,36 @@ const styles = StyleSheet.create({
     fontSize: scaleh(12),
     fontWeight: '700',
   },
+  skincareAddToCartWrapper: {
+    flex: 0.7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
+  quantityControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    height: '100%',
+  },
+  qtyBtn: {
+    paddingHorizontal: scaleh(10),
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  qtyText: {
+    fontSize: scaleh(14),
+    fontWeight: '700',
+    color: '#1a1a1a',
+  },
+  cartButtonText: {
+    color: AppTheme.colors.primary,
+    fontSize: scaleh(12),
+    fontWeight: '700',
+  },
 
   // Cosmetics specific styles
   rowCosmetics: {
@@ -518,6 +614,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  origAddToCartWrapper: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
   },
   footerCartText: {
     fontSize: scaleh(12),

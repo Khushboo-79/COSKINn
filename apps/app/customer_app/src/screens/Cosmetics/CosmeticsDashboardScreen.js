@@ -8,6 +8,8 @@ import { Rabbit, TreePine } from 'lucide-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../../redux/slices/productSlice';
+import { fetchWishlist, toggleWishlist } from '../../redux/slices/wishlistSlice';
+import { fetchCart, addToCart, updateCartItem, removeFromCart } from '../../redux/slices/cartSlice';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
 import BottomNavBar from '../../constants/BottomNavBar';
 import TopHeader from '../../components/TopHeader';
@@ -33,10 +35,14 @@ const CosmeticsDashboardScreen = () => {
   const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app.activeDomain);
   const { items: products, loading } = useSelector(state => state.product);
+  const { items: wishlistItems } = useSelector(state => state.wishlist);
+  const cartItems = useSelector(state => state.cart.items) || [];
   const isThemeDark = activeDomain === 'skincare';
 
   useEffect(() => {
     dispatch(fetchProducts({ category: 'cosmetics' })); // Fetch cosmetics products
+    dispatch(fetchWishlist()); // Fetch wishlist
+    dispatch(fetchCart()); // Fetch cart
   }, [dispatch]);
 
   const [activeComboBannerIndex, setActiveComboBannerIndex] = React.useState(0);
@@ -80,33 +86,77 @@ const CosmeticsDashboardScreen = () => {
     }
   };
 
-  const renderCosmeticsProductCard = () => (
-    <View style={styles.milkProductCard}>
-      <View style={styles.milkImageContainer}>
-        <Image source={require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.milkProductImage} resizeMode="contain" />
-        <TouchableOpacity style={styles.milkHeartIcon}>
-          <Icon name="heart" size={scaleh(16)} color="#1a1a1a" />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.milkDetails}>
-        <Text style={styles.milkTitle}>Milk Makeup</Text>
-        <Text style={styles.milkSub}>Cooling Water Jelly Tint 5g{'\n'}Spritz (4 more Shades)</Text>
-        <View style={styles.milkPriceRow}>
-          <Text style={styles.milkPrice}>₹899</Text>
-          <Text style={styles.milkOldPrice}>₹1099</Text>
-        </View>
-        <TouchableOpacity style={styles.milkAddBtn}>
-          <Text style={styles.milkAddBtnText}>Add to Cart</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  const renderCosmeticsProductCard = (product) => {
+    if (!product) return null;
+    const isWishlisted = wishlistItems?.some(w => w.productId === product.id);
+    const cartItem = cartItems?.find(c => c.productId === product.id);
 
-  const renderNewlyLaunchedCard = ({ item }) => (
-    <View style={[styles.origProductCard, { marginRight: scaleh(15) }]}>
-      <View style={styles.origHeartIconContainer}>
-        <Ionicons name="heart-outline" size={scaleh(16)} color="#666" />
+    return (
+      <View style={styles.milkProductCard}>
+        <View style={styles.milkImageContainer}>
+          <Image source={product.images?.[0]?.url ? { uri: product.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.milkProductImage} resizeMode="contain" />
+          <TouchableOpacity 
+            style={styles.milkHeartIcon}
+            onPress={() => dispatch(toggleWishlist(product.id))}
+          >
+            <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#1a1a1a"} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.milkDetails}>
+          <Text style={styles.milkTitle} numberOfLines={1}>{product.name}</Text>
+          <Text style={styles.milkSub} numberOfLines={2}>{product.description || 'Cooling Water Jelly Tint 5g\nSpritz'}</Text>
+          <View style={styles.milkPriceRow}>
+            <Text style={styles.milkPrice}>₹{product.discountPrice || product.mrp}</Text>
+            {product.discountPrice && <Text style={styles.milkOldPrice}>₹{product.mrp}</Text>}
+          </View>
+          <View style={styles.milkAddToCartWrapper}>
+            {cartItem ? (
+              <View style={styles.quantityControl}>
+                <TouchableOpacity 
+                  style={styles.qtyBtn}
+                  onPress={() => {
+                    if (cartItem.quantity > 1) {
+                      dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                    } else {
+                      dispatch(removeFromCart(cartItem.id));
+                    }
+                  }}
+                >
+                  <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
+                </TouchableOpacity>
+                <Text style={styles.qtyText}>{cartItem.quantity}</Text>
+                <TouchableOpacity 
+                  style={styles.qtyBtn}
+                  onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
+                >
+                  <Icon name="plus" size={scaleh(16)} color="#FF0069" />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity 
+                style={styles.milkAddBtn}
+                onPress={() => dispatch(addToCart({ productId: product.id }))}
+              >
+                <Text style={styles.milkAddBtnText}>Add to Cart</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
       </View>
+    );
+  };
+
+  const renderNewlyLaunchedCard = ({ item }) => {
+    const isWishlisted = wishlistItems?.some(w => w.productId === item.id);
+    const cartItem = cartItems?.find(c => c.productId === item.id);
+    return (
+    <View style={[styles.origProductCard, { marginRight: scaleh(15) }]}>
+      <TouchableOpacity 
+        style={styles.origHeartIconContainer}
+        onPress={() => dispatch(toggleWishlist(item.id))}
+      >
+        <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#666"} />
+      </TouchableOpacity>
       <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
       <View style={styles.origCardDetails}>
         <Text style={styles.origProductNameFull} numberOfLines={3}>{item?.name || 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with\nNew-Age UV Filters'}</Text>
@@ -150,16 +200,49 @@ const CosmeticsDashboardScreen = () => {
       </View>
 
       <View style={styles.origCardFooter}>
-        <TouchableOpacity style={styles.origFooterHeartBtn}>
-          <Ionicons name="heart" size={scaleh(22)} color="#FF0069" />
+        <TouchableOpacity 
+          style={styles.origFooterHeartBtn}
+          onPress={() => dispatch(toggleWishlist(item.id))}
+        >
+          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(22)} color={isWishlisted ? "#FF0069" : "#666"} />
         </TouchableOpacity>
         <View style={styles.origFooterDivider} />
-        <TouchableOpacity style={styles.origFooterCartBtn}>
-          <Text style={styles.origFooterCartText}>ADD TO CART</Text>
-        </TouchableOpacity>
+        <View style={styles.origAddToCartWrapper}>
+          {cartItem ? (
+            <View style={styles.quantityControl}>
+              <TouchableOpacity 
+                style={styles.qtyBtn}
+                onPress={() => {
+                  if (cartItem.quantity > 1) {
+                    dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                  } else {
+                    dispatch(removeFromCart(cartItem.id));
+                  }
+                }}
+              >
+                <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
+              </TouchableOpacity>
+              <Text style={styles.qtyText}>{cartItem.quantity}</Text>
+              <TouchableOpacity 
+                style={styles.qtyBtn}
+                onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
+              >
+                <Icon name="plus" size={scaleh(16)} color="#FF0069" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity 
+              style={styles.origFooterCartBtn}
+              onPress={() => dispatch(addToCart({ productId: item.id }))}
+            >
+              <Text style={styles.origFooterCartText}>ADD TO CART</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </View>
-  );
+    );
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: '#ffffffff' }]}>
@@ -198,7 +281,7 @@ const CosmeticsDashboardScreen = () => {
           {/* Top Tall Cards Row */}
           <View style={styles.tallCardsRow}>
             <View style={[styles.tallCard, { backgroundColor: '#FFDCE6', opacity: 0.6 }]} />
-            {renderCosmeticsProductCard()}
+            {renderCosmeticsProductCard(products?.[0])}
           </View>
 
           {/* Promo Banners */}
@@ -276,7 +359,7 @@ const CosmeticsDashboardScreen = () => {
           {/* Bottom Cards Row */}
           <View style={{ marginBottom: scalev(20) }}>
             <FlatList
-              data={products}
+              data={products?.slice(1) || []}
               horizontal
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
@@ -544,6 +627,38 @@ const styles = StyleSheet.create({
     fontSize: scaleh(12),
     fontWeight: '700',
     color: '#000',
+  },
+  milkAddToCartWrapper: {
+    height: scalev(35),
+    justifyContent: 'center',
+    marginBottom: scalev(20),
+  },
+  origAddToCartWrapper: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
+  },
+  quantityControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: scaleh(15),
+    borderWidth: 1,
+    borderColor: '#FF0069',
+    height: '100%',
+  },
+  qtyBtn: {
+    paddingHorizontal: scaleh(10),
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  qtyText: {
+    fontSize: scaleh(14),
+    fontWeight: '700',
+    color: '#1a1a1a',
   },
   trustBadgesRow: {
     flexDirection: 'row',
