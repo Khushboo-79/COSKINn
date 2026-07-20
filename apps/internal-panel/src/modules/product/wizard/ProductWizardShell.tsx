@@ -4,7 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Step1BaseDetails } from './Step1BaseDetails';
 import { Step2Compliance } from './Step2Compliance';
-import { Check, ChevronRight } from 'lucide-react';
+import { Step3Variants } from './Step3Variants';
+import { Step4Media } from './Step4Media';
+import { Step5SeoContent } from './Step5SeoContent';
+import { Step6ReviewSubmit } from './Step6ReviewSubmit';
+import { Check, ChevronRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // Comprehensive schema for all wizard steps
@@ -119,11 +123,10 @@ export const ProductWizardShell = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 min-h-[400px] mt-12">
           {currentStep === 1 && <Step1BaseDetails />}
           {currentStep === 2 && <Step2Compliance />}
-          {currentStep > 2 && (
-            <div className="text-center py-20 text-slate-500">
-              Step {currentStep} under construction
-            </div>
-          )}
+          {currentStep === 3 && <Step3Variants />}
+          {currentStep === 4 && <Step4Media />}
+          {currentStep === 5 && <Step5SeoContent />}
+          {currentStep === 6 && <Step6ReviewSubmit />}
         </div>
 
         {/* Footer Actions */}

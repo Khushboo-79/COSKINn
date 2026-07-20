@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { CatalogDashboardScreen } from './CatalogDashboardScreen';
 import { ProductWizardShell } from './wizard/ProductWizardShell';
+import { ProductFeedScreen } from './ProductFeedScreen';
+import { BulkImportScreen } from './BulkImportScreen';
 import { Package, PlusCircle, List, ArrowLeft } from 'lucide-react';
 
 export const ProductRouter = () => {
@@ -36,6 +38,8 @@ export const ProductRouter = () => {
         <Routes>
           <Route path="/" element={<CatalogDashboardScreen />} />
           <Route path="/create" element={<ProductWizardShell />} />
+          <Route path="/feed" element={<ProductFeedScreen />} />
+          <Route path="/import" element={<BulkImportScreen />} />
           <Route path="/list" element={<div className="p-4 bg-white rounded-xl shadow-sm">Product List (Coming Soon)</div>} />
           <Route path="*" element={<Navigate to="/product" replace />} />
         </Routes>

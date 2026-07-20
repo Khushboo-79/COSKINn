@@ -6,6 +6,23 @@ export class MarketingService {
   constructor(private prisma: PrismaService) {}
 
   // --- BANNERS ---
+  async getActiveBanners() {
+    const now = new Date();
+    return this.prisma.banner.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { startDate: null },
+          { startDate: { lte: now } }
+        ],
+        AND: [
+          { OR: [{ endDate: null }, { endDate: { gte: now } }] }
+        ]
+      },
+      orderBy: { sortOrder: 'asc' }
+    });
+  }
+
   async getBanners() {
     return this.prisma.banner.findMany({
       orderBy: { sortOrder: 'asc' }
