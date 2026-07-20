@@ -9,6 +9,7 @@ import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
 import { productService } from '../../services/productService';
 import { toggleWishlist } from '../../redux/slices/wishlistSlice';
 import { addToCart, updateCartItem, removeFromCart } from '../../redux/slices/cartSlice';
+import { fetchSearchResults, addRecentSearch, clearSearch } from '../../redux/slices/searchSlice';
 
 const popularChoices = [
   { id: 1, title: 'Suncreen' },
@@ -48,9 +49,11 @@ const SearchScreen = () => {
 
   const searchInputRef = useRef(null);
   
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const searchResults = useSelector(state => state.search.results);
+  const isSearching = useSelector(state => state.search.loading);
+  const recentSearches = useSelector(state => state.search.recentSearches);
+  
+  const [localQuery, setLocalQuery] = useState('');
 
   useEffect(() => {
     // Delay focusing the keyboard until the screen transition animation finishes
@@ -64,26 +67,16 @@ const SearchScreen = () => {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (searchQuery.trim().length > 0) {
-        setIsSearching(true);
-        try {
-          console.log(`[SearchScreen] Hitting Search API for: "${searchQuery}" in segment: ${activeDomain}`);
-          const results = await productService.searchProducts(searchQuery, activeDomain);
-          console.log(`[SearchScreen] Search API Success! Found ${results?.length || 0} results.`);
-          setSearchResults(results);
-        } catch (err) {
-          console.error("[SearchScreen] Search error:", err);
-        } finally {
-          setIsSearching(false);
-        }
+    const timer = setTimeout(() => {
+      if (localQuery.trim().length > 0) {
+        dispatch(fetchSearchResults({ query: localQuery, segment: activeDomain }));
       } else {
-        setSearchResults([]);
+        dispatch(clearSearch());
       }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, activeDomain]);
+  }, [localQuery, activeDomain, dispatch]);
 
   const renderProductCard = (item, isDummy = false) => {
     const isWishlisted = !isDummy && wishlistItems?.some(w => w.productId === item.id);
@@ -194,11 +187,12 @@ const SearchScreen = () => {
               style={styles.searchInput}
               placeholder="Type to search.."
               placeholderTextColor="#999"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
+              value={localQuery}
+              onChangeText={setLocalQuery}
+              onSubmitEditing={() => dispatch(addRecentSearch(localQuery))}
             />
-            {searchQuery.length > 0 ? (
-              <TouchableOpacity onPress={() => setSearchQuery('')} style={{ padding: 4 }}>
+            {localQuery.length > 0 ? (
+              <TouchableOpacity onPress={() => setLocalQuery('')} style={{ padding: 4 }}>
                  <Icon name="x" size={20} color="#666" style={styles.micIcon} />
               </TouchableOpacity>
             ) : (
@@ -208,7 +202,7 @@ const SearchScreen = () => {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          {searchQuery.length > 0 ? (
+          {localQuery.length > 0 ? (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>SEARCH RESULTS</Text>
               {isSearching ? (
@@ -216,7 +210,7 @@ const SearchScreen = () => {
                   <ActivityIndicator size="large" color={searchBorderColor} />
                 </View>
               ) : searchResults.length === 0 ? (
-                <Text style={{ textAlign: 'center', marginTop: scalev(40), color: '#666' }}>No products found for "{searchQuery}"</Text>
+                <Text style={{ textAlign: 'center', marginTop: scalev(40), color: '#666' }}>No products found for "{localQuery}"</Text>
               ) : (
                 <View style={styles.recommendedContainer}>
                   {searchResults.map((product) => renderProductCard(product, false))}
@@ -225,11 +219,24 @@ const SearchScreen = () => {
             </View>
           ) : (
             <>
+              {recentSearches?.length > 0 && (
+                <View style={[styles.section, { marginBottom: 20 }]}>
+                  <Text style={styles.sectionTitle}>RECENT SEARCHES</Text>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 }}>
+                    {recentSearches.map((item, index) => (
+                      <TouchableOpacity key={index} style={[styles.choicePill, { borderColor: '#E5E5E5' }]} onPress={() => setLocalQuery(item)}>
+                        <Text style={styles.choiceText}>{item}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
+              
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>POPULAR CHOICES</Text>
                 <View style={styles.choicesContainer}>
                   {popularChoices.map((choice) => (
-                    <TouchableOpacity key={choice.id} style={[styles.choicePill, { borderColor: searchBorderColor }]} onPress={() => setSearchQuery(choice.title)}>
+                    <TouchableOpacity key={choice.id} style={[styles.choicePill, { borderColor: searchBorderColor }]} onPress={() => setLocalQuery(choice.title)}>
                       <Text style={styles.choiceText}>{choice.title}</Text>
                       <Icon name="arrow-right" size={16} color="#000" style={styles.choiceIcon} />
                     </TouchableOpacity>

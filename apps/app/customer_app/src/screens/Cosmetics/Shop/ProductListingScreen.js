@@ -18,16 +18,16 @@ const MOCK_PRODUCTS = Array.from({ length: 8 }).map((_, i) => ({
 const ProductListingScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  
+
   const initialCategory = route.params?.category || 'FACE';
   const initialSubcategory = route.params?.subcategory || 'Blush';
-  
+
   const [activeSubcategory, setActiveSubcategory] = useState(initialSubcategory);
   const siblingTabs = SUBCATEGORIES_DATA[initialCategory] || [];
-  
+
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
-  
+
   const scrollViewRef = useRef(null);
 
   const formatTitle = (str) => {
@@ -39,27 +39,27 @@ const ProductListingScreen = () => {
     return (
       <View style={styles.productCard}>
         <View style={styles.imageContainer}>
-          <Image 
-            source={require('../../../images/makeup/ProductImgs/Blush.webp')} 
-            style={styles.productImage} 
-            resizeMode="contain" 
+          <Image
+            source={require('../../../images/makeup/ProductImgs/Blush.webp')}
+            style={styles.productImage}
+            resizeMode="contain"
           />
           <TouchableOpacity style={styles.wishlistBtn}>
             <Icon name="heart" size={scaleh(16)} color="#000" />
           </TouchableOpacity>
         </View>
-        
+
         <View style={styles.productInfo}>
           <Text style={styles.brandText}>{item.brand}</Text>
           <Text style={styles.titleText} numberOfLines={1}>{item.title}</Text>
           <Text style={styles.weightText}>{item.weight}</Text>
           <Text style={styles.shadesText}>{item.shades}</Text>
-          
+
           <View style={styles.priceRow}>
             <Text style={styles.priceText}>₹{item.price}</Text>
             <Text style={styles.originalPriceText}>₹{item.originalPrice}</Text>
           </View>
-          
+
           <TouchableOpacity style={styles.addToCartBtn} activeOpacity={0.8}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>
@@ -76,7 +76,7 @@ const ProductListingScreen = () => {
         resizeMode="cover"
       />
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
-      
+
       {/* Solid Pink Header Background */}
       <View style={styles.headerBackground} />
 
@@ -86,9 +86,9 @@ const ProductListingScreen = () => {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconBtn}>
             <Icon name="chevron-left" size={scaleh(28)} color="#1a1a1a" />
           </TouchableOpacity>
-          
+
           <Text style={styles.headerTitle}>{formatTitle(activeSubcategory)}</Text>
-          
+
           <View style={styles.headerRightIcons}>
             <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Wishlist')}>
               <Icon name="heart" size={scaleh(22)} color="#1a1a1a" />
@@ -101,9 +101,9 @@ const ProductListingScreen = () => {
 
         {/* Horizontal Tabs */}
         <View style={styles.tabsContainer}>
-          <ScrollView 
+          <ScrollView
             ref={scrollViewRef}
-            horizontal 
+            horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tabsScrollContent}
           >
@@ -112,7 +112,7 @@ const ProductListingScreen = () => {
               // Let's render all.
               const isActive = activeSubcategory === tab.name;
               return (
-                <TouchableOpacity 
+                <TouchableOpacity
                   key={tab.id}
                   style={styles.tabItem}
                   onPress={() => setActiveSubcategory(tab.name)}
@@ -165,21 +165,21 @@ const ProductListingScreen = () => {
         >
           <View style={styles.unifiedModalOverlay}>
             <View style={styles.unifiedModalContainer}>
-              
+
               {/* Floating Close Button */}
-              <TouchableOpacity 
-                style={styles.closeModalBtn} 
+              <TouchableOpacity
+                style={styles.closeModalBtn}
                 onPress={() => {
                   setSortModalVisible(false);
                   setFilterModalVisible(false);
                 }}
               >
-                <Icon name="x" size={scaleh(20)} color="#1a1a1a" />
+                <Icon name="x" size={scaleh(24)} color="#666" />
               </TouchableOpacity>
 
               {/* Tabs Row */}
               <View style={styles.modalTabsRow}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.modalTabBtn, filterModalVisible && styles.modalTabActive]}
                   onPress={() => {
                     setFilterModalVisible(true);
@@ -188,7 +188,7 @@ const ProductListingScreen = () => {
                 >
                   <Text style={[styles.modalTabText, filterModalVisible && styles.modalTabTextActive]}>Filters</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.modalTabBtn, sortModalVisible && styles.modalTabActive]}
                   onPress={() => {
                     setSortModalVisible(true);
@@ -200,25 +200,31 @@ const ProductListingScreen = () => {
               </View>
 
               {/* Modal Content */}
-              <ScrollView style={styles.modalContentScroll}>
+              <ScrollView style={styles.modalContentScroll} showsVerticalScrollIndicator={false}>
                 {filterModalVisible ? (
                   // Filters Content
                   <View style={styles.modalOptionsContainer}>
-                    {['Product Type', 'Skin Type', 'Ingredients'].map((option, i) => (
-                      <TouchableOpacity key={i} style={styles.unifiedOptionCard}>
-                        <Text style={styles.unifiedOptionText}>{option}</Text>
-                        <Icon name="chevron-right" size={scaleh(18)} color="#1a1a1a" />
-                      </TouchableOpacity>
-                    ))}
+                    {['Product Type', 'Skin Type', 'Ingredients'].map((option, i) => {
+                      const isLast = i === 2;
+                      return (
+                        <TouchableOpacity key={i} style={[styles.unifiedOptionRow, isLast && styles.unifiedOptionRowLast]}>
+                          <Text style={styles.unifiedOptionText}>{option}</Text>
+                          <Icon name="chevron-right" size={scaleh(18)} color="#1a1a1a" />
+                        </TouchableOpacity>
+                      );
+                    })}
                   </View>
                 ) : (
                   // Sort Content
                   <View style={styles.modalOptionsContainer}>
-                    {['Best Selling', 'Prices, Low to High', 'Prices, High to Low'].map((option, i) => (
-                      <TouchableOpacity key={i} style={styles.unifiedOptionCard}>
-                        <Text style={styles.unifiedOptionText}>{option}</Text>
-                      </TouchableOpacity>
-                    ))}
+                    {['Best Selling', 'Prices, Low to High', 'Prices, High to Low'].map((option, i) => {
+                      const isLast = i === 2;
+                      return (
+                        <TouchableOpacity key={i} style={[styles.unifiedOptionRow, isLast && styles.unifiedOptionRowLast]}>
+                          <Text style={styles.unifiedOptionText}>{option}</Text>
+                        </TouchableOpacity>
+                      );
+                    })}
                   </View>
                 )}
               </ScrollView>
@@ -256,7 +262,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: scalev(100), // Covers status bar and header row
-    backgroundColor: '#FFDCE6', 
+    backgroundColor: '#FFDCE6',
     zIndex: 0,
   },
   safeArea: {
@@ -268,7 +274,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scaleh(15),
-    height: scalev(50),
+    paddingTop: scalev(10),
+    height: scalev(80),
     zIndex: 1,
   },
   iconBtn: {
@@ -442,12 +449,12 @@ const styles = StyleSheet.create({
   closeModalBtn: {
     alignSelf: 'center',
     backgroundColor: '#FFFFFF',
-    width: scaleh(40),
-    height: scaleh(40),
-    borderRadius: scaleh(20),
+    width: scaleh(45),
+    height: scaleh(45),
+    borderRadius: scaleh(25),
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: scalev(15),
+    marginBottom: scalev(20),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -458,17 +465,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: scaleh(20),
     backgroundColor: '#FFFFFF',
-    borderRadius: scaleh(15),
+    borderRadius: scaleh(25),
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    marginBottom: scalev(15),
   },
   modalTabBtn: {
     flex: 1,
-    paddingVertical: scalev(15),
+    paddingVertical: scalev(12),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
@@ -488,22 +496,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalOptionsContainer: {
-    padding: scaleh(20),
-    paddingTop: scalev(15),
+    marginHorizontal: scaleh(20),
+    backgroundColor: '#FFFFFF',
+    borderRadius: scaleh(15),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  unifiedOptionCard: {
+  unifiedOptionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: scaleh(15),
-    borderRadius: scaleh(15),
-    marginBottom: scalev(12),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    padding: scaleh(18),
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  unifiedOptionRowLast: {
+    borderBottomWidth: 0,
   },
   unifiedOptionText: {
     fontSize: scaleh(14),

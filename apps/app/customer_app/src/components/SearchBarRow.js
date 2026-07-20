@@ -23,7 +23,7 @@ const SearchBarRow = () => {
           <Icon name="search" size={scaleh(18)} color="#666" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Type to search..."
+            placeholder={isCosmetics ? "What are you looking for?" : "Type to search..."}
             placeholderTextColor="#999"
             editable={false}
           />
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: scaleh(14),
+    fontSize: scaleh(12),
     color: '#1a1a1a',
     paddingVertical: 0,
   },
