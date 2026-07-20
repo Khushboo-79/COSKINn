@@ -10,6 +10,9 @@ import SearchBarRow from '../../components/SearchBarRow';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleDomain } from '../../redux/slices/appSlice';
 import { fetchProducts } from '../../redux/slices/productSlice';
+import { fetchWishlist, toggleWishlist } from '../../redux/slices/wishlistSlice';
+import { fetchCart, addToCart, updateCartItem, removeFromCart } from '../../redux/slices/cartSlice';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const { width } = Dimensions.get('window');
 const bannerWidth = width - scaleh(40); // Screen width minus padding
@@ -19,10 +22,14 @@ const DashboardScreen = () => {
   const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app.activeDomain);
   const { items: products, loading } = useSelector(state => state.product);
+  const { items: wishlistItems } = useSelector(state => state.wishlist);
+  const cartItems = useSelector(state => state.cart.items) || [];
   const isThemeDark = activeDomain === 'skincare';
 
   useEffect(() => {
     dispatch(fetchProducts({ category: 'skincare' })); // Fetch skincare products
+    dispatch(fetchWishlist());
+    dispatch(fetchCart()); // Fetch cart on load to sync state
   }, [dispatch]);
   const [activeMainBannerIndex, setActiveMainBannerIndex] = useState(0);
   const mainBannerData = [1, 2, 3, 4, 5, 6];
@@ -170,44 +177,83 @@ const DashboardScreen = () => {
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
               contentContainerStyle={{ paddingHorizontal: scaleh(20) }}
-              renderItem={({ item }) => (
-                <View style={[styles.productBanner, { overflow: 'hidden', width: scaleh(300), marginRight: scaleh(20) }]}>
-                  {/* Background gradient */}
-                  <LinearGradient
-                    colors={['#FFD1E3', '#FFF2E6']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    style={StyleSheet.absoluteFill}
-                  />
-
-                  {/* Orange slices background image */}
-                  <Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '30%', height: '30%', left: '40%', top: '5%', opacity: 0.9 }]} resizeMode="cover" />
-
-                  <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
-                    <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
-                  </View>
-
-                  <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]} numberOfLines={2}>
-                    {item.name || 'Vitamin C + E Moisturizer'}
-                  </Text>
-                  <Text style={[styles.productSubtitle, { fontSize: scaleh(12), color: '#1a1a1a', fontWeight: '600', marginBottom: scalev(20), marginTop: scalev(5) }]} numberOfLines={1}>
-                    {item.subtitle || 'Normal, Oily & Combination Skin'}
-                  </Text>
-
-                  <View style={[styles.sizePill, { borderColor: '#FF0069', paddingVertical: scalev(6), paddingHorizontal: scaleh(20) }]}>
-                    <Text style={[styles.sizePillText, { fontSize: scaleh(14), fontWeight: '700' }]}>{item.size || '60ml'}</Text>
-                  </View>
-
-                  <View style={[styles.priceActionContainer, { borderColor: '#FF0069', height: scalev(50), width: '100%', borderRadius: scaleh(15) }]}>
-                    <View style={[styles.priceSection, { borderRightColor: '#FF0069' }]}>
-                      <Text style={[styles.priceText, { fontSize: scaleh(18) }]}>₹{item.price || '899'}</Text>
-                    </View>
-                    <TouchableOpacity style={styles.addToCartSection}>
-                      <Text style={[styles.addToCartText, { color: '#FF0069', fontWeight: '800', fontSize: scaleh(14) }]}>Add to Cart</Text>
+              renderItem={({ item }) => {
+                const isWishlisted = wishlistItems?.some(w => w.productId === item.id);
+                const cartItem = cartItems?.find(c => c.productId === item.id);
+                return (
+                  <View style={[styles.productBanner, { overflow: 'hidden', width: scaleh(300), marginRight: scaleh(20) }]}>
+                    <TouchableOpacity
+                      style={{ position: 'absolute', top: scalev(15), right: scaleh(15), zIndex: 10, backgroundColor: 'rgba(255,255,255,0.7)', padding: scaleh(8), borderRadius: scaleh(20) }}
+                      onPress={() => dispatch(toggleWishlist(item.id))}
+                    >
+                      <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(22)} color={isWishlisted ? "#FF0069" : "#666"} />
                     </TouchableOpacity>
+                    {/* Background gradient */}
+                    <LinearGradient
+                      colors={['#FFD1E3', '#FFF2E6']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                      style={StyleSheet.absoluteFill}
+                    />
+
+                    {/* Orange slices background image */}
+                    {/* //<Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '30%', height: '30%', left: '40%', top: '5%', opacity: 0.9 }]} resizeMode="cover" /> */}
+
+                    <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
+                      <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
+                    </View>
+
+                    <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]} numberOfLines={2}>
+                      {item.name || 'Vitamin C + E Moisturizer'}
+                    </Text>
+                    <Text style={[styles.productSubtitle, { fontSize: scaleh(12), color: '#1a1a1a', fontWeight: '600', marginBottom: scalev(20), marginTop: scalev(5) }]} numberOfLines={1}>
+                      {item.subtitle || 'Normal, Oily & Combination Skin'}
+                    </Text>
+
+                    <View style={[styles.sizePill, { borderColor: '#FF0069', paddingVertical: scalev(6), paddingHorizontal: scaleh(20) }]}>
+                      <Text style={[styles.sizePillText, { fontSize: scaleh(14), fontWeight: '700' }]}>{item.size || '60ml'}</Text>
+                    </View>
+
+                    <View style={[styles.priceActionContainer, { borderColor: '#FF0069', height: scalev(50), width: '100%', borderRadius: scaleh(15) }]}>
+                      <View style={[styles.priceSection, { borderRightColor: '#FF0069' }]}>
+                        <Text style={[styles.priceText, { fontSize: scaleh(18) }]}>₹{item.price || '899'}</Text>
+                      </View>
+                      <View style={styles.addToCartWrapper}>
+                        {cartItem ? (
+                          <View style={styles.quantityControl}>
+                            <TouchableOpacity
+                              style={styles.qtyBtn}
+                              onPress={() => {
+                                if (cartItem.quantity > 1) {
+                                  dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                                } else {
+                                  dispatch(removeFromCart(cartItem.id));
+                                }
+                              }}
+                            >
+                              <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
+                            </TouchableOpacity>
+                            <Text style={styles.qtyText}>{cartItem.quantity}</Text>
+                            <TouchableOpacity
+                              style={styles.qtyBtn}
+                              onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
+                            >
+                              <Icon name="plus" size={scaleh(16)} color="#FF0069" />
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          <TouchableOpacity
+                            style={styles.addToCartSection}
+                            onPress={() => dispatch(addToCart({ productId: item.id }))}
+                          >
+                            <Text style={[styles.addToCartText, { color: '#FF0069', fontWeight: '800', fontSize: scaleh(14) }]}>Add to Cart</Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </View>
                   </View>
-                </View>
-              )}
+                )
+              }}
               ListEmptyComponent={() => (
                 <View style={{ width: width - scaleh(40), alignItems: 'center', justifyContent: 'center', height: scalev(200) }}>
                   <Text>{loading ? 'Loading Products...' : 'No products found.'}</Text>
@@ -713,6 +759,30 @@ const styles = StyleSheet.create({
     fontSize: scaleh(12),
     fontWeight: '600',
     color: AppTheme.colors.primary,
+  },
+  addToCartWrapper: {
+    flex: 1.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+  },
+  qtyBtn: {
+    width: scaleh(28),
+    height: scalev(28),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: scaleh(14),
+  },
+  qtyText: {
+    fontSize: scaleh(16),
+    fontWeight: '700',
+    color: '#1a1a1a',
   },
 
   categoriesContainer: {

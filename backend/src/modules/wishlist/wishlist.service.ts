@@ -81,6 +81,7 @@ export class WishlistService {
         }
       });
     } catch (e) {
+      console.error('Error in removeFromWishlist:', e);
       // Ignore error if item wasn't in wishlist
     }
 

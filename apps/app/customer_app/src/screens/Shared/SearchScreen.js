@@ -1,11 +1,14 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, ScrollView, Image, ImageBackground, InteractionManager } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, ScrollView, Image, ActivityIndicator, InteractionManager } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
+import { productService } from '../../services/productService';
+import { toggleWishlist } from '../../redux/slices/wishlistSlice';
+import { addToCart, updateCartItem, removeFromCart } from '../../redux/slices/cartSlice';
 
 const popularChoices = [
   { id: 1, title: 'Suncreen' },
@@ -35,11 +38,19 @@ const recommendedProducts = [
 
 const SearchScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
   const searchBorderColor = isCosmetics ? '#FFC2D1' : AppTheme.colors.primary;
 
+  const cartItems = useSelector(state => state.cart.items) || [];
+  const wishlistItems = useSelector(state => state.wishlist.items) || [];
+
   const searchInputRef = useRef(null);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     // Delay focusing the keyboard until the screen transition animation finishes
@@ -51,6 +62,123 @@ const SearchScreen = () => {
     });
     return () => interactionTask.cancel();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (searchQuery.trim().length > 0) {
+        setIsSearching(true);
+        try {
+          console.log(`[SearchScreen] Hitting Search API for: "${searchQuery}" in segment: ${activeDomain}`);
+          const results = await productService.searchProducts(searchQuery, activeDomain);
+          console.log(`[SearchScreen] Search API Success! Found ${results?.length || 0} results.`);
+          setSearchResults(results);
+        } catch (err) {
+          console.error("[SearchScreen] Search error:", err);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, activeDomain]);
+
+  const renderProductCard = (item, isDummy = false) => {
+    const isWishlisted = !isDummy && wishlistItems?.some(w => w.productId === item.id);
+    const cartItem = !isDummy && cartItems?.find(c => c.productId === item.id);
+
+    if (isCosmetics) {
+      return (
+        <View key={item.id} style={styles.cosmeticProductCard}>
+          <TouchableOpacity 
+            style={styles.heartIconContainer}
+            onPress={() => !isDummy && dispatch(toggleWishlist(item.id))}
+          >
+            <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#666"} />
+          </TouchableOpacity>
+          <Image source={isDummy ? item.image : (item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp'))} style={styles.cosmeticProductImage} resizeMode="contain" />
+          <View style={styles.cosmeticProductInfo}>
+            <Text style={styles.cosmeticProductBrand}>{item.brand || 'COSKINn'}</Text>
+            <Text style={styles.cosmeticProductTitle} numberOfLines={3}>{item.title || item.name}</Text>
+            <View style={styles.cosmeticProductBottom}>
+              <Text style={styles.cosmeticProductPrice}>{isDummy ? item.price : `₹${item.discountPrice || item.price}`}</Text>
+              
+              {cartItem ? (
+                 <View style={styles.searchQtyRow}>
+                   <TouchableOpacity style={styles.searchQtyBtn} onPress={() => {
+                     if (cartItem.quantity > 1) {
+                       dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                     } else {
+                       dispatch(removeFromCart(cartItem.id));
+                     }
+                   }}>
+                     <Icon name="minus" size={12} color="#1a1a1a" />
+                   </TouchableOpacity>
+                   <Text style={styles.searchQtyText}>{cartItem.quantity}</Text>
+                   <TouchableOpacity style={styles.searchQtyBtn} onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}>
+                     <Icon name="plus" size={12} color="#FF0069" />
+                   </TouchableOpacity>
+                 </View>
+              ) : (
+                <TouchableOpacity style={styles.cosmeticAddButton} onPress={() => !isDummy && dispatch(addToCart({ productId: item.id }))}>
+                  <Icon name="shopping-bag" size={14} color="#FFF" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </View>
+      );
+    }
+    
+    // Skincare render
+    return (
+      <View key={item.id} style={styles.productCard}>
+        <View style={styles.productImageSection}>
+          <TouchableOpacity 
+            style={styles.heartIconContainer}
+            onPress={() => !isDummy && dispatch(toggleWishlist(item.id))}
+          >
+            <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#666"} />
+          </TouchableOpacity>
+          <LinearGradient colors={['#FFD1E3', '#FFF2E6']} style={StyleSheet.absoluteFill} />
+          {!isDummy && <Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '130%', height: '130%', left: '-15%', top: '-15%', opacity: 0.9 }]} resizeMode="cover" />}
+          {isDummy && <Image source={item.bgImage} style={[StyleSheet.absoluteFill, { width: '130%', height: '130%', left: '-15%', top: '-15%', opacity: 0.9 }]} resizeMode="cover" />}
+          
+          <Image source={isDummy ? item.image : (item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/bgImages/productImg.webp'))} style={styles.productImage} resizeMode="contain" />
+        </View>
+        <View style={styles.productInfoSection}>
+          <Text style={styles.productTitle} numberOfLines={3}>{item.title || item.name}</Text>
+          <View style={styles.productBottomRow}>
+            <Text style={styles.productPrice}>{isDummy ? item.price : `₹${item.discountPrice || item.price}`}</Text>
+            
+            {cartItem ? (
+               <View style={styles.searchQtyRow}>
+                 <TouchableOpacity style={styles.searchQtyBtn} onPress={() => {
+                   if (cartItem.quantity > 1) {
+                     dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                   } else {
+                     dispatch(removeFromCart(cartItem.id));
+                   }
+                 }}>
+                   <Icon name="minus" size={12} color="#1a1a1a" />
+                 </TouchableOpacity>
+                 <Text style={styles.searchQtyText}>{cartItem.quantity}</Text>
+                 <TouchableOpacity style={styles.searchQtyBtn} onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}>
+                   <Icon name="plus" size={12} color="#FF0069" />
+                 </TouchableOpacity>
+               </View>
+            ) : (
+              <TouchableOpacity style={styles.addButton} onPress={() => !isDummy && dispatch(addToCart({ productId: item.id }))}>
+                <Icon name="shopping-bag" size={16} color="#FFF" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: isCosmetics ? '#ffffffff' : AppTheme.colors.white }}>
@@ -66,72 +194,57 @@ const SearchScreen = () => {
               style={styles.searchInput}
               placeholder="Type to search.."
               placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
-            <Icon name="mic" size={20} color="#666" style={styles.micIcon} />
+            {searchQuery.length > 0 ? (
+              <TouchableOpacity onPress={() => setSearchQuery('')} style={{ padding: 4 }}>
+                 <Icon name="x" size={20} color="#666" style={styles.micIcon} />
+              </TouchableOpacity>
+            ) : (
+              <Icon name="mic" size={20} color="#666" style={styles.micIcon} />
+            )}
           </View>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>POPULAR CHOICES</Text>
-            <View style={styles.choicesContainer}>
-              {popularChoices.map((choice) => (
-                <TouchableOpacity key={choice.id} style={[styles.choicePill, { borderColor: searchBorderColor }]}>
-                  <Text style={styles.choiceText}>{choice.title}</Text>
-                  <Icon name="arrow-right" size={16} color="#000" style={styles.choiceIcon} />
-                </TouchableOpacity>
-              ))}
+          {searchQuery.length > 0 ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>SEARCH RESULTS</Text>
+              {isSearching ? (
+                <View style={{ marginTop: scalev(40) }}>
+                  <ActivityIndicator size="large" color={searchBorderColor} />
+                </View>
+              ) : searchResults.length === 0 ? (
+                <Text style={{ textAlign: 'center', marginTop: scalev(40), color: '#666' }}>No products found for "{searchQuery}"</Text>
+              ) : (
+                <View style={styles.recommendedContainer}>
+                  {searchResults.map((product) => renderProductCard(product, false))}
+                </View>
+              )}
             </View>
-          </View>
+          ) : (
+            <>
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>POPULAR CHOICES</Text>
+                <View style={styles.choicesContainer}>
+                  {popularChoices.map((choice) => (
+                    <TouchableOpacity key={choice.id} style={[styles.choicePill, { borderColor: searchBorderColor }]} onPress={() => setSearchQuery(choice.title)}>
+                      <Text style={styles.choiceText}>{choice.title}</Text>
+                      <Icon name="arrow-right" size={16} color="#000" style={styles.choiceIcon} />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>RECOMMENDED FOR YOU</Text>
-            <View style={styles.recommendedContainer}>
-              {recommendedProducts.map((product) => {
-                if (isCosmetics) {
-                  return (
-                    <View key={product.id} style={styles.cosmeticProductCard}>
-                      <View style={styles.heartIconContainer}>
-                        <Ionicons name="heart-outline" size={scaleh(14)} color="#666" />
-                      </View>
-                      <Image source={product.image} style={styles.cosmeticProductImage} resizeMode="contain" />
-                      <View style={styles.cosmeticProductInfo}>
-                        <Text style={styles.cosmeticProductBrand}>{product.brand}</Text>
-                        <Text style={styles.cosmeticProductTitle} numberOfLines={3}>{product.title}</Text>
-                        <View style={styles.cosmeticProductBottom}>
-                          <Text style={styles.cosmeticProductPrice}>{product.price}</Text>
-                          <TouchableOpacity style={styles.cosmeticAddButton}>
-                            <Icon name="shopping-bag" size={14} color="#FFF" />
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  );
-                }
-                return (
-                  <View key={product.id} style={styles.productCard}>
-                    <View style={styles.productImageSection}>
-                      <LinearGradient
-                        colors={['#FFD1E3', '#FFF2E6']}
-                        style={StyleSheet.absoluteFill}
-                      />
-                      <Image source={product.bgImage} style={[StyleSheet.absoluteFill, { width: '130%', height: '130%', left: '-15%', top: '-15%', opacity: 0.9 }]} resizeMode="cover" />
-                      <Image source={product.image} style={styles.productImage} resizeMode="contain" />
-                    </View>
-                    <View style={styles.productInfoSection}>
-                      <Text style={styles.productTitle} numberOfLines={3}>{product.title}</Text>
-                      <View style={styles.productBottomRow}>
-                        <Text style={styles.productPrice}>{product.price}</Text>
-                        <TouchableOpacity style={styles.addButton}>
-                          <Icon name="shopping-bag" size={16} color="#FFF" />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
-          </View>
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>RECOMMENDED FOR YOU</Text>
+                <View style={styles.recommendedContainer}>
+                  {recommendedProducts.map((product) => renderProductCard(product, true))}
+                </View>
+              </View>
+            </>
+          )}
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -221,6 +334,8 @@ const styles = StyleSheet.create({
   recommendedContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    rowGap: scalev(15),
   },
   productCard: {
     ...AppTheme.styles.shadowCard,
@@ -316,6 +431,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFC2D1', // Light pink background
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  searchQtyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: scaleh(14),
+  },
+  searchQtyBtn: {
+    paddingHorizontal: scaleh(6),
+    paddingVertical: scalev(4),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchQtyText: {
+    fontSize: scaleh(12),
+    fontWeight: '600',
+    color: '#000',
+    paddingHorizontal: scaleh(2),
   },
 });
 

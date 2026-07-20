@@ -3,9 +3,12 @@ import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import { AppTheme, scaleh, scalev } from '../constants/AppTheme';
+import { useSelector } from 'react-redux';
 
 const Header = ({ showHeart = false, rightComponent, onBackPress, transparent = false, showLogo = true, backgroundColor = '#FFFFFF' }) => {
   const navigation = useNavigation();
+  const cartItems = useSelector(state => state.cart.items);
+  const cartCount = cartItems?.length || 0;
 
   return (
     <View style={[styles.headerContainer, { backgroundColor: transparent ? 'transparent' : backgroundColor }]}>
@@ -43,6 +46,11 @@ const Header = ({ showHeart = false, rightComponent, onBackPress, transparent = 
               style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} 
               resizeMode="contain" 
             />
+            {!showHeart && cartCount > 0 && (
+              <View style={styles.badgeContainer}>
+                <Text style={styles.badgeText}>{cartCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
             <Icon name="search" size={scaleh(22)} color="#1a1a1a" />
@@ -102,6 +110,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: scaleh(15),
+  },
+  badgeContainer: {
+    position: 'absolute',
+    top: scalev(0),
+    right: scaleh(0),
+    backgroundColor: '#FF0069',
+    borderRadius: scaleh(10),
+    minWidth: scaleh(16),
+    height: scalev(16),
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: scaleh(4),
+  },
+  badgeText: {
+    color: '#FFF',
+    fontSize: scaleh(10),
+    fontWeight: '700',
   },
 });
 

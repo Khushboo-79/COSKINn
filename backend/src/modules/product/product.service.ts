@@ -106,7 +106,11 @@ export class ProductService {
 
   async search(query: string, segment?: string) {
     // Uses PostgreSQL full text search natively through Prisma preview feature
-    const searchQuery = query.split(' ').map(term => `${term}:*`).join(' & ');
+    const searchQuery = query.trim().split(/\s+/).filter(Boolean).map(term => `${term}:*`).join(' & ');
+    
+    if (!searchQuery) {
+      return [];
+    }
     
     const where: any = {
       isDeleted: false,

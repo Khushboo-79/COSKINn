@@ -28,12 +28,13 @@ export const productService = {
   },
 
   /**
-   * Search products by query string
+   * Search products by query string and optional segment
    * @param {string} query - The search string
+   * @param {string} [segment] - The segment to filter by (e.g. SKINCARE or COSMETICS)
    */
-  searchProducts: async (query) => {
+  searchProducts: async (query, segment) => {
     try {
-      const response = await api.get('/products/search', { params: { q: query } });
+      const response = await api.get('/products/search', { params: { q: query, segment } });
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
