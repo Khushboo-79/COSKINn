@@ -47,6 +47,12 @@ export class OrderController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('orders/:id/track')
+  async trackOrder(@Request() req, @Param('id') id: string) {
+    return this.orderService.trackOrder(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('orders/:id/invoice')
   async getCustomerOrderInvoice(@Request() req, @Param('id') id: string) {
     // Basic authorization check could be added inside service or here

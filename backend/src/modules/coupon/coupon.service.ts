@@ -51,6 +51,20 @@ export class CouponService {
 
   // --- ADMIN METHODS ---
 
+  async getAvailableCoupons(userId: string) {
+    const now = new Date();
+    return this.prisma.coupon.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { endDate: null },
+          { endDate: { gt: now } }
+        ]
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
   async createCoupon(data: any) {
     return this.prisma.coupon.create({ data });
   }
