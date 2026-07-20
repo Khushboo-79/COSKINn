@@ -83,7 +83,7 @@ export default function IngredientGuidesPage() {
       skinType: "Dry, flaky, and dehydrated skin.",
       usage: "Whenever deep moisturization is needed.",
       pairWith: ["Ceramides", "Squalane"], avoidMixing: ["None"],
-      products: ["COSKINn Mango Lip Balm SPF 30", "COSKINn Rich Body Butter"]
+      products: ["COSKINn Rich Body Butter"]
     },
     {
       id: 10, name: "Orange Extract", category: "Fruit Extracts",

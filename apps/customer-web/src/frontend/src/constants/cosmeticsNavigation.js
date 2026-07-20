@@ -5,14 +5,13 @@ export const cosmeticsNavigation = {
       links: [
         { name: "COSKINn Magnetic Lipstick", href: "/collections/magnetic-lipstick" },
         { name: "COSKINn Precision Lip Liner", href: "/collections/precision-lip-liner" },
-        { name: "COSKINn Lip Blur", href: "/product/307" },
-        { name: "COSKINn Mango Lip Balm SPF 30", href: "/product/308" },
+        { name: "COSKINn Lip Blur", href: "/collections/lip-blur" }
       ]
     },
     {
       title: "Eyes",
       links: [
-        { name: "COSKINn Lift & Curl Mascara", href: "/product/303" },
+        { name: "COSKINn Lift & Curl Mascara", href: "/collections/lift-curl-mascara" },
         { name: "COSKINn Eyeshadow Palette", href: "/product/304" },
       ]
     },
