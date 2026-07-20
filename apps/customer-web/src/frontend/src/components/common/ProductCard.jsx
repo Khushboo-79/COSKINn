@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingBag, Star } from 'lucide-react';
+import { Heart, ShoppingBag, Star, Eye } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onQuickView }) {
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
@@ -60,6 +60,15 @@ export default function ProductCard({ product }) {
         >
           <Heart className={`w-4 h-4 ${inWishlist ? 'fill-[#FF2D7A] text-[#FF2D7A]' : 'text-gray-400 hover:text-[#FF2D7A]'}`} />
         </button>
+
+        {onQuickView && (
+          <button 
+            onClick={(e) => { e.preventDefault(); onQuickView(product); }}
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-md text-[#1B1B1B] text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-full shadow-lg flex items-center gap-2 transition-all duration-300 hover:bg-[#FF2D7A] hover:text-white ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'}`}
+          >
+            <Eye size={14} /> Quick View
+          </button>
+        )}
 
         <Link to={`/product/${product.id}`} className="absolute inset-0 z-10 flex items-center justify-center">
           <motion.img 

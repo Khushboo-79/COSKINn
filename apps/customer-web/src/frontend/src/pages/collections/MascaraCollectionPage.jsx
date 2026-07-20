@@ -8,8 +8,7 @@ import Footer from '../../components/common/Footer';
 import SEO from '../../components/common/SEO';
 
 // Images
-import heroModel from '../../assets/images/cat_mascara_model.webp';
-import floatingMascara from '../../assets/images/cosmetics_floating_mascara.webp';
+import heroModel from '../../assets/images/luxury_mascara_hero.png';
 import mascaraProductImg from '../../assets/images/lift_curl_mascara.webp';
 import featureImg1 from '../../assets/images/cat_eyes_1784312591092.webp';
 import featureImg2 from '../../assets/images/cosmetics_after_model.webp';
@@ -79,17 +78,18 @@ export default function MascaraCollectionPage() {
           SECTION 1: LUXURY HERO
           ========================================= */}
       <section className="relative w-full min-h-[90vh] flex items-center overflow-hidden pt-[110px]">
-        {/* Luxury Background Gradient (Extends to top) */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FFC2D1]/40 via-[#FFFDFD] to-[#FF8FB1]/20 -z-10" />
-        <div className="absolute top-0 right-0 w-[60vw] h-[60vw] bg-gradient-to-bl from-[#FF0069]/5 to-transparent rounded-full blur-[120px] -z-10" />
+        {/* Luxury Background Gradient (Soft White, Blush Pink, Baby Pink) */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#FFFDFD] via-[#FFE5EC] to-[#FFD1DC] opacity-90 -z-10" />
+        <div className="absolute top-0 left-0 w-[50vw] h-[50vw] bg-gradient-to-br from-[#FFB6C1]/30 to-transparent rounded-full blur-[100px] -z-10" />
+        <div className="absolute bottom-0 right-0 w-[60vw] h-[60vw] bg-gradient-to-tl from-[#FFC0CB]/30 to-transparent rounded-full blur-[120px] -z-10" />
 
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 w-full flex flex-col-reverse lg:flex-row items-center h-full gap-12 lg:gap-0 pb-16">
           
           {/* Left Content */}
           <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
             className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left z-20"
           >
             <span className="inline-block py-1.5 px-4 rounded-full bg-white/60 backdrop-blur-md border border-[#FF8FB1]/30 text-xs font-bold tracking-[0.2em] uppercase text-[#FF0069] shadow-sm mb-6">
@@ -119,34 +119,24 @@ export default function MascaraCollectionPage() {
           </motion.div>
 
           {/* Right Image (Editorial Style - No Container) */}
-          <div className="w-full lg:w-1/2 relative h-[50vh] lg:h-[75vh] flex justify-center items-center">
+          <div className="w-full lg:w-1/2 relative h-[50vh] lg:h-[80vh] flex justify-center items-center z-10">
             <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
               style={{ y: yParallax }}
-              className="absolute inset-0 w-full h-full flex justify-center items-end lg:items-center"
+              className="absolute inset-0 w-full h-full flex justify-center items-center"
             >
-              <img 
+              <motion.img 
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 8, ease: "easeInOut", repeat: Infinity }}
                 src={heroModel} 
                 alt="Lift & Curl Model" 
-                className="w-full h-[120%] lg:h-[130%] object-cover mix-blend-multiply opacity-95 pointer-events-none"
-              />
-              {/* Bottom fade to seamlessly blend image */}
-              <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#FFFDFD] to-transparent pointer-events-none mix-blend-overlay" />
-            </motion.div>
-
-            {/* Floating Product Element */}
-            <motion.div
-              initial={{ opacity: 0, y: 50, rotate: -10 }}
-              animate={{ opacity: 1, y: 0, rotate: -15 }}
-              transition={{ duration: 1.2, delay: 0.5, type: 'spring', bounce: 0.4 }}
-              className="absolute right-0 lg:right-[-5%] top-[20%] lg:top-[30%] w-28 md:w-40 lg:w-48 drop-shadow-2xl z-30"
-              style={{
-                animation: 'float-slow 6s ease-in-out infinite'
-              }}
-            >
-              <img 
-                src={floatingMascara} 
-                alt="Mascara Tube" 
-                className="w-full h-auto object-contain filter drop-shadow-[0_20px_40px_rgba(255,0,105,0.2)]"
+                style={{ 
+                  WebkitMaskImage: 'radial-gradient(circle at center, black 35%, transparent 75%)', 
+                  maskImage: 'radial-gradient(circle at center, black 35%, transparent 75%)' 
+                }}
+                className="w-[120%] h-[120%] object-cover object-center pointer-events-none"
               />
             </motion.div>
           </div>
@@ -326,12 +316,6 @@ export default function MascaraCollectionPage() {
 
       <Footer />
       
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0) rotate(-15deg); }
-          50% { transform: translateY(-20px) rotate(-12deg); }
-        }
-      `}} />
     </div>
   );
 }
