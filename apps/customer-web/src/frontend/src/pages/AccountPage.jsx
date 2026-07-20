@@ -2549,15 +2549,31 @@ function NotificationsTab({ primaryClass }) {
 
 function WalletTab() {
   const [filter, setFilter] = useState('All');
-  
-  const transactions = [
-    { id: 'TXN-9021', type: 'Credit', category: 'Refund', amount: 1500, date: '2026-07-18', status: 'Completed', opening: 500, closing: 2000 },
-    { id: 'TXN-9020', type: 'Debit', category: 'Order Payment', amount: 499, date: '2026-07-15', status: 'Completed', opening: 999, closing: 500 },
-    { id: 'TXN-9019', type: 'Credit', category: 'Bonus', amount: 200, date: '2026-07-10', status: 'Completed', opening: 799, closing: 999 },
-    { id: 'TXN-9018', type: 'Credit', category: 'Cashback', amount: 50, date: '2026-07-05', status: 'Completed', opening: 749, closing: 799 },
-  ];
+  const [wallet, setWallet] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const filteredTransactions = filter === 'All' ? transactions : transactions.filter(t => t.type === filter);
+  useEffect(() => {
+    const fetchWallet = async () => {
+      try {
+        const { data } = await apiClient.get('/wallet');
+        setWallet(data);
+      } catch (err) {
+        console.error('Failed to fetch wallet', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWallet();
+  }, []);
+
+  if (loading) {
+    return <div className="p-8 text-center"><div className="w-8 h-8 border-4 border-[#FF0069] border-t-transparent rounded-full animate-spin mx-auto"></div></div>;
+  }
+
+  const transactions = wallet?.transactions || [];
+  const filteredTransactions = filter === 'All' ? transactions : transactions.filter(t => 
+    filter === 'Credit' ? t.type === 'CREDIT' : t.type === 'DEBIT'
+  );
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 font-sans">
@@ -2577,7 +2593,7 @@ function WalletTab() {
         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
         <div className="relative z-10">
           <p className="text-white/80 text-sm font-bold uppercase tracking-wider mb-2">Available Balance</p>
-          <h3 className="text-5xl font-black mb-1">₹2,000</h3>
+          <h3 className="text-5xl font-black mb-1">₹{wallet?.balance || 0}</h3>
           <p className="text-white/90 text-sm flex items-center gap-2 mt-4">
             <CheckCircle2 size={16} /> Secure and ready to use
           </p>
@@ -2603,44 +2619,39 @@ function WalletTab() {
           <thead className="bg-gray-50/50 border-b border-gray-100">
             <tr>
               <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date & ID</th>
-              <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
+              <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Reference</th>
               <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
               <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Balance (Op/Cl)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filteredTransactions.map(t => (
               <tr key={t.id} className="hover:bg-pink-50/10 transition-colors">
                 <td className="p-4">
-                  <p className="font-bold text-gray-900 text-sm">{t.date}</p>
-                  <p className="text-xs text-gray-500">{t.id}</p>
+                  <p className="font-bold text-gray-900 text-sm">{new Date(t.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500">{t.id.slice(0, 8)}</p>
                 </td>
                 <td className="p-4">
                   <div className="flex items-center gap-2">
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === 'Credit' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                      {t.type === 'Credit' ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === 'CREDIT' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                      {t.type === 'CREDIT' ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
                     </span>
-                    <span className="font-medium text-gray-700 text-sm">{t.category}</span>
+                    <span className="font-medium text-gray-700 text-sm">{t.reference}</span>
                   </div>
                 </td>
                 <td className="p-4">
-                  <span className={`font-black ${t.type === 'Credit' ? 'text-green-600' : 'text-gray-900'}`}>
-                    {t.type === 'Credit' ? '+' : '-'}₹{t.amount}
+                  <span className={`font-black ${t.type === 'CREDIT' ? 'text-green-600' : 'text-gray-900'}`}>
+                    {t.type === 'CREDIT' ? '+' : '-'}₹{t.amount}
                   </span>
                 </td>
                 <td className="p-4">
-                  <span className="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-100">{t.status}</span>
-                </td>
-                <td className="p-4 text-right">
-                  <p className="text-xs text-gray-400">Op: ₹{t.opening}</p>
-                  <p className="font-bold text-gray-800 text-sm">Cl: ₹{t.closing}</p>
+                  <span className="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-100">Completed</span>
                 </td>
               </tr>
             ))}
             {filteredTransactions.length === 0 && (
               <tr>
-                <td colSpan="5" className="p-8 text-center text-gray-500">No transactions found.</td>
+                <td colSpan="4" className="p-8 text-center text-gray-500">No transactions found.</td>
               </tr>
             )}
           </tbody>
@@ -2720,8 +2731,25 @@ function BonusesTab() {
 
 function ReferralTab() {
   const { user } = useAuth();
-  const referralCode = user?.name ? `${user.name.split(' ')[0].toUpperCase()}-BEAUTY-2026` : "RESHU-BEAUTY-2026";
+  const [referralData, setReferralData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchReferral = async () => {
+      try {
+        const { data } = await apiClient.get('/referral/my-code');
+        setReferralData(data);
+      } catch (err) {
+        console.error('Failed to fetch referral code', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReferral();
+  }, []);
+
+  const referralCode = referralData?.referralCode || 'COSKINN-BEAUTY';
   
   const handleCopy = () => {
     navigator.clipboard.writeText(referralCode);
@@ -2901,13 +2929,35 @@ function ReferralTab() {
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
 
-// 8. Reward Points Tab
-function RewardPointsTab({ dynamicData }) {
+function RewardPointsTab() {
+  const [rewardData, setRewardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRewards = async () => {
+      try {
+        const { data } = await apiClient.get('/reward-point');
+        setRewardData(data);
+      } catch (err) {
+        console.error('Failed to fetch reward points', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRewards();
+  }, []);
+
+  const balance = rewardData?.balance || 0;
+  const history = rewardData?.history || [];
+  
+  const lifetimeEarned = history.filter(h => h.type === 'EARN').reduce((sum, h) => sum + h.points, 0);
+  const totalRedeemed = history.filter(h => h.type === 'REDEEM').reduce((sum, h) => sum + h.points, 0);
+
+  if (loading) {
+    return <div className="p-8 text-center"><div className="w-8 h-8 border-4 border-[#FF0069] border-t-transparent rounded-full animate-spin mx-auto"></div></div>;
+  }
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col gap-6 font-sans">
       <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white">
@@ -2921,8 +2971,8 @@ function RewardPointsTab({ dynamicData }) {
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
           <Award size={32} className="mb-4 text-white/80" />
           <p className="text-white/80 font-bold uppercase tracking-wider text-xs mb-1">Total Points</p>
-          <h3 className="text-4xl font-black mb-4">{(dynamicData?.rewardPoints || 0).toLocaleString()}</h3>
-          <p className="text-sm font-medium">Equal to ${((dynamicData?.rewardPoints || 0) * 0.01).toFixed(2)} store credit</p>
+          <h3 className="text-4xl font-black mb-4">{balance.toLocaleString()}</h3>
+          <p className="text-sm font-medium">Equal to ₹{(balance * 0.1).toFixed(2)} store credit</p>
         </div>
 
         {/* Stats */}
@@ -2930,7 +2980,7 @@ function RewardPointsTab({ dynamicData }) {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Lifetime Earned</p>
-              <h4 className="text-2xl font-black text-black">12,500 <span className="text-sm font-bold text-gray-400">pts</span></h4>
+              <h4 className="text-2xl font-black text-black">{lifetimeEarned.toLocaleString()} <span className="text-sm font-bold text-gray-400">pts</span></h4>
             </div>
             <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-600">
               <ArrowUpRight size={20} />
@@ -2939,7 +2989,7 @@ function RewardPointsTab({ dynamicData }) {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Redeemed</p>
-              <h4 className="text-2xl font-black text-black">8,000 <span className="text-sm font-bold text-gray-400">pts</span></h4>
+              <h4 className="text-2xl font-black text-black">{totalRedeemed.toLocaleString()} <span className="text-sm font-bold text-gray-400">pts</span></h4>
             </div>
             <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-orange-600">
               <ArrowDownLeft size={20} />
@@ -2990,19 +3040,21 @@ function RewardPointsTab({ dynamicData }) {
       <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white mt-2">
         <h3 className="text-lg font-bold text-black mb-4">Points History</h3>
         <div className="divide-y divide-gray-100">
-          {[
-            { action: 'Order #9021', date: '2026-07-18', pts: '+150', type: 'earn' },
-            { action: 'Redeemed on Checkout', date: '2026-07-10', pts: '-500', type: 'redeem' },
-            { action: 'Product Review', date: '2026-07-05', pts: '+50', type: 'earn' },
-          ].map((hist, idx) => (
-            <div key={idx} className="flex justify-between items-center py-4">
-              <div>
-                <p className="font-bold text-sm text-black">{hist.action}</p>
-                <p className="text-xs text-gray-500">{hist.date}</p>
+          {history.length === 0 ? (
+            <div className="py-8 text-center text-gray-500">No reward points history yet.</div>
+          ) : (
+            history.map((hist, idx) => (
+              <div key={idx} className="flex justify-between items-center py-4">
+                <div>
+                  <p className="font-bold text-sm text-black">{hist.description || hist.reason || 'Reward Points'}</p>
+                  <p className="text-xs text-gray-500">{new Date(hist.createdAt).toLocaleDateString()}</p>
+                </div>
+                <p className={`font-black text-sm ${hist.type === 'EARN' ? 'text-green-600' : 'text-gray-900'}`}>
+                  {hist.type === 'EARN' ? '+' : '-'}{hist.points} pts
+                </p>
               </div>
-              <p className={`font-black text-sm ${hist.type === 'earn' ? 'text-green-600' : 'text-gray-900'}`}>{hist.pts} pts</p>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </motion.div>

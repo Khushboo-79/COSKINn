@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import Hero from '../components/skincare/Hero';
 import SEO from '../components/common/SEO';
+import OffersCarousel from '../components/common/OffersCarousel';
 
 // Lazy load below-the-fold components to improve mobile CPU performance
 const FeaturedCategories = React.lazy(() => import('../components/skincare/FeaturedCategories'));
@@ -14,6 +15,7 @@ export default function SkincarePage() {
   return (
     <div className="min-h-screen w-full bg-theme-surface font-sans text-theme-dark selection:bg-theme-secondary selection:text-theme-dark overflow-x-hidden">
       <SEO title="Skincare Collections" description="Explore our premium skincare range. Transform your daily routine with clean ingredients." url="https://www.coskinn.com/skincare" />
+      <OffersCarousel />
       <Hero />
       <Suspense fallback={<div className="h-40 w-full flex items-center justify-center">Loading...</div>}>
         <FeaturedCategories />
