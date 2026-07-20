@@ -1,5 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { addressService } from '../../services/addressService';
+import { locationService } from '../../services/locationService';
+
+// Async thunk to fetch live location based on IP
+export const fetchLiveLocation = createAsyncThunk(
+  'address/fetchLiveLocation',
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log('Fetching live location from backend API...');
+      const response = await locationService.getIpLocation();
+      console.log('Live location fetched successfully:', response);
+      return response;
+    } catch (error) {
+      console.error('Error fetching live location:', error);
+      return rejectWithValue(error.message || 'Error fetching live location');
+    }
+  }
+);
 
 // Async thunk to fetch addresses
 export const fetchAddresses = createAsyncThunk(
@@ -67,6 +84,32 @@ const addressSlice = createSlice({
       .addCase(fetchAddresses.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch addresses';
+      })
+      .addCase(fetchLiveLocation.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchLiveLocation.fulfilled, (state, action) => {
+        state.loading = false;
+        const loc = action.payload;
+        if (!loc || loc.error) {
+           state.error = loc?.error || 'Failed to resolve location';
+           return;
+        }
+        state.selectedAddress = {
+          id: 'live_loc_' + Date.now(),
+          fullName: 'Current Location',
+          addressLine1: loc.city || loc.region || loc.country || 'Unknown Area',
+          city: loc.city || '',
+          state: loc.region || '',
+          country: loc.country || '',
+          pincode: 'LIVE',
+          isDefault: true
+        };
+      })
+      .addCase(fetchLiveLocation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch live location';
       });
   },
 });

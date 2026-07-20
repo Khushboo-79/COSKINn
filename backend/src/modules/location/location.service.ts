@@ -49,7 +49,7 @@ export class LocationService {
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
       
       const { data } = await firstValueFrom(
-        this.httpService.get(url, {
+        this.httpService.get<any>(url, {
           headers: {
             'User-Agent': 'COSKINn-App/1.0',
             'Accept-Language': 'en-US,en;q=0.9',

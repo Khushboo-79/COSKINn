@@ -2,7 +2,7 @@ import { Controller, Get, Query, Req, BadRequestException } from '@nestjs/common
 import { LocationService } from './location.service';
 import type { Request } from 'express';
 
-@Controller('api/location')
+@Controller('location')
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 

@@ -45,6 +45,12 @@ const CosmeticsDashboardScreen = () => {
     dispatch(fetchCart()); // Fetch cart
   }, [dispatch]);
 
+  const getImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+  };
+
   const [activeComboBannerIndex, setActiveComboBannerIndex] = React.useState(0);
   const comboBannerData = [
     {
@@ -94,8 +100,8 @@ const CosmeticsDashboardScreen = () => {
     return (
       <View style={styles.milkProductCard}>
         <View style={styles.milkImageContainer}>
-          <Image source={product.images?.[0]?.url ? { uri: product.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.milkProductImage} resizeMode="contain" />
-          <TouchableOpacity 
+          <Image source={product.images?.[0]?.url ? { uri: getImageUrl(product.images[0].url) } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.milkProductImage} resizeMode="contain" />
+          <TouchableOpacity
             style={styles.milkHeartIcon}
             onPress={() => dispatch(toggleWishlist(product.id))}
           >
@@ -103,16 +109,16 @@ const CosmeticsDashboardScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.milkDetails}>
-          <Text style={styles.milkTitle} numberOfLines={1}>{product.name}</Text>
-          <Text style={styles.milkSub} numberOfLines={2}>{product.description || 'Cooling Water Jelly Tint 5g\nSpritz'}</Text>
+          <Text style={styles.milkBrandTitle} numberOfLines={1}>Milk Makeup</Text>
+          <Text style={styles.milkSub} numberOfLines={2}>{product.description || 'Cooling Water Jelly Tint 5g\nSpritz (4 more Shades)'}</Text>
           <View style={styles.milkPriceRow}>
-            <Text style={styles.milkPrice}>₹{product.discountPrice || product.mrp}</Text>
-            {product.discountPrice && <Text style={styles.milkOldPrice}>₹{product.mrp}</Text>}
+            <Text style={styles.milkPrice}>₹{product.discountPrice || product.mrp || '899'}</Text>
+            {product.mrp && <Text style={styles.milkOldPrice}>₹{product.mrp}</Text>}
           </View>
           <View style={styles.milkAddToCartWrapper}>
             {cartItem ? (
               <View style={styles.quantityControl}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.qtyBtn}
                   onPress={() => {
                     if (cartItem.quantity > 1) {
@@ -125,7 +131,7 @@ const CosmeticsDashboardScreen = () => {
                   <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
                 </TouchableOpacity>
                 <Text style={styles.qtyText}>{cartItem.quantity}</Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.qtyBtn}
                   onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
                 >
@@ -133,7 +139,7 @@ const CosmeticsDashboardScreen = () => {
                 </TouchableOpacity>
               </View>
             ) : (
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.milkAddBtn}
                 onPress={() => dispatch(addToCart({ productId: product.id }))}
               >
@@ -150,97 +156,97 @@ const CosmeticsDashboardScreen = () => {
     const isWishlisted = wishlistItems?.some(w => w.productId === item.id);
     const cartItem = cartItems?.find(c => c.productId === item.id);
     return (
-    <View style={[styles.origProductCard, { marginRight: scaleh(15) }]}>
-      <TouchableOpacity 
-        style={styles.origHeartIconContainer}
-        onPress={() => dispatch(toggleWishlist(item.id))}
-      >
-        <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#666"} />
-      </TouchableOpacity>
-      <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
-      <View style={styles.origCardDetails}>
-        <Text style={styles.origProductNameFull} numberOfLines={3}>{item?.name || 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with\nNew-Age UV Filters'}</Text>
-
-        <View style={styles.origSkinTypeRow}>
-          <Ionicons name="checkmark-circle-outline" size={scaleh(12)} color="#FF0069" />
-          <Text style={styles.origSkinTypeText}> All Skin Types</Text>
-        </View>
-
-        <View style={styles.origRatingRow}>
-          <View style={styles.origRatingBadge}>
-            <Ionicons name="star" size={scaleh(10)} color="#FFF" />
-            <Text style={styles.origRatingText}> 4.81</Text>
-          </View>
-          <Text style={styles.origReviewCount}>(5698)</Text>
-        </View>
-
-        <View style={styles.origSizePill}>
-          <Text style={styles.origSizeText}>80g</Text>
-        </View>
-
-        <View style={styles.origPromoTextRow}>
-          <View style={styles.promoIconOverlay}>
-            <MaterialCommunityIcons name="decagram-outline" size={scaleh(12)} color="#FF0069" />
-            <Text style={styles.promoIconText}>%</Text>
-          </View>
-          <Text style={styles.origPromoText}>Upto 20% OFF + Free Gifts</Text>
-        </View>
-
-        <View style={styles.origCashbackBadgeContainer}>
-          <View style={styles.cashbackIconOverlay}>
-            <MaterialCommunityIcons name="decagram" size={scaleh(34)} color="#F1C9A9" />
-            <Text style={styles.cashbackIconText}>%</Text>
-          </View>
-          <View style={styles.origCashbackBadge}>
-            <Text style={styles.origCashbackText}>Get 5% Cashback</Text>
-          </View>
-        </View>
-
-        <Text style={styles.origPriceCurrentLarge}>₹{item?.price || '899'}</Text>
-      </View>
-
-      <View style={styles.origCardFooter}>
-        <TouchableOpacity 
-          style={styles.origFooterHeartBtn}
+      <View style={[styles.origProductCard, { marginRight: scaleh(15) }]}>
+        <TouchableOpacity
+          style={styles.origHeartIconContainer}
           onPress={() => dispatch(toggleWishlist(item.id))}
         >
-          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(22)} color={isWishlisted ? "#FF0069" : "#666"} />
+          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#666"} />
         </TouchableOpacity>
-        <View style={styles.origFooterDivider} />
-        <View style={styles.origAddToCartWrapper}>
-          {cartItem ? (
-            <View style={styles.quantityControl}>
-              <TouchableOpacity 
-                style={styles.qtyBtn}
-                onPress={() => {
-                  if (cartItem.quantity > 1) {
-                    dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
-                  } else {
-                    dispatch(removeFromCart(cartItem.id));
-                  }
-                }}
-              >
-                <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
-              </TouchableOpacity>
-              <Text style={styles.qtyText}>{cartItem.quantity}</Text>
-              <TouchableOpacity 
-                style={styles.qtyBtn}
-                onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
-              >
-                <Icon name="plus" size={scaleh(16)} color="#FF0069" />
-              </TouchableOpacity>
+        <Image source={item?.images?.[0]?.url ? { uri: getImageUrl(item.images[0].url) } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
+        <View style={styles.origCardDetails}>
+          <Text style={styles.origProductNameFull} numberOfLines={3}>{item?.name || 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with\nNew-Age UV Filters'}</Text>
+
+          <View style={styles.origSkinTypeRow}>
+            <Ionicons name="checkmark-circle-outline" size={scaleh(12)} color="#FF0069" />
+            <Text style={styles.origSkinTypeText}> All Skin Types</Text>
+          </View>
+
+          <View style={styles.origRatingRow}>
+            <View style={styles.origRatingBadge}>
+              <Ionicons name="star" size={scaleh(10)} color="#FFF" />
+              <Text style={styles.origRatingText}> 4.81</Text>
             </View>
-          ) : (
-            <TouchableOpacity 
-              style={styles.origFooterCartBtn}
-              onPress={() => dispatch(addToCart({ productId: item.id }))}
-            >
-              <Text style={styles.origFooterCartText}>ADD TO CART</Text>
-            </TouchableOpacity>
-          )}
+            <Text style={styles.origReviewCount}>(5698)</Text>
+          </View>
+
+          <View style={styles.origSizePill}>
+            <Text style={styles.origSizeText}>80g</Text>
+          </View>
+
+          <View style={styles.origPromoTextRow}>
+            <View style={styles.promoIconOverlay}>
+              <MaterialCommunityIcons name="decagram-outline" size={scaleh(12)} color="#FF0069" />
+              <Text style={styles.promoIconText}>%</Text>
+            </View>
+            <Text style={styles.origPromoText}>Upto 20% OFF + Free Gifts</Text>
+          </View>
+
+          <View style={styles.origCashbackBadgeContainer}>
+            <View style={styles.cashbackIconOverlay}>
+              <MaterialCommunityIcons name="decagram" size={scaleh(34)} color="#F1C9A9" />
+              <Text style={styles.cashbackIconText}>%</Text>
+            </View>
+            <View style={styles.origCashbackBadge}>
+              <Text style={styles.origCashbackText}>Get 5% Cashback</Text>
+            </View>
+          </View>
+
+          <Text style={styles.origPriceCurrentLarge}>₹{item?.price || '899'}</Text>
+        </View>
+
+        <View style={styles.origCardFooter}>
+          <TouchableOpacity
+            style={styles.origFooterHeartBtn}
+            onPress={() => dispatch(toggleWishlist(item.id))}
+          >
+            <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(22)} color={isWishlisted ? "#FF0069" : "#666"} />
+          </TouchableOpacity>
+          <View style={styles.origFooterDivider} />
+          <View style={styles.origAddToCartWrapper}>
+            {cartItem ? (
+              <View style={styles.quantityControl}>
+                <TouchableOpacity
+                  style={styles.qtyBtn}
+                  onPress={() => {
+                    if (cartItem.quantity > 1) {
+                      dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                    } else {
+                      dispatch(removeFromCart(cartItem.id));
+                    }
+                  }}
+                >
+                  <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
+                </TouchableOpacity>
+                <Text style={styles.qtyText}>{cartItem.quantity}</Text>
+                <TouchableOpacity
+                  style={styles.qtyBtn}
+                  onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
+                >
+                  <Icon name="plus" size={scaleh(16)} color="#FF0069" />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.origFooterCartBtn}
+                onPress={() => dispatch(addToCart({ productId: item.id }))}
+              >
+                <Text style={styles.origFooterCartText}>ADD TO CART</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
-    </View>
     );
   };
 
@@ -280,7 +286,7 @@ const CosmeticsDashboardScreen = () => {
 
           {/* Top Tall Cards Row */}
           <View style={styles.tallCardsRow}>
-            <View style={[styles.tallCard, { backgroundColor: '#FFDCE6', opacity: 0.6 }]} />
+            <View style={[styles.tallCard, { backgroundColor: '#FDE4ED' }]} />
             {renderCosmeticsProductCard(products?.[0])}
           </View>
 
@@ -407,8 +413,8 @@ const CosmeticsDashboardScreen = () => {
         </ScrollView>
       </SafeAreaView>
 
-      <BottomNavBar 
-        activeTab="home" 
+      <BottomNavBar
+        activeTab="home"
         onTabPress={(tabId) => {
           if (tabId === 'shop') {
             navigation.navigate('Shop');
@@ -422,7 +428,7 @@ const CosmeticsDashboardScreen = () => {
           if (tabId === 'account') {
             navigation.navigate('AccountScreen');
           }
-        }} 
+        }}
       />
     </View>
   );
@@ -585,8 +591,15 @@ const styles = StyleSheet.create({
   },
   milkHeartIcon: {
     position: 'absolute',
-    top: 0,
-    right: -scaleh(5),
+    bottom: -scalev(20),
+    right: 0,
+    zIndex: 10,
+  },
+  milkBrandTitle: {
+    fontSize: scaleh(13),
+    fontWeight: '800',
+    color: '#1a1a1a',
+    marginBottom: scalev(4),
   },
   milkTitle: {
     fontSize: scaleh(12),
@@ -595,10 +608,10 @@ const styles = StyleSheet.create({
     marginBottom: scalev(2),
   },
   milkSub: {
-    fontSize: scaleh(10),
+    fontSize: scaleh(9),
     color: '#666',
     marginBottom: scalev(8),
-    lineHeight: scalev(14),
+    lineHeight: scalev(12),
   },
   milkPriceRow: {
     flexDirection: 'row',
@@ -618,20 +631,23 @@ const styles = StyleSheet.create({
   },
   milkAddBtn: {
     backgroundColor: '#FFC2D1',
-    borderRadius: scaleh(15),
-    marginBottom: scalev(20),
-    paddingVertical: scalev(10),
+    borderRadius: scaleh(8),
+    paddingVertical: scalev(6),
+    paddingHorizontal: scaleh(15),
     alignItems: 'center',
+    alignSelf: 'center',
+    width: '70%',
   },
   milkAddBtnText: {
-    fontSize: scaleh(12),
+    fontSize: scaleh(11),
     fontWeight: '700',
-    color: '#000',
+    color: '#1a1a1a',
   },
   milkAddToCartWrapper: {
-    height: scalev(35),
+    minHeight: scalev(35),
     justifyContent: 'center',
-    marginBottom: scalev(20),
+    marginTop: scalev(5),
+    marginBottom: scalev(10),
   },
   origAddToCartWrapper: {
     flex: 1,
@@ -826,18 +842,18 @@ const styles = StyleSheet.create({
     borderRadius: scaleh(20),
     padding: scaleh(10),
     position: 'relative',
-    height: scalev(370),
+    height: scalev(420),
   },
   origHeartIconContainer: {
     position: 'absolute',
-    top: scalev(15),
+    top: scalev(170),
     right: scaleh(15),
     zIndex: 1,
   },
   origCardProductImage: {
     width: '100%',
-    height: scalev(100),
-    marginBottom: scalev(10),
+    height: scalev(150),
+    marginBottom: scalev(15),
   },
   origCardDetails: {
     flex: 1,
@@ -968,31 +984,33 @@ const styles = StyleSheet.create({
   origCardFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderTopWidth: 1.5,
-    borderColor: '#FFE0E8',
-    paddingTop: scalev(8),
+    borderWidth: 1.5,
+    borderColor: '#FFC2D1',
+    borderRadius: scaleh(25),
     marginTop: scalev(5),
-    paddingHorizontal: scaleh(5),
+    height: scalev(40),
+    overflow: 'hidden',
   },
   origFooterHeartBtn: {
-    width: scaleh(28),
-    height: scaleh(28),
+    width: scaleh(45),
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   origFooterDivider: {
     width: 1.5,
     height: '100%',
-    backgroundColor: '#FFE0E8',
-    marginHorizontal: scaleh(10),
+    backgroundColor: '#FFC2D1',
   },
   origFooterCartBtn: {
     flex: 1,
+    height: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   origFooterCartText: {
-    fontSize: scaleh(12),
-    fontWeight: '700',
+    fontSize: scaleh(11),
+    fontWeight: '800',
     color: '#1a1a1a',
   },
 });

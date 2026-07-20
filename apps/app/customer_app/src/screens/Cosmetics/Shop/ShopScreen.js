@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Image, FlatList, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -25,102 +25,70 @@ const ShopScreen = () => {
 
   const renderCategory = ({ item }) => (
     <View style={styles.categoryContainer}>
-      {/* Clickable Image Area (Pink Section) - Currently clear/transparent as requested */}
-      <TouchableOpacity 
-        style={styles.categoryImageArea} 
+      <TouchableOpacity
+        style={styles.categoryTextRow}
         activeOpacity={0.8}
         onPress={() => navigation.navigate('CategoryDetail', { category: item.name })}
       >
-      </TouchableOpacity>
-      
-      {/* Non-Clickable Text Area (White Section) */}
-      <View style={styles.categoryTextRow}>
         <Text style={styles.categoryText}>{item.name}</Text>
-      </View>
+      </TouchableOpacity>
+      <View style={styles.categoryImageArea} />
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../../images/makeup/CosmeticBackImg.webp')}
-        style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.3 }]}
-        resizeMode="cover"
-      />
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
-      
+
       <SafeAreaView style={styles.safeArea}>
-        <View style={{ paddingTop: 0, paddingBottom: scalev(10) }}>
-           <SearchBarRow />
+        {/* Header with Solid Pink Background */}
+        <View style={{ backgroundColor: '#FFC2D1', paddingTop: scalev(15), paddingBottom: scalev(10) }}>
+          <SearchBarRow />
         </View>
 
         {/* Tabs */}
         <View style={styles.tabsContainer}>
-           <TouchableOpacity style={styles.tab} onPress={() => setActiveTab('CATEGORIES')} activeOpacity={0.8}>
-             <Text style={[styles.tabText, activeTab === 'CATEGORIES' && styles.activeTabText]}>CATEGORIES</Text>
-           </TouchableOpacity>
-           <TouchableOpacity style={styles.tab} onPress={() => setActiveTab('COLLABS')} activeOpacity={0.8}>
-             <Text style={[styles.tabText, activeTab === 'COLLABS' && styles.activeTabText]}>COLLABS</Text>
-           </TouchableOpacity>
-           
-           <View style={[styles.activeLine, { left: activeTab === 'CATEGORIES' ? 0 : '50%' }]} />
+          <TouchableOpacity style={styles.tab} onPress={() => setActiveTab('CATEGORIES')} activeOpacity={0.8}>
+            <Text style={[styles.tabText, activeTab === 'CATEGORIES' && styles.activeTabText]}>CATEGORIES</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tab} onPress={() => setActiveTab('COLLABS')} activeOpacity={0.8}>
+            <Text style={[styles.tabText, activeTab === 'COLLABS' && styles.activeTabText]}>COLLABS</Text>
+          </TouchableOpacity>
+
+          <View style={[styles.activeLine, { left: activeTab === 'CATEGORIES' ? 0 : '50%' }]} />
         </View>
 
-        {/* List */}
-        {activeTab === 'CATEGORIES' && (
-          <FlatList
-            data={SHOP_CATEGORIES}
-            keyExtractor={item => item.id}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: scalev(80) }}
-            renderItem={renderCategory}
+        {/* Content Area with Background Image */}
+        <View style={{ flex: 1, position: 'relative', backgroundColor: '#FFFFFF' }}>
+          <Image
+            source={require('../../../images/makeup/CosmeticBackImg.webp')}
+            style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.2 }]}
+            resizeMode="cover"
           />
-        )}
+          {/* List */}
+          {activeTab === 'CATEGORIES' && (
+            <FlatList
+              data={SHOP_CATEGORIES}
+              keyExtractor={item => item.id}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: scalev(80), paddingTop: scalev(30) }}
+              renderItem={renderCategory}
+            />
+          )}
 
-        {/* Collabs Tab Placeholder */}
-        {activeTab === 'COLLABS' && (
-          <LinearGradient
-            colors={['#FF006926', '#FFD49826']}
-            style={styles.collabsContainer}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-          >
-            <View style={styles.collabsContent}>
-              <View style={styles.emptyLogoBox}>
-                <Text style={styles.emptyLogoText}>C</Text>
-                <View style={styles.emptyLogoHeartTop}>
-                  <Ionicons name="heart" size={scaleh(16)} color="#FF0069" />
-                </View>
-                <View style={styles.emptyLogoHeartBottom}>
-                  <Ionicons name="heart" size={scaleh(20)} color="#FF0069" />
-                </View>
-              </View>
-
-              <View style={styles.textContainerCosmetics}>
-                <Text style={styles.titleTextLineCosmetics}>
-                  Our <Text style={styles.titleHighlightCosmetics}>COLLABS</Text>
-                </Text>
-                <Text style={[styles.titleTextLineCosmetics, { marginBottom: scalev(40) }]}>
-                  are <Text style={styles.titleHighlightCosmetics}>COMING SOON !</Text>
-                </Text>
-              </View>
-
-              <Text style={styles.subtitleTextCosmetics}>Stay tuned for exciting collaborations</Text>
-
-              <TouchableOpacity
-                style={styles.addButtonCosmetics}
-                onPress={() => setActiveTab('CATEGORIES')}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.addButtonTextCosmetics}>EXPLORE CATEGORIES</Text>
-              </TouchableOpacity>
+          {/* Collabs Tab Placeholder */}
+          {activeTab === 'COLLABS' && (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ fontSize: scaleh(32), fontStyle: 'italic', color: '#FFB2C9', fontWeight: '400' }}>
+                Coming Soon
+              </Text>
             </View>
-          </LinearGradient>
-        )}
+          )}
+        </View>
       </SafeAreaView>
 
-      <BottomNavBar 
-        activeTab="shop" 
+      <BottomNavBar
+        activeTab="shop"
         onTabPress={(tabId) => {
           if (tabId === 'home') {
             navigation.navigate('Dashboard');
@@ -143,11 +111,12 @@ const ShopScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFDCE6', 
+    backgroundColor: '#FFFFFF',
   },
   safeArea: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight || scalev(30),
+    backgroundColor: '#FFC2D1',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   tabsContainer: {
     flexDirection: 'row',
@@ -174,16 +143,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '50%',
-    height: scalev(4), // Thicker line like reference
+    height: scalev(2),
     backgroundColor: '#FFB2C9',
   },
   categoryContainer: {
     width: '100%',
   },
   categoryImageArea: {
-    height: scalev(150), // Diameter 402*150 requested
+    height: scalev(110),
     width: '100%',
-    backgroundColor: 'rgba(255,255,255,0.01)', // Near-invisible color to ensure touch registers on Android
+    backgroundColor: 'rgba(255, 194, 209, 0.4)', // Pink translucent box between text rows
   },
   categoryImage: {
     width: '100%',
@@ -264,8 +233,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   categoryTextRow: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    height: scalev(65),
+    backgroundColor: 'transparent',
+    height: scalev(50),
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -274,7 +243,7 @@ const styles = StyleSheet.create({
     fontSize: scaleh(12),
     fontWeight: '700',
     color: '#000000',
-    letterSpacing: 1.5,
+    letterSpacing: 1.0,
   }
 });
 

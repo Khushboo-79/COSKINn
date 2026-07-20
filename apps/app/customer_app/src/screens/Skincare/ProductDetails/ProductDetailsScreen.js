@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, Image, TextInput, Platform, Animated, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProductById } from '../../../redux/slices/productSlice';
+import { addToCart } from '../../../redux/slices/cartSlice';
+import { toggleWishlist } from '../../../redux/slices/wishlistSlice';
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -11,6 +15,18 @@ const { width } = Dimensions.get('window');
 
 const ProductDetailsScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const { productId } = route.params || {};
+  
+  const { selectedProduct, loading } = useSelector(state => state.product);
+  
+  React.useEffect(() => {
+    if (productId) {
+      dispatch(fetchProductById(productId));
+    }
+  }, [dispatch, productId]);
+
   const [selectedSize, setSelectedSize] = useState('50g');
   const [quantity, setQuantity] = useState(1);
   const [pincode, setPincode] = useState('');
@@ -90,11 +106,11 @@ const ProductDetailsScreen = () => {
           <View style={styles.topSection}>
             {/* Title & Ratings */}
             <Text style={styles.productTitle}>
-              Vitamin C + E Sunscreen SPF 50+ PA++++ With New-Age UV Filters
+              {selectedProduct?.name || 'Vitamin C + E Sunscreen SPF 50+ PA++++ With New-Age UV Filters'}
             </Text>
 
             <Text style={styles.suitableText}>
-              Suitable for: <Text style={styles.suitableBold}>All Skin Types</Text>
+              Suitable for: <Text style={styles.suitableBold}>{selectedProduct?.skinTypes?.map(st => st.name).join(', ') || 'All Skin Types'}</Text>
             </Text>
 
             <View style={styles.ratingsRow}>
@@ -119,7 +135,7 @@ const ProductDetailsScreen = () => {
                 onScroll={handleImageScroll}
                 scrollEventThrottle={16}
               >
-                {[...Array(9)].map((_, index) => (
+                {(selectedProduct?.images?.length > 0 ? selectedProduct.images : [...Array(9)]).map((img, index) => (
                   <View key={index} style={{ width: width - scaleh(40) }}>
                     <LinearGradient
                       colors={['#FF006926', '#FFD49826']}
@@ -128,7 +144,7 @@ const ProductDetailsScreen = () => {
                       style={styles.imageBackground}
                     >
                       <Image
-                        source={require('../../../images/bgImages/productImg.webp')}
+                        source={img?.url ? { uri: img.url } : require('../../../images/bgImages/productImg.webp')}
                         style={styles.productImage}
                         resizeMode="contain"
                       />
@@ -139,7 +155,7 @@ const ProductDetailsScreen = () => {
 
               {/* Pagination Dots */}
               <View style={styles.paginationRow}>
-                {[...Array(9)].map((_, i) => (
+                {(selectedProduct?.images?.length > 0 ? selectedProduct.images : [...Array(9)]).map((_, i) => (
                   <View key={i} style={[styles.dot, activeImageIndex === i && styles.activeDot]} />
                 ))}
               </View>
@@ -162,7 +178,7 @@ const ProductDetailsScreen = () => {
 
             {/* Size Selection */}
             <View style={styles.sizeSelectionRow}>
-              {['80g', '50g'].map((size) => {
+              {(selectedProduct?.variants?.length > 0 ? selectedProduct.variants.map(v => v.name || v.size || 'Default') : ['80g', '50g']).map((size) => {
                 const isActive = selectedSize === size;
                 return (
                   <TouchableOpacity
@@ -182,8 +198,8 @@ const ProductDetailsScreen = () => {
             {/* Pricing */}
             <View style={styles.priceContainer}>
               <View style={styles.priceRow}>
-                <Text style={styles.currentPrice}>₹476</Text>
-                <Text style={styles.originalPrice}>₹899</Text>
+                <Text style={styles.currentPrice}>₹{selectedProduct?.price || 476}</Text>
+                <Text style={styles.originalPrice}>₹{selectedProduct?.mrp || 899}</Text>
               </View>
               <Text style={styles.taxesText}>inclusive of all taxes</Text>
             </View>
@@ -690,23 +706,35 @@ const ProductDetailsScreen = () => {
 
         {/* Bottom Fixed Footer */}
         <View style={styles.bottomFooter}>
-          <Text style={styles.footerPrice}>₹699</Text>
+          <Text style={styles.footerPrice}>₹{selectedProduct?.price || 699}</Text>
 
-          <View style={styles.quantitySelector}>
-            <TouchableOpacity
-              style={styles.qtyBtn}
-              onPress={() => setQuantity(Math.max(1, quantity - 1))}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.quantitySelector}>
+              <TouchableOpacity
+                style={styles.qtyBtn}
+                onPress={() => setQuantity(Math.max(1, quantity - 1))}
+              >
+                <Text style={styles.qtyBtnText}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.qtyValue}>{quantity}</Text>
+              <TouchableOpacity
+                style={styles.qtyBtn}
+                onPress={() => setQuantity(quantity + 1)}
+              >
+                <Text style={styles.qtyBtnText}>+</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <TouchableOpacity 
+              style={[styles.addToCartBtn, { backgroundColor: '#FF0069', paddingHorizontal: scaleh(20), paddingVertical: scalev(12), borderRadius: scaleh(8), marginLeft: scaleh(15) }]}
+              onPress={() => {
+                if (productId) {
+                  dispatch(addToCart({ productId, quantity }));
+                  navigation.navigate('Cart');
+                }
+              }}
             >
-              <Text style={styles.qtyBtnText}>-</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.qtyValue}>{quantity}</Text>
-
-            <TouchableOpacity
-              style={styles.qtyBtn}
-              onPress={() => setQuantity(quantity + 1)}
-            >
-              <Text style={styles.qtyBtnText}>+</Text>
+              <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: scaleh(14) }}>Add to Cart</Text>
             </TouchableOpacity>
           </View>
         </View>

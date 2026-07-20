@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, FlatList, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
@@ -92,23 +92,23 @@ const DashboardScreen = () => {
   const guideTabs = ['Sunscreen', 'Moisturizer', 'Skincare', 'Serum'];
   const [activeGuideIndex, setActiveGuideIndex] = useState(0); // For the 3 dots
 
-  const handleMainScroll = (event) => {
+  const handleMainScroll = useCallback((event) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
     if (index !== activeMainBannerIndex) setActiveMainBannerIndex(index);
-  };
+  }, [activeMainBannerIndex]);
 
-  const handleComboScroll = (event) => {
+  const handleComboScroll = useCallback((event) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
     if (index !== activeComboBannerIndex) setActiveComboBannerIndex(index);
-  };
+  }, [activeComboBannerIndex]);
 
-  const handleGuideScroll = (event) => {
+  const handleGuideScroll = useCallback((event) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / width);
     if (index !== activeGuideIndex) setActiveGuideIndex(index);
-  };
+  }, [activeGuideIndex]);
 
   const skinViewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
@@ -122,6 +122,91 @@ const DashboardScreen = () => {
       }
     }
   }).current;
+
+  const renderMainBannerItem = useCallback(() => (
+    <View style={{ width: width, paddingHorizontal: scaleh(20) }}>
+      <LinearGradient
+        colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.mainBanner}
+      />
+    </View>
+  ), []);
+
+  const renderProductItem = useCallback(({ item }) => {
+    const isWishlisted = wishlistItems?.some(w => w.productId === item.id);
+    const cartItem = cartItems?.find(c => c.productId === item.id);
+    return (
+      <TouchableOpacity
+        style={[styles.productBanner, { overflow: 'hidden', width: scaleh(300), marginRight: scaleh(20) }]}
+        onPress={() => navigation.navigate('ProductDetails', { productId: item.id })}
+        activeOpacity={0.9}
+      >
+        <TouchableOpacity
+          style={{ position: 'absolute', top: scalev(15), right: scaleh(15), zIndex: 10, backgroundColor: 'rgba(255,255,255,0.7)', padding: scaleh(8), borderRadius: scaleh(20) }}
+          onPress={() => dispatch(toggleWishlist(item.id))}
+        >
+          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(22)} color={isWishlisted ? "#FF0069" : "#666"} />
+        </TouchableOpacity>
+        <LinearGradient
+          colors={['#FFD1E3', '#FFF2E6']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+        <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
+          <Image source={item?.images?.length > 0 && item.images[0].url ? { uri: item.images[0].url } : require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
+        </View>
+        <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]} numberOfLines={2}>
+          {item.name || 'Vitamin C + E Moisturizer'}
+        </Text>
+        <Text style={[styles.productSubtitle, { fontSize: scaleh(12), color: '#1a1a1a', fontWeight: '600', marginBottom: scalev(20), marginTop: scalev(5) }]} numberOfLines={1}>
+          {item.subtitle || 'Normal, Oily & Combination Skin'}
+        </Text>
+        <View style={[styles.sizePill, { borderColor: '#FF0069', paddingVertical: scalev(6), paddingHorizontal: scaleh(20) }]}>
+          <Text style={[styles.sizePillText, { fontSize: scaleh(14), fontWeight: '700' }]}>{item.size || '60ml'}</Text>
+        </View>
+        <View style={[styles.priceActionContainer, { borderColor: '#FF0069', height: scalev(50), width: '100%', borderRadius: scaleh(15) }]}>
+          <View style={[styles.priceSection, { borderRightColor: '#FF0069' }]}>
+            <Text style={[styles.priceText, { fontSize: scaleh(18) }]}>₹{item.price || '899'}</Text>
+          </View>
+          <View style={styles.addToCartWrapper}>
+            {cartItem ? (
+              <View style={styles.quantityControl}>
+                <TouchableOpacity
+                  style={styles.qtyBtn}
+                  onPress={() => {
+                    if (cartItem.quantity > 1) {
+                      dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
+                    } else {
+                      dispatch(removeFromCart(cartItem.id));
+                    }
+                  }}
+                >
+                  <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
+                </TouchableOpacity>
+                <Text style={styles.qtyText}>{cartItem.quantity}</Text>
+                <TouchableOpacity
+                  style={styles.qtyBtn}
+                  onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
+                >
+                  <Icon name="plus" size={scaleh(16)} color="#FF0069" />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.addToCartSection}
+                onPress={() => dispatch(addToCart({ productId: item.id }))}
+              >
+                <Text style={[styles.addToCartText, { color: '#FF0069', fontWeight: '800', fontSize: scaleh(14) }]}>Add to Cart</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }, [wishlistItems, cartItems, dispatch]);
 
   return (
     <View style={styles.container}>
@@ -146,16 +231,11 @@ const DashboardScreen = () => {
               onScroll={handleMainScroll}
               scrollEventThrottle={16}
               keyExtractor={(item) => item.toString()}
-              renderItem={() => (
-                <View style={{ width: width, paddingHorizontal: scaleh(20) }}>
-                  <LinearGradient
-                    colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    style={styles.mainBanner}
-                  />
-                </View>
-              )}
+              renderItem={renderMainBannerItem}
+              initialNumToRender={2}
+              maxToRenderPerBatch={3}
+              windowSize={5}
+              removeClippedSubviews={true}
             />
           </View>
 
@@ -177,83 +257,11 @@ const DashboardScreen = () => {
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
               contentContainerStyle={{ paddingHorizontal: scaleh(20) }}
-              renderItem={({ item }) => {
-                const isWishlisted = wishlistItems?.some(w => w.productId === item.id);
-                const cartItem = cartItems?.find(c => c.productId === item.id);
-                return (
-                  <View style={[styles.productBanner, { overflow: 'hidden', width: scaleh(300), marginRight: scaleh(20) }]}>
-                    <TouchableOpacity
-                      style={{ position: 'absolute', top: scalev(15), right: scaleh(15), zIndex: 10, backgroundColor: 'rgba(255,255,255,0.7)', padding: scaleh(8), borderRadius: scaleh(20) }}
-                      onPress={() => dispatch(toggleWishlist(item.id))}
-                    >
-                      <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(22)} color={isWishlisted ? "#FF0069" : "#666"} />
-                    </TouchableOpacity>
-                    {/* Background gradient */}
-                    <LinearGradient
-                      colors={['#FFD1E3', '#FFF2E6']}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={StyleSheet.absoluteFill}
-                    />
-
-                    {/* Orange slices background image */}
-                    {/* //<Image source={require('../../images/bgImages/orange.webp')} style={[StyleSheet.absoluteFill, { width: '30%', height: '30%', left: '40%', top: '5%', opacity: 0.9 }]} resizeMode="cover" /> */}
-
-                    <View style={[styles.productImageContainer, { height: scalev(160), marginTop: scalev(10) }]}>
-                      <Image source={item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/bgImages/productImg.webp')} style={styles.productImagePlaceholder} resizeMode="contain" />
-                    </View>
-
-                    <Text style={[styles.productTitle, { fontSize: scaleh(16), marginTop: scalev(10), fontWeight: '600' }]} numberOfLines={2}>
-                      {item.name || 'Vitamin C + E Moisturizer'}
-                    </Text>
-                    <Text style={[styles.productSubtitle, { fontSize: scaleh(12), color: '#1a1a1a', fontWeight: '600', marginBottom: scalev(20), marginTop: scalev(5) }]} numberOfLines={1}>
-                      {item.subtitle || 'Normal, Oily & Combination Skin'}
-                    </Text>
-
-                    <View style={[styles.sizePill, { borderColor: '#FF0069', paddingVertical: scalev(6), paddingHorizontal: scaleh(20) }]}>
-                      <Text style={[styles.sizePillText, { fontSize: scaleh(14), fontWeight: '700' }]}>{item.size || '60ml'}</Text>
-                    </View>
-
-                    <View style={[styles.priceActionContainer, { borderColor: '#FF0069', height: scalev(50), width: '100%', borderRadius: scaleh(15) }]}>
-                      <View style={[styles.priceSection, { borderRightColor: '#FF0069' }]}>
-                        <Text style={[styles.priceText, { fontSize: scaleh(18) }]}>₹{item.price || '899'}</Text>
-                      </View>
-                      <View style={styles.addToCartWrapper}>
-                        {cartItem ? (
-                          <View style={styles.quantityControl}>
-                            <TouchableOpacity
-                              style={styles.qtyBtn}
-                              onPress={() => {
-                                if (cartItem.quantity > 1) {
-                                  dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity - 1 }));
-                                } else {
-                                  dispatch(removeFromCart(cartItem.id));
-                                }
-                              }}
-                            >
-                              <Icon name="minus" size={scaleh(16)} color="#1a1a1a" />
-                            </TouchableOpacity>
-                            <Text style={styles.qtyText}>{cartItem.quantity}</Text>
-                            <TouchableOpacity
-                              style={styles.qtyBtn}
-                              onPress={() => dispatch(updateCartItem({ itemId: cartItem.id, quantity: cartItem.quantity + 1 }))}
-                            >
-                              <Icon name="plus" size={scaleh(16)} color="#FF0069" />
-                            </TouchableOpacity>
-                          </View>
-                        ) : (
-                          <TouchableOpacity
-                            style={styles.addToCartSection}
-                            onPress={() => dispatch(addToCart({ productId: item.id }))}
-                          >
-                            <Text style={[styles.addToCartText, { color: '#FF0069', fontWeight: '800', fontSize: scaleh(14) }]}>Add to Cart</Text>
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    </View>
-                  </View>
-                )
-              }}
+              renderItem={renderProductItem}
+              initialNumToRender={3}
+              maxToRenderPerBatch={5}
+              windowSize={5}
+              removeClippedSubviews={true}
               ListEmptyComponent={() => (
                 <View style={{ width: width - scaleh(40), alignItems: 'center', justifyContent: 'center', height: scalev(200) }}>
                   <Text>{loading ? 'Loading Products...' : 'No products found.'}</Text>

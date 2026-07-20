@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,14 +11,19 @@ import BottomNavBar from '../../../../constants/BottomNavBar';
 import ProfileHeader from '../../../../components/ProfileHeader';
 import { logout } from '../../../../redux/slices/authSlice';
 import api from '../../../../services/api';
-import { useSelector } from 'react-redux';
+import { fetchProfile } from '../../../../redux/slices/profileSlice';
 import { Image } from 'react-native';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const { data: profileData, loading } = useSelector(state => state.profile);
   const isCosmetics = activeDomain === 'cosmetics';
+
+  React.useEffect(() => {
+    dispatch(fetchProfile());
+  }, [dispatch]);
 
   const handleTabPress = (tabId) => {
     if (tabId === 'home') navigation.navigate('Dashboard');
@@ -74,8 +80,8 @@ const AccountScreen = () => {
       
       {/* Reusable Profile Header */}
       <ProfileHeader 
-        name="Khushboo Sharma"
-        phone="+912223456789"
+        name={profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}` : 'Loading...'}
+        phone={profileData?.phone || ''}
       />
 
       {/* Main Content Area overlapping the header slightly */}

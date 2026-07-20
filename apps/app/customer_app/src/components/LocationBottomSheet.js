@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Dimensions,
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedAddress } from '../redux/slices/addressSlice';
+import { setSelectedAddress, fetchLiveLocation } from '../redux/slices/addressSlice';
 import { scaleh, scalev } from '../constants/AppTheme';
 
 const { height } = Dimensions.get('window');
@@ -57,7 +57,10 @@ const LocationBottomSheet = ({ visible, onClose }) => {
               <View style={styles.divider} />
 
               {/* Use Current Location */}
-              <TouchableOpacity style={styles.currentLocationRow}>
+              <TouchableOpacity style={styles.currentLocationRow} onPress={() => {
+                dispatch(fetchLiveLocation());
+                onClose();
+              }}>
                 <View style={styles.currentLocationLeft}>
                   <Icon name="gps-fixed" size={scaleh(18)} color="#FF6B9E" />
                   <Text style={styles.currentLocationText}>Use my current location</Text>

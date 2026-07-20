@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, InteractionManager } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { scaleh, scalev } from '../constants/AppTheme';
@@ -32,10 +32,13 @@ const TopHeader = () => {
     const nextVal = !localTheme;
     setLocalTheme(nextVal); // Update UI instantly to start toggle animation
     
-    // Defer heavy Redux update slightly so the UI thread can initiate the animation
-    setTimeout(() => {
-      dispatch(toggleDomain());
-    }, 10);
+    // Defer heavy Redux update so the UI thread can finish the animation first
+    InteractionManager.runAfterInteractions(() => {
+      // Also wrap in a slight timeout as an extra precaution since Redux state changes cause massive re-renders
+      setTimeout(() => {
+        dispatch(toggleDomain());
+      }, 150);
+    });
   };
 
   return (

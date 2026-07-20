@@ -4,20 +4,40 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
-import { useSelector } from 'react-redux';
-import { Image } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateProfile } from '../../../../redux/slices/profileSlice';
+import { Image, ActivityIndicator } from 'react-native';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
   
-  const [title, setTitle] = useState('Miss');
-  
-  const [name, setName] = useState('Khushboo Sharma');
-  const [email, setEmail] = useState('abcd@gmail.com');
-  const [mobile, setMobile] = useState('+91234567899');
-  const [dob, setDob] = useState('');
+  const dispatch = useDispatch();
+  const { data: profileData, loading } = useSelector(state => state.profile);
+
+  const [title, setTitle] = useState(profileData?.title || 'Miss');
+  const [name, setName] = useState(
+    profileData?.firstName 
+      ? `${profileData.firstName} ${profileData.lastName || ''}`.trim() 
+      : ''
+  );
+  const [email, setEmail] = useState(profileData?.email || '');
+  const [mobile, setMobile] = useState(profileData?.phone || '');
+  const [dob, setDob] = useState(profileData?.dob || '');
+
+  const handleUpdateProfile = () => {
+    const [firstName, ...lastNameArr] = name.split(' ');
+    const lastName = lastNameArr.join(' ');
+    dispatch(updateProfile({
+      title,
+      firstName,
+      lastName,
+      email,
+      phone: mobile,
+      dob
+    }));
+  };
 
   const renderRadioButton = (label) => {
     const isSelected = title === label;
@@ -140,8 +160,14 @@ const ProfileScreen = () => {
         <TouchableOpacity 
           style={[styles.doneButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]} 
           activeOpacity={0.8}
+          onPress={handleUpdateProfile}
+          disabled={loading}
         >
-          <Text style={[styles.doneButtonText, isCosmetics && { color: '#1A1A1A' }]}>Done</Text>
+          {loading ? (
+            <ActivityIndicator color={isCosmetics ? '#1A1A1A' : '#FFFFFF'} />
+          ) : (
+            <Text style={[styles.doneButtonText, isCosmetics && { color: '#1A1A1A' }]}>Done</Text>
+          )}
         </TouchableOpacity>
       </View>
 
