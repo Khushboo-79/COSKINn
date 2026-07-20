@@ -82,11 +82,11 @@ export default function AccountPage() {
                   <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-14 h-14 rounded-full object-cover shadow-sm border border-gray-100" />
                 ) : (
                   <div className={`w-14 h-14 rounded-full ${primaryClass} flex items-center justify-center text-xl font-bold shadow-sm`}>
-                    {user.name.charAt(0).toUpperCase()}
+                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-black text-lg leading-tight truncate">{user.name}</h3>
+                  <h3 className="font-bold text-black text-lg leading-tight truncate">{user.name || 'User'}</h3>
                   <p className="text-sm text-gray-500 truncate">{user.email || 'No email added'}</p>
                 </div>
               </div>
@@ -164,34 +164,49 @@ function SidebarItem({ icon: Icon, label, id, activeTab, onClick }) {
 function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
   const { updateUserProfile } = useAuth();
   const [profile, setProfile] = useState({
-    name: user.name || '',
-    email: user.email || '',
-    mobile: user.mobile || '',
-    dob: '',
-    gender: 'female'
+    name: user?.name || '',
+    email: user?.email || '',
+    mobile: user?.phone || '',
+    dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+    gender: user?.gender ? user.gender.toLowerCase() : 'female'
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Avatar Upload State
   const [previewAvatar, setPreviewAvatar] = useState(null);
   const [uploadError, setUploadError] = useState('');
   
   useEffect(() => {
-    const saved = localStorage.getItem('coskinn_profile');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setProfile({ ...parsed, name: user.name, email: user.email, mobile: user.mobile });
-    }
+    setProfile({
+      name: user?.name || '',
+      email: user?.email || '',
+      mobile: user?.phone || '',
+      dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+      gender: user?.gender ? user.gender.toLowerCase() : 'female'
+    });
   }, [user]);
 
-  const handleSaveProfile = () => {
-    // Update local storage for non-global fields
-    localStorage.setItem('coskinn_profile', JSON.stringify({ dob: profile.dob, gender: profile.gender }));
-    
-    // Update global state for global fields
-    updateUserProfile({ name: profile.name, email: profile.email, mobile: profile.mobile });
-    
-    setIsEditing(false);
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    setUploadError('');
+    try {
+      const data = {
+        name: profile.name,
+        email: profile.email,
+        gender: profile.gender.toUpperCase(),
+      };
+      if (profile.dob) {
+        data.dob = new Date(profile.dob).toISOString();
+      }
+      
+      await updateUserProfile(data);
+      setIsEditing(false);
+    } catch (err) {
+      setUploadError(err.response?.data?.message || 'Failed to update profile.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -219,10 +234,15 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
     reader.readAsDataURL(file);
   };
 
-  const handleSaveAvatar = () => {
+  const handleSaveAvatar = async () => {
     if (previewAvatar) {
-      updateUserProfile({ avatarUrl: previewAvatar });
-      setPreviewAvatar(null);
+      setUploadError('');
+      try {
+        await updateUserProfile({ avatarUrl: previewAvatar });
+        setPreviewAvatar(null);
+      } catch (err) {
+        setUploadError(err.response?.data?.message || 'Failed to update avatar.');
+      }
     }
   };
 
@@ -243,7 +263,7 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
             </div>
           ) : (
             <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full ${primaryClass} flex items-center justify-center text-4xl font-bold shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-4 border-white`}>
-              {user.name.charAt(0).toUpperCase()}
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
           )}
           
@@ -312,8 +332,10 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass }) {
 
       {isEditing && (
         <div className="mt-8 flex justify-end gap-4">
-          <button onClick={() => setIsEditing(false)} className="px-6 py-3 font-bold text-gray-600 hover:text-black transition-colors">Cancel</button>
-          <button onClick={handleSaveProfile} className="px-8 py-3 rounded-xl font-bold bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 text-white transition-all shadow-sm">Save Changes</button>
+          <button onClick={() => setIsEditing(false)} disabled={isSaving} className="px-6 py-3 font-bold text-gray-600 hover:text-black transition-colors disabled:opacity-50">Cancel</button>
+          <button onClick={handleSaveProfile} disabled={isSaving} className="px-8 py-3 rounded-xl font-bold bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 text-white transition-all shadow-sm disabled:opacity-50">
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
         </div>
       )}
     </motion.div>
@@ -326,43 +348,43 @@ function AddressesTab({ primaryClass, textPrimaryClass }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    const saved = localStorage.getItem('coskinn_addresses');
-    if (saved) setAddresses(JSON.parse(saved));
-    else setAddresses([]); // Ensure empty state initially
-  }, []);
-
-  const handleSave = (addressData) => {
-    let updatedAddresses = [...addresses];
-    
-    // If setting as default, remove default from others
-    if (addressData.isDefault) {
-      updatedAddresses = updatedAddresses.map(a => ({ ...a, isDefault: false }));
+  const fetchAddresses = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await apiClient.get('/customer/addresses');
+      setAddresses(data);
+    } catch (err) {
+      console.error('Failed to fetch addresses', err);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (editingAddress) {
-      // Update
-      updatedAddresses = updatedAddresses.map(a => a.id === editingAddress.id ? { ...addressData, id: a.id } : a);
-    } else {
-      // Add new
-      // If it's the first address, automatically make it default
-      const newAddress = { ...addressData, id: Date.now().toString() };
-      if (updatedAddresses.length === 0) newAddress.isDefault = true;
-      updatedAddresses.push(newAddress);
-    }
-
-    setAddresses(updatedAddresses);
-    localStorage.setItem('coskinn_addresses', JSON.stringify(updatedAddresses));
-    setIsModalOpen(false);
-    setEditingAddress(null);
   };
 
-  const handleDelete = (id) => {
-    const updated = addresses.filter(a => a.id !== id);
-    setAddresses(updated);
-    localStorage.setItem('coskinn_addresses', JSON.stringify(updated));
-    setShowDeleteConfirm(null);
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
+
+  const handleSave = async (addressData) => {
+    if (editingAddress) {
+      await apiClient.put(`/customer/addresses/${editingAddress.id}`, addressData);
+    } else {
+      await apiClient.post('/customer/addresses', addressData);
+    }
+    setIsModalOpen(false);
+    setEditingAddress(null);
+    await fetchAddresses();
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/customer/addresses/${id}`);
+      setShowDeleteConfirm(null);
+      await fetchAddresses();
+    } catch (err) {
+      console.error('Failed to delete address', err);
+    }
   };
 
   const openAddModal = () => {
@@ -471,6 +493,32 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
     isDefault: false
   });
   const [errorMsg, setErrorMsg] = useState('');
+  const [isCheckingPin, setIsCheckingPin] = useState(false);
+  const [pinServiceable, setPinServiceable] = useState(null);
+  const [pinMessage, setPinMessage] = useState('');
+
+  useEffect(() => {
+    const checkPin = async () => {
+      const pinStr = formData.pin.replace(/\D/g, '');
+      if (pinStr.length === 6) {
+        setIsCheckingPin(true);
+        try {
+          const { data } = await apiClient.get(`/customer/addresses/serviceability?pincode=${pinStr}`);
+          setPinServiceable(data.serviceable);
+          setPinMessage(data.message);
+        } catch (err) {
+          setPinServiceable(false);
+          setPinMessage('Failed to check serviceability');
+        } finally {
+          setIsCheckingPin(false);
+        }
+      } else {
+        setPinServiceable(null);
+        setPinMessage('');
+      }
+    };
+    checkPin();
+  }, [formData.pin]);
 
   useEffect(() => {
     if (isOpen) {
@@ -487,7 +535,7 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -504,8 +552,16 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
       setErrorMsg('Please enter a valid 6-digit PIN code.');
       return;
     }
+    if (pinServiceable === false) {
+      setErrorMsg('Delivery is not available to this PIN code.');
+      return;
+    }
 
-    onSave({ ...formData, phone: formData.phone.replace(/\D/g, ''), pin: formData.pin.replace(/\D/g, '') });
+    try {
+      await onSave({ ...formData, phone: formData.phone.replace(/\D/g, ''), pin: formData.pin.replace(/\D/g, '') });
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to save address');
+    }
   };
 
   const inputClass = "w-full py-3 px-4 border border-gray-300 rounded-xl outline-none font-medium text-gray-900 focus:border-[#FF0069] focus:ring-1 focus:ring-[#FF0069] transition-all bg-transparent placeholder-gray-400";
@@ -564,6 +620,9 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
               <div className="relative group">
                 <label className={labelClass}>PIN Code *</label>
                 <input type="text" value={formData.pin} onChange={e => setFormData({...formData, pin: e.target.value.replace(/\D/g,'').slice(0,6)})} placeholder="6-digit PIN" className={inputClass} />
+                {isCheckingPin && <p className="text-xs text-gray-500 mt-1">Checking serviceability...</p>}
+                {!isCheckingPin && pinServiceable === true && <p className="text-xs text-green-600 font-bold mt-1">{pinMessage}</p>}
+                {!isCheckingPin && pinServiceable === false && <p className="text-xs text-red-500 font-bold mt-1">{pinMessage}</p>}
               </div>
               <div className="relative group">
                 <label className={labelClass}>City *</label>
@@ -605,14 +664,14 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
             {errorMsg && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 mt-2 text-red-500 text-sm font-medium bg-red-50 p-3 rounded-xl border border-red-100">
                 <AlertCircle size={16} className="flex-shrink-0" />
-                <span>{errorMsg}</span>
+                <p className="text-sm font-bold text-red-500 px-2">{errorMsg}</p>
               </motion.div>
             )}
 
             {/* Footer Buttons */}
-            <div className="flex gap-4 pt-4 mt-2">
-              <button type="button" onClick={onClose} className="flex-1 py-4 font-bold text-gray-600 bg-[#FF0069]/5 hover:bg-[#FF0069]/10 rounded-xl transition-colors">Cancel</button>
-              <button type="submit" className="flex-1 py-4 font-bold rounded-xl bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 text-white shadow-sm transition-all">
+            <div className="flex gap-4 sticky bottom-0 bg-white pt-2">
+              <button type="button" onClick={onClose} className="flex-1 py-4 font-bold text-gray-600 hover:text-black transition-colors rounded-xl">Cancel</button>
+              <button type="submit" disabled={pinServiceable === false} className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 text-white transition-all shadow-sm disabled:opacity-50">
                 {initialData ? 'Save Changes' : 'Save Address'}
               </button>
             </div>
@@ -664,9 +723,9 @@ function OrdersTab({ primaryClass }) {
             <div className="flex gap-2 w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 hide-scrollbar shrink-0">
               {order.items.map((item, idx) => (
                 <div key={idx} className="w-24 h-24 bg-pink-50/10 rounded-xl overflow-hidden shrink-0 border border-pink-100/20 relative">
-                  <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply opacity-85" />
+                  <img loading="lazy" src={item.variant?.product?.images?.[0] || 'https://via.placeholder.com/150'} alt={item.variant?.product?.name || item.name || 'Product'} className="w-full h-full object-cover mix-blend-multiply opacity-85" />
                   <div className="absolute bottom-1 right-1 bg-white/90 text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm border border-pink-100/30 text-[#FF0069]">
-                    x{item.qty}
+                    x{item.quantity}
                   </div>
                 </div>
               ))}
@@ -675,24 +734,28 @@ function OrdersTab({ primaryClass }) {
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-bold text-black text-lg">Order {order.id}</h4>
+                  <h4 className="font-bold text-black text-lg">Order {order.id.split('-')[0]}...</h4>
                   <span className={`px-3 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full 
-                    ${order.status === 'Delivered' ? 'bg-green-50 text-green-700 border border-green-100' : 
-                      order.status === 'Cancelled' ? 'bg-red-50 text-red-700 border border-red-100' :
-                      order.status === 'Out For Delivery' || order.status === 'Shipped' ? 'bg-pink-50 text-[#FF0069] border border-pink-100/50' : 
+                    ${order.status === 'DELIVERED' ? 'bg-green-50 text-green-700 border border-green-100' : 
+                      order.status === 'CANCELLED' ? 'bg-red-50 text-red-700 border border-red-100' :
+                      order.status === 'OUT_FOR_DELIVERY' || order.status === 'SHIPPED' ? 'bg-pink-50 text-[#FF0069] border border-pink-100/50' : 
                       'bg-orange-50 text-orange-700 border border-orange-100'}`}>
-                    {order.status === 'Cancelled' ? 'Refund Processing' : order.status}
+                    {order.status === 'CANCELLED' ? 'Refund Processing' : order.status}
                   </span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-sm text-gray-500 mb-4">
-                  <p><span className="font-medium text-gray-700">Placed:</span> {order.date}</p>
-                  <p><span className="font-medium text-gray-700">Total:</span> ₹{order.totalAmount} ({order.paymentMethod})</p>
+                  <p><span className="font-medium text-gray-700">Placed:</span> {new Date(order.createdAt).toLocaleDateString()}</p>
+                  <p><span className="font-medium text-gray-700">Total:</span> ₹{order.finalAmount} ({order.paymentMode})</p>
                 </div>
                 {order.items.length === 1 && (
-                  <p className="text-sm font-medium text-gray-800 mb-4 truncate">{order.items[0].name} - {order.items[0].variant}</p>
+                  <p className="text-sm font-medium text-black line-clamp-1 mb-2 max-w-md">
+                    {order.items[0].variant?.product?.name}
+                  </p>
                 )}
                 {order.items.length > 1 && (
-                  <p className="text-sm font-medium text-gray-800 mb-4">{order.items[0].name} and {order.items.length - 1} more item(s)</p>
+                  <p className="text-sm font-medium text-black line-clamp-1 mb-2 max-w-md">
+                    {order.items[0].variant?.product?.name || order.items[0].name} <span className="text-gray-500 font-normal">and {order.items.length - 1} more items</span>
+                  </p>
                 )}
               </div>
               

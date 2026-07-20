@@ -145,7 +145,7 @@ const MainLayout = () => {
             <Route path="/award-winners" element={<AwardWinnersPage />} />
             <Route path="/gift-sets" element={<GiftSetsPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/product/:id" element={<ProductDetailsPage />} />
+            <Route path="/product/:slug" element={<ProductDetailsPage />} />
             <Route path="/order/:orderId" element={<OrderTrackingPage />} />
             <Route path="/shop-all-skincare" element={<ShopAllSkincarePage />} />
             <Route path="/skin-quiz" element={<SkinQuizPage />} />

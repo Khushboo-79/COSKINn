@@ -6,16 +6,19 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import Footer from '../components/common/Footer';
 import { Heart, ShoppingBag, Star, ShieldCheck, ChevronRight, Truck, RefreshCcw, Share2, Plus, Minus, CheckCircle, ChevronDown, ChevronUp, ThumbsUp } from 'lucide-react';
+import apiClient from '../utils/apiClient';
 import { skincareProducts } from '../constants/skincareProducts';
 
 export default function ProductDetailsPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const { theme } = useTheme();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
@@ -32,15 +35,50 @@ export default function ProductDetailsPage() {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    const foundProduct = skincareProducts.find(p => p.id === parseInt(id));
-    if (foundProduct) {
-      setProduct(foundProduct);
-      setMainImage(foundProduct.images[0]);
-    } else {
-      navigate(`/${theme}`);
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        // We now fetch by slug
+        const res = await apiClient.get(`/catalog/products/${slug}`);
+        if (res.data) {
+          const p = res.data;
+          const mapped = {
+            id: p.id,
+            slug: p.slug,
+            name: p.name,
+            originalPrice: p.mrp,
+            price: p.discountPrice || p.mrp,
+            discountBadge: p.mrp > (p.discountPrice || p.mrp) ? `${Math.round(((p.mrp - (p.discountPrice || p.mrp)) / p.mrp) * 100)}% OFF` : null,
+            rating: 4.8, 
+            reviews: Math.floor(Math.random() * 500) + 50,
+            category: p.category?.name || 'Skincare',
+            image: p.images?.[0]?.url || '',
+            images: p.images?.map(i => i.url) || [],
+            badge: p.isNewArrival ? 'NEW' : p.isBestSeller ? 'BEST SELLER' : '',
+            shortDescription: p.description?.substring(0, 80) || '',
+            longDescription: p.description || '',
+            benefits: p.benefits?.map(b => b.name) || [],
+            keyIngredients: p.ingredients?.map(i => i.name) || [],
+            howToUse: p.howToUse,
+            suitableSkinType: p.skinTypes?.map(s => s.name).join(', ') || "All Skin Types",
+            skinConcerns: p.concerns?.map(c => c.name).join(', ') || "",
+            stock: 100
+          };
+          setProduct(mapped);
+          setMainImage(mapped.images[0] || '');
+        }
+      } catch (err) {
+        console.error('Failed to fetch product:', err);
+        setError('Product not found');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (slug) {
+      fetchProduct();
+      window.scrollTo(0, 0);
     }
-    window.scrollTo(0, 0);
-  }, [id, theme, navigate]);
+  }, [slug]);
 
   // Sticky Bar Logic
   useEffect(() => {
@@ -72,7 +110,22 @@ export default function ProductDetailsPage() {
     setSliderPos(percent);
   };
 
-  if (!product) return null;
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen bg-theme-bg flex items-center justify-center mt-[60px]">
+        <div className="w-12 h-12 border-4 border-gray-200 border-t-[#FF2D7A] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="w-full min-h-[70vh] bg-theme-bg flex flex-col items-center justify-center mt-[60px]">
+        <h2 className="text-3xl font-heading font-bold mb-4">Product Not Found</h2>
+        <Link to="/shop-all-skincare" className="btn-primary-skincare px-8 py-3">Back to Shop</Link>
+      </div>
+    );
+  }
 
   const relatedProducts = skincareProducts.filter(p => 
     p.id !== product.id && 

@@ -159,6 +159,37 @@ export class OrderService {
     return orderData;
   }
 
+  async getOrders(userId: string) {
+    return this.prisma.order.findMany({
+      where: { userId },
+      include: {
+        items: { include: { variant: { include: { product: true } } } },
+        address: true,
+        statusHistory: true,
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async getOrderByIdForCustomer(userId: string, id: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: { include: { variant: { include: { product: true } } } },
+        address: true,
+        statusHistory: {
+          orderBy: { createdAt: 'asc' }
+        }
+      }
+    });
+
+    if (!order || order.userId !== userId) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return order;
+  }
+
   // --- ADMIN METHODS ---
 
   async getAdminOrders(filters: { status?: string, paymentMode?: string, email?: string, mobile?: string }) {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import apiClient from '../utils/apiClient';
 
 const AuthContext = createContext();
 
@@ -12,143 +13,113 @@ export function AuthProvider({ children }) {
 
   // Initialize session on mount
   useEffect(() => {
-    const session = localStorage.getItem('coskinn_session');
-    if (session) {
-      setUser(JSON.parse(session));
-    }
-    setLoading(false);
+    const initSession = async () => {
+      const sessionStr = localStorage.getItem('coskinn_session');
+      if (sessionStr) {
+        try {
+          const session = JSON.parse(sessionStr);
+          if (session.user && session.token) {
+            setUser(session.user);
+            
+            try {
+              const res = await apiClient.get('/customer/me');
+              if (res.data) {
+                setUser(res.data);
+                session.user = res.data;
+                localStorage.setItem('coskinn_session', JSON.stringify(session));
+              }
+            } catch (err) {
+              console.error("Failed to fetch fresh profile", err);
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse session", e);
+        }
+      }
+      setLoading(false);
+    };
+    initSession();
   }, []);
 
-  const login = (email, password) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-        const existingUser = users.find(u => u.email === email && u.password === password);
-        
-        if (existingUser) {
-          const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile, avatarUrl: existingUser.avatarUrl };
-          setUser(sessionUser);
-          localStorage.setItem('coskinn_session', JSON.stringify(sessionUser));
-          resolve(sessionUser);
-        } else {
-          reject(new Error('Invalid email or password.'));
-        }
-      }, 800); // Simulate network delay
-    });
+  const sendMobileOtp = async (phone) => {
+    // Format to E.164 if it's a 10 digit Indian number
+    const formattedPhone = phone.length === 10 ? `+91${phone}` : phone;
+    const response = await apiClient.post('/auth/send-otp', { phone: formattedPhone });
+    return response.data;
   };
 
-  const register = (userData) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-        if (users.find(u => u.email === userData.email)) {
-          reject(new Error('Email is already registered.'));
-          return;
-        }
-
-        const newUser = {
-          name: userData.name,
-          email: userData.email,
-          mobile: userData.mobile,
-          password: userData.password,
-        };
-        
-        users.push(newUser);
-        localStorage.setItem('coskinn_users', JSON.stringify(users));
-        
-        resolve(true);
-      }, 1000);
-    });
-  };
-
-  const authenticateOTPUser = (userData) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-        let existingUserIndex = users.findIndex(u => u.mobile === userData.mobile);
-        
-        let sessionUser = { name: userData.name, email: userData.email, mobile: userData.mobile, avatarUrl: userData.avatarUrl };
-        
-        if (existingUserIndex >= 0) {
-          // Update existing user with new details if provided
-          users[existingUserIndex] = { ...users[existingUserIndex], ...sessionUser };
-        } else {
-          // Register new user
-          users.push(sessionUser);
-        }
-        
-        localStorage.setItem('coskinn_users', JSON.stringify(users));
-        setUser(sessionUser);
-        localStorage.setItem('coskinn_session', JSON.stringify(sessionUser));
-        
-        resolve(sessionUser);
-      }, 800);
-    });
-  };
-
-  const checkMobileExists = async (mobile) => {
-    const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-    return users.some(u => u.mobile === mobile);
-  };
-
-  const checkEmailExists = async (email) => {
-    const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-    return users.some(u => u.email === email);
-  };
-
-  const loginWithMobile = async (mobile) => {
-    const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-    const existingUser = users.find(u => u.mobile === mobile);
-    if (existingUser) {
-      const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile, avatarUrl: existingUser.avatarUrl };
-      setUser(sessionUser);
-      localStorage.setItem('coskinn_session', JSON.stringify(sessionUser));
-      return sessionUser;
-    }
-    throw new Error("User not found.");
-  };
-
-  const loginWithEmail = async (email) => {
-    const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-    const existingUser = users.find(u => u.email === email);
-    if (existingUser) {
-      const sessionUser = { name: existingUser.name, email: existingUser.email, mobile: existingUser.mobile, avatarUrl: existingUser.avatarUrl };
-      setUser(sessionUser);
-      localStorage.setItem('coskinn_session', JSON.stringify(sessionUser));
-      return sessionUser;
-    }
-    throw new Error("User not found.");
-  };
-
-  const updateUserProfile = (updatedData) => {
-    const newSessionUser = { ...user, ...updatedData };
-    setUser(newSessionUser);
-    localStorage.setItem('coskinn_session', JSON.stringify(newSessionUser));
+  const verifyMobileOtp = async (phone, otp) => {
+    const formattedPhone = phone.length === 10 ? `+91${phone}` : phone;
+    const response = await apiClient.post('/auth/verify-otp', { phone: formattedPhone, otp });
     
-    // Also update in the users array
-    const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-    const userIndex = users.findIndex(u => u.mobile === user.mobile);
-    if (userIndex >= 0) {
-      users[userIndex] = { ...users[userIndex], ...updatedData };
-      localStorage.setItem('coskinn_users', JSON.stringify(users));
+    if (response.data && response.data.access_token) {
+      const sessionUser = {
+        ...response.data.user,
+      };
+      
+      const sessionData = {
+        user: sessionUser,
+        token: response.data.access_token,
+        refreshToken: response.data.refresh_token
+      };
+      
+      setUser(sessionUser);
+      localStorage.setItem('coskinn_session', JSON.stringify(sessionData));
+      return sessionData;
     }
+    throw new Error('Authentication failed');
   };
 
-  const logout = () => {
+  const updateUserProfile = async (updatedData) => {
+    const res = await apiClient.put('/customer/profile', updatedData);
+    const freshUser = res.data;
+    
+    setUser(freshUser);
+    
+    const sessionStr = localStorage.getItem('coskinn_session');
+    if (sessionStr) {
+      try {
+        const session = JSON.parse(sessionStr);
+        session.user = freshUser;
+        localStorage.setItem('coskinn_session', JSON.stringify(session));
+      } catch (e) {
+        console.error("Failed to update session", e);
+      }
+    }
+    
+    return freshUser;
+  };
+
+  const logout = async () => {
+    const sessionStr = localStorage.getItem('coskinn_session');
+    if (sessionStr) {
+      try {
+        const session = JSON.parse(sessionStr);
+        if (session.refreshToken) {
+          // Attempt to logout on backend, ignore errors if token already expired
+          await apiClient.post('/auth/logout', { refreshToken: session.refreshToken }).catch(() => {});
+        }
+      } catch (e) {
+        console.error("Failed to parse session during logout", e);
+      }
+    }
     setUser(null);
     localStorage.removeItem('coskinn_session');
   };
 
+  useEffect(() => {
+    const handleLogoutEvent = () => {
+      logout();
+    };
+    window.addEventListener('auth:logout', handleLogoutEvent);
+    return () => window.removeEventListener('auth:logout', handleLogoutEvent);
+  }, []);
+
   const memoizedContextValue = useMemo(() => ({
     user,
     loading,
-    login,
-    register,
-    authenticateOTPUser,
-    checkMobileExists,
-    checkEmailExists,
-    loginWithMobile,
-    loginWithEmail,
+    sendMobileOtp,
+    verifyMobileOtp,
     logout,
     updateUserProfile,
     isAuthModalOpen,

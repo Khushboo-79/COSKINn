@@ -61,7 +61,7 @@ export default function ProductCard({ product }) {
           <Heart className={`w-4 h-4 ${inWishlist ? 'fill-[#FF2D7A] text-[#FF2D7A]' : 'text-gray-400 hover:text-[#FF2D7A]'}`} />
         </button>
 
-        <Link to={`/product/${product.id}`} className="absolute inset-0 z-10 flex items-center justify-center">
+        <Link to={`/product/${product.slug || product.id}`} className="absolute inset-0 z-10 flex items-center justify-center">
           <motion.img 
             src={productImg} 
             alt={product.name} 
@@ -84,7 +84,7 @@ export default function ProductCard({ product }) {
           <span className="text-xs text-gray-500 font-medium">({product.reviews || 0})</span>
         </div>
 
-        <Link to={`/product/${product.id}`} className="block">
+        <Link to={`/product/${product.slug || product.id}`} className="block">
           {brand && (
             <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
               {brand}

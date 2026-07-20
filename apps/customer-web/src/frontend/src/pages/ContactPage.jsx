@@ -8,9 +8,15 @@ import {
 } from 'lucide-react';
 import Footer from '../components/common/Footer';
 import heroImg from '../assets/images/contact_hero_desk.png';
+import { useAuth } from '../context/AuthContext';
+import apiClient from '../utils/apiClient';
 
 export default function ContactPage() {
+  const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -47,10 +53,30 @@ export default function ContactPage() {
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Message Sent Successfully!');
-    setFormState({ name: '', email: '', phone: '', subject: 'Product Question', message: '' });
+    setLoading(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+    
+    try {
+      const userId = user?.id || "guest"; // Fallback if not logged in
+      const combinedSubject = `${formState.subject} - From: ${formState.name} (${formState.email}) - Message: ${formState.message}`;
+      
+      await apiClient.post('/support/tickets', {
+        userId,
+        subject: combinedSubject,
+        priority: 'NORMAL'
+      });
+      
+      setSuccessMsg('Message Sent Successfully! We will get back to you soon.');
+      setFormState({ name: '', email: '', phone: '', subject: 'Product Question', message: '' });
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -247,11 +273,15 @@ export default function ContactPage() {
                     ></textarea>
                   </div>
 
+                  {successMsg && <p className="text-green-600 font-bold text-sm">{successMsg}</p>}
+                  {errorMsg && <p className="text-red-500 font-bold text-sm">{errorMsg}</p>}
+
                   <button 
                     type="submit" 
-                    className="w-full bg-[#FF2D7A] text-white rounded-xl py-4 font-bold uppercase tracking-widest text-sm hover:bg-[#E01B63] hover:shadow-[0_10px_30px_rgba(255,45,122,0.3)] transition-all duration-300 flex items-center justify-center gap-2"
+                    disabled={loading}
+                    className="w-full bg-[#FF2D7A] text-white rounded-xl py-4 font-bold uppercase tracking-widest text-sm hover:bg-[#E01B63] hover:shadow-[0_10px_30px_rgba(255,45,122,0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send size={18} /> Send Message
+                    {loading ? "Sending..." : <><Send size={18} /> Send Message</>}
                   </button>
                 </form>
               </motion.div>

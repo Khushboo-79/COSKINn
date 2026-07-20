@@ -527,10 +527,10 @@ export default function Navbar() {
                     <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover shadow-sm border border-white" />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-theme-primary text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
-                      {user.name.charAt(0).toUpperCase()}
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
-                  <span className="text-[14px] font-bold text-black hidden sm:block">{user.name.split(' ')[0]}</span>
+                  <span className="text-[14px] font-bold text-black hidden sm:block">{user.name ? user.name.split(' ')[0] : 'User'}</span>
                 </>
               ) : (
                 <User size={24} strokeWidth={1.5} />
@@ -649,11 +649,11 @@ export default function Navbar() {
                     <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-14 h-14 rounded-full object-cover shadow-sm border border-white" />
                   ) : (
                     <div className="w-14 h-14 rounded-full bg-theme-primary text-white flex items-center justify-center text-xl font-bold shadow-sm">
-                      {user.name.charAt(0).toUpperCase()}
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-black text-lg truncate leading-tight">{user.name}</h3>
+                    <h3 className="font-bold text-black text-lg truncate leading-tight">{user.name || 'User'}</h3>
                     <p className="text-sm text-gray-500 truncate">{user.email || 'No email added'}</p>
                   </div>
                   <button
