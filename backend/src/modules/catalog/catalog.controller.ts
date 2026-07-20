@@ -22,8 +22,11 @@ export class CatalogController {
     @Query('maxPrice') maxPrice?: string,
     @Query('category') category?: string,
     @Query('skinType') skinType?: string,
+    @Query('skinConcern') skinConcern?: string,
+    @Query('ingredient') ingredient?: string,
+    @Query('sort') sort?: string,
   ) {
-    return this.catalogService.getProducts({ page, minPrice, maxPrice, category, skinType });
+    return this.catalogService.getProducts({ page, minPrice, maxPrice, category, skinType, skinConcern, ingredient, sort });
   }
 
   @Get('products/:slug')
@@ -44,5 +47,20 @@ export class CatalogController {
   @Get('categories/:slug')
   getCategoryBySlug(@Param('slug') slug: string) {
     return this.catalogService.getCategoryBySlug(slug);
+  }
+
+  @Get('skin-types')
+  getSkinTypes() {
+    return this.catalogService.getSkinTypes();
+  }
+
+  @Get('skin-concerns')
+  getSkinConcerns() {
+    return this.catalogService.getSkinConcerns();
+  }
+
+  @Get('ingredients')
+  getIngredients() {
+    return this.catalogService.getIngredients();
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
@@ -8,6 +8,13 @@ import { UseGuards, Request } from '@nestjs/common';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getCurrentUser(@Request() req) {
+    return req.user;
+  }
+
 
   @Post('login')
   login(@Body() loginDto: LoginDto) {

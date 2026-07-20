@@ -10,6 +10,15 @@ import { SharedShell } from './components/layout/SharedShell';
 import { RequirePanel } from './core/rbac/RequirePanel';
 import { AdminRouter } from './modules/admin/AdminRouter';
 import { ProductRouter } from './modules/product/ProductRouter';
+import { InventoryRouter } from './modules/inventory/InventoryRouter';
+import { OrderRouter } from './modules/orders/OrderRouter';
+import { WarehouseRouter } from './modules/warehouse/WarehouseRouter';
+import { SupportRouter } from './modules/support/SupportRouter';
+import { FinanceRouter } from './modules/finance/FinanceRouter';
+import { MarketingRouter } from './modules/marketing/MarketingRouter';
+import { ContentRouter } from './modules/content/ContentRouter';
+import { HrRouter } from './modules/hr/HrRouter';
+import { AuditRouter } from './modules/audit/AuditRouter';
 
 // Initialize React Query Client
 const queryClient = new QueryClient({
@@ -51,7 +60,59 @@ const App = () => {
                 </RequirePanel>
               } />
               
-              {/* Other panels would go here */}
+              <Route path="/inventory/*" element={
+                <RequirePanel panelId="inventory">
+                  <InventoryRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/orders/*" element={
+                <RequirePanel panelId="orders">
+                  <OrderRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/warehouse/*" element={
+                <RequirePanel panelId="warehouse">
+                  <WarehouseRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/support/*" element={
+                <RequirePanel panelId="support">
+                  <SupportRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/finance/*" element={
+                <RequirePanel panelId="finance">
+                  <FinanceRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/marketing/*" element={
+                <RequirePanel panelId="marketing">
+                  <MarketingRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/content/*" element={
+                <RequirePanel panelId="content">
+                  <ContentRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/hr/*" element={
+                <RequirePanel panelId="hr">
+                  <HrRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/audit/*" element={
+                <RequirePanel panelId="audit">
+                  <AuditRouter />
+                </RequirePanel>
+              } />
             </Route>
 
             {/* Catch-all */}

@@ -15,7 +15,10 @@ async function bootstrap() {
     transform: true,
   }));
   
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
   app.setGlobalPrefix('api');
   
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {

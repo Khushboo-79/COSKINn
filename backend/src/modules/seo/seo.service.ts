@@ -48,4 +48,27 @@ export class SeoService {
       keywords: `${fruitName.toLowerCase()}, skincare, coskinn`
     };
   }
+
+  // --- Admin ---
+  async getGlobalSeo() {
+    const seo = await this.prisma.globalSeo.findFirst();
+    if (!seo) {
+      return this.prisma.globalSeo.create({
+        data: {
+          title: 'COSKINn - Premium Skincare & Cosmetics',
+          description: 'Discover our premium range of fruit-infused skincare and cosmetics.',
+          keywords: 'skincare, cosmetics, fruit, natural'
+        }
+      });
+    }
+    return seo;
+  }
+
+  async updateGlobalSeo(data: { title?: string; description?: string; keywords?: string }) {
+    const seo = await this.getGlobalSeo();
+    return this.prisma.globalSeo.update({
+      where: { id: seo.id },
+      data
+    });
+  }
 }

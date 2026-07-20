@@ -27,6 +27,13 @@ export class ContentController {
   // --- ADMIN ENDPOINTS ---
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Get('admin/articles')
+  getAdminArticles(@Query('type') type?: 'BLOG' | 'TIP' | 'ROUTINE' | 'LEGAL' | 'PAGE') {
+    return this.contentService.getArticles(type, false); // false means get all (drafts + published)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
   @Post('admin/articles')
   createArticle(@Body() data: any) {
     return this.contentService.createArticle(data);
