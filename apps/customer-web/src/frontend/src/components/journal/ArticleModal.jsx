@@ -151,7 +151,7 @@ export const articlesData = {
       { q: "How often should I reapply SPF in the summer?", a: "Every 2 hours, especially if you are swimming or sweating." },
       { q: "Can I skip moisturizer in the summer?", a: "No, but you should switch to a lightweight, oil-free hydrator." }
     ],
-    products: ["COSKINn Vitamin C Sunscreen SPF 50", "COSKINn Mango Lip Balm SPF 30"]
+    products: ["COSKINn Vitamin C Sunscreen SPF 50"]
   }
 };
 

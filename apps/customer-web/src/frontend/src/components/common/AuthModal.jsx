@@ -31,10 +31,10 @@ export default function AuthModal({ isOpen, onClose }) {
   const [step, setStep] = useState('MOBILE'); // MOBILE, EMAIL_LOGIN_INPUT, OTP, DETAILS, EMAIL_OTP
   const [mobile, setMobile] = useState('');
   const [emailLogin, setEmailLogin] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '']); // Changed to 4 digits
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [emailOtp, setEmailOtp] = useState(['', '', '', '']); // Changed to 4 digits
+  const [emailOtp, setEmailOtp] = useState(['', '', '', '', '', '']);
   
   const [countdown, setCountdown] = useState(30);
   const [loading, setLoading] = useState(false);
@@ -43,6 +43,8 @@ export default function AuthModal({ isOpen, onClose }) {
   // Flow state
   const [isExistingMobile, setIsExistingMobile] = useState(false);
   const [isExistingEmail, setIsExistingEmail] = useState(false);
+  const [duplicateMobileError, setDuplicateMobileError] = useState(false);
+  const [duplicateEmailError, setDuplicateEmailError] = useState(false);
   
   const otpRefs = useRef([]);
   const emailOtpRefs = useRef([]);
@@ -52,15 +54,17 @@ export default function AuthModal({ isOpen, onClose }) {
       setStep('MOBILE');
       setMobile('');
       setEmailLogin('');
-      setOtp(['', '', '', '']);
+      setOtp(['', '', '', '', '', '']);
       setName('');
       setEmail('');
-      setEmailOtp(['', '', '', '']);
+      setEmailOtp(['', '', '', '', '', '']);
       setCountdown(30);
       setLoading(false);
       setErrorMsg('');
       setIsExistingMobile(false);
       setIsExistingEmail(false);
+      setDuplicateMobileError(false);
+      setDuplicateEmailError(false);
     }
   }, [isOpen]);
 
@@ -77,6 +81,7 @@ export default function AuthModal({ isOpen, onClose }) {
   const handleMobileSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setDuplicateMobileError(false);
     if (mobile.length !== 10) {
       setErrorMsg('Please enter a valid 10-digit mobile number.');
       return;
@@ -85,13 +90,25 @@ export default function AuthModal({ isOpen, onClose }) {
     
     // Check if user exists
     const exists = await checkMobileExists(mobile);
-    setIsExistingMobile(exists);
     
     setTimeout(() => {
       setLoading(false);
-      setStep('OTP');
-      setCountdown(30);
+      if (exists) {
+        setDuplicateMobileError(true);
+        setTimeout(() => setDuplicateMobileError(false), 5000);
+      } else {
+        setIsExistingMobile(false);
+        setStep('OTP');
+        setCountdown(30);
+      }
     }, 600);
+  };
+
+  const handleMobileSignIn = () => {
+    setDuplicateMobileError(false);
+    setIsExistingMobile(true);
+    setStep('OTP');
+    setCountdown(30);
   };
 
   const handleEmailLoginSubmit = async (e) => {
@@ -123,19 +140,19 @@ export default function AuthModal({ isOpen, onClose }) {
     setErrorMsg('');
     const arr = isEmail ? [...emailOtp] : [...otp];
     if (value.length > 1) {
-      const pastedData = value.slice(0, 4).split('');
+      const pastedData = value.slice(0, 6).split('');
       for (let i = 0; i < pastedData.length; i++) {
-        if (i + index < 4) arr[i + index] = pastedData[i];
+        if (i + index < 6) arr[i + index] = pastedData[i];
       }
       if (isEmail) setEmailOtp(arr); else setOtp(arr);
-      const nextIndex = Math.min(index + pastedData.length, 3);
+      const nextIndex = Math.min(index + pastedData.length, 5);
       const refs = isEmail ? emailOtpRefs : otpRefs;
       refs.current[nextIndex]?.focus();
       return;
     }
     arr[index] = value;
     if (isEmail) setEmailOtp(arr); else setOtp(arr);
-    if (value && index < 3) {
+    if (value && index < 5) {
       const refs = isEmail ? emailOtpRefs : otpRefs;
       refs.current[index + 1]?.focus();
     }
@@ -152,7 +169,7 @@ export default function AuthModal({ isOpen, onClose }) {
     e.preventDefault();
     setErrorMsg('');
     
-    if (otp.join('').length === 4) {
+    if (otp.join('').length === 6) {
       setLoading(true);
       setTimeout(async () => {
         if (isExistingMobile) {
@@ -175,6 +192,7 @@ export default function AuthModal({ isOpen, onClose }) {
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setDuplicateEmailError(false);
     
     const trimmedName = name.trim();
     if (!trimmedName) {
@@ -193,14 +211,10 @@ export default function AuthModal({ isOpen, onClose }) {
     setTimeout(() => {
       setLoading(false);
       if (emailExists) {
-        setIsExistingEmail(true);
-        setErrorMsg('This email is already registered. Please log in instead.');
-        setTimeout(() => {
-          setErrorMsg('');
-          setStep('EMAIL_OTP');
-          setCountdown(30);
-        }, 2000);
+        setDuplicateEmailError(true);
+        setTimeout(() => setDuplicateEmailError(false), 5000);
       } else {
+        setIsExistingEmail(false);
         setStep('EMAIL_OTP');
         setCountdown(30);
       }
@@ -210,7 +224,7 @@ export default function AuthModal({ isOpen, onClose }) {
   const handleEmailOtpSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    if (emailOtp.join('').length === 4) {
+    if (emailOtp.join('').length === 6) {
       setLoading(true);
       
       try {
@@ -223,7 +237,7 @@ export default function AuthModal({ isOpen, onClose }) {
         onClose();
       } catch (err) {
         setLoading(false);
-        setErrorMsg('Verification failed. Please try again.');
+        setErrorMsg(err.message || 'Verification failed. Please try again.');
       }
     }
   };
@@ -244,25 +258,30 @@ export default function AuthModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <>
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.4 }}
-        className="absolute inset-0 bg-black/40 backdrop-blur-md"
+        style={{ zIndex: 9998 }}
+        className="fixed inset-0 bg-black/40 backdrop-blur-md"
         onClick={onClose}
       />
 
-      {/* Modal Container */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full max-w-[850px] bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.2)] overflow-y-auto max-h-[90vh] md:max-h-none md:overflow-hidden flex flex-col md:flex-row md:min-h-[500px]"
+      {/* Modal Container Wrapper */}
+      <div 
+        style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 }}
+        className="w-full max-w-[850px] px-4 pointer-events-none"
       >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.2)] overflow-y-auto max-h-[90vh] md:max-h-none md:overflow-hidden flex flex-col md:flex-row md:min-h-[500px] pointer-events-auto"
+        >
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -323,6 +342,7 @@ export default function AuthModal({ isOpen, onClose }) {
                         onChange={(e) => {
                           setMobile(e.target.value.replace(/\D/g, '').slice(0, 10));
                           setErrorMsg('');
+                          setDuplicateMobileError(false);
                         }}
                         placeholder="Enter 10 digit number"
                         className="flex-1 py-4 px-4 outline-none text-gray-900 font-medium bg-transparent"
@@ -331,7 +351,17 @@ export default function AuthModal({ isOpen, onClose }) {
                     </div>
                   </div>
 
-                  {renderError()}
+                  {duplicateMobileError && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-2 mt-3 text-red-500 text-sm font-medium bg-red-50 p-3 rounded-xl border border-red-100">
+                      <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                      <span className="leading-tight">
+                        This mobile number is already registered. Please{' '}
+                        <button type="button" onClick={handleMobileSignIn} className="underline font-bold hover:text-red-700">sign in</button>
+                        {' '}or use a different mobile number.
+                      </span>
+                    </motion.div>
+                  )}
+                  {!duplicateMobileError && renderError()}
 
                   <button
                     type="submit"
@@ -445,7 +475,7 @@ export default function AuthModal({ isOpen, onClose }) {
                         ref={(el) => (otpRefs.current[index] = el)}
                         type="text"
                         inputMode="numeric"
-                        maxLength={4}
+                        maxLength={6}
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value, false)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e, false)}
@@ -470,8 +500,8 @@ export default function AuthModal({ isOpen, onClose }) {
 
                   <button
                     type="submit"
-                    disabled={otp.join('').length !== 4 || loading}
-                    className={`w-full py-4 rounded-xl font-bold tracking-wide transition-all flex items-center justify-center gap-2 ${otp.join('').length === 4 ? `${primaryClass} ${primaryHoverClass} shadow-md` : disabledClass}`}
+                    disabled={otp.join('').length !== 6 || loading}
+                    className={`w-full py-4 rounded-xl font-bold tracking-wide transition-all flex items-center justify-center gap-2 ${otp.join('').length === 6 ? `${primaryClass} ${primaryHoverClass} shadow-md` : disabledClass}`}
                   >
                     {loading ? 'Verifying...' : (isExistingMobile ? 'Login' : 'Verify & Proceed')} <ArrowRight size={18} />
                   </button>
@@ -513,13 +543,23 @@ export default function AuthModal({ isOpen, onClose }) {
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => { setEmail(e.target.value.trim()); setErrorMsg(''); }}
+                      onChange={(e) => { setEmail(e.target.value.trim()); setErrorMsg(''); setDuplicateEmailError(false); }}
                       placeholder="jane@example.com"
                       className="w-full py-4 px-4 border border-gray-300 rounded-xl outline-none text-gray-900 font-medium bg-transparent focus:border-theme-primary focus:ring-1 focus:ring-theme-primary transition-all"
                     />
                   </div>
 
-                  {renderError()}
+                  {duplicateEmailError && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-2 mt-3 text-red-500 text-sm font-medium bg-red-50 p-3 rounded-xl border border-red-100">
+                      <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                      <span className="leading-tight">
+                        This email address is already registered. Please{' '}
+                        <button type="button" onClick={() => { setDuplicateEmailError(false); setStep('EMAIL_LOGIN_INPUT'); }} className="underline font-bold hover:text-red-700">sign in</button>
+                        {' '}or use a different email address.
+                      </span>
+                    </motion.div>
+                  )}
+                  {!duplicateEmailError && renderError()}
 
                   <button
                     type="submit"
@@ -567,7 +607,7 @@ export default function AuthModal({ isOpen, onClose }) {
                         ref={(el) => (emailOtpRefs.current[index] = el)}
                         type="text"
                         inputMode="numeric"
-                        maxLength={4}
+                        maxLength={6}
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value, true)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e, true)}
@@ -592,8 +632,8 @@ export default function AuthModal({ isOpen, onClose }) {
 
                   <button
                     type="submit"
-                    disabled={emailOtp.join('').length !== 4 || loading}
-                    className={`w-full py-4 rounded-xl font-bold tracking-wide transition-all flex items-center justify-center gap-2 ${emailOtp.join('').length === 4 ? `${primaryClass} ${primaryHoverClass} shadow-md` : disabledClass}`}
+                    disabled={emailOtp.join('').length !== 6 || loading}
+                    className={`w-full py-4 rounded-xl font-bold tracking-wide transition-all flex items-center justify-center gap-2 ${emailOtp.join('').length === 6 ? `${primaryClass} ${primaryHoverClass} shadow-md` : disabledClass}`}
                   >
                     {loading ? 'Verifying...' : (isExistingEmail ? 'Login' : 'Verify & Create Account')}
                   </button>
@@ -603,7 +643,8 @@ export default function AuthModal({ isOpen, onClose }) {
 
           </AnimatePresence>
         </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+    </>
   );
 }

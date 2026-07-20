@@ -446,16 +446,18 @@ export default function Navbar() {
           {/* Pill Theme Switcher */}
           <div className="flex bg-white/40 p-1 rounded-full text-xs font-semibold backdrop-blur-sm border border-white/60 shadow-sm">
             <button
+              aria-label="Switch to Skincare Theme"
               onClick={() => handleThemeSwitch('skincare')}
               className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-[#FF8FB1] text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
               Skincare
             </button>
             <button
+              aria-label="Switch to Cosmetic Theme"
               onClick={() => handleThemeSwitch('cosmetics')}
               className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-[#FF8FB1] text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
             >
-              Makeup
+              Cosmetic
             </button>
           </div>
 

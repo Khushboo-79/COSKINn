@@ -40,8 +40,7 @@ export default function NewArrivalsPage() {
     { id: 4, name: "COSKINn Magnetic Lipstick", price: 999, rating: 5.0, category: "Cosmetics", image: lipstickImg, badge: "LIMITED EDITION" },
     { id: 5, name: "COSKINn Green Tea Face Mist", price: 499, rating: 4.6, category: "Skincare", image: cleanserImg, badge: "BEST SELLER" },
     { id: 6, name: "COSKINn Blueberry Overnight Mask", price: 1299, rating: 4.9, category: "Skincare", image: cleanserImg, badge: "JUST DROPPED" },
-    { id: 7, name: "COSKINn Lift & Curl Mascara", price: 899, rating: 4.8, category: "Cosmetics", image: mascaraImg, badge: "MOST LOVED" },
-    { id: 8, name: "COSKINn Mango Lip Balm SPF 30", price: 499, rating: 4.7, category: "Skincare", image: sunscreenImg, badge: "NEW" }
+    { id: 7, name: "COSKINn Lift & Curl Mascara", price: 899, rating: 4.8, category: "Cosmetics", image: mascaraImg, badge: "MOST LOVED" }
   ];
 
   const activeProducts = theme === 'skincare' ? skincareProducts : legacyProducts;

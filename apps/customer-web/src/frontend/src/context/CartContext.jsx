@@ -9,6 +9,7 @@ export function CartProvider({ children }) {
   const { showToast } = useToast();
   const [cart, setCart] = useState([]);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const [pendingCartAction, setPendingCartAction] = useState(null);
 
   // Load cart from local storage when user changes
   useEffect(() => {
@@ -33,6 +34,7 @@ export function CartProvider({ children }) {
 
   const addToCart = useCallback((product) => {
     if (!user) {
+      setPendingCartAction(product);
       openAuthModal();
       return;
     }
@@ -50,6 +52,13 @@ export function CartProvider({ children }) {
       }
     });
   }, [user, openAuthModal, showToast]);
+
+  useEffect(() => {
+    if (user && pendingCartAction) {
+      addToCart(pendingCartAction);
+      setPendingCartAction(null);
+    }
+  }, [user, pendingCartAction, addToCart]);
 
   const removeFromCart = useCallback((productId) => {
     setCart((prevCart) => prevCart.filter(item => item.id !== productId));

@@ -57,6 +57,5 @@ export const cosmeticsProducts = [
   { id: 304, name: "COSKINn Eyeshadow Palette", price: 1899, category: "Eyes", image: paletteImg, images: [paletteImg] },
   { id: 305, name: "COSKINn Professional Makeup Brush Set", price: 2499, category: "Tools", image: brushImg, images: [brushImg] },
   { id: 306, name: "COSKINn Precision Lip Liner", price: 499, category: "Lips", image: lipstickImg, images: [lipstickImg] },
-  { id: 307, name: "COSKINn Lip Blur", price: 699, category: "Lips", image: lipstickImg, images: [lipstickImg] },
-  { id: 308, name: "COSKINn Mango Lip Balm SPF 30", price: 399, category: "Lips", image: lipstickImg, images: [lipstickImg] }
+  { id: 307, name: "COSKINn Lip Blur", price: 699, category: "Lips", image: lipstickImg, images: [lipstickImg] }
 ];

@@ -43,6 +43,8 @@ const AcneBlemishesPage = React.lazy(() => import('./pages/AcneBlemishesPage'));
 const WeekendCollectionPage = React.lazy(() => import('./pages/WeekendCollectionPage'));
 const MagneticLipstickCollectionPage = React.lazy(() => import('./pages/collections/MagneticLipstickCollectionPage'));
 const PrecisionLipLinerCollectionPage = React.lazy(() => import('./pages/collections/PrecisionLipLinerCollectionPage'));
+const LipBlurCollectionPage = React.lazy(() => import('./pages/collections/LipBlurCollectionPage'));
+const MascaraCollectionPage = React.lazy(() => import('./pages/collections/MascaraCollectionPage'));
 
 // Category Pages
 const HydrationPage = React.lazy(() => import('./pages/categories/HydrationPage'));
@@ -166,6 +168,8 @@ const MainLayout = () => {
             <Route path="/shop/collections/daily-essentials" element={<DailyEssentialsPage />} />
             <Route path="/collections/magnetic-lipstick" element={<MagneticLipstickCollectionPage />} />
             <Route path="/collections/precision-lip-liner" element={<PrecisionLipLinerCollectionPage />} />
+            <Route path="/collections/lip-blur" element={<LipBlurCollectionPage />} />
+            <Route path="/collections/lift-curl-mascara" element={<MascaraCollectionPage />} />
             <Route path="/categories/acne-blemishes" element={<AcneBlemishesPage />} />
             <Route path="/shop/collections/weekend-collection" element={<WeekendCollectionPage />} />
             <Route path="/categories/hydration" element={<HydrationPage />} />
@@ -194,13 +198,12 @@ const MainLayout = () => {
   );
 };
 
+import SEO from './components/common/SEO';
+
 export default function App() {
   return (
     <AuthProvider>
-      <Helmet>
-        <title>COSKINn | Premium Skincare & Cosmetics</title>
-        <meta name="description" content="Discover premium skincare and cosmetics. Shop clean, ethical, and effective beauty products for your daily routine." />
-      </Helmet>
+      <SEO />
       <ToastProvider>
         <CartProvider>
           <WishlistProvider>

@@ -62,20 +62,19 @@ export function AuthProvider({ children }) {
   };
 
   const authenticateOTPUser = (userData) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       setTimeout(() => {
         const users = JSON.parse(localStorage.getItem('coskinn_users') || '[]');
-        let existingUserIndex = users.findIndex(u => u.mobile === userData.mobile);
+        
+        if (users.some(u => u.mobile === userData.mobile)) {
+          return reject(new Error('This mobile number is already registered. Please sign in or use a different mobile number.'));
+        }
+        if (users.some(u => u.email === userData.email)) {
+          return reject(new Error('This email address is already registered. Please sign in or use a different email address.'));
+        }
         
         let sessionUser = { name: userData.name, email: userData.email, mobile: userData.mobile, avatarUrl: userData.avatarUrl };
-        
-        if (existingUserIndex >= 0) {
-          // Update existing user with new details if provided
-          users[existingUserIndex] = { ...users[existingUserIndex], ...sessionUser };
-        } else {
-          // Register new user
-          users.push(sessionUser);
-        }
+        users.push(sessionUser);
         
         localStorage.setItem('coskinn_users', JSON.stringify(users));
         setUser(sessionUser);
