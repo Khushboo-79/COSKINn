@@ -22,7 +22,9 @@ const NewArrivalsPage = React.lazy(() => import('./pages/NewArrivalsPage'));
 const BestSellersPage = React.lazy(() => import('./pages/BestSellersPage'));
 const AwardWinnersPage = React.lazy(() => import('./pages/AwardWinnersPage'));
 const GiftSetsPage = React.lazy(() => import('./pages/GiftSetsPage'));
+const RecommendedPage = React.lazy(() => import('./pages/RecommendedPage'));
 const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
+const MembershipPurchasePage = React.lazy(() => import('./pages/MembershipPurchasePage'));
 const ProductDetailsPage = React.lazy(() => import('./pages/ProductDetailsPage'));
 const OrderTrackingPage = React.lazy(() => import('./pages/OrderTrackingPage'));
 const ShopAllSkincarePage = React.lazy(() => import('./pages/ShopAllSkincarePage'));
@@ -45,6 +47,7 @@ const MagneticLipstickCollectionPage = React.lazy(() => import('./pages/collecti
 const PrecisionLipLinerCollectionPage = React.lazy(() => import('./pages/collections/PrecisionLipLinerCollectionPage'));
 const LipBlurCollectionPage = React.lazy(() => import('./pages/collections/LipBlurCollectionPage'));
 const MascaraCollectionPage = React.lazy(() => import('./pages/collections/MascaraCollectionPage'));
+const SaleCollectionPage = React.lazy(() => import('./pages/collections/SaleCollectionPage'));
 
 // Category Pages
 const HydrationPage = React.lazy(() => import('./pages/categories/HydrationPage'));
@@ -150,6 +153,8 @@ const MainLayout = () => {
             <Route path="/best-sellers" element={<BestSellersPage />} />
             <Route path="/award-winners" element={<AwardWinnersPage />} />
             <Route path="/gift-sets" element={<GiftSetsPage />} />
+            <Route path="/recommended" element={<RecommendedPage />} />
+            <Route path="/membership/:type" element={<MembershipPurchasePage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/product/:id" element={<ProductDetailsPage />} />
             <Route path="/order/:orderId" element={<OrderTrackingPage />} />
@@ -170,6 +175,7 @@ const MainLayout = () => {
             <Route path="/collections/precision-lip-liner" element={<PrecisionLipLinerCollectionPage />} />
             <Route path="/collections/lip-blur" element={<LipBlurCollectionPage />} />
             <Route path="/collections/lift-curl-mascara" element={<MascaraCollectionPage />} />
+            <Route path="/collections/sale" element={<SaleCollectionPage />} />
             <Route path="/categories/acne-blemishes" element={<AcneBlemishesPage />} />
             <Route path="/shop/collections/weekend-collection" element={<WeekendCollectionPage />} />
             <Route path="/categories/hydration" element={<HydrationPage />} />
