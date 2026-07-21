@@ -65,4 +65,45 @@ export class MembershipService {
 
     this.logger.log(`Completed tier computation. ${upgrades} users adjusted.`);
   }
+
+  // Customer Methods
+  async getMyTier(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        membershipTier: true
+      }
+    });
+    
+    return {
+      tier: user?.membershipTier || null,
+      historyUrl: '/api/membership/history' // placeholder if needed
+    };
+  }
+
+  // Admin Methods
+  async getTiers() {
+    return this.prisma.membershipTier.findMany({
+      orderBy: { minSpend: 'asc' }
+    });
+  }
+
+  async createTier(data: { name: string; minSpend: number; multiplier: number }) {
+    return this.prisma.membershipTier.create({
+      data
+    });
+  }
+
+  async updateTier(id: string, data: { name?: string; minSpend?: number; multiplier?: number }) {
+    return this.prisma.membershipTier.update({
+      where: { id },
+      data
+    });
+  }
+
+  async deleteTier(id: string) {
+    return this.prisma.membershipTier.delete({
+      where: { id }
+    });
+  }
 }

@@ -6,7 +6,7 @@ export class ContentService {
   constructor(private prisma: PrismaService) {}
 
   // --- ARTICLES (BLOG / TIPS) ---
-  async getArticles(type?: 'BLOG' | 'TIP', publishedOnly: boolean = true) {
+  async getArticles(type?: 'BLOG' | 'TIP' | 'ROUTINE' | 'LEGAL' | 'PAGE', publishedOnly: boolean = true) {
     const where: any = {};
     if (type) where.type = type;
     if (publishedOnly) where.published = true;

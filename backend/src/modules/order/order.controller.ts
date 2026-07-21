@@ -47,6 +47,12 @@ export class OrderController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('orders/:id/track')
+  async trackOrder(@Request() req, @Param('id') id: string) {
+    return this.orderService.trackOrder(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('orders/:id/invoice')
   async getCustomerOrderInvoice(@Request() req, @Param('id') id: string) {
     // Basic authorization check could be added inside service or here
@@ -64,6 +70,18 @@ export class OrderController {
       throw new BadRequestException('Cancellation reason is required');
     }
     return this.orderService.cancelOrder(id, req.user.id, reason);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('orders')
+  async getOrders(@Request() req) {
+    return this.orderService.getOrders(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('orders/:id')
+  async getOrderById(@Request() req, @Param('id') id: string) {
+    return this.orderService.getOrderByIdForCustomer(req.user.id, id);
   }
 
   // --- ADMIN ENDPOINTS ---

@@ -20,5 +20,17 @@ export const adminApi = {
   getStaff2FAStatus: async () => {
     const response = await apiClient.get('/admin/staff/2fa');
     return response.data;
+  },
+  getUsers: async () => {
+    const response = await apiClient.get('/admin/config/users');
+    return response.data;
+  },
+  getSettings: async () => {
+    const response = await apiClient.get('/admin/config/settings');
+    return response.data;
+  },
+  getOverview: async (platform?: string) => {
+    const response = await apiClient.get('/admin/config/overview', { params: { platform } });
+    return response.data;
   }
 };

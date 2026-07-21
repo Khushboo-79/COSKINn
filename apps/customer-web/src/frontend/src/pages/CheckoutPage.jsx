@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, CreditCard, CheckCircle, Package, ArrowLeft, ShieldCheck, Lock, QrCode, Smartphone, RefreshCw, AlertCircle, Download, Truck, Building2, Wallet, Zap, Trash2, Plus, Minus, Tag } from 'lucide-react';
 import BnplFlow from '../components/checkout/BnplFlow';
 import WalletFlow from '../components/checkout/WalletFlow';
+import apiClient from '../utils/apiClient';
 
 export default function CheckoutPage() {
   const { cart, cartSubtotal, clearCart, addToCart, removeFromCart } = useCart();
@@ -73,7 +74,74 @@ export default function CheckoutPage() {
     }
   };
 
-  const processPayment = () => {
+  const createOrderOnBackend = async (methodStr, extraDetails) => {
+    // 1. Create Address in Backend
+    const addressRes = await apiClient.post('/customer/addresses', {
+      fullName: address.name,
+      phone: address.mobile,
+      addressLine1: address.street,
+      city: address.city,
+      state: address.state,
+      pincode: address.pincode,
+      isDefault: true
+    });
+    
+    const addressId = addressRes.data.id;
+
+    // 2. Create Order in Backend
+    let backendMethod = 'ONLINE';
+    if (methodStr === 'cod') backendMethod = 'COD';
+
+    const orderRes = await apiClient.post('/orders', {
+      addressId,
+      paymentMode: backendMethod,
+      pointsToRedeem: 0
+    });
+
+    const orderData = orderRes.data;
+
+    let methodDisplay = methodStr.toUpperCase();
+    if (methodStr === 'cod') methodDisplay = 'Cash On Delivery';
+    else if (methodStr === 'upi') methodDisplay = 'UPI';
+    else if (methodStr === 'card') methodDisplay = 'Credit Card';
+    else if (methodStr === 'netbanking') methodDisplay = 'Net Banking';
+
+    let transactionId = methodStr === 'cod' ? 'N/A' : `TXN${Date.now()}`;
+    if (extraDetails && extraDetails.transactionId) {
+      transactionId = extraDetails.transactionId;
+    }
+
+    const newOrder = {
+      id: orderData.id,
+      orderId: orderData.id.substring(0, 8).toUpperCase(),
+      transactionId,
+      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      totalAmount: orderData.finalAmount,
+      subtotal: cartSubtotal.toFixed(2),
+      discount: orderData.discountAmt,
+      couponDiscount: appliedCoupon ? discount.toFixed(2) : 0,
+      shipping: SHIPPING_COST,
+      gst: TAX.toFixed(2),
+      paymentMethod: methodDisplay,
+      paymentDetails: methodStr === 'cod' ? 'COD' : (methodStr === 'card' ? `Card Ending ${cardDetails.number.slice(-4) || '1234'}` : (methodStr === 'upi' ? 'PhonePe UPI' : (extraDetails?.provider || methodDisplay))),
+      delivery: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' }),
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        qty: item.quantity,
+        variant: item.variant || 'Standard',
+        price: item.price,
+        image: item.image
+      }))
+    };
+    
+    setOrderDetails({...newOrder, status: backendMethod === 'COD' ? 'Payment Pending' : (methodStr === 'bnpl' ? 'Authorized' : 'Paid'), provider: extraDetails?.provider, amount: orderData.finalAmount, method: methodDisplay});
+    placeOrder(newOrder); // keep local context for immediate display in profile page
+    setPaymentStatus('success');
+    clearCart();
+  };
+
+  const processPayment = async () => {
     if (paymentMethod === 'bnpl') {
       setPaymentStatus('bnpl-flow');
       return;
@@ -85,107 +153,38 @@ export default function CheckoutPage() {
 
     setPaymentStatus('processing');
     
-    // Simulate real-world delay for gateway
-    setTimeout(() => {
-      completeOrder();
-    }, 2500);
+    try {
+      await createOrderOnBackend(paymentMethod);
+      setCurrentStep(5);
+    } catch (err) {
+      console.error('Failed to create order:', err);
+      alert('Failed to place order. Please try again.');
+      setPaymentStatus('idle');
+    }
   };
 
-  const handleWalletSuccess = (walletDetails) => {
-    const newOrder = {
-      id: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
-      transactionId: walletDetails.transactionId,
-      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-      totalAmount: TOTAL.toFixed(2),
-      subtotal: cartSubtotal.toFixed(2),
-      discount: discount.toFixed(2),
-      couponDiscount: appliedCoupon ? discount.toFixed(2) : 0,
-      shipping: SHIPPING_COST,
-      gst: TAX.toFixed(2),
-      paymentMethod: 'Wallet',
-      paymentDetails: walletDetails.provider,
-      delivery: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' }),
-      items: cart.map(item => ({
-        id: item.id,
-        name: item.name,
-        qty: item.quantity,
-        variant: item.variant || 'Standard',
-        price: item.price,
-        image: item.image
-      }))
-    };
-    setOrderDetails({...newOrder, orderId: newOrder.id, status: 'Paid'});
-    placeOrder(newOrder);
-    setPaymentStatus('success');
-    clearCart();
-    setCurrentStep(5);
+  const handleWalletSuccess = async (walletDetails) => {
+    setPaymentStatus('processing');
+    try {
+      await createOrderOnBackend('wallet', walletDetails);
+      setCurrentStep(5);
+    } catch (err) {
+      console.error('Wallet order failed:', err);
+      alert('Order failed.');
+      setPaymentStatus('idle');
+    }
   };
 
-  const handleBnplSuccess = (bnplDetails) => {
-    const newOrder = {
-      id: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
-      transactionId: `TXN${Date.now()}`,
-      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-      totalAmount: TOTAL.toFixed(2),
-      subtotal: cartSubtotal.toFixed(2),
-      discount: discount.toFixed(2),
-      couponDiscount: appliedCoupon ? discount.toFixed(2) : 0,
-      shipping: SHIPPING_COST,
-      gst: TAX.toFixed(2),
-      paymentMethod: 'BNPL',
-      paymentDetails: bnplDetails.provider,
-      delivery: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' }),
-      items: cart.map(item => ({
-        id: item.id,
-        name: item.name,
-        qty: item.quantity,
-        variant: item.variant || 'Standard',
-        price: item.price,
-        image: item.image
-      }))
-    };
-    setOrderDetails({...newOrder, orderId: newOrder.id, status: 'Authorized'});
-    placeOrder(newOrder);
-    setPaymentStatus('success');
-    clearCart();
-    setCurrentStep(5);
-  };
-
-  const completeOrder = () => {
-    let methodDisplay = paymentMethod.toUpperCase();
-    if (paymentMethod === 'cod') methodDisplay = 'Cash On Delivery';
-    else if (paymentMethod === 'upi') methodDisplay = 'UPI';
-    else if (paymentMethod === 'card') methodDisplay = 'Credit Card';
-    else if (paymentMethod === 'netbanking') methodDisplay = 'Net Banking';
-
-    const newOrder = {
-      id: `ORD-${Math.floor(Math.random() * 900000) + 100000}`,
-      transactionId: paymentMethod === 'cod' ? 'N/A' : `TXN${Date.now()}`,
-      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-      totalAmount: TOTAL.toFixed(2),
-      subtotal: cartSubtotal.toFixed(2),
-      discount: discount.toFixed(2),
-      couponDiscount: appliedCoupon ? discount.toFixed(2) : 0,
-      shipping: SHIPPING_COST,
-      gst: TAX.toFixed(2),
-      paymentMethod: methodDisplay,
-      paymentDetails: paymentMethod === 'cod' ? 'COD' : (paymentMethod === 'card' ? `Card Ending ${cardDetails.number.slice(-4) || '1234'}` : (paymentMethod === 'upi' ? 'PhonePe UPI' : methodDisplay)),
-      delivery: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' }),
-      items: cart.map(item => ({
-        id: item.id,
-        name: item.name,
-        qty: item.quantity,
-        variant: item.variant || 'Standard',
-        price: item.price,
-        image: item.image
-      }))
-    };
-    
-    setOrderDetails({...newOrder, orderId: newOrder.id, status: paymentMethod === 'cod' ? 'Payment Pending' : 'Paid'});
-    placeOrder(newOrder);
-    setPaymentStatus('success');
-    clearCart();
-    setCurrentStep(5);
+  const handleBnplSuccess = async (bnplDetails) => {
+    setPaymentStatus('processing');
+    try {
+      await createOrderOnBackend('bnpl', bnplDetails);
+      setCurrentStep(5);
+    } catch (err) {
+      console.error('BNPL order failed:', err);
+      alert('Order failed.');
+      setPaymentStatus('idle');
+    }
   };
 
   const updateQuantity = (product, delta) => {

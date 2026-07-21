@@ -155,10 +155,13 @@ export const articlesData = {
   }
 };
 
+import apiClient from '../../utils/apiClient';
+
 export default function ArticleModal({ isOpen, onClose, articleSlug, onArticleChange }) {
   const [article, setArticle] = useState(null);
   const [activeFaq, setActiveFaq] = useState(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [loading, setLoading] = useState(false);
   const modalRef = useRef(null);
 
   const { scrollYProgress } = useScroll({ container: modalRef });
@@ -169,18 +172,47 @@ export default function ArticleModal({ isOpen, onClose, articleSlug, onArticleCh
   });
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && articleSlug) {
       document.body.style.overflow = 'hidden';
-      if (articlesData[articleSlug]) {
-        setArticle(articlesData[articleSlug]);
-      } else {
-        setArticle(articlesData["ultimate-guide-to-achieving-glass-skin-naturally"]);
-      }
+      setLoading(true);
       
-      // Reset scroll
-      if (modalRef.current) {
-        modalRef.current.scrollTo(0, 0);
-      }
+      apiClient.get(`/content/articles/${articleSlug}`)
+        .then(response => {
+          const data = response.data;
+          let parsed = {};
+          try {
+            parsed = JSON.parse(data.contentJson || '{}');
+          } catch(e) {}
+          
+          setArticle({
+            id: data.slug,
+            title: data.title,
+            category: parsed.category || 'Blog',
+            readTime: parsed.readTime || '5 min read',
+            author: parsed.author || 'COSKINn Team',
+            date: parsed.date || new Date(data.createdAt).toLocaleDateString(),
+            image: data.heroImageUrl || "https://images.unsplash.com/photo-1617897903246-719242758050?w=1600&q=80",
+            toc: parsed.toc || [],
+            content: parsed.content || [],
+            takeaways: parsed.takeaways || [],
+            faqs: parsed.faqs || [],
+            products: parsed.products || []
+          });
+        })
+        .catch(err => {
+          console.error("Failed to load article", err);
+          // Fallback if not found on backend (just in case)
+          if (articlesData[articleSlug]) {
+            setArticle(articlesData[articleSlug]);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+          if (modalRef.current) {
+            modalRef.current.scrollTo(0, 0);
+          }
+        });
+
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -200,7 +232,14 @@ export default function ArticleModal({ isOpen, onClose, articleSlug, onArticleCh
     }
   };
 
-  if (!article) return null;
+  if (!isOpen) return null;
+  if (loading || !article) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md">
+        <div className="w-12 h-12 border-4 border-white border-t-[#FF2D7A] rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <AnimatePresence>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -7,7 +7,7 @@ import {
   Sparkles, Leaf
 } from 'lucide-react';
 
-import { skincareProducts } from '../constants/skincareProducts';
+import apiClient from '../utils/apiClient';
 import ProductCard from '../components/common/ProductCard';
 import Footer from '../components/common/Footer';
 import CategoryFAQ from '../components/categories/CategoryFAQ';
@@ -79,7 +79,52 @@ export default function ShopAllSkincarePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('Featured');
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentReview, setCurrentReview] = useState(0);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        // Fetch all products for local filtering
+        const res = await apiClient.get('/catalog/products?limit=100');
+        if (res.data && res.data.items) {
+          // Map backend products to frontend shape
+          const mapped = res.data.items.map(p => ({
+            id: p.id,
+            slug: p.slug,
+            name: p.name,
+            originalPrice: p.mrp,
+            price: p.discountPrice || p.mrp,
+            discountBadge: p.mrp > (p.discountPrice || p.mrp) ? `${Math.round(((p.mrp - (p.discountPrice || p.mrp)) / p.mrp) * 100)}% OFF` : null,
+            rating: 4.8, // placeholder
+            reviews: Math.floor(Math.random() * 500) + 50, // placeholder
+            category: p.category?.name || 'Skincare',
+            image: p.images?.[0]?.url || '',
+            images: p.images?.map(i => i.url) || [],
+            badge: p.isNewArrival ? 'NEW' : p.isBestSeller ? 'BEST SELLER' : '',
+            shortDescription: p.description?.substring(0, 80) || '',
+            longDescription: p.description || '',
+            benefits: [],
+            keyIngredients: [],
+            howToUse: p.howToUse,
+            suitableSkinType: "All Skin Types",
+            skinConcerns: "",
+            stock: 100
+          }));
+          setProducts(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+        setError('Failed to load products');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const bestSellersRef = useRef(null);
 
@@ -92,7 +137,7 @@ export default function ShopAllSkincarePage() {
   };
 
   const filteredProducts = useMemo(() => {
-    let result = [...skincareProducts];
+    let result = [...products];
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -139,7 +184,7 @@ export default function ShopAllSkincarePage() {
   }, [searchQuery, activeFilters, sortBy]);
 
   const bestSellers = useMemo(() => {
-    return [...skincareProducts].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 6);
+    return [...products].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 6);
   }, []);
 
   const scrollBestSellers = (direction) => {
@@ -359,7 +404,13 @@ export default function ShopAllSkincarePage() {
       {/* SECTION 3: PRODUCT GRID */}
       <section className="py-16 bg-[#FAFAFA]">
         <div className="max-w-7xl mx-auto px-6">
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div className="w-10 h-10 border-4 border-gray-200 border-t-[#FF2D7A] rounded-full animate-spin" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-24 text-red-500">{error}</div>
+          ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />

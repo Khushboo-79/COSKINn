@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { SupportService } from './support.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -9,9 +9,17 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class SupportController {
   constructor(private readonly supportService: SupportService) {}
 
+  @Post('contact')
+  createContactTicket(
+    @Request() req,
+    @Body() body: { subject: string; message: string; priority?: string }
+  ) {
+    return this.supportService.createContactTicket(req.user.id, body.subject, body.message, body.priority);
+  }
+
   @Post('tickets')
-  createTicket(@Body() body: { userId: string; subject: string; priority?: string }) {
-    return this.supportService.createTicket(body.userId, body.subject, body.priority);
+  createTicket(@Request() req, @Body() body: { subject: string; priority?: string }) {
+    return this.supportService.createTicket(req.user.id, body.subject, body.priority);
   }
 
   @Get('tickets/:id/messages')

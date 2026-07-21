@@ -12,6 +12,17 @@ export const CatalogDashboardScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      <div className="flex justify-end gap-3">
+        <Link to="/product/feed" className="px-4 py-2 bg-slate-50 text-slate-700 rounded-xl font-medium hover:bg-slate-100 transition-colors flex items-center border border-slate-200">
+          <Tag className="h-4 w-4 mr-2" />
+          Marketing Feed
+        </Link>
+        <Link to="/product/import" className="px-4 py-2 bg-slate-50 text-slate-700 rounded-xl font-medium hover:bg-slate-100 transition-colors flex items-center border border-slate-200">
+          <List className="h-4 w-4 mr-2" />
+          Bulk Import
+        </Link>
+      </div>
+
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link to="/product/create" className="bg-primary-600 text-white p-4 rounded-xl shadow-sm hover:bg-primary-700 transition-all flex items-center justify-between group">
