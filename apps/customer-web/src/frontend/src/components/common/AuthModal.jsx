@@ -323,6 +323,5 @@ export default function AuthModal({ isOpen, onClose }) {
         </div>
         </motion.div>
       </div>
-    </>
   );
 }

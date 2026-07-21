@@ -2929,6 +2929,10 @@ function ReferralTab() {
             </motion.div>
           </div>
         )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
 
 function RewardPointsTab() {
   const [rewardData, setRewardData] = useState(null);
