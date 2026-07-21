@@ -47,6 +47,7 @@ const MagneticLipstickCollectionPage = React.lazy(() => import('./pages/collecti
 const PrecisionLipLinerCollectionPage = React.lazy(() => import('./pages/collections/PrecisionLipLinerCollectionPage'));
 const LipBlurCollectionPage = React.lazy(() => import('./pages/collections/LipBlurCollectionPage'));
 const MascaraCollectionPage = React.lazy(() => import('./pages/collections/MascaraCollectionPage'));
+const EyeshadowCollectionPage = React.lazy(() => import('./pages/collections/EyeshadowCollectionPage'));
 const SaleCollectionPage = React.lazy(() => import('./pages/collections/SaleCollectionPage'));
 
 // Category Pages
@@ -175,6 +176,7 @@ const MainLayout = () => {
             <Route path="/collections/precision-lip-liner" element={<PrecisionLipLinerCollectionPage />} />
             <Route path="/collections/lip-blur" element={<LipBlurCollectionPage />} />
             <Route path="/collections/lift-curl-mascara" element={<MascaraCollectionPage />} />
+            <Route path="/collections/eyeshadow-palette" element={<EyeshadowCollectionPage />} />
             <Route path="/collections/sale" element={<SaleCollectionPage />} />
             <Route path="/categories/acne-blemishes" element={<AcneBlemishesPage />} />
             <Route path="/shop/collections/weekend-collection" element={<WeekendCollectionPage />} />
