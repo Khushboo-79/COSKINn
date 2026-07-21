@@ -19,6 +19,7 @@ export class CatalogController {
   @Get('products')
   getProducts(
     @Query('page') page?: string,
+    @Query('limit') limit?: string,
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
     @Query('category') category?: string,
@@ -27,7 +28,7 @@ export class CatalogController {
     @Query('ingredient') ingredient?: string,
     @Query('sort') sort?: string,
   ) {
-    return this.catalogService.getProducts({ page, minPrice, maxPrice, category, skinType, skinConcern, ingredient, sort });
+    return this.catalogService.getProducts({ page, limit, minPrice, maxPrice, category, skinType });
   }
 
   @Get('products/:slug')

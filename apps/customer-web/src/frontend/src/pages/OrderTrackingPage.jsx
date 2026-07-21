@@ -10,12 +10,13 @@ import ReturnReplaceModal from '../components/orders/ReturnReplaceModal';
 import ReturnPolicyModal from '../components/orders/ReturnPolicyModal';
 import { useOrders } from '../context/OrderContext';
 import { downloadInvoice } from '../utils/downloadInvoice';
+import apiClient from '../utils/apiClient';
 
 export default function OrderTrackingPage() {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { getOrderById } = useOrders();
+  const { getOrderById, loading } = useOrders();
   
   const [order, setOrder] = useState(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -24,11 +25,53 @@ export default function OrderTrackingPage() {
   const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('return');
 
+  const mapOrderToFrontend = (backendOrder) => {
+    if (!backendOrder) return null;
+    
+    // Map statusHistory to timeline
+    // Timeline expects: status, date, time, desc, done
+    let timeline = [];
+    if (backendOrder.statusHistory && backendOrder.statusHistory.length > 0) {
+      timeline = backendOrder.statusHistory.map((sh, idx) => {
+        const d = new Date(sh.createdAt);
+        return {
+          status: sh.status,
+          date: d.toLocaleDateString(),
+          time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          desc: sh.comment || `Order is ${sh.status}`,
+          done: true
+        };
+      });
+    }
+
+    return {
+      ...backendOrder,
+      timeline: timeline.length > 0 ? timeline : [
+        { status: 'Order Placed', date: new Date(backendOrder.createdAt).toLocaleDateString(), time: new Date(backendOrder.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), desc: 'Order received.', done: true }
+      ]
+    };
+  };
+
   useEffect(() => {
-    // Fetch order from Context
+    // Try to get from context first
     const found = getOrderById(orderId);
-    if (found) setOrder(found);
-  }, [orderId, getOrderById]);
+    if (found) {
+      setOrder(mapOrderToFrontend(found));
+    } else if (user && !loading) {
+      // Fallback: Fetch from API directly if not found in context (e.g. direct link)
+      apiClient.get(`/orders/${orderId}`)
+        .then(res => setOrder(mapOrderToFrontend(res.data)))
+        .catch(err => console.error("Failed to fetch order:", err));
+    }
+  }, [orderId, getOrderById, user, loading]);
+
+  if (loading && !order) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <RefreshCw className="w-8 h-8 text-[#FF0069] animate-spin" />
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -46,24 +89,13 @@ export default function OrderTrackingPage() {
   }
 
   const handleCancelSuccess = (cancelledOrderId) => {
-    // Local state mutation for immediate feedback, the context is updated by CancelOrderModal
-    setOrder(prev => ({
-      ...prev,
-      status: 'Cancelled',
-      timeline: [
-        { status: 'Cancellation Requested', date: 'Today', time: '10:00 AM', desc: 'Your cancellation request has been received.', done: true },
-        { status: 'Cancellation Approved', date: 'Today', time: '10:05 AM', desc: 'Your cancellation has been approved.', done: true },
-        { status: 'Refund Initiated', date: 'Today', time: '10:10 AM', desc: 'Refund initiated successfully.', done: true },
-        { status: 'Refund Processing', date: '-', time: '-', desc: 'Processing refund to original payment source.', done: false },
-        { status: 'Refund Completed', date: '-', time: '-', desc: 'Pending transfer.', done: false }
-      ]
-    }));
-    setIsCancelModalOpen(false);
+    // Navigate back to orders or refresh page
+    navigate('/account/orders');
   };
 
-  const isCancelled = order.status === 'Cancelled';
-  const isReturned = order.status === 'Return Requested';
-  const isReplaced = order.status === 'Replacement Requested';
+  const isCancelled = order.status === 'CANCELLED';
+  const isReturned = order.status === 'RETURNED';
+  const isReplaced = order.status === 'REPLACED';
   
   const isSpecialStatus = isCancelled || isReturned || isReplaced;
 
@@ -93,9 +125,9 @@ export default function OrderTrackingPage() {
           <div>
             <h1 className="text-3xl font-heading font-medium text-black mb-2">Order Tracking</h1>
             <p className="text-gray-500 flex items-center gap-2">
-              <span className="font-mono text-black font-medium">{order.id}</span>
+              <span className="font-mono text-black font-medium">{order.id.split('-')[0]}...</span>
               <span>•</span>
-              <span>Placed on {order.date}</span>
+              <span>Placed on {new Date(order.createdAt).toLocaleDateString()}</span>
             </p>
           </div>
           
@@ -212,12 +244,12 @@ export default function OrderTrackingPage() {
                 {order.items.map(item => (
                   <div key={item.id} className="flex items-center gap-4 p-4 border border-gray-100 rounded-2xl hover:border-gray-200 transition-colors">
                     <div className="w-20 h-20 bg-gray-50 rounded-xl overflow-hidden shrink-0">
-                      <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply opacity-90" />
+                      <img loading="lazy" src={item.product?.images?.[0] || 'https://via.placeholder.com/150'} alt={item.product?.name} className="w-full h-full object-cover mix-blend-multiply opacity-90" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-black text-sm truncate">{item.name}</h4>
-                      <p className="text-xs text-gray-500 mt-1">Variant: {item.variant}</p>
-                      <p className="text-xs font-medium text-gray-500 mt-1">Qty: {item.qty}</p>
+                      <h4 className="font-bold text-black text-sm truncate">{item.product?.name}</h4>
+                      <p className="text-xs text-gray-500 mt-1">Variant: Default</p>
+                      <p className="text-xs font-medium text-gray-500 mt-1">Qty: {item.quantity}</p>
                     </div>
                     <div className="font-bold text-black text-right shrink-0">
                       ₹{item.price}
@@ -239,32 +271,32 @@ export default function OrderTrackingPage() {
               <div className="flex flex-col gap-3 text-sm text-gray-600 mb-6">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-medium text-black">₹{order.subtotal}</span>
+                  <span className="font-medium text-black">₹{order.totalAmount}</span>
                 </div>
-                {order.discount > 0 && (
+                {order.discountAmt > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount</span>
-                    <span>-₹{order.discount}</span>
+                    <span>-₹{order.discountAmt}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span>GST (included)</span>
-                  <span className="font-medium text-black">₹{Math.round(order.subtotal * 0.18)}</span>
+                  <span className="font-medium text-black">₹{Math.round(order.totalAmount * 0.18)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Charge</span>
-                  <span className="font-medium text-black">{order.shipping === 0 ? 'Free' : `₹${order.shipping}`}</span>
+                  <span className="font-medium text-black">{order.shippingFee === 0 ? 'Free' : `₹${order.shippingFee}`}</span>
                 </div>
               </div>
               
               <div className="pt-4 border-t border-gray-100 flex justify-between items-center mb-6">
                 <span className="font-bold text-black text-lg">Grand Total</span>
-                <span className="font-bold text-[#FF0069] text-xl">₹{order.totalAmount}</span>
+                <span className="font-bold text-[#FF0069] text-xl">₹{order.finalAmount}</span>
               </div>
               
               <div className="bg-gray-50 rounded-xl p-4 text-center">
                 <p className="text-xs font-medium text-gray-500 mb-1">Payment Method</p>
-                <p className="font-bold text-black">{order.paymentMethod}</p>
+                <p className="font-bold text-black">{order.paymentMode}</p>
               </div>
             </motion.div>
 

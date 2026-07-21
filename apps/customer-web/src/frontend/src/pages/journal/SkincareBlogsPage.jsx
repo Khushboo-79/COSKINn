@@ -1,36 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Search, ArrowRight, Clock, User, ChevronRight } from 'lucide-react';
 import Footer from '../../components/common/Footer';
 import ArticleModal from '../../components/journal/ArticleModal';
-import heroImg from '../../assets/images/journal_blogs_hero.webp';
+import heroImg from '../../assets/images/journal_blogs_hero.png';
+import apiClient from '../../utils/apiClient';
 
 export default function SkincareBlogsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedArticleSlug, setSelectedArticleSlug] = useState(null);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [featuredArticle, setFeaturedArticle] = useState(null);
   
   const categories = ['All', 'Routines', 'Ingredients', 'Lifestyle', 'Expert Advice', 'News'];
   
-  const featuredArticle = {
-    slug: "ultimate-guide-to-achieving-glass-skin-naturally",
-    title: "The Ultimate Guide to Achieving Glass Skin Naturally",
-    category: "Routines",
-    readTime: "5 min read",
-    author: "Dr. Sarah Jenkins",
-    excerpt: "Discover the secrets to luminous, translucent skin using fruit-powered ingredients and simple, consistent habits that won't damage your barrier.",
-    image: "https://images.unsplash.com/photo-1617897903246-719242758050?w=800&q=80"
-  };
-
-  const blogs = [
-    { slug: "why-strawberry-extract-is-new-vitamin-c", title: "Why Strawberry Extract is the New Vitamin C", category: "Ingredients", readTime: "3 min read", image: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=800&q=80" },
-    { slug: "5-common-mistakes-damaging-skin-barrier", title: "5 Common Mistakes Damaging Your Skin Barrier", category: "Expert Advice", readTime: "4 min read", image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80" },
-    { slug: "how-to-build-a-morning-routine-for-oily-skin", title: "How to Build a Morning Routine for Oily Skin", category: "Routines", readTime: "6 min read", image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=800&q=80" },
-    { slug: "the-truth-about-daily-exfoliation", title: "The Truth About Daily Exfoliation", category: "Expert Advice", readTime: "4 min read", image: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?w=800&q=80" },
-    { slug: "pomegranate-vs-green-tea-which-antioxidant-is-better", title: "Pomegranate vs. Green Tea: Which Antioxidant is Better?", category: "Ingredients", readTime: "5 min read", image: "https://images.unsplash.com/photo-1556228720-1c2f0f46c6ab?w=800&q=80" },
-    { slug: "summer-skincare-essentials-you-cant-ignore", title: "Summer Skincare Essentials You Can't Ignore", category: "Lifestyle", readTime: "3 min read", image: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?w=800&q=80" }
-  ];
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await apiClient.get('/content/articles?type=BLOG');
+        const data = response.data || [];
+        const formatted = data.map(article => {
+          let parsedContent = {};
+          try {
+            parsedContent = JSON.parse(article.contentJson || '{}');
+          } catch(e) {}
+          return {
+            slug: article.slug,
+            title: article.title,
+            category: parsedContent.category || 'Blog',
+            readTime: parsedContent.readTime || '5 min read',
+            author: parsedContent.author || 'COSKINn Team',
+            excerpt: article.seoDesc || 'Discover the secrets to luminous skin.',
+            image: article.heroImageUrl || "https://images.unsplash.com/photo-1617897903246-719242758050?w=800&q=80"
+          };
+        });
+        setBlogs(formatted);
+        if (formatted.length > 0) {
+          setFeaturedArticle(formatted[0]); // Just pick the first one as featured
+        }
+      } catch (error) {
+        console.error("Failed to fetch blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
 
   const filteredBlogs = blogs.filter(blog => {
     const matchesCategory = activeCategory === 'All' || blog.category === activeCategory;
@@ -185,44 +203,46 @@ export default function SkincareBlogsPage() {
       </section>
 
       {/* 4. FEATURED ARTICLE */}
-      <section className="py-16 lg:py-24 bg-[#FFFDFD]">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-2 h-8 bg-gradient-to-b from-[#FF2D7A] to-[#FF8EAA] rounded-full"></div>
-            <h2 className="text-3xl lg:text-4xl font-heading font-black text-[#1B1B1B]">Featured Read</h2>
-          </div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="group cursor-pointer bg-white rounded-[2rem] p-4 lg:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col lg:flex-row gap-8 lg:gap-12 hover:shadow-[0_20px_50px_rgba(255,45,122,0.08)] hover:border-[#FF2D7A]/20 transition-all duration-500"
-          >
-            <div className="w-full lg:w-1/2 h-[300px] lg:h-[450px] rounded-3xl overflow-hidden relative">
-              <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
-              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full text-[#FF2D7A] text-xs font-bold uppercase tracking-widest shadow-sm">
-                {featuredArticle.category}
-              </div>
+      {featuredArticle && (
+        <section className="py-16 lg:py-24 bg-[#FFFDFD]">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+            <div className="flex items-center gap-3 mb-10">
+              <div className="w-2 h-8 bg-gradient-to-b from-[#FF2D7A] to-[#FF8EAA] rounded-full"></div>
+              <h2 className="text-3xl lg:text-4xl font-heading font-black text-[#1B1B1B]">Featured Read</h2>
             </div>
             
-            <div className="w-full lg:w-1/2 flex flex-col justify-center py-4 lg:py-10 lg:pr-10">
-              <div className="flex items-center gap-4 text-gray-400 text-sm font-bold uppercase tracking-widest mb-4">
-                <span className="flex items-center gap-1.5"><Clock size={16} /> {featuredArticle.readTime}</span>
-                <span className="flex items-center gap-1.5"><User size={16} /> {featuredArticle.author}</span>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="group cursor-pointer bg-white rounded-[2rem] p-4 lg:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col lg:flex-row gap-8 lg:gap-12 hover:shadow-[0_20px_50px_rgba(255,45,122,0.08)] hover:border-[#FF2D7A]/20 transition-all duration-500"
+            >
+              <div className="w-full lg:w-1/2 h-[300px] lg:h-[450px] rounded-3xl overflow-hidden relative">
+                <img src={featuredArticle.image} alt={featuredArticle.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full text-[#FF2D7A] text-xs font-bold uppercase tracking-widest shadow-sm">
+                  {featuredArticle.category}
+                </div>
               </div>
-              <h3 className="text-3xl lg:text-5xl font-heading font-black text-[#1B1B1B] leading-tight mb-6 group-hover:text-[#FF2D7A] transition-colors">
-                {featuredArticle.title}
-              </h3>
-              <p className="text-gray-500 text-lg font-medium leading-relaxed mb-8">
-                {featuredArticle.excerpt}
-              </p>
-              <button onClick={() => setSelectedArticleSlug(featuredArticle.slug)} className="inline-flex items-center gap-2 text-[#FF2D7A] font-bold uppercase tracking-widest text-sm hover:gap-4 transition-all w-max">
-                Read Full Article <ArrowRight size={18} />
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+              
+              <div className="w-full lg:w-1/2 flex flex-col justify-center py-4 lg:py-10 lg:pr-10">
+                <div className="flex items-center gap-4 text-gray-400 text-sm font-bold uppercase tracking-widest mb-4">
+                  <span className="flex items-center gap-1.5"><Clock size={16} /> {featuredArticle.readTime}</span>
+                  <span className="flex items-center gap-1.5"><User size={16} /> {featuredArticle.author}</span>
+                </div>
+                <h3 className="text-3xl lg:text-5xl font-heading font-black text-[#1B1B1B] leading-tight mb-6 group-hover:text-[#FF2D7A] transition-colors">
+                  {featuredArticle.title}
+                </h3>
+                <p className="text-gray-500 text-lg font-medium leading-relaxed mb-8 line-clamp-3">
+                  {featuredArticle.excerpt}
+                </p>
+                <button onClick={() => setSelectedArticleSlug(featuredArticle.slug)} className="inline-flex items-center gap-2 text-[#FF2D7A] font-bold uppercase tracking-widest text-sm hover:gap-4 transition-all w-max">
+                  Read Full Article <ArrowRight size={18} />
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* 5. NEWSLETTER SECTION */}
       <section className="py-24 bg-white">

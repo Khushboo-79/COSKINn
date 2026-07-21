@@ -176,13 +176,13 @@ export default function AccountPage() {
                 {user.avatarUrl ? (
                   <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-12 h-12 rounded-full object-cover shadow-sm border-2 border-white" />
                 ) : (
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] flex items-center justify-center text-lg font-bold text-white shadow-sm border-2 border-white`}>
-                    {user.name.charAt(0).toUpperCase()}
+                  <div className={`w-14 h-14 rounded-full ${primaryClass} flex items-center justify-center text-xl font-bold shadow-sm`}>
+                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-[#1B1B1B] text-base leading-tight truncate">{user.name}</h3>
-                  <p className="text-xs font-medium text-gray-500 truncate">{user.email || 'No email added'}</p>
+                  <h3 className="font-bold text-black text-lg leading-tight truncate">{user.name || 'User'}</h3>
+                  <p className="text-sm text-gray-500 truncate">{user.email || 'No email added'}</p>
                 </div>
               </div>
 
@@ -320,11 +320,11 @@ function SidebarItem({ icon: Icon, label, id, activeTab, onClick }) {
 function ProfileTab({ user, primaryClass, ringPrimaryClass, dynamicData, handleTabChange }) {
   const { updateUserProfile } = useAuth();
   const [profile, setProfile] = useState({
-    name: user.name || '',
-    email: user.email || '',
-    mobile: user.mobile || '',
-    dob: '',
-    gender: 'female'
+    name: user?.name || '',
+    email: user?.email || '',
+    mobile: user?.phone || '',
+    dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+    gender: user?.gender ? user.gender.toLowerCase() : 'female'
   });
   
   const [beautyProfile, setBeautyProfile] = useState({
@@ -335,26 +335,42 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass, dynamicData, handleT
   });
   
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Avatar Upload State
   const [previewAvatar, setPreviewAvatar] = useState(null);
   const [uploadError, setUploadError] = useState('');
   
   useEffect(() => {
-    const saved = localStorage.getItem('coskinn_profile');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setProfile({ ...parsed, name: user.name, email: user.email, mobile: user.mobile });
-    }
-    const savedBeauty = localStorage.getItem('coskinn_beauty_profile');
-    if (savedBeauty) {
-      setBeautyProfile(JSON.parse(savedBeauty));
-    }
+    setProfile({
+      name: user?.name || '',
+      email: user?.email || '',
+      mobile: user?.phone || '',
+      dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+      gender: user?.gender ? user.gender.toLowerCase() : 'female'
+    });
   }, [user]);
 
-  const handleSaveProfile = () => {
-    localStorage.setItem('coskinn_profile', JSON.stringify({ dob: profile.dob, gender: profile.gender }));
-    localStorage.setItem('coskinn_beauty_profile', JSON.stringify(beautyProfile));
-    updateUserProfile({ name: profile.name, email: profile.email, mobile: profile.mobile });
-    setIsEditing(false);
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    setUploadError('');
+    try {
+      const data = {
+        name: profile.name,
+        email: profile.email,
+        gender: profile.gender.toUpperCase(),
+      };
+      if (profile.dob) {
+        data.dob = new Date(profile.dob).toISOString();
+      }
+      
+      await updateUserProfile(data);
+      setIsEditing(false);
+    } catch (err) {
+      setUploadError(err.response?.data?.message || 'Failed to update profile.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -369,8 +385,21 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass, dynamicData, handleT
     reader.readAsDataURL(file);
   };
 
-  const handleSaveAvatar = () => {
-    if (previewAvatar) { updateUserProfile({ avatarUrl: previewAvatar }); setPreviewAvatar(null); }
+  const handleSaveAvatar = async () => {
+    if (previewAvatar) {
+      setUploadError('');
+      try {
+        await updateUserProfile({ avatarUrl: previewAvatar });
+        setPreviewAvatar(null);
+      } catch (err) {
+        setUploadError(err.response?.data?.message || 'Failed to update avatar.');
+      }
+    }
+  };
+
+  const handleCancelAvatar = () => {
+    setPreviewAvatar(null);
+    setUploadError('');
   };
   
   const StatCard = ({ icon: Icon, title, value, gradient, onClick }) => (
@@ -388,27 +417,18 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass, dynamicData, handleT
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col gap-6">
       
-      {/* Profile Overview Card (Apple Wallet Style) */}
-      <div className="relative overflow-hidden bg-white/70 backdrop-blur-2xl rounded-[2rem] p-8 md:p-10 border border-white shadow-[0_8px_40px_rgba(0,0,0,0.05)]">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#FF0069]/10 to-transparent rounded-full blur-3xl" />
-        
-        <div className="flex flex-col md:flex-row gap-8 items-start md:items-center relative z-10">
-          {/* Avatar Area */}
-          <div className="relative group">
-            {previewAvatar || user.avatarUrl ? (
-              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-[6px] border-white shadow-xl">
-                <img loading="lazy" src={previewAvatar || user.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
-              </div>
-            ) : (
-              <div className={`w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-[#FF0069] to-[#FF6B6B] flex items-center justify-center text-5xl font-black text-white shadow-xl border-[6px] border-white`}>
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <label className="absolute bottom-1 right-1 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors text-[#FF0069]">
-              <Camera size={18} />
-              <input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" onChange={handleFileChange} />
-            </label>
-          </div>
+      {/* Avatar Section */}
+      <div className="flex flex-col sm:flex-row items-center gap-6 mb-10 pb-8 border-b border-gray-100">
+        <div className="relative group">
+          {previewAvatar || user.avatarUrl ? (
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
+              <img loading="lazy" src={previewAvatar || user.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full ${primaryClass} flex items-center justify-center text-4xl font-bold shadow-[0_8px_24px_rgba(0,0,0,0.12)] border-4 border-white`}>
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+          )}
           
           {/* Main Info */}
           <div className="flex-1">
@@ -548,10 +568,12 @@ function ProfileTab({ user, primaryClass, ringPrimaryClass, dynamicData, handleT
 
       {/* Save Button */}
       {isEditing && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end gap-4 mt-2">
-          <button onClick={() => setIsEditing(false)} className="px-8 py-3.5 font-bold rounded-2xl bg-white text-gray-600 hover:text-black hover:shadow-sm border border-gray-200 transition-all">Cancel</button>
-          <button onClick={handleSaveProfile} className="px-10 py-3.5 rounded-2xl font-black bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:shadow-[0_8px_25px_rgba(255,0,105,0.3)] hover:-translate-y-1 text-white transition-all">Save All Changes</button>
-        </motion.div>
+        <div className="mt-8 flex justify-end gap-4">
+          <button onClick={() => setIsEditing(false)} disabled={isSaving} className="px-6 py-3 font-bold text-gray-600 hover:text-black transition-colors disabled:opacity-50">Cancel</button>
+          <button onClick={handleSaveProfile} disabled={isSaving} className="px-8 py-3 rounded-xl font-bold bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 text-white transition-all shadow-sm disabled:opacity-50">
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
       )}
     </motion.div>
   );
@@ -563,43 +585,43 @@ function AddressesTab({ primaryClass, textPrimaryClass }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    const saved = localStorage.getItem('coskinn_addresses');
-    if (saved) setAddresses(JSON.parse(saved));
-    else setAddresses([]); // Ensure empty state initially
-  }, []);
-
-  const handleSave = (addressData) => {
-    let updatedAddresses = [...addresses];
-    
-    // If setting as default, remove default from others
-    if (addressData.isDefault) {
-      updatedAddresses = updatedAddresses.map(a => ({ ...a, isDefault: false }));
+  const fetchAddresses = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await apiClient.get('/customer/addresses');
+      setAddresses(data);
+    } catch (err) {
+      console.error('Failed to fetch addresses', err);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (editingAddress) {
-      // Update
-      updatedAddresses = updatedAddresses.map(a => a.id === editingAddress.id ? { ...addressData, id: a.id } : a);
-    } else {
-      // Add new
-      // If it's the first address, automatically make it default
-      const newAddress = { ...addressData, id: Date.now().toString() };
-      if (updatedAddresses.length === 0) newAddress.isDefault = true;
-      updatedAddresses.push(newAddress);
-    }
-
-    setAddresses(updatedAddresses);
-    localStorage.setItem('coskinn_addresses', JSON.stringify(updatedAddresses));
-    setIsModalOpen(false);
-    setEditingAddress(null);
   };
 
-  const handleDelete = (id) => {
-    const updated = addresses.filter(a => a.id !== id);
-    setAddresses(updated);
-    localStorage.setItem('coskinn_addresses', JSON.stringify(updated));
-    setShowDeleteConfirm(null);
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
+
+  const handleSave = async (addressData) => {
+    if (editingAddress) {
+      await apiClient.put(`/customer/addresses/${editingAddress.id}`, addressData);
+    } else {
+      await apiClient.post('/customer/addresses', addressData);
+    }
+    setIsModalOpen(false);
+    setEditingAddress(null);
+    await fetchAddresses();
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiClient.delete(`/customer/addresses/${id}`);
+      setShowDeleteConfirm(null);
+      await fetchAddresses();
+    } catch (err) {
+      console.error('Failed to delete address', err);
+    }
   };
 
   const openAddModal = () => {
@@ -708,6 +730,32 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
     isDefault: false
   });
   const [errorMsg, setErrorMsg] = useState('');
+  const [isCheckingPin, setIsCheckingPin] = useState(false);
+  const [pinServiceable, setPinServiceable] = useState(null);
+  const [pinMessage, setPinMessage] = useState('');
+
+  useEffect(() => {
+    const checkPin = async () => {
+      const pinStr = formData.pin.replace(/\D/g, '');
+      if (pinStr.length === 6) {
+        setIsCheckingPin(true);
+        try {
+          const { data } = await apiClient.get(`/customer/addresses/serviceability?pincode=${pinStr}`);
+          setPinServiceable(data.serviceable);
+          setPinMessage(data.message);
+        } catch (err) {
+          setPinServiceable(false);
+          setPinMessage('Failed to check serviceability');
+        } finally {
+          setIsCheckingPin(false);
+        }
+      } else {
+        setPinServiceable(null);
+        setPinMessage('');
+      }
+    };
+    checkPin();
+  }, [formData.pin]);
 
   useEffect(() => {
     if (isOpen) {
@@ -724,7 +772,7 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -741,8 +789,16 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
       setErrorMsg('Please enter a valid 6-digit PIN code.');
       return;
     }
+    if (pinServiceable === false) {
+      setErrorMsg('Delivery is not available to this PIN code.');
+      return;
+    }
 
-    onSave({ ...formData, phone: formData.phone.replace(/\D/g, ''), pin: formData.pin.replace(/\D/g, '') });
+    try {
+      await onSave({ ...formData, phone: formData.phone.replace(/\D/g, ''), pin: formData.pin.replace(/\D/g, '') });
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to save address');
+    }
   };
 
   const inputClass = "w-full py-3 px-4 border border-gray-300 rounded-xl outline-none font-medium text-gray-900 focus:border-[#FF0069] focus:ring-1 focus:ring-[#FF0069] transition-all bg-transparent placeholder-gray-400";
@@ -801,6 +857,9 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
               <div className="relative group">
                 <label className={labelClass}>PIN Code *</label>
                 <input type="text" value={formData.pin} onChange={e => setFormData({...formData, pin: e.target.value.replace(/\D/g,'').slice(0,6)})} placeholder="6-digit PIN" className={inputClass} />
+                {isCheckingPin && <p className="text-xs text-gray-500 mt-1">Checking serviceability...</p>}
+                {!isCheckingPin && pinServiceable === true && <p className="text-xs text-green-600 font-bold mt-1">{pinMessage}</p>}
+                {!isCheckingPin && pinServiceable === false && <p className="text-xs text-red-500 font-bold mt-1">{pinMessage}</p>}
               </div>
               <div className="relative group">
                 <label className={labelClass}>City *</label>
@@ -842,14 +901,14 @@ function AddressModal({ isOpen, onClose, onSave, initialData, primaryClass, text
             {errorMsg && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 mt-2 text-red-500 text-sm font-medium bg-red-50 p-3 rounded-xl border border-red-100">
                 <AlertCircle size={16} className="flex-shrink-0" />
-                <span>{errorMsg}</span>
+                <p className="text-sm font-bold text-red-500 px-2">{errorMsg}</p>
               </motion.div>
             )}
 
             {/* Footer Buttons */}
-            <div className="flex gap-4 pt-4 mt-2">
-              <button type="button" onClick={onClose} className="flex-1 py-4 font-bold text-gray-600 bg-[#FF0069]/5 hover:bg-[#FF0069]/10 rounded-xl transition-colors">Cancel</button>
-              <button type="submit" className="flex-1 py-4 font-bold rounded-xl bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 text-white shadow-sm transition-all">
+            <div className="flex gap-4 sticky bottom-0 bg-white pt-2">
+              <button type="button" onClick={onClose} className="flex-1 py-4 font-bold text-gray-600 hover:text-black transition-colors rounded-xl">Cancel</button>
+              <button type="submit" disabled={pinServiceable === false} className="flex-1 py-4 rounded-xl font-bold bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 text-white transition-all shadow-sm disabled:opacity-50">
                 {initialData ? 'Save Changes' : 'Save Address'}
               </button>
             </div>
@@ -901,9 +960,9 @@ function OrdersTab({ primaryClass }) {
             <div className="flex gap-2 w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 hide-scrollbar shrink-0">
               {order.items.map((item, idx) => (
                 <div key={idx} className="w-24 h-24 bg-pink-50/10 rounded-xl overflow-hidden shrink-0 border border-pink-100/20 relative">
-                  <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply opacity-85" />
+                  <img loading="lazy" src={item.variant?.product?.images?.[0] || 'https://via.placeholder.com/150'} alt={item.variant?.product?.name || item.name || 'Product'} className="w-full h-full object-cover mix-blend-multiply opacity-85" />
                   <div className="absolute bottom-1 right-1 bg-white/90 text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm border border-pink-100/30 text-[#FF0069]">
-                    x{item.qty}
+                    x{item.quantity}
                   </div>
                 </div>
               ))}
@@ -912,24 +971,28 @@ function OrdersTab({ primaryClass }) {
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-bold text-black text-lg">Order {order.id}</h4>
+                  <h4 className="font-bold text-black text-lg">Order {order.id.split('-')[0]}...</h4>
                   <span className={`px-3 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full 
-                    ${order.status === 'Delivered' ? 'bg-green-50 text-green-700 border border-green-100' : 
-                      order.status === 'Cancelled' ? 'bg-red-50 text-red-700 border border-red-100' :
-                      order.status === 'Out For Delivery' || order.status === 'Shipped' ? 'bg-pink-50 text-[#FF0069] border border-pink-100/50' : 
+                    ${order.status === 'DELIVERED' ? 'bg-green-50 text-green-700 border border-green-100' : 
+                      order.status === 'CANCELLED' ? 'bg-red-50 text-red-700 border border-red-100' :
+                      order.status === 'OUT_FOR_DELIVERY' || order.status === 'SHIPPED' ? 'bg-pink-50 text-[#FF0069] border border-pink-100/50' : 
                       'bg-orange-50 text-orange-700 border border-orange-100'}`}>
-                    {order.status === 'Cancelled' ? 'Refund Processing' : order.status}
+                    {order.status === 'CANCELLED' ? 'Refund Processing' : order.status}
                   </span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-sm text-gray-500 mb-4">
-                  <p><span className="font-medium text-gray-700">Placed:</span> {order.date}</p>
-                  <p><span className="font-medium text-gray-700">Total:</span> ₹{order.totalAmount} ({order.paymentMethod})</p>
+                  <p><span className="font-medium text-gray-700">Placed:</span> {new Date(order.createdAt).toLocaleDateString()}</p>
+                  <p><span className="font-medium text-gray-700">Total:</span> ₹{order.finalAmount} ({order.paymentMode})</p>
                 </div>
                 {order.items.length === 1 && (
-                  <p className="text-sm font-medium text-gray-800 mb-4 truncate">{order.items[0].name} - {order.items[0].variant}</p>
+                  <p className="text-sm font-medium text-black line-clamp-1 mb-2 max-w-md">
+                    {order.items[0].variant?.product?.name}
+                  </p>
                 )}
                 {order.items.length > 1 && (
-                  <p className="text-sm font-medium text-gray-800 mb-4">{order.items[0].name} and {order.items.length - 1} more item(s)</p>
+                  <p className="text-sm font-medium text-black line-clamp-1 mb-2 max-w-md">
+                    {order.items[0].variant?.product?.name || order.items[0].name} <span className="text-gray-500 font-normal">and {order.items.length - 1} more items</span>
+                  </p>
                 )}
               </div>
               
@@ -2486,15 +2549,31 @@ function NotificationsTab({ primaryClass }) {
 
 function WalletTab() {
   const [filter, setFilter] = useState('All');
-  
-  const transactions = [
-    { id: 'TXN-9021', type: 'Credit', category: 'Refund', amount: 1500, date: '2026-07-18', status: 'Completed', opening: 500, closing: 2000 },
-    { id: 'TXN-9020', type: 'Debit', category: 'Order Payment', amount: 499, date: '2026-07-15', status: 'Completed', opening: 999, closing: 500 },
-    { id: 'TXN-9019', type: 'Credit', category: 'Bonus', amount: 200, date: '2026-07-10', status: 'Completed', opening: 799, closing: 999 },
-    { id: 'TXN-9018', type: 'Credit', category: 'Cashback', amount: 50, date: '2026-07-05', status: 'Completed', opening: 749, closing: 799 },
-  ];
+  const [wallet, setWallet] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const filteredTransactions = filter === 'All' ? transactions : transactions.filter(t => t.type === filter);
+  useEffect(() => {
+    const fetchWallet = async () => {
+      try {
+        const { data } = await apiClient.get('/wallet');
+        setWallet(data);
+      } catch (err) {
+        console.error('Failed to fetch wallet', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWallet();
+  }, []);
+
+  if (loading) {
+    return <div className="p-8 text-center"><div className="w-8 h-8 border-4 border-[#FF0069] border-t-transparent rounded-full animate-spin mx-auto"></div></div>;
+  }
+
+  const transactions = wallet?.transactions || [];
+  const filteredTransactions = filter === 'All' ? transactions : transactions.filter(t => 
+    filter === 'Credit' ? t.type === 'CREDIT' : t.type === 'DEBIT'
+  );
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 font-sans">
@@ -2514,7 +2593,7 @@ function WalletTab() {
         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
         <div className="relative z-10">
           <p className="text-white/80 text-sm font-bold uppercase tracking-wider mb-2">Available Balance</p>
-          <h3 className="text-5xl font-black mb-1">₹2,000</h3>
+          <h3 className="text-5xl font-black mb-1">₹{wallet?.balance || 0}</h3>
           <p className="text-white/90 text-sm flex items-center gap-2 mt-4">
             <CheckCircle2 size={16} /> Secure and ready to use
           </p>
@@ -2540,44 +2619,39 @@ function WalletTab() {
           <thead className="bg-gray-50/50 border-b border-gray-100">
             <tr>
               <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date & ID</th>
-              <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
+              <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Reference</th>
               <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
               <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Balance (Op/Cl)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filteredTransactions.map(t => (
               <tr key={t.id} className="hover:bg-pink-50/10 transition-colors">
                 <td className="p-4">
-                  <p className="font-bold text-gray-900 text-sm">{t.date}</p>
-                  <p className="text-xs text-gray-500">{t.id}</p>
+                  <p className="font-bold text-gray-900 text-sm">{new Date(t.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500">{t.id.slice(0, 8)}</p>
                 </td>
                 <td className="p-4">
                   <div className="flex items-center gap-2">
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === 'Credit' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                      {t.type === 'Credit' ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === 'CREDIT' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                      {t.type === 'CREDIT' ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
                     </span>
-                    <span className="font-medium text-gray-700 text-sm">{t.category}</span>
+                    <span className="font-medium text-gray-700 text-sm">{t.reference}</span>
                   </div>
                 </td>
                 <td className="p-4">
-                  <span className={`font-black ${t.type === 'Credit' ? 'text-green-600' : 'text-gray-900'}`}>
-                    {t.type === 'Credit' ? '+' : '-'}₹{t.amount}
+                  <span className={`font-black ${t.type === 'CREDIT' ? 'text-green-600' : 'text-gray-900'}`}>
+                    {t.type === 'CREDIT' ? '+' : '-'}₹{t.amount}
                   </span>
                 </td>
                 <td className="p-4">
-                  <span className="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-100">{t.status}</span>
-                </td>
-                <td className="p-4 text-right">
-                  <p className="text-xs text-gray-400">Op: ₹{t.opening}</p>
-                  <p className="font-bold text-gray-800 text-sm">Cl: ₹{t.closing}</p>
+                  <span className="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-100">Completed</span>
                 </td>
               </tr>
             ))}
             {filteredTransactions.length === 0 && (
               <tr>
-                <td colSpan="5" className="p-8 text-center text-gray-500">No transactions found.</td>
+                <td colSpan="4" className="p-8 text-center text-gray-500">No transactions found.</td>
               </tr>
             )}
           </tbody>
@@ -2657,8 +2731,25 @@ function BonusesTab() {
 
 function ReferralTab() {
   const { user } = useAuth();
-  const referralCode = user?.name ? `${user.name.split(' ')[0].toUpperCase()}-BEAUTY-2026` : "RESHU-BEAUTY-2026";
+  const [referralData, setReferralData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchReferral = async () => {
+      try {
+        const { data } = await apiClient.get('/referral/my-code');
+        setReferralData(data);
+      } catch (err) {
+        console.error('Failed to fetch referral code', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReferral();
+  }, []);
+
+  const referralCode = referralData?.referralCode || 'COSKINN-BEAUTY';
   
   const handleCopy = () => {
     navigator.clipboard.writeText(referralCode);
@@ -2838,13 +2929,35 @@ function ReferralTab() {
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
 
-// 8. Reward Points Tab
-function RewardPointsTab({ dynamicData }) {
+function RewardPointsTab() {
+  const [rewardData, setRewardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRewards = async () => {
+      try {
+        const { data } = await apiClient.get('/reward-point');
+        setRewardData(data);
+      } catch (err) {
+        console.error('Failed to fetch reward points', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRewards();
+  }, []);
+
+  const balance = rewardData?.balance || 0;
+  const history = rewardData?.history || [];
+  
+  const lifetimeEarned = history.filter(h => h.type === 'EARN').reduce((sum, h) => sum + h.points, 0);
+  const totalRedeemed = history.filter(h => h.type === 'REDEEM').reduce((sum, h) => sum + h.points, 0);
+
+  if (loading) {
+    return <div className="p-8 text-center"><div className="w-8 h-8 border-4 border-[#FF0069] border-t-transparent rounded-full animate-spin mx-auto"></div></div>;
+  }
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col gap-6 font-sans">
       <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white">
@@ -2858,8 +2971,8 @@ function RewardPointsTab({ dynamicData }) {
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
           <Award size={32} className="mb-4 text-white/80" />
           <p className="text-white/80 font-bold uppercase tracking-wider text-xs mb-1">Total Points</p>
-          <h3 className="text-4xl font-black mb-4">{(dynamicData?.rewardPoints || 0).toLocaleString()}</h3>
-          <p className="text-sm font-medium">Equal to ${((dynamicData?.rewardPoints || 0) * 0.01).toFixed(2)} store credit</p>
+          <h3 className="text-4xl font-black mb-4">{balance.toLocaleString()}</h3>
+          <p className="text-sm font-medium">Equal to ₹{(balance * 0.1).toFixed(2)} store credit</p>
         </div>
 
         {/* Stats */}
@@ -2867,7 +2980,7 @@ function RewardPointsTab({ dynamicData }) {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Lifetime Earned</p>
-              <h4 className="text-2xl font-black text-black">12,500 <span className="text-sm font-bold text-gray-400">pts</span></h4>
+              <h4 className="text-2xl font-black text-black">{lifetimeEarned.toLocaleString()} <span className="text-sm font-bold text-gray-400">pts</span></h4>
             </div>
             <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-600">
               <ArrowUpRight size={20} />
@@ -2876,7 +2989,7 @@ function RewardPointsTab({ dynamicData }) {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Redeemed</p>
-              <h4 className="text-2xl font-black text-black">8,000 <span className="text-sm font-bold text-gray-400">pts</span></h4>
+              <h4 className="text-2xl font-black text-black">{totalRedeemed.toLocaleString()} <span className="text-sm font-bold text-gray-400">pts</span></h4>
             </div>
             <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-orange-600">
               <ArrowDownLeft size={20} />
@@ -2927,19 +3040,21 @@ function RewardPointsTab({ dynamicData }) {
       <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white mt-2">
         <h3 className="text-lg font-bold text-black mb-4">Points History</h3>
         <div className="divide-y divide-gray-100">
-          {[
-            { action: 'Order #9021', date: '2026-07-18', pts: '+150', type: 'earn' },
-            { action: 'Redeemed on Checkout', date: '2026-07-10', pts: '-500', type: 'redeem' },
-            { action: 'Product Review', date: '2026-07-05', pts: '+50', type: 'earn' },
-          ].map((hist, idx) => (
-            <div key={idx} className="flex justify-between items-center py-4">
-              <div>
-                <p className="font-bold text-sm text-black">{hist.action}</p>
-                <p className="text-xs text-gray-500">{hist.date}</p>
+          {history.length === 0 ? (
+            <div className="py-8 text-center text-gray-500">No reward points history yet.</div>
+          ) : (
+            history.map((hist, idx) => (
+              <div key={idx} className="flex justify-between items-center py-4">
+                <div>
+                  <p className="font-bold text-sm text-black">{hist.description || hist.reason || 'Reward Points'}</p>
+                  <p className="text-xs text-gray-500">{new Date(hist.createdAt).toLocaleDateString()}</p>
+                </div>
+                <p className={`font-black text-sm ${hist.type === 'EARN' ? 'text-green-600' : 'text-gray-900'}`}>
+                  {hist.type === 'EARN' ? '+' : '-'}{hist.points} pts
+                </p>
               </div>
-              <p className={`font-black text-sm ${hist.type === 'earn' ? 'text-green-600' : 'text-gray-900'}`}>{hist.pts} pts</p>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </motion.div>
