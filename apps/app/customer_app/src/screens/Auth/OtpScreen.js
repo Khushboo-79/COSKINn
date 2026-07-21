@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
 import api from '../../services/api';
 import { setCredentials } from '../../redux/slices/authSlice';
+import { fetchProfile } from '../../redux/slices/profileSlice';
 
 const OtpScreen = ({ navigation, route }) => {
   const phone = route.params?.phone || '';
@@ -77,6 +78,7 @@ const OtpScreen = ({ navigation, route }) => {
 
       // Dispatch to Redux (this will automatically switch the navigation stack)
       dispatch(setCredentials({ user, access_token, refresh_token }));
+      dispatch(fetchProfile());
     } catch (error) {
       console.error(error);
       Alert.alert('Error', error.response?.data?.message || 'Invalid or expired OTP.');

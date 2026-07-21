@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { setCredentials } from '../redux/slices/authSlice';
+import { fetchProfile } from '../redux/slices/profileSlice';
 import AuthScreen from '../screens/Auth/AuthScreen';
 import OtpScreen from '../screens/Auth/OtpScreen';
 import DashboardScreen from '../screens/Skincare/DashboardScreen';
@@ -16,6 +17,7 @@ import TermsAndConditionsScreen from '../screens/Skincare/BottomNav/Account/Term
 import ReturnPolicyScreen from '../screens/Skincare/BottomNav/Account/ReturnPolicyScreen';
 import FAQScreen from '../screens/Skincare/BottomNav/Account/FAQScreen';
 import PrivacyScreen from '../screens/Skincare/BottomNav/Account/PrivacyScreen';
+import ContactUsScreen from '../screens/Skincare/BottomNav/Account/ContactUsScreen';
 import ProductDetailsScreen from '../screens/Skincare/ProductDetails/ProductDetailsScreen';
 import AllReviewsScreen from '../screens/Skincare/ProductDetails/AllReviewsScreen';
 import CartScreen from '../screens/Shared/Cart/CartScreen';
@@ -42,6 +44,7 @@ import MembershipScreen from '../screens/Skincare/BottomNav/Account/MembershipSc
 import ProfileScreen from '../screens/Skincare/BottomNav/Account/ProfileScreen';
 import AddressScreen from '../screens/Skincare/BottomNav/Account/AddressScreen';
 import OrdersListScreen from '../screens/Skincare/BottomNav/Account/OrdersListScreen';
+import OrderDetailsScreen from '../screens/Skincare/BottomNav/Account/OrderDetailsScreen';
 
 import CosmeticsDashboardScreen from '../screens/Cosmetics/CosmeticsDashboardScreen';
 import CosmeticsShopScreen from '../screens/Cosmetics/Shop/ShopScreen';
@@ -75,10 +78,12 @@ const CosmeticsNavigator = () => {
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
+      <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
       <Stack.Screen name="TermsAndConditionsScreen" component={TermsAndConditionsScreen} />
       <Stack.Screen name="ReturnPolicyScreen" component={ReturnPolicyScreen} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="PrivacyScreen" component={PrivacyScreen} />
+      <Stack.Screen name="ContactUsScreen" component={ContactUsScreen} />
     </Stack.Navigator>
   );
 };
@@ -112,10 +117,12 @@ const SkincareNavigator = () => {
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
+      <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
       <Stack.Screen name="TermsAndConditionsScreen" component={TermsAndConditionsScreen} />
       <Stack.Screen name="ReturnPolicyScreen" component={ReturnPolicyScreen} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="PrivacyScreen" component={PrivacyScreen} />
+      <Stack.Screen name="ContactUsScreen" component={ContactUsScreen} />
       <Stack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} />
       <Stack.Screen name="AllReviewsScreen" component={AllReviewsScreen} />
       <Stack.Screen name="FilterScreen" component={FilterScreen} />
@@ -163,6 +170,8 @@ const AppNavigator = () => {
         const token = await AsyncStorage.getItem('access_token');
         if (token) {
           dispatch(setCredentials({ access_token: token }));
+          // Fetch profile data after setting credentials
+          dispatch(fetchProfile());
         }
       } catch (e) {
         console.error(e);

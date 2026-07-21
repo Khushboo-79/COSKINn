@@ -103,7 +103,7 @@ const AccountScreen = () => {
           <Text style={styles.moreTitle}>More</Text>
           <View style={styles.moreLinksSection}>
             <MoreMenuItem title="Terms & Conditions" iconName="shield" onPress={() => navigation.navigate('TermsAndConditionsScreen')} />
-            <MoreMenuItem title="Contact Us" iconName="phone" onPress={() => {}} />
+            <MoreMenuItem title="Contact Us" iconName="phone" onPress={() => navigation.navigate('ContactUsScreen')} />
             <MoreMenuItem title="Return Policy" iconName="refresh-ccw" onPress={() => navigation.navigate('ReturnPolicyScreen')} />
             <MoreMenuItem title="FAQ" iconName="help-circle" onPress={() => navigation.navigate('FAQScreen')} />
             <MoreMenuItem title="Privacy" iconName="lock" onPress={() => navigation.navigate('PrivacyScreen')} />

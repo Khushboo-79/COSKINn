@@ -39,5 +39,23 @@ export const productService = {
     } catch (error) {
       throw error.response?.data || error.message;
     }
+  },
+
+  getProductReviews: async (id) => {
+    try {
+      const response = await api.get(`/products/${id}/reviews`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  addProductReview: async (id, reviewData) => {
+    try {
+      const response = await api.post(`/products/${id}/reviews`, reviewData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   }
 };

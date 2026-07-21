@@ -1,37 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAddresses, setSelectedAddress } from '../../../redux/slices/addressSlice';
+import { createOrder } from '../../../redux/slices/orderSlice';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
-const addresses = [
-  { id: 1, name: 'Ayushi', pin: '345678', details: 'Ibus stop, Mumbai, Bandra, Chauraha.....' },
-  { id: 2, name: 'Ayushi', pin: '345678', details: 'Ibus stop, Mumbai, Bandra, Chauraha.....' },
-  { id: 3, name: 'Ayushi', pin: '345678', details: 'Ibus stop, Mumbai, Bandra, Chauraha.....' },
-];
-
-const CheckoutModal = ({ visible, onClose }) => {
+const CheckoutModal = ({ visible, onClose, finalTotal }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
   const primaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
 
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-  // 'summary' or 'address'
+  
+  const { items: addresses, selectedAddress, loading: addressLoading } = useSelector(state => state.address);
   const [viewState, setViewState] = useState('summary');
-  const [selectedAddressId, setSelectedAddressId] = useState(2); // Match image showing middle one selected
+  const [orderLoading, setOrderLoading] = useState(false);
 
   // Reset to summary view when modal opens
   useEffect(() => {
     if (visible) {
       setViewState('summary');
+      if (addresses.length === 0) {
+        dispatch(fetchAddresses());
+      }
     }
-  }, [visible]);
+  }, [visible, dispatch, addresses.length]);
 
   const handleClose = () => {
     onClose();
+  };
+
+  const handlePlaceOrder = () => {
+    if (!selectedAddress) {
+      alert("Please select a delivery address");
+      return;
+    }
+    setOrderLoading(true);
+    // Create COD order by default for Phase 4
+    const orderData = {
+      addressId: selectedAddress._id || selectedAddress.id,
+      paymentMethod: 'COD'
+    };
+    dispatch(createOrder(orderData)).then((res) => {
+      setOrderLoading(false);
+      if (!res.error) {
+        handleClose();
+        setTimeout(() => navigation.navigate('OrderConfirmed'), 300);
+      } else {
+        alert(res.payload || 'Failed to place order');
+      }
+    });
   };
 
   const renderSummaryView = () => (
@@ -44,7 +67,7 @@ const CheckoutModal = ({ visible, onClose }) => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.titleText}>Complete payment: ₹1,104</Text>
+      <Text style={styles.titleText}>Complete payment: ₹{finalTotal}</Text>
 
       {/* Delivering to Card */}
       <View style={styles.summaryCard}>
@@ -53,8 +76,13 @@ const CheckoutModal = ({ visible, onClose }) => {
         </View>
         <View style={styles.cardContent}>
           <Text style={styles.cardSubtitle}>Delivering to</Text>
-          <Text style={styles.cardTitle}>Ayushi, 345678</Text>
-          <Text style={styles.cardDesc} numberOfLines={1}>Ibus stop, Mumbai, Bandra, Chauraha.....</Text>
+          <Text style={styles.cardTitle}>
+            {selectedAddress?.fullName || 'Select Address'}
+            {selectedAddress?.pincode ? `, ${selectedAddress.pincode}` : ''}
+          </Text>
+          <Text style={styles.cardDesc} numberOfLines={1}>
+            {selectedAddress ? `${selectedAddress.addressLine1}, ${selectedAddress.city}` : 'No address selected'}
+          </Text>
         </View>
         <TouchableOpacity onPress={() => setViewState('address')} style={[styles.changeBtnWrapper, { flexDirection: 'row', alignItems: 'center' }]}>
           <Text style={[styles.changeBtnText, { color: primaryColor }]}>Change</Text>
@@ -80,11 +108,16 @@ const CheckoutModal = ({ visible, onClose }) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={[styles.payButton, isCosmetics && { backgroundColor: '#FFC2D1' }]} onPress={() => {
-        handleClose();
-        setTimeout(() => navigation.navigate('OrderConfirmed'), 300);
-      }}>
-        <Text style={[styles.payButtonText, isCosmetics && { color: '#000000' }]}>Pay ₹1,104</Text>
+      <TouchableOpacity 
+        style={[styles.payButton, isCosmetics && { backgroundColor: '#FFC2D1' }]} 
+        onPress={handlePlaceOrder}
+        disabled={orderLoading}
+      >
+        {orderLoading ? (
+           <ActivityIndicator size="small" color={isCosmetics ? '#000' : '#FFF'} />
+        ) : (
+           <Text style={[styles.payButtonText, isCosmetics && { color: '#000000' }]}>Place Order</Text>
+        )}
       </TouchableOpacity>
 
     </View>
@@ -102,52 +135,58 @@ const CheckoutModal = ({ visible, onClose }) => {
 
       <Text style={[styles.titleText, { marginBottom: scalev(15) }]}>Select from saved addresses</Text>
 
-      <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: scalev(250) }}>
-        {addresses.map((item) => {
-          const isSelected = item.id === selectedAddressId;
-          return (
-            <TouchableOpacity
-              key={item.id}
-              style={[styles.addressCard, isSelected && (isCosmetics ? { borderColor: primaryColor, backgroundColor: '#FFF2F6' } : styles.addressCardSelected)]}
-              onPress={() => setSelectedAddressId(item.id)}
-              activeOpacity={0.9}
-            >
-              <View style={styles.addressLeft}>
-                <Text style={styles.addressName}>{item.name}, {item.pin}</Text>
-                <Text style={styles.addressDetails} numberOfLines={1}>{item.details}</Text>
-              </View>
-              <View style={styles.addressRight}>
-                {isSelected && isCosmetics ? (
-                  <View style={[styles.radioCircle, { borderColor: '#333', overflow: 'hidden' }]}>
-                    <Svg height="100%" width="100%" viewBox="0 0 24 24">
-                      <Defs>
-                        <RadialGradient
-                          id="gradAddress"
-                          cx="50%"
-                          cy="50%"
-                          rx="50%"
-                          ry="50%"
-                          fx="30%"
-                          fy="30%"
-                        >
-                          <Stop offset="0%" stopColor="#FFC2D1" />
-                          <Stop offset="100%" stopColor="#D81B60" />
-                        </RadialGradient>
-                      </Defs>
-                      <Circle cx="12" cy="12" r="12" fill="url(#gradAddress)" />
-                    </Svg>
-                  </View>
-                ) : (
-                  <View style={[styles.radioCircle, isSelected ? [styles.radioSelected, { backgroundColor: primaryColor }] : styles.radioUnselected]} />
-                )}
-                <TouchableOpacity style={{ marginTop: scalev(5) }}>
-                  <Text style={[styles.editText, { color: primaryColor }]}>Edit</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+      {addressLoading ? (
+        <ActivityIndicator size="large" color={primaryColor} />
+      ) : addresses.length === 0 ? (
+        <Text style={{ textAlign: 'center', marginTop: 20 }}>No saved addresses found.</Text>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: scalev(250) }}>
+          {addresses.map((item) => {
+            const isSelected = selectedAddress && (selectedAddress._id === item._id || selectedAddress.id === item.id);
+            return (
+              <TouchableOpacity
+                key={item._id || item.id}
+                style={[styles.addressCard, isSelected && (isCosmetics ? { borderColor: primaryColor, backgroundColor: '#FFF2F6' } : styles.addressCardSelected)]}
+                onPress={() => dispatch(setSelectedAddress(item))}
+                activeOpacity={0.9}
+              >
+                <View style={styles.addressLeft}>
+                  <Text style={styles.addressName}>{item.fullName}, {item.pincode}</Text>
+                  <Text style={styles.addressDetails} numberOfLines={1}>{item.addressLine1}, {item.city}</Text>
+                </View>
+                <View style={styles.addressRight}>
+                  {isSelected && isCosmetics ? (
+                    <View style={[styles.radioCircle, { borderColor: '#333', overflow: 'hidden' }]}>
+                      <Svg height="100%" width="100%" viewBox="0 0 24 24">
+                        <Defs>
+                          <RadialGradient
+                            id="gradAddress"
+                            cx="50%"
+                            cy="50%"
+                            rx="50%"
+                            ry="50%"
+                            fx="30%"
+                            fy="30%"
+                          >
+                            <Stop offset="0%" stopColor="#FFC2D1" />
+                            <Stop offset="100%" stopColor="#D81B60" />
+                          </RadialGradient>
+                        </Defs>
+                        <Circle cx="12" cy="12" r="12" fill="url(#gradAddress)" />
+                      </Svg>
+                    </View>
+                  ) : (
+                    <View style={[styles.radioCircle, isSelected ? [styles.radioSelected, { backgroundColor: primaryColor }] : styles.radioUnselected]} />
+                  )}
+                  <TouchableOpacity style={{ marginTop: scalev(5) }}>
+                    <Text style={[styles.editText, { color: primaryColor }]}>Edit</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      )}
 
       {/* OR Divider */}
       <View style={styles.orDividerContainer}>

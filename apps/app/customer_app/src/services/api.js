@@ -32,4 +32,48 @@ api.interceptors.request.use(
   }
 );
 
+import Toast from 'react-native-toast-message';
+
+// Response interceptor to handle errors globally
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response) {
+      const { status, data } = error.response;
+      if (status === 401) {
+        // Handle unauthorized (Session expired)
+        await AsyncStorage.removeItem('access_token');
+        Toast.show({
+          type: 'error',
+          text1: 'Session Expired',
+          text2: 'Please log in again.',
+          position: 'top',
+        });
+        // In a real app, you would dispatch a logout action here or trigger a navigation event
+      } else if (status >= 500) {
+        // Server Error
+        Toast.show({
+          type: 'error',
+          text1: 'Server Error',
+          text2: 'Something went wrong on our end. Please try again later.',
+          position: 'top',
+        });
+      } else if (status >= 400 && status !== 401 && status !== 404) {
+        // For client errors, we typically let the local thunk handle it or show a generic message
+        const message = data?.message || data?.error || 'An error occurred';
+        // Optional: show a generic toast for all client errors, but we rely on local component alerts for forms usually
+      }
+    } else if (error.request) {
+      // Network Error / Timeout
+      Toast.show({
+        type: 'error',
+        text1: 'Network Error',
+        text2: 'Please check your internet connection.',
+        position: 'top',
+      });
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

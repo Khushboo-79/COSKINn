@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scaleh, scalev, AppTheme } from '../../../../constants/AppTheme';
 import { Dimensions } from 'react-native';
+import { fetchMembershipTier } from '../../../../redux/slices/profileSlice';
 
 const { width: screenWidth } = Dimensions.get('window');
 const cardWidth = screenWidth * 0.85;
@@ -34,16 +35,22 @@ const FaqItem = ({ question, answer }) => {
 
 const MembershipScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
+  const { membershipTier, data: userProfile, rewardPoints } = useSelector(state => state.profile);
+
+  useEffect(() => {
+    dispatch(fetchMembershipTier());
+  }, [dispatch]);
   
   const gradientColors = isCosmetics 
     ? ['#FFC2D1', '#FF6B9A'] 
     : ['#FFCFBA', '#FF6B9A'];
     
-  const profileInitial = 'V';
+  const profileInitial = userProfile?.firstName ? userProfile.firstName[0].toUpperCase() : 'C';
   
   const [activeSlide, setActiveSlide] = React.useState(0);
   
@@ -84,7 +91,7 @@ const MembershipScreen = () => {
         <View style={styles.contentArea}>
           
           <View style={styles.progressCard}>
-            <Text style={styles.progressCardTitle}>Prive Member Since Jul 2026</Text>
+            <Text style={styles.progressCardTitle}>{membershipTier?.tier || 'Member'} Since {new Date(userProfile?.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric'})}</Text>
             
             <View style={styles.progressSection}>
               <View style={styles.progressLineBg} />
@@ -93,26 +100,26 @@ const MembershipScreen = () => {
                 colors={['#A3003A', '#FF4D85']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                style={styles.progressLineActive}
+                style={[styles.progressLineActive, { width: `${Math.min(((membershipTier?.currentSpend || 0) / 10000) * 100, 100)}%` }]}
               />
               
               <View style={styles.nodesContainer}>
                 <View style={styles.nodeWrapper}>
-                  <View style={[styles.nodeInner, { backgroundColor: '#FF6B9A', justifyContent: 'center', alignItems: 'center' }]}>
-                    <Icon name="check" size={scaleh(12)} color="#FFFFFF" />
+                  <View style={[styles.nodeInner, { backgroundColor: (membershipTier?.currentSpend || 0) >= 2000 ? '#FF6B9A' : '#FFFFFF', borderColor: '#FF6B9A', borderWidth: (membershipTier?.currentSpend || 0) >= 2000 ? 0 : 3, justifyContent: 'center', alignItems: 'center' }]}>
+                    {(membershipTier?.currentSpend || 0) >= 2000 && <Icon name="check" size={scaleh(12)} color="#FFFFFF" />}
                   </View>
                   <Text style={styles.nodeTitle}>Member</Text>
                   <Text style={styles.nodeValue}>₹2,000</Text>
                 </View>
 
                 <View style={styles.nodeWrapper}>
-                  <View style={[styles.nodeInner, { borderColor: '#D4AF37', borderWidth: 3, backgroundColor: '#FFFFFF' }]} />
+                  <View style={[styles.nodeInner, { borderColor: '#D4AF37', borderWidth: 3, backgroundColor: (membershipTier?.currentSpend || 0) >= 5000 ? '#D4AF37' : '#FFFFFF' }]} />
                   <Text style={styles.nodeTitle}>Gold</Text>
                   <Text style={styles.nodeValue}>₹5,000</Text>
                 </View>
                 
                 <View style={styles.nodeWrapper}>
-                  <View style={[styles.nodeInner, { borderColor: '#666', borderWidth: 3, backgroundColor: '#FFFFFF' }]} />
+                  <View style={[styles.nodeInner, { borderColor: '#666', borderWidth: 3, backgroundColor: (membershipTier?.currentSpend || 0) >= 10000 ? '#666' : '#FFFFFF' }]} />
                   <Text style={styles.nodeTitle}>Platinum</Text>
                   <Text style={styles.nodeValue}>₹10,000</Text>
                 </View>
@@ -130,7 +137,7 @@ const MembershipScreen = () => {
                 <View style={styles.rewardsIconBg}>
                   <Text style={styles.rewardsIconText}>//</Text>
                 </View>
-                <Text style={styles.rewardsText}>3412 Reward Points</Text>
+                <Text style={styles.rewardsText}>{rewardPoints || 0} Reward Points</Text>
               </View>
               
               <TouchableOpacity style={styles.viewHistoryBtn}>

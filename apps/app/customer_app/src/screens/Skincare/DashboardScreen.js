@@ -14,6 +14,8 @@ import { fetchWishlist, toggleWishlist } from '../../redux/slices/wishlistSlice'
 import { fetchCart, addToCart, updateCartItem, removeFromCart } from '../../redux/slices/cartSlice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { fetchHomeData, fetchCategories } from '../../redux/slices/catalogSlice';
+
 const { width } = Dimensions.get('window');
 const bannerWidth = width - scaleh(40); // Screen width minus padding
 
@@ -22,11 +24,14 @@ const DashboardScreen = () => {
   const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app.activeDomain);
   const { items: products, loading } = useSelector(state => state.product);
+  const { homeData, categories: apiCategories } = useSelector(state => state.catalog || {});
   const { items: wishlistItems } = useSelector(state => state.wishlist);
   const cartItems = useSelector(state => state.cart.items) || [];
   const isThemeDark = activeDomain === 'skincare';
 
   useEffect(() => {
+    dispatch(fetchHomeData());
+    dispatch(fetchCategories());
     dispatch(fetchProducts({ category: 'skincare' })); // Fetch skincare products
     dispatch(fetchWishlist());
     dispatch(fetchCart()); // Fetch cart on load to sync state
@@ -123,14 +128,18 @@ const DashboardScreen = () => {
     }
   }).current;
 
-  const renderMainBannerItem = useCallback(() => (
+  const renderMainBannerItem = useCallback(({ item }) => (
     <View style={{ width: width, paddingHorizontal: scaleh(20) }}>
-      <LinearGradient
-        colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.mainBanner}
-      />
+      {item && item.imageUrl ? (
+        <Image source={{ uri: item.imageUrl }} style={[styles.mainBanner, { resizeMode: 'cover' }]} />
+      ) : (
+        <LinearGradient
+          colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.mainBanner}
+        />
+      )}
     </View>
   ), []);
 
@@ -140,7 +149,7 @@ const DashboardScreen = () => {
     return (
       <TouchableOpacity
         style={[styles.productBanner, { overflow: 'hidden', width: scaleh(300), marginRight: scaleh(20) }]}
-        onPress={() => navigation.navigate('ProductDetails', { productId: item.id })}
+        onPress={() => navigation.navigate('ProductDetailsScreen', { productId: item.id })}
         activeOpacity={0.9}
       >
         <TouchableOpacity
@@ -252,7 +261,7 @@ const DashboardScreen = () => {
           {/* 2. Product Banner Section */}
           <View style={{ width: '100%', marginBottom: scalev(40) }}>
             <FlatList
-              data={products}
+              data={products && products.length > 0 ? products : []}
               horizontal
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
@@ -353,7 +362,7 @@ const DashboardScreen = () => {
               contentContainerStyle={styles.categoriesContainer}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity style={styles.categoryItem} activeOpacity={0.8}>
+                <TouchableOpacity style={styles.categoryItem} activeOpacity={0.8} onPress={() => navigation.navigate('Shop', { category: item.title })}>
                   <View style={styles.categoryCircle}>
                     <Image source={item.image} style={styles.categoryImage} resizeMode="cover" />
                   </View>

@@ -61,9 +61,48 @@ export const removeFromCart = createAsyncThunk(
   }
 );
 
+import { couponService } from '../../services/couponService';
+
+export const fetchAvailableCoupons = createAsyncThunk(
+  'cart/fetchAvailableCoupons',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await couponService.getAvailableCoupons();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const applyCoupon = createAsyncThunk(
+  'cart/applyCoupon',
+  async (couponCode, { rejectWithValue }) => {
+    try {
+      const response = await couponService.applyCoupon(couponCode);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const removeCoupon = createAsyncThunk(
+  'cart/removeCoupon',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await couponService.removeCoupon();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const initialState = {
   cart: null, // Holds the main cart object (subtotal, etc.)
   items: [],  // Holds the cart items for easy mapping
+  availableCoupons: [], // Available coupons
   loading: false,
   error: null,
 };
@@ -132,6 +171,42 @@ const cartSlice = createSlice({
       .addCase(removeFromCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to remove from cart';
+      })
+      // Fetch Available Coupons
+      .addCase(fetchAvailableCoupons.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchAvailableCoupons.fulfilled, (state, action) => {
+        state.loading = false;
+        state.availableCoupons = action.payload?.data || action.payload || [];
+      })
+      .addCase(fetchAvailableCoupons.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch coupons';
+      })
+      // Apply Coupon
+      .addCase(applyCoupon.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(applyCoupon.fulfilled, (state, action) => {
+        state.loading = false;
+        state.cart = action.payload?.data || action.payload; // Typically returns updated cart
+      })
+      .addCase(applyCoupon.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to apply coupon';
+      })
+      // Remove Coupon
+      .addCase(removeCoupon.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeCoupon.fulfilled, (state, action) => {
+        state.loading = false;
+        state.cart = action.payload?.data || action.payload; // Returns updated cart
+      })
+      .addCase(removeCoupon.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to remove coupon';
       });
   },
 });

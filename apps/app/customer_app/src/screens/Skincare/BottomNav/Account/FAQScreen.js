@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, LayoutAnimation, UIManager, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, LayoutAnimation, UIManager, Platform, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import { scaleh, scalev } from '../../../../constants/AppTheme';
 import { useSelector } from 'react-redux';
+import { contentService } from '../../../../services/contentService';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -24,28 +25,27 @@ const FAQScreen = () => {
     setExpandedId(expandedId === id ? null : id);
   };
 
-  const faqs = [
-    {
-      section: 'Order Support',
-      items: [
-        { id: 'order-1', question: 'How can I track my order?', answer: 'You can track your order in the Orders List section.' },
-        { id: 'order-2', question: 'Can I change my shipping address after placing the order?', answer: 'Please contact support immediately to change your shipping address before the order is dispatched.' },
-        { id: 'order-3', question: 'How long will it take for my order to arrive?', answer: 'Delivery usually takes 3-7 business days depending on your location.' },
-        { id: 'order-4', question: 'Can I cancel or modify my order after placing it?', answer: 'Orders can only be cancelled or modified before they are shipped. Please contact support.' },
-        { id: 'order-5', question: 'Haven’t received my order confirmation email, what should I do?', answer: 'Check your spam or promotions folder. If not found, share your registered email and phone via DM, email (support@coskinn.com), or Whatsapp (+91537387137), and we’ll help you.' },
-      ]
-    },
-    {
-      section: 'Payment Support',
-      items: [
-        { id: 'pay-1', question: 'What payment methods does COSKINn accept ?', answer: 'We accept Credit/Debit Cards, UPI, Net Banking, and Wallets.' },
-        { id: 'pay-2', question: 'Is Cash on Delivery (COD) available?', answer: 'Yes, Cash on Delivery is available for selected pin codes.' },
-        { id: 'pay-3', question: 'My payment failed. What should I do?', answer: 'If your payment fails, please try again using a different payment method or check your internet connection.' },
-        { id: 'pay-4', question: 'Amount deducted but my order didn’t go through?', answer: 'Don’t worry! The deducted amount is usually refunded automatically within 3-5 business days by your bank.' },
-        { id: 'pay-5', question: 'Is it safe to use my credit card on your website?', answer: 'Yes, all transactions are secured and encrypted. We do not store your credit card details.' },
-      ]
-    }
-  ];
+  const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        const response = await contentService.getFaqs();
+        // Assuming API returns array of sections or array of faqs
+        if (Array.isArray(response)) {
+          setFaqs(response);
+        } else if (response.data) {
+          setFaqs(response.data);
+        }
+      } catch (error) {
+        console.log('Error fetching FAQs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFaqs();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -69,7 +69,10 @@ const FAQScreen = () => {
         >
           <Text style={styles.mainHeading}>Frequently Asked Questions</Text>
           
-          {faqs.map((sectionData, index) => (
+          {loading ? (
+            <ActivityIndicator size="large" color={isCosmetics ? '#FF0069' : '#333'} style={{ marginTop: 50 }} />
+          ) : (
+            faqs.map((sectionData, index) => (
             <View key={index} style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>{sectionData.section}</Text>
               
@@ -104,7 +107,7 @@ const FAQScreen = () => {
                 );
               })}
             </View>
-          ))}
+          )))}
           
         </ScrollView>
       </SafeAreaView>
