@@ -1,57 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCart, updateCartItem, removeFromCart } from '../../../redux/slices/cartSlice';
+import { fetchRewardPoints } from '../../../redux/slices/profileSlice';
 import Header from '../../../components/Header';
 import CartEmpty from './CartEmpty';
 import CheckoutModal from './CheckoutModal';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
-
-const cartData = [
-  {
-    id: 1,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with Ne..',
-    size: '80g',
-    delivery: 'Delivery by Thu,9 Jul',
-    price: 699,
-    originalPrice: 899,
-    quantity: 1,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  }
-];
-
-const lastMinuteData = [
-  {
-    id: 1,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with New...',
-    sizes: '3 Sizes',
-    price: 899,
-    originalPrice: 899,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  },
-  {
-    id: 2,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with New...',
-    sizes: '3 Sizes',
-    price: 899,
-    originalPrice: 899,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  },
-  {
-    id: 3,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with New...',
-    sizes: '3 Sizes',
-    price: 899,
-    originalPrice: 899,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  }
-];
 
 const CartScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -59,16 +16,19 @@ const CartScreen = ({ navigation }) => {
   const isCosmetics = activeDomain === 'cosmetics';
 
   const cartItems = useSelector(state => state.cart.items) || [];
+  const { cart } = useSelector(state => state.cart);
+  const rewardPointsBalance = useSelector(state => state.profile?.rewardPoints || 0);
   
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchCart());
+    dispatch(fetchRewardPoints());
   }, [dispatch]);
 
-  const cartTotal = cartItems.reduce((acc, item) => acc + (item.product?.discountPrice || item.product?.mrp || 0) * item.quantity, 0);
-  const cartMRP = cartItems.reduce((acc, item) => acc + (item.product?.mrp || 0) * item.quantity, 0);
-  const discount = cartMRP - cartTotal;
-  const shipping = cartTotal > 0 ? 5 : 0;
-  const finalTotal = cartTotal + shipping;
+  const cartTotal = cart?.subtotal || cartItems.reduce((acc, item) => acc + (item.product?.discountPrice || item.product?.mrp || 0) * item.quantity, 0);
+  const cartMRP = cart?.totalMrp || cartItems.reduce((acc, item) => acc + (item.product?.mrp || 0) * item.quantity, 0);
+  const discount = cart?.discount || (cartMRP - cartTotal);
+  const shipping = cartTotal > 0 ? (cart?.shippingFee || 5) : 0;
+  const finalTotal = cart?.total || (cartTotal + shipping);
   const selectedCount = cartItems.length;
 
   const [rewardPoints, setRewardPoints] = useState(false);
@@ -225,7 +185,7 @@ const CartScreen = ({ navigation }) => {
             <Text style={styles.boxTitle}>Use reward points</Text>
           </View>
           <View style={styles.boxRight}>
-            <Text style={styles.pointsText}>3412</Text>
+            <Text style={styles.pointsText}>{rewardPointsBalance}</Text>
             <Switch
               trackColor={{ false: "#d3d3d3", true: primaryColor }}
               thumbColor={AppTheme.colors.white}
@@ -267,7 +227,7 @@ const CartScreen = ({ navigation }) => {
               </View>
               <View style={styles.priceRowItem}>
                 <Text style={styles.priceRowLabel}>Bag Discount</Text>
-                <Text style={[styles.priceRowValue, { color: AppTheme.colors.success }]}>₹{discount}</Text>
+                <Text style={[styles.priceRowValue, { color: AppTheme.colors.success }]}>-₹{discount}</Text>
               </View>
               <View style={styles.priceRowItem}>
                 <Text style={styles.priceRowLabel}>Shipping & Platform Fee</Text>
@@ -293,37 +253,7 @@ const CartScreen = ({ navigation }) => {
           </LinearGradient>
         </View>
 
-        {/* Last minute additions */}
-        <View style={styles.lastMinuteSection}>
-          <Text style={styles.lastMinuteTitle}>Last minute additions</Text>
-
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.lastMinuteScroll}>
-            {lastMinuteData.map((item, index) => (
-              <View key={item.id} style={[styles.lastMinuteCard, index === 0 && { marginLeft: scaleh(20) }]}>
-                <View style={styles.lmImageWrapper}>
-                  {!isCosmetics && <Image source={item.bgImage} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />}
-                  <Image source={isCosmetics ? require('../../../images/makeup/ProductImgs/Blush.webp') : item.image} style={isCosmetics ? [styles.lmProdImg, { width: '90%', height: '90%' }] : styles.lmProdImg} resizeMode="contain" />
-                </View>
-                <View style={styles.lmDetails}>
-                  <Text style={styles.lmBrand}>COSKINn</Text>
-                  <Text style={styles.lmTitle} numberOfLines={2}>{item.title}</Text>
-                  <Text style={styles.lmSizes}>{item.sizes}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.lmOriginalPrice}>₹{item.originalPrice}</Text>
-                  </View>
-                  <View style={styles.lmActionRow}>
-                    <TouchableOpacity style={styles.lmHeartBtn}>
-                      <Icon name="heart" size={scaleh(14)} color={primaryColor} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.lmSelectBtn, isCosmetics && { backgroundColor: '#FFC2D1' }]}>
-                      <Text style={[styles.lmSelectText, isCosmetics && { color: '#000000' }]}>Select Size</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
+        {/* Removed Last minute additions (no dummy data allowed) */}
 
       </ScrollView>
 
@@ -368,7 +298,7 @@ const CartScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <CheckoutModal visible={isCheckoutVisible} onClose={() => setIsCheckoutVisible(false)} />
+      <CheckoutModal visible={isCheckoutVisible} onClose={() => setIsCheckoutVisible(false)} finalTotal={finalTotal} />
 
     </View>
   );

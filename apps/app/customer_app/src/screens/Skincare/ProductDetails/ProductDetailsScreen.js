@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, Image, TextInput, Platform, Animated, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProductById } from '../../../redux/slices/productSlice';
+import { fetchProductById, fetchProductReviews } from '../../../redux/slices/productSlice';
 import { addToCart } from '../../../redux/slices/cartSlice';
 import { toggleWishlist } from '../../../redux/slices/wishlistSlice';
 import Icon from 'react-native-vector-icons/Feather';
@@ -19,11 +19,12 @@ const ProductDetailsScreen = () => {
   const dispatch = useDispatch();
   const { productId } = route.params || {};
   
-  const { selectedProduct, loading } = useSelector(state => state.product);
+  const { currentProduct: selectedProduct, loading, reviews } = useSelector(state => state.product);
   
   React.useEffect(() => {
     if (productId) {
       dispatch(fetchProductById(productId));
+      dispatch(fetchProductReviews(productId));
     }
   }, [dispatch, productId]);
 
@@ -614,47 +615,34 @@ const ProductDetailsScreen = () => {
               
               <View style={styles.reviewDivider} />
 
-              {/* Sample Review 1 */}
-              <View style={styles.reviewItem}>
-                <View style={styles.reviewHeader}>
-                  <View style={styles.reviewStars}>
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star-outline" size={scaleh(12)} color="#32CD32" />
+              {/* Dynamic API Reviews */}
+              {reviews && reviews.length > 0 ? (
+                reviews.slice(0, 3).map((review, index) => (
+                  <View key={index}>
+                    <View style={styles.reviewItem}>
+                      <View style={styles.reviewHeader}>
+                        <View style={styles.reviewStars}>
+                          {[...Array(5)].map((_, i) => (
+                            <MaterialIcons key={i} name={i < (review.rating || 5) ? "star" : "star-outline"} size={scaleh(12)} color="#32CD32" />
+                          ))}
+                        </View>
+                        <Text style={styles.reviewDate}>{review.createdAt ? new Date(review.createdAt).toLocaleDateString() : 'Recently'}</Text>
+                      </View>
+                      <View style={styles.reviewUserRow}>
+                        {review.isVerifiedPurchase && <View style={styles.reviewVerifiedPill}><Text style={styles.reviewVerifiedText}>Verified</Text></View>}
+                        <Text style={styles.reviewUserName}>{review.customer?.firstName || 'Customer'}</Text>
+                      </View>
+                      {review.title && <Text style={styles.reviewHeadline}>{review.title}</Text>}
+                      <Text style={styles.reviewBody}>{review.comment || review.text}</Text>
+                    </View>
+                    <View style={styles.reviewDivider} />
                   </View>
-                  <Text style={styles.reviewDate}>06/16/2025</Text>
+                ))
+              ) : (
+                <View style={[styles.reviewItem, { alignItems: 'center' }]}>
+                  <Text style={styles.reviewBody}>No reviews yet.</Text>
                 </View>
-                <View style={styles.reviewUserRow}>
-                  <View style={styles.reviewVerifiedPill}><Text style={styles.reviewVerifiedText}>Verified</Text></View>
-                  <Text style={styles.reviewUserName}>Hemal Kapoor</Text>
-                </View>
-                <Text style={styles.reviewHeadline}>No Heavy Layer Feeling</Text>
-                <Text style={styles.reviewBody}>Unlike many sunscreens I've tried, this one feels very lightly on the face.</Text>
-              </View>
-
-              <View style={styles.reviewDivider} />
-
-              {/* Sample Review 2 */}
-              <View style={styles.reviewItem}>
-                <View style={styles.reviewHeader}>
-                  <View style={styles.reviewStars}>
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star" size={scaleh(12)} color="#32CD32" />
-                    <MaterialIcons name="star-outline" size={scaleh(12)} color="#32CD32" />
-                  </View>
-                  <Text style={styles.reviewDate}>06/16/2025</Text>
-                </View>
-                <View style={styles.reviewUserRow}>
-                  <View style={styles.reviewVerifiedPill}><Text style={styles.reviewVerifiedText}>Verified</Text></View>
-                  <Text style={styles.reviewUserName}>Hemal Kapoor</Text>
-                </View>
-                <Text style={styles.reviewHeadline}>No Heavy Layer Feeling</Text>
-                <Text style={styles.reviewBody}>Unlike many sunscreens I've tried, this one feels very lightly on the face.</Text>
-              </View>
+              )}
 
               <View style={styles.viewAllReviewsRow}>
                 <TouchableOpacity onPress={() => navigation.navigate('AllReviewsScreen')}>

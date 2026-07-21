@@ -7,6 +7,8 @@ import cartReducer from './slices/cartSlice';
 import addressReducer from './slices/addressSlice';
 import searchReducer from './slices/searchSlice';
 import profileReducer from './slices/profileSlice';
+import catalogReducer from './slices/catalogSlice';
+import orderReducer from './slices/orderSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +20,7 @@ export const store = configureStore({
     address: addressReducer,
     search: searchReducer,
     profile: profileReducer,
+    catalog: catalogReducer,
+    order: orderReducer,
   },
 });
