@@ -38,21 +38,44 @@ export const Step2Compliance = () => {
         </div>
 
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-2">Product Claims (Comma separated)</label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Manufacturer Name <span className="text-red-500">*</span></label>
           <input
             type="text"
-            {...register('claims')}
-            placeholder="e.g. Dermatologically Tested, Cruelty Free, Vegan"
+            {...register('manufacturerName')}
+            placeholder="e.g. COSKINn Manufacturing Unit"
             className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
           />
         </div>
 
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-2">Warnings & Precautions</label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Manufacturer Address <span className="text-red-500">*</span></label>
           <textarea
-            {...register('warnings')}
-            rows={3}
-            placeholder="e.g. Avoid contact with eyes. Discontinue use if irritation occurs."
+            {...register('manufacturerAddress')}
+            rows={2}
+            placeholder="e.g. Plot No 12, Industrial Area, Phase 1"
+            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Country of Origin <span className="text-red-500">*</span></label>
+          <select 
+            {...register('countryOfOrigin')}
+            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all bg-white"
+          >
+            <option value="India">India</option>
+            <option value="USA">USA</option>
+            <option value="UK">UK</option>
+            <option value="South Korea">South Korea</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Net Quantity <span className="text-red-500">*</span></label>
+          <input
+            type="text"
+            {...register('netQuantity')}
+            placeholder="e.g. 50g, 100ml"
             className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
           />
         </div>

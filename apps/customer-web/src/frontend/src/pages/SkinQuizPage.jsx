@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, RotateCcw, Check, ShoppingBag, Info, Leaf } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import apiClient from '../utils/apiClient';
 
 class QuizErrorBoundary extends React.Component {
   constructor(props) {
@@ -77,6 +79,7 @@ const QUIZ_QUESTIONS = [
 
 export default function SkinQuizPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   
   // State: 0 = Intro, 1-6 = Questions, 7 = Results
   const [step, setStep] = useState(() => {
@@ -110,10 +113,17 @@ export default function SkinQuizPage() {
 
   // If on results page but no answers exist (e.g. hard refresh cleared something), redirect to step 1
   useEffect(() => {
-    if (step === 7 && Object.keys(answers).length === 0) {
-      setStep(1);
+    if (step === 7) {
+      if (Object.keys(answers).length === 0) {
+        setStep(1);
+      } else if (user) {
+        // Save answers to backend for logged-in users
+        apiClient.post('/customer/skin-quiz', { answers }).catch(err => {
+          console.error("Failed to sync skin quiz answers to profile:", err);
+        });
+      }
     }
-  }, [step, answers]);
+  }, [step, answers, user]);
 
   // Scroll to top on step change for a clean experience
   useEffect(() => {

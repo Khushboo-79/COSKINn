@@ -5,19 +5,21 @@ import {
   Menu, X, Search, Bell, Mail, LogOut, User,
   LayoutDashboard, ShoppingBag, Package, ShoppingCart, 
   Truck, HeadphonesIcon, FileText, Megaphone,
-  Briefcase, ShieldCheck, DollarSign
+  Briefcase, ShieldCheck, DollarSign, ShieldAlert, Boxes, Box,
+  RefreshCw, MessageSquare
 } from 'lucide-react';
 
 const PANEL_ROUTES = [
-  { id: 'admin', path: '/admin', label: 'Admin', icon: ShieldCheck },
-  { id: 'product', path: '/product', label: 'Product Mgmt', icon: ShoppingBag },
-  { id: 'inventory', path: '/inventory', label: 'Inventory', icon: Package },
-  { id: 'orders', path: '/orders', label: 'Order Mgmt', icon: ShoppingCart },
-  { id: 'warehouse', path: '/warehouse', label: 'Warehouse', icon: Truck },
-  { id: 'support', path: '/support', label: 'Support', icon: HeadphonesIcon },
+  { id: 'admin', path: '/admin', label: 'Admin', icon: ShieldAlert },
+  { id: 'product', path: '/product', label: 'Product Catalog', icon: Package },
+  { id: 'inventory', path: '/inventory', label: 'Inventory', icon: Boxes },
+  { id: 'warehouse', path: '/warehouse', label: 'Warehouse', icon: Box },
+  { id: 'orders', path: '/orders', label: 'Orders', icon: ShoppingCart },
+  { id: 'returns', path: '/returns', label: 'Returns & QC', icon: RefreshCw },
+  { id: 'support', path: '/support', label: 'Customer Support', icon: MessageSquare },
   { id: 'finance', path: '/finance', label: 'Tax & Finance', icon: DollarSign },
   { id: 'marketing', path: '/marketing', label: 'Marketing/CRM', icon: Megaphone },
-  { id: 'content', path: '/content', label: 'Content', icon: FileText },
+  { id: 'content', path: '/content', label: 'Content CMS', icon: FileText },
   { id: 'hr', path: '/hr', label: 'HR', icon: Briefcase },
   { id: 'audit', path: '/audit', label: 'Auditor', icon: ShieldCheck },
 ];

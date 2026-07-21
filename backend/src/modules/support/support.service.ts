@@ -15,6 +15,12 @@ export class SupportService {
     });
   }
 
+  async createContactTicket(userId: string, subject: string, message: string, priority: string = 'NORMAL') {
+    const ticket = await this.createTicket(userId, subject, priority, 'CONTACT_FORM');
+    await this.addMessage(ticket.id, userId, 'USER', message);
+    return ticket;
+  }
+
   async getTickets(status?: string) {
     const where = status && status !== 'ALL' ? { status } : {};
     return this.prisma.supportTicket.findMany({

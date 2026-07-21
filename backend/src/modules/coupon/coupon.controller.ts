@@ -13,6 +13,11 @@ export class CouponController {
   async applyCoupon(@Request() req, @Body('code') code: string) {
     return this.couponService.applyCoupon(req.user.id, code);
   }
+
+  @Get('available')
+  async getAvailableCoupons(@Request() req) {
+    return this.couponService.getAvailableCoupons(req.user.id);
+  }
 }
 
 @Controller('admin/coupons')

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertCircle, CheckCircle2, ChevronRight, Banknote, ShieldAlert, Check } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { useOrders } from '../../context/OrderContext';
+import apiClient from '../../utils/apiClient';
 
 export default function CancelOrderModal({ isOpen, onClose, order, onCancelSuccess }) {
   const { showToast } = useToast();
@@ -38,11 +39,12 @@ export default function CancelOrderModal({ isOpen, onClose, order, onCancelSucce
   const primaryClass = "bg-[#FF0069] text-white hover:bg-pink-700";
 
   // Refund Calculation
-  const isCOD = order.paymentMethod === 'Cash On Delivery';
-  const refundAmount = order.totalAmount; 
+  // Refund Calculation
+  const isCOD = order.paymentMethod === 'COD' || order.paymentMode === 'COD';
+  const refundAmount = order.finalAmount || order.totalAmount; 
   
   // Status check for eligibility
-  const canCancel = ['Order Placed', 'Order Confirmed', 'Packed', 'Ready to Ship'].includes(order.status);
+  const canCancel = ['DRAFT', 'PLACED', 'PACKED'].includes(order.status) || ['Order Placed', 'Order Confirmed', 'Packed', 'Ready to Ship'].includes(order.status);
   
   const validateBankDetails = () => {
     const newErrors = {};
@@ -74,29 +76,25 @@ export default function CancelOrderModal({ isOpen, onClose, order, onCancelSucce
     setStep(prev => prev + 1);
   };
 
-  const handleConfirmCancellation = () => {
+  const handleConfirmCancellation = async () => {
     setIsProcessing(true);
-    // Simulate API Call
-    setTimeout(() => {
-      setIsProcessing(false);
-      
-      const newTimeline = [
-        { status: 'Cancellation Requested', date: 'Today', time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), desc: 'Your cancellation request has been received.', done: true },
-        { status: 'Cancellation Approved', date: 'Today', time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), desc: 'Your cancellation has been approved.', done: true },
-        { status: 'Refund Initiated', date: 'Today', time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), desc: 'Refund initiated successfully.', done: true },
-        { status: 'Refund Processing', date: '-', time: '-', desc: 'Processing refund to original payment source.', done: false },
-        { status: 'Refund Completed', date: '-', time: '-', desc: 'Pending transfer.', done: false }
-      ];
-      updateOrderStatus(order.id, 'Cancelled', newTimeline);
+    try {
+      const cancelReason = reason === 'Other' ? otherReason : reason;
+      await apiClient.post(`/orders/${order.id}/cancel`, { reason: cancelReason });
       
       setStep(7); // Go to Success
       
-      // Simulated Notifications
+      // Real API success
       if (showToast) {
-        setTimeout(() => showToast("Email Sent: Your cancellation has been approved.", "success"), 500);
-        setTimeout(() => showToast("SMS Sent: Refund initiated successfully.", "success"), 2500);
+        showToast("Cancellation successful. Refund initiated if applicable.", "success");
       }
-    }, 1500);
+    } catch (err) {
+      if (showToast) {
+        showToast(err.response?.data?.message || "Failed to cancel order.", "error");
+      }
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleClose = () => {

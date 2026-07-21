@@ -25,6 +25,14 @@ export function ToastProvider({ children }) {
     showToast
   }), [showToast]);
 
+  React.useEffect(() => {
+    const handleToastError = (event) => {
+      showToast(event.detail?.message || 'An error occurred', 'error');
+    };
+    window.addEventListener('toast:error', handleToastError);
+    return () => window.removeEventListener('toast:error', handleToastError);
+  }, [showToast]);
+
   return (
     <ToastContext.Provider value={memoizedContextValue}>
       {children}

@@ -147,4 +147,15 @@ export class CartService {
 
     return this.getCart(userId);
   }
+
+  async clearCart(userId: string) {
+    const cart = await this.prisma.cart.findUnique({ where: { userId } });
+    if (!cart) return this.getCart(userId);
+
+    await this.prisma.cartItem.deleteMany({
+      where: { cartId: cart.id }
+    });
+
+    return this.getCart(userId);
+  }
 }
