@@ -66,6 +66,21 @@ export class MembershipService {
     this.logger.log(`Completed tier computation. ${upgrades} users adjusted.`);
   }
 
+  // Customer Methods
+  async getMyTier(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        membershipTier: true
+      }
+    });
+    
+    return {
+      tier: user?.membershipTier || null,
+      historyUrl: '/api/membership/history' // placeholder if needed
+    };
+  }
+
   // Admin Methods
   async getTiers() {
     return this.prisma.membershipTier.findMany({

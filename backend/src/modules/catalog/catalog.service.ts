@@ -169,6 +169,29 @@ export class CatalogService {
     return product;
   }
 
+  async getProductReviews(productId: string) {
+    return this.prisma.productReview.findMany({
+      where: { productId, isApproved: true },
+      include: {
+        user: { select: { firstName: true, lastName: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async submitProductReview(productId: string, userId: string, dto: { rating: number; title?: string; content?: string }) {
+    return this.prisma.productReview.create({
+      data: {
+        productId,
+        userId,
+        rating: dto.rating,
+        title: dto.title,
+        content: dto.content,
+        isApproved: true, // Auto-approve for demo purposes
+      }
+    });
+  }
+
   async getCategoryBySlug(slug: string) {
     const category = await this.prisma.category.findUnique({
       where: { slug },

@@ -223,6 +223,25 @@ export class OrderService {
     });
   }
 
+  async trackOrder(orderId: string, userId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        statusHistory: { orderBy: { createdAt: 'desc' } },
+        shipments: { orderBy: { createdAt: 'desc' } }
+      }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.userId !== userId) throw new BadRequestException('Not authorized to track this order');
+
+    return {
+      status: order.status,
+      history: order.statusHistory,
+      shipment: order.shipments.length > 0 ? order.shipments[0] : null
+    };
+  }
+
   async getOrderByIdForCustomer(userId: string, id: string) {
     const order = await this.prisma.order.findUnique({
       where: { id },
