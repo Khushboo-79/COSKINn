@@ -38,6 +38,7 @@ import NewScreen from '../screens/Shared/New/NewScreen';
 import RewardsScreen from '../screens/Skincare/BottomNav/Rewards/RewardsScreen';
 import FilterScreen from '../screens/Skincare/BottomNav/Shop/FilterScreen';
 import AccountScreen from '../screens/Skincare/BottomNav/Account/AccountScreen';
+import MembershipScreen from '../screens/Skincare/BottomNav/Account/MembershipScreen';
 import ProfileScreen from '../screens/Skincare/BottomNav/Account/ProfileScreen';
 import AddressScreen from '../screens/Skincare/BottomNav/Account/AddressScreen';
 import OrdersListScreen from '../screens/Skincare/BottomNav/Account/OrdersListScreen';
@@ -107,6 +108,7 @@ const SkincareNavigator = () => {
       <Stack.Screen name="NewScreen" component={NewScreen} />
       <Stack.Screen name="RewardsScreen" component={RewardsScreen} />
       <Stack.Screen name="AccountScreen" component={AccountScreen} />
+      <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
