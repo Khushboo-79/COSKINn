@@ -7,7 +7,7 @@ import {
   ArrowRight, Send, Map, Navigation
 } from 'lucide-react';
 import Footer from '../components/common/Footer';
-import heroImg from '../assets/images/contact_hero_desk.png';
+import heroImg from '../assets/images/contact_hero_desk.webp';
 import { useAuth } from '../context/AuthContext';
 import apiClient from '../utils/apiClient';
 

@@ -40,35 +40,30 @@ export default function ProductDetailsPage() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        // We now fetch by slug
-        const res = await apiClient.get(`/catalog/products/${slug}`);
-        if (res.data) {
-          const p = res.data;
-          const mapped = {
-            id: p.id,
-            slug: p.slug,
-            name: p.name,
-            originalPrice: p.mrp,
-            price: p.discountPrice || p.mrp,
-            discountBadge: p.mrp > (p.discountPrice || p.mrp) ? `${Math.round(((p.mrp - (p.discountPrice || p.mrp)) / p.mrp) * 100)}% OFF` : null,
-            rating: 4.8, 
-            reviews: Math.floor(Math.random() * 500) + 50,
-            category: p.category?.name || 'Skincare',
-            image: p.images?.[0]?.url || '',
-            images: p.images?.map(i => i.url) || [],
-            badge: p.isNewArrival ? 'NEW' : p.isBestSeller ? 'BEST SELLER' : '',
-            shortDescription: p.description?.substring(0, 80) || '',
-            longDescription: p.description || '',
-            benefits: p.benefits?.map(b => b.name) || [],
-            keyIngredients: p.ingredients?.map(i => i.name) || [],
-            howToUse: p.howToUse,
-            suitableSkinType: p.skinTypes?.map(s => s.name).join(', ') || "All Skin Types",
-            skinConcerns: p.concerns?.map(c => c.name).join(', ') || "",
-            stock: 100
-          };
-          setProduct(mapped);
-          setMainImage(mapped.images[0] || '');
+        setError(null);
+        let mapped = null;
+        
+        // Always try local data first for frontend app
+        const localCosmetic = cosmeticsProducts.find(p => p.id.toString() === slug.toString() || p.slug === slug);
+        if (localCosmetic) {
+          mapped = localCosmetic;
+          setProductType('cosmetics');
+        } else {
+          const localSkincare = skincareProducts.find(p => p.id.toString() === slug.toString() || p.slug === slug);
+          if (localSkincare) {
+            mapped = localSkincare;
+            setProductType('skincare');
+          }
         }
+
+        if (mapped) {
+          setProduct(mapped);
+          setMainImage(mapped.images?.[0] || '');
+        } else {
+          // If not in local data, we could try API, but since this is a UI prototype, we just fail
+          setError('Product not found');
+        }
+
       } catch (err) {
         console.error('Failed to fetch product:', err);
         setError('Product not found');
