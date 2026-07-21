@@ -15,11 +15,11 @@ import imgBrushHolder from '../../assets/images/cat_makeup_brushes.webp';
 import imgPerfume from '../../assets/images/pocket_perfume.webp';
 
 const categories = [
-  { id: 1, title: "Lipstick", image: imgLipstick, link: "/shop/lipstick" },
-  { id: 2, title: "Lip Liner", image: imgLipLiner, link: "/shop/lip-liner" },
-  { id: 3, title: "Lip Blur", image: imgLipBlur, link: "/shop/lip-blur" },
-  { id: 4, title: "Mascara", image: imgMascara, link: "/shop/mascara" },
-  { id: 5, title: "Eyeshadow Palette", image: imgEyeshadow, link: "/shop/eyeshadow" },
+  { id: 1, title: "Lipstick", image: imgLipstick, link: "/collections/magnetic-lipstick" },
+  { id: 2, title: "Lip Liner", image: imgLipLiner, link: "/collections/precision-lip-liner" },
+  { id: 3, title: "Lip Blur", image: imgLipBlur, link: "/collections/lip-blur" },
+  { id: 4, title: "Mascara", image: imgMascara, link: "/collections/lift-curl-mascara" },
+  { id: 5, title: "Eyeshadow Palette", image: imgEyeshadow, link: "/collections/eyeshadow-palette" },
   { id: 6, title: "Blush", image: imgBlush, link: "/shop/blush" },
   { id: 7, title: "Makeup Brushes", image: imgBrushes, link: "/shop/brushes" },
   { id: 8, title: "Brush Holder", image: imgBrushHolder, link: "/shop/brush-holder" },
