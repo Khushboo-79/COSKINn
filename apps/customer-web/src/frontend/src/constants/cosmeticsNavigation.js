@@ -12,13 +12,13 @@ export const cosmeticsNavigation = {
       title: "Eyes",
       links: [
         { name: "COSKINn Lift & Curl Mascara", href: "/collections/lift-curl-mascara" },
-        { name: "COSKINn Eyeshadow Palette", href: "/product/304" },
+        { name: "COSKINn Eyeshadow Palette", href: "/collections/eyeshadow-palette" },
       ]
     },
     {
       title: "Face",
       links: [
-        { name: "COSKINn Velvet Blush", href: "/product/302" },
+        { name: "COSKINn Velvet Blush", href: "#" },
       ]
     }
   ],
@@ -26,9 +26,9 @@ export const cosmeticsNavigation = {
     title: "Tools & Fragrance",
     description: "Premium tools and signature scents for a complete experience.",
     links: [
-      { name: "COSKINn Professional Makeup Brush Set", href: "/product/305" },
-      { name: "COSKINn Brush Holder", href: "/product/309" },
-      { name: "COSKINn Pocket Perfume Collection", href: "/product/310" },
+      { name: "COSKINn Professional Makeup Brush Set", href: "#" },
+      { name: "COSKINn Brush Holder", href: "#" },
+      { name: "COSKINn Pocket Perfume Collection", href: "#" },
     ],
     shopAllText: "Shop All Cosmetics →",
     shopAllHref: "/shop"
