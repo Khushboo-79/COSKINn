@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Heart, Star as StarIcon, Crown, Diamond as DiamondIcon, CheckCircle } from 'lucide-react';
+import { ShoppingBag, Heart, Star as StarIcon, Crown, Diamond as DiamondIcon, CheckCircle, Sparkles, ArrowRight } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import Footer from '../../components/common/Footer';
@@ -9,7 +9,7 @@ import SEO from '../../components/common/SEO';
 import { cosmeticsProducts } from '../../constants/cosmeticsProducts';
 
 // Images
-import lipstickHeroImg from '../../assets/images/cosmetics_editorial_lifestyle.webp';
+import lipstickHeroImg from '../../assets/images/magnetic_lipstick_hero_campaign.webp';
 import featureImg1 from '../../assets/images/cosmetics_after_model.webp';
 import featureImg2 from '../../assets/images/cat_magnetic_lipstick.webp';
 import lookRoyal from '../../assets/images/cosmetics_before_model.webp';
@@ -70,6 +70,16 @@ export default function MagneticLipstickCollectionPage() {
         ))}
       </div>
 
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Great+Vibes&display=swap');
+        .font-playfair {
+          font-family: 'Playfair Display', serif !important;
+        }
+        .font-cursive {
+          font-family: 'Great Vibes', cursive !important;
+        }
+      `}</style>
+
       {/* 1. Large Editorial Hero */}
       <section className="relative w-full h-[120vh] flex items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 bg-[#FFFDFD]" />
@@ -79,16 +89,15 @@ export default function MagneticLipstickCollectionPage() {
         <motion.div style={{ y: yHero, opacity: opacityHero }} className="relative z-10 w-full max-w-[1600px] mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between">
           
           <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left pt-10 lg:pt-0">
-            <div className="flex items-center gap-3 mb-8 text-[#FF8FB1] border border-[#FFC2D1] py-2 px-6 bg-white shadow-sm">
-              <Crown size={14} />
+            <div className="flex items-center gap-3 mb-8 text-[#FF8FB1] border border-[#FFC2D1] py-2 px-6 bg-white/70 backdrop-blur-md shadow-sm rounded-full">
+              <Crown size={14} className="animate-pulse" />
               <span className="text-[10px] font-bold tracking-[0.3em] uppercase">Chapter IV : The Reign</span>
             </div>
             
-            <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-heading font-black text-[#75263F] leading-[0.9] tracking-tighter uppercase mb-8">
+            <h1 className="text-6xl md:text-8xl lg:text-[7rem] font-heading font-black text-[#5E1930] leading-[0.9] tracking-tighter uppercase mb-8 font-playfair">
               Magnetic <br />
-              <span className="relative inline-block">
-                Elegance.
-                <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-[#FF0069] to-[#FF8FB1]" />
+              <span className="font-cursive text-7xl md:text-8xl text-[#D74D76] font-normal italic inline-block mt-3 normal-case tracking-normal pl-2">
+                Elegance
               </span>
             </h1>
             
@@ -100,17 +109,17 @@ export default function MagneticLipstickCollectionPage() {
           <div className="w-full lg:w-1/2 flex justify-center items-center relative h-[60vh] lg:h-[80vh]">
             <div className="relative w-full h-full flex items-center justify-center p-4">
               {/* Luxury Mirror Frame */}
-              <div className="absolute inset-0 border-[2px] border-[#FFC2D1] rounded-t-full shadow-[0_30px_60px_rgba(255,143,177,0.2)] bg-white/40 backdrop-blur-sm" />
-              <div className="absolute inset-4 border border-[#FF8FB1]/50 rounded-t-full" />
+              <div className="absolute inset-0 border-[3px] border-[#FFE2EA] rounded-t-full shadow-[0_30px_60px_rgba(255,143,177,0.25)] bg-gradient-to-b from-white/30 to-[#FFF2F5]/40 backdrop-blur-md" />
+              <div className="absolute inset-4 border border-[#FFF0F4] rounded-t-full" />
               
-              <img src={lipstickHeroImg} alt="Royal Palace Lipstick" className="relative z-10 w-full h-[95%] object-cover object-center rounded-t-full rounded-b-[40px] shadow-2xl" />
+              <img src={lipstickHeroImg} alt="Royal Palace Lipstick" className="relative z-10 w-full h-[95%] object-cover object-center rounded-t-full rounded-b-[40px] shadow-2xl scale-[1.01] hover:scale-105 transition-transform duration-[4s]" />
             </div>
           </div>
 
         </motion.div>
       </section>
 
-      {/* 2. Editorial Story Section */}
+            {/* 2. Editorial Story Section */}
       <section className="relative py-32 overflow-hidden bg-white border-t border-[#FFE0E9]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="flex flex-col lg:flex-row-reverse items-center gap-20">

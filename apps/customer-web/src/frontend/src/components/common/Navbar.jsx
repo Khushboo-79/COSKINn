@@ -137,12 +137,12 @@ const NavItem = ({ title, to, children, isActive, isScrolled, theme }) => {
       {to ? (
         <Link
           to={to}
-          className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 focus:outline-none ${(!isScrolled && isCosmeticsHome) ? "text-white font-bold" : (isActive ? "text-black font-semibold" : "text-black/90 font-medium")}`}
+          className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 focus:outline-none ${isActive ? "text-black font-semibold" : "text-black font-medium"}`}
         >
           {title}
         </Link>
       ) : (
-        <button className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 cursor-pointer focus:outline-none ${(!isScrolled && isCosmeticsHome) ? "text-white font-bold" : "text-black/90 font-medium"}`}>
+        <button className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 cursor-pointer focus:outline-none text-black font-medium`}>
           {title}
         </button>
       )}
@@ -379,7 +379,7 @@ export default function Navbar() {
                 <Heart size={22} strokeWidth={1.5} />
               </button>
               <button
-                onClick={openCart}
+                onClick={() => navigate('/cart')}
                 aria-label="Open cart"
                 className="relative hover:text-[#FF0069] transition flex items-center"
               >
@@ -504,7 +504,7 @@ export default function Navbar() {
         <div className="flex-1 lg:hidden"></div>
 
         {/* Icons */}
-        <div className={`flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 relative flex-shrink-0 transition-colors duration-300 ${(!isScrolled && isCosmeticsHome) ? 'text-white' : 'text-black/80'}`}>
+        <div className={`flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 relative flex-shrink-0 transition-colors duration-300 text-black`}>
           {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -584,7 +584,7 @@ export default function Navbar() {
 
           {/* Cart Icon */}
           <button
-            onClick={openCart}
+            onClick={() => navigate('/cart')}
             onMouseEnter={() => prefetchPage('checkout')}
             aria-label="Open cart"
             className="relative hover:text-theme-primary transition flex items-center"

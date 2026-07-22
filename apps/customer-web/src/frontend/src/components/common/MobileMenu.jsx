@@ -187,7 +187,7 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
                     <Heart size={22} strokeWidth={1.5} />
                     <span className="text-[9px] font-bold uppercase tracking-widest">Wishlist</span>
                  </button>
-                 <button onClick={() => { onClose(); setIsCartOpen(true); }} className="flex flex-col items-center gap-1.5 text-black/60 hover:text-[#FF0069] transition-colors p-2" aria-label="Cart">
+                 <button onClick={() => { onClose(); navigate('/cart'); }} className="flex flex-col items-center gap-1.5 text-black/60 hover:text-[#FF0069] transition-colors p-2" aria-label="Cart">
                     <ShoppingBag size={22} strokeWidth={1.5} />
                     <span className="text-[9px] font-bold uppercase tracking-widest">Cart</span>
                  </button>
