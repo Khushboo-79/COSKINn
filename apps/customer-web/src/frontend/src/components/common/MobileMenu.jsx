@@ -154,13 +154,14 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
                   )}
                 </MobileAccordion>
 
-                <MobileAccordion title="Routine">
-                  <div className="text-xs font-bold text-[#FF0069] uppercase tracking-widest mt-2 mb-1">Select Routine</div>
-                  {data.routines.map((routine, idx) => (
-                    <Link key={`routine-${idx}`} to={routine.href} onClick={onClose} className="text-black/80 font-medium py-1">{routine.name}</Link>
-                  ))}
-                  <Link to="/routine" onClick={onClose} className="text-[#FF0069] font-bold py-1 mt-2">Complete Routine →</Link>
-                </MobileAccordion>
+                {theme === 'skincare' && data.routines && (
+                  <MobileAccordion title="Routine">
+                    <div className="text-xs font-bold text-[#FF0069] uppercase tracking-widest mt-2 mb-1">Skincare Routines</div>
+                    {data.routines.map((link, lIdx) => (
+                      <Link key={`routine-${lIdx}`} to={link.href} onClick={onClose} className="text-black/80 font-medium py-1">{link.name}</Link>
+                    ))}
+                  </MobileAccordion>
+                )}
 
                 <Link to="/about" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">About Us</Link>
                 <Link to="/journal" onClick={onClose} className="py-4 text-lg font-bold font-heading text-black border-b border-black/10">Journal</Link>

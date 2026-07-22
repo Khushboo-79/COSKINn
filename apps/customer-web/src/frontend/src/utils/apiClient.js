@@ -43,9 +43,11 @@ apiClient.interceptors.response.use(
       }
     } else if (error.request) {
       // Network error (backend might be down)
-      window.dispatchEvent(new CustomEvent('toast:error', {
+      // Suppressed during frontend UI development
+      console.warn("Network error suppressed:", error);
+      /* window.dispatchEvent(new CustomEvent('toast:error', {
         detail: { message: 'Network error. Please check your connection.' }
-      }));
+      })); */
     }
     return Promise.reject(error);
   }

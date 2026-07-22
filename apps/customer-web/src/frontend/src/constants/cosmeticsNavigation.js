@@ -18,7 +18,7 @@ export const cosmeticsNavigation = {
     {
       title: "Face",
       links: [
-        { name: "COSKINn Velvet Blush", href: "#" },
+        { name: "COSKINn Velvet Blush", href: "/collections/velvet-blush" },
       ]
     }
   ],
@@ -26,9 +26,9 @@ export const cosmeticsNavigation = {
     title: "Tools & Fragrance",
     description: "Premium tools and signature scents for a complete experience.",
     links: [
-      { name: "COSKINn Professional Makeup Brush Set", href: "#" },
-      { name: "COSKINn Brush Holder", href: "#" },
-      { name: "COSKINn Pocket Perfume Collection", href: "#" },
+      { name: "COSKINn Professional Makeup Brush Set", href: "/collections/professional-makeup-brush-set" },
+      { name: "COSKINn Brush Holder", href: "/collections/brush-holder" },
+      { name: "COSKINn Pocket Perfume Collection", href: "/collections/pocket-perfume" },
     ],
     shopAllText: "Shop All Cosmetics →",
     shopAllHref: "/shop"

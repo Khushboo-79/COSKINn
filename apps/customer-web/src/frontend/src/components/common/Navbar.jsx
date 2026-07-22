@@ -84,31 +84,32 @@ const CoskinnLogo = ({ isScrolled }) => (
 const prefetchPage = (pagePath) => {
   const cleanPath = pagePath.replace('/', '');
   if (cleanPath === 'skincare') {
-    import('../../pages/SkincarePage').catch(() => {});
+    import('../../pages/SkincarePage').catch(() => { });
   } else if (cleanPath === 'cosmetics') {
-    import('../../pages/CosmeticsPage').catch(() => {});
+    import('../../pages/CosmeticsPage').catch(() => { });
   } else if (cleanPath === 'about') {
-    import('../../pages/AboutPage').catch(() => {});
+    import('../../pages/AboutPage').catch(() => { });
   } else if (cleanPath === 'contact') {
-    import('../../pages/ContactPage').catch(() => {});
+    import('../../pages/ContactPage').catch(() => { });
   } else if (cleanPath.startsWith('account')) {
-    import('../../pages/AccountPage').catch(() => {});
+    import('../../pages/AccountPage').catch(() => { });
   } else if (cleanPath === 'checkout') {
-    import('../../pages/CheckoutPage').catch(() => {});
+    import('../../pages/CheckoutPage').catch(() => { });
   } else if (cleanPath === 'skincare/cleansing-balms') {
-    import('../../pages/CleansingBalmPage').catch(() => {});
+    import('../../pages/CleansingBalmPage').catch(() => { });
   } else if (cleanPath === 'skincare/sunscreens') {
-    import('../../pages/SunscreenPage').catch(() => {});
+    import('../../pages/SunscreenPage').catch(() => { });
   } else if (cleanPath === 'skincare/face-mist') {
-    import('../../pages/FaceMistPage').catch(() => {});
+    import('../../pages/FaceMistPage').catch(() => { });
   }
 };
 
 // Desktop Navigation Item Wrapper
-const NavItem = ({ title, to, children, isActive }) => {
+const NavItem = ({ title, to, children, isActive, isScrolled, theme }) => {
   const [isOpen, setIsOpen] = useState(false);
   let timeoutRef = useRef(null);
   const location = useLocation();
+  const isCosmeticsHome = theme === 'cosmetics' && (location.pathname === '/cosmetics' || location.pathname === '/');
 
   // Close dropdown immediately when route changes
   useEffect(() => {
@@ -136,12 +137,12 @@ const NavItem = ({ title, to, children, isActive }) => {
       {to ? (
         <Link
           to={to}
-          className={`flex items-center gap-1 hover:text-theme-primary transition-colors focus:outline-none ${isActive ? "text-black font-semibold" : ""}`}
+          className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 focus:outline-none ${(!isScrolled && isCosmeticsHome) ? "text-white font-bold" : (isActive ? "text-black font-semibold" : "text-black/90 font-medium")}`}
         >
           {title}
         </Link>
       ) : (
-        <button className="flex items-center gap-1 hover:text-theme-primary transition-colors cursor-pointer font-medium focus:outline-none">
+        <button className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 cursor-pointer focus:outline-none ${(!isScrolled && isCosmeticsHome) ? "text-white font-bold" : "text-black/90 font-medium"}`}>
           {title}
         </button>
       )}
@@ -165,15 +166,15 @@ const AnimatedHamburger = ({ isOpen, toggle }) => (
   >
     <motion.span
       animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -6 }}
-      className="absolute w-6 h-[2px] bg-black block rounded-full"
+      className="absolute w-6 h-[2px] bg-current block rounded-full"
     />
     <motion.span
       animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-      className="absolute w-6 h-[2px] bg-black block rounded-full"
+      className="absolute w-6 h-[2px] bg-current block rounded-full"
     />
     <motion.span
       animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 6 }}
-      className="absolute w-6 h-[2px] bg-black block rounded-full"
+      className="absolute w-6 h-[2px] bg-current block rounded-full"
     />
   </button>
 );
@@ -197,6 +198,7 @@ export default function Navbar() {
   const { cartCount, openCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+  const isCosmeticsHome = theme === 'cosmetics' && (location.pathname === '/cosmetics' || location.pathname === '/');
 
   useEffect(() => {
     const currentPath = location.pathname.split('/')[1];
@@ -336,11 +338,11 @@ export default function Navbar() {
           className="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-black/5 shadow-sm h-[60px] flex flex-col justify-center"
         >
           <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between">
-            
+
             {/* Left: Back Button & Breadcrumbs */}
             <div className="flex items-center gap-4">
-              <button 
-                onClick={() => navigate(-1)} 
+              <button
+                onClick={() => navigate(-1)}
                 aria-label="Go back"
                 className="flex items-center gap-1 font-bold text-sm text-black hover:text-[#FF0069] transition-colors"
               >
@@ -376,8 +378,8 @@ export default function Navbar() {
               >
                 <Heart size={22} strokeWidth={1.5} />
               </button>
-              <button 
-                onClick={openCart} 
+              <button
+                onClick={openCart}
                 aria-label="Open cart"
                 className="relative hover:text-[#FF0069] transition flex items-center"
               >
@@ -472,35 +474,37 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center justify-center gap-10 text-[20px] font-body text-black/90 flex-1 ml-10">
-          <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} />
+        <div className="hidden lg:flex items-center justify-center gap-10 text-[20px] font-body flex-1 ml-10">
+          <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} isScrolled={isScrolled} theme={theme} />
 
-          <NavItem title="Shop">
+          <NavItem title="Shop" isScrolled={isScrolled} theme={theme}>
             <ShopMegaMenu theme={theme} />
           </NavItem>
 
-          <NavItem title="Categories">
+          <NavItem title="Categories" isScrolled={isScrolled} theme={theme}>
             <CategoriesMegaMenu theme={theme} />
           </NavItem>
+          
+          {theme === 'skincare' && (
+            <NavItem title="Routine" isScrolled={isScrolled} theme={theme}>
+              <RoutineMenu theme={theme} />
+            </NavItem>
+          )}
 
-          <NavItem title="Routine">
-            <RoutineMenu theme={theme} />
-          </NavItem>
+          <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} isScrolled={isScrolled} theme={theme} />
 
-          <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} />
-
-          <NavItem title="Journal">
+          <NavItem title="Journal" isScrolled={isScrolled} theme={theme}>
             <JournalMenu theme={theme} />
           </NavItem>
 
-          <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} />
+          <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} isScrolled={isScrolled} theme={theme} />
         </div>
 
         {/* Spacer for Mobile layout balancing */}
         <div className="flex-1 lg:hidden"></div>
 
         {/* Icons */}
-        <div className="flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 text-black/80 relative flex-shrink-0">
+        <div className={`flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 relative flex-shrink-0 transition-colors duration-300 ${(!isScrolled && isCosmeticsHome) ? 'text-white' : 'text-black/80'}`}>
           {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -579,8 +583,8 @@ export default function Navbar() {
           </div>
 
           {/* Cart Icon */}
-          <button 
-            onClick={openCart} 
+          <button
+            onClick={openCart}
             onMouseEnter={() => prefetchPage('checkout')}
             aria-label="Open cart"
             className="relative hover:text-theme-primary transition flex items-center"
@@ -643,7 +647,7 @@ export default function Navbar() {
               onClick={() => setIsMobileProfileOpen(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-[4px]"
             />
-            
+
             {/* Sheet */}
             <motion.div
               initial={{ y: "100%" }}
@@ -751,7 +755,7 @@ export default function Navbar() {
                       navigate('/contact');
                     }}
                   />
-                  
+
                   <div className="pt-4 mt-2 border-t border-black/5">
                     <button
                       onClick={() => {
