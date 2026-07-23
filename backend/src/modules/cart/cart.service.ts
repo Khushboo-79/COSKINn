@@ -49,6 +49,20 @@ export class CartService {
     }
 
     const offerData = await this.offerService.evaluateBestOffer(cart.items, totalDiscountPrice);
+    const tieredOffers = await this.offerService.getTieredOfferProgress(totalDiscountPrice);
+    
+    // Auto-add Free Gifts based on achieved tiers
+    const autoAddedGifts: any[] = [];
+    for (const tier of tieredOffers) {
+      if (tier.isAchieved && tier.reward === 'Free Gift') {
+        autoAddedGifts.push({
+          name: tier.offer?.title || 'Surprise Free Gift',
+          price: 0,
+          quantity: 1,
+          isAutoAdded: true
+        });
+      }
+    }
     
     // Using getWallet returns { balance } object, we just want the balance number
     const wallet = await this.walletService.getWallet(userId);
@@ -58,12 +72,14 @@ export class CartService {
 
     return {
       ...cart,
+      autoAddedGifts, // Injecting free gifts explicitly so frontend can show them in cart
       summary: {
         totalMrp,
         totalDiscountPrice,
         totalSavings: totalMrp - totalDiscountPrice,
         offerDiscount: offerData.discount,
         appliedOffer: offerData.offer,
+        tieredOffers,
         finalTotal: finalPayable, // Excludes shipping for now
         walletBalance: wallet.balance,
         rewardPointsBalance: rewardPoints

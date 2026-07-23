@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { auditApi } from '../../core/api/audit';
@@ -87,7 +88,7 @@ export const ActivityLogScreen = () => {
                     <td className="px-4 py-3 text-right">
                       <button 
                         className="text-rose-600 hover:text-rose-800 text-xs font-bold px-3 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 transition-colors"
-                        onClick={() => alert(`Old: ${log.oldData}\nNew: ${log.newData}`)}
+                        onClick={() => toast(`Old: ${log.oldData}\nNew: ${log.newData}`)}
                       >
                         View Diff
                       </button>

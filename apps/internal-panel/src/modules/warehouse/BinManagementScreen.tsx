@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { warehouseApi } from '../../core/api/warehouse';
@@ -26,7 +27,7 @@ export const BinManagementScreen = () => {
       setNewBin({ code: '', description: '' });
     },
     onError: (err: any) => {
-      alert(`Error creating bin: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 

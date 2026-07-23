@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { marketingApi } from '../../core/api/marketing';
@@ -50,7 +51,7 @@ export const BannerManagementScreen = () => {
         setImageUrl(url);
       } catch (err) {
         console.error("Upload failed", err);
-        alert("Image upload failed");
+        toast.error();
       } finally {
         setUploading(false);
       }

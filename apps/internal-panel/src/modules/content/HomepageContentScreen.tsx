@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { contentApi } from '../../core/api/content';
@@ -52,7 +53,7 @@ export const HomepageContentScreen = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content', 'articles', 'PAGE'] });
-      alert('Homepage content updated successfully!');
+      toast.success();
     }
   });
 

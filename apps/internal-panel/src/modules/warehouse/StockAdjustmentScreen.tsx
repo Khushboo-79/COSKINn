@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
@@ -14,14 +15,14 @@ export const StockAdjustmentScreen = () => {
   const adjustMutation = useMutation({
     mutationFn: () => inventoryApi.adjustStock({ sku, warehouseId, type, quantity, reason }),
     onSuccess: () => {
-      alert(`Stock adjusted successfully for ${sku}.`);
+      toast.success();
       queryClient.invalidateQueries({ queryKey: ['admin', 'inventory'] });
       setSku('');
       setQuantity(0);
       setReason('');
     },
     onError: (err: any) => {
-      alert(`Error adjusting stock: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 

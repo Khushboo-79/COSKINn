@@ -14,5 +14,25 @@ export const productApi = {
         });
       }, 500);
     });
+  },
+
+  getProducts: async () => {
+    const response = await apiClient.get('/product');
+    return response.data;
+  },
+
+  getCategories: async () => {
+    const response = await apiClient.get('/categories');
+    return response.data;
+  },
+
+  createCategory: async (data: any) => {
+    const response = await apiClient.post('/categories', data);
+    return response.data;
+  },
+
+  createProduct: async (data: any) => {
+    const response = await apiClient.post('/product', data);
+    return response.data;
   }
 };

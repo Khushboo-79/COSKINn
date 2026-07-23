@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { contentApi } from '../../core/api/content';
@@ -73,7 +74,7 @@ export const BlogEditorScreen = () => {
         setHeroImageUrl(url);
       } catch (err) {
         console.error("Upload failed", err);
-        alert("Image upload failed");
+        toast.error();
       } finally {
         setUploading(false);
       }

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supportApi } from '../../core/api/support';
@@ -31,7 +32,7 @@ export const EscalationModal = ({ ticketId, adminId, isOpen, onClose }: Escalati
       setHandoffNote('');
     },
     onError: (err: any) => {
-      alert(`Error escalating ticket: ${err.message}`);
+      toast.error();
     }
   });
 

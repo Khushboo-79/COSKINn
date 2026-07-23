@@ -1,6 +1,7 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
 import { ArrowLeft, Save, Plus, Minus, AlertTriangle, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,8 +11,14 @@ export const StockAdjustmentScreen = () => {
   const queryClient = useQueryClient();
   const [adjustmentType, setAdjustmentType] = useState<'IN' | 'OUT'>('IN');
   
+  const { data: warehouses = [] } = useQuery({
+    queryKey: ['inventory', 'warehouses'],
+    queryFn: inventoryApi.getWarehouses,
+  });
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
+      warehouseId: '',
       sku: '',
       quantity: 1,
       reasonCode: '',
@@ -33,12 +40,12 @@ export const StockAdjustmentScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stats'] });
-      alert(`Stock ${adjustmentType} recorded successfully.`);
+      toast.success();
       reset();
       navigate('/inventory');
     },
     onError: (err: any) => {
-      alert(`Error: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
@@ -88,6 +95,20 @@ export const StockAdjustmentScreen = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Warehouse <span className="text-red-500">*</span></label>
+              <select
+                {...register('warehouseId', { required: 'Warehouse is required' })}
+                className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white"
+              >
+                <option value="">Select warehouse...</option>
+                {warehouses.map((wh: any) => (
+                  <option key={wh.id} value={wh.id}>{wh.name}</option>
+                ))}
+              </select>
+              {errors.warehouseId && <p className="text-red-500 text-xs mt-1">{errors.warehouseId.message as string}</p>}
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">SKU Code <span className="text-red-500">*</span></label>
               <input

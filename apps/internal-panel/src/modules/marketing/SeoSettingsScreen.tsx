@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { marketingApi } from '../../core/api/marketing';
@@ -27,7 +28,7 @@ export const SeoSettingsScreen = () => {
     mutationFn: () => marketingApi.updateGlobalSeo({ title, description, keywords }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['marketing', 'globalSeo'] });
-      alert('SEO Settings saved successfully!');
+      toast.success();
     }
   });
 

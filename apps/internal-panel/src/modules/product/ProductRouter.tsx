@@ -3,6 +3,8 @@ import { CatalogDashboardScreen } from './CatalogDashboardScreen';
 import { ProductWizardShell } from './wizard/ProductWizardShell';
 import { ProductFeedScreen } from './ProductFeedScreen';
 import { BulkImportScreen } from './BulkImportScreen';
+import { ProductListScreen } from './ProductListScreen';
+import { CategoriesScreen } from './CategoriesScreen';
 import { Package, PlusCircle, List, ArrowLeft } from 'lucide-react';
 
 export const ProductRouter = () => {
@@ -40,7 +42,8 @@ export const ProductRouter = () => {
           <Route path="/create" element={<ProductWizardShell />} />
           <Route path="/feed" element={<ProductFeedScreen />} />
           <Route path="/import" element={<BulkImportScreen />} />
-          <Route path="/list" element={<div className="p-4 bg-white rounded-xl shadow-sm">Product List (Coming Soon)</div>} />
+          <Route path="/list" element={<ProductListScreen />} />
+          <Route path="/categories" element={<CategoriesScreen />} />
           <Route path="*" element={<Navigate to="/product" replace />} />
         </Routes>
       </main>

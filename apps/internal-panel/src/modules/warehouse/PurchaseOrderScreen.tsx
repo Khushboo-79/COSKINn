@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { warehouseApi } from '../../core/api/warehouse';
@@ -33,14 +34,14 @@ export const PurchaseOrderScreen = () => {
       setItems([{ sku: '', requestedQty: 1, unitPrice: 0 }]);
     },
     onError: (err: any) => {
-      alert(`Error creating PO: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (items.some(i => !i.sku)) {
-      alert('All items must have a SKU');
+      toast('All items must have a SKU');
       return;
     }
     createMutation.mutate();

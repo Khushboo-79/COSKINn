@@ -2,6 +2,7 @@
   "name": "coskinn-monorepo",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@10.8.0",
   "workspaces": [
     "apps/*",
     "backend",
@@ -11,9 +12,19 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "lint:fix": "turbo run lint -- --fix",
+    "test": "turbo run test",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "eslint": "^9.15.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.1.0",
     "turbo": "^2.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
   }
 }

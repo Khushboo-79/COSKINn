@@ -8,6 +8,7 @@ import {
   Briefcase, ShieldCheck, DollarSign, ShieldAlert, Boxes, Box,
   RefreshCw, MessageSquare
 } from 'lucide-react';
+import { GlobalSearch } from '../ui/GlobalSearch';
 
 const PANEL_ROUTES = [
   { id: 'admin', path: '/admin', label: 'Admin', icon: ShieldAlert },
@@ -27,6 +28,8 @@ const PANEL_ROUTES = [
 export const SharedShell = () => {
   const { user, logout } = useAuth();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [isProfileOpen, setProfileOpen] = useState(false);
+  const [isNotificationOpen, setNotificationOpen] = useState(false);
   const location = useLocation();
 
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
@@ -99,7 +102,7 @@ export const SharedShell = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
           <div className="flex items-center flex-1">
             <button 
               onClick={toggleSidebar} 
@@ -113,32 +116,111 @@ export const SharedShell = () => {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Search className="h-4 w-4 text-slate-400" />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Global search..."
-                  className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-full bg-slate-50 text-sm focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                />
+                <div
+                  className="flex items-center justify-between w-full pl-10 pr-3 py-2 border border-slate-200 rounded-full bg-slate-50 text-sm text-slate-400 cursor-pointer hover:bg-white hover:ring-2 hover:ring-primary-500 hover:border-primary-500 transition-all"
+                  onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+                >
+                  <span>Search modules, pages...</span>
+                  <span className="hidden lg:flex items-center space-x-1">
+                    <kbd className="font-sans font-semibold text-[10px] bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">⌘</kbd>
+                    <kbd className="font-sans font-semibold text-[10px] bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">K</kbd>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <button className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors">
+            <button className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative group">
               <Mail className="h-5 w-5" />
+              {/* Tooltip for Mail */}
+              <div className="absolute top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity">
+                No new messages
+              </div>
             </button>
-            <button className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => {
+                  setNotificationOpen(!isNotificationOpen);
+                  setProfileOpen(false);
+                }}
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative"
+              >
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+              </button>
+              
+              {/* Notifications Dropdown */}
+              {isNotificationOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setNotificationOpen(false)}></div>
+                  <div className="absolute right-0 top-12 w-64 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-slate-100">
+                      <h3 className="font-bold text-sm text-slate-800">Notifications</h3>
+                    </div>
+                    <div className="px-4 py-3 hover:bg-slate-50 cursor-pointer">
+                      <p className="text-sm font-medium text-slate-800">New Product Approval</p>
+                      <p className="text-xs text-slate-500 mt-1">Vitamin C Face Wash is awaiting review.</p>
+                    </div>
+                    <div className="px-4 py-3 hover:bg-slate-50 cursor-pointer border-t border-slate-50">
+                      <p className="text-sm font-medium text-slate-800">System Update</p>
+                      <p className="text-xs text-slate-500 mt-1">Version 1.2 deployed successfully.</p>
+                    </div>
+                    <div className="px-4 py-2 border-t border-slate-100 text-center">
+                      <span className="text-xs font-semibold text-primary-600 hover:text-primary-700 cursor-pointer">View All</span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            
             <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block"></div>
-            <div className="flex items-center cursor-pointer">
-              <div className="h-8 w-8 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold">
-                {user?.email?.charAt(0).toUpperCase() || <User className="h-4 w-4" />}
-              </div>
-              <div className="hidden md:block ml-2 text-sm">
-                <span className="block font-medium text-slate-700 truncate max-w-[120px]">{user?.email}</span>
-                <span className="block text-slate-500 text-xs capitalize">{user?.role}</span>
-              </div>
+            
+            {/* Profile Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => {
+                  setProfileOpen(!isProfileOpen);
+                  setNotificationOpen(false);
+                }}
+                className="flex items-center cursor-pointer p-1 pr-2 rounded-full hover:bg-slate-50 transition-colors focus:outline-none"
+              >
+                <div className="h-8 w-8 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold">
+                  {user?.email?.charAt(0).toUpperCase() || <User className="h-4 w-4" />}
+                </div>
+                <div className="hidden md:block ml-2 text-sm text-left">
+                  <span className="block font-medium text-slate-700 truncate max-w-[120px]">{user?.email}</span>
+                  <span className="block text-slate-500 text-xs capitalize">{user?.role}</span>
+                </div>
+              </button>
+              
+              {/* Dropdown Menu */}
+              {isProfileOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)}></div>
+                  <div className="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
+                    <Link 
+                      to="/admin/profile" 
+                      onClick={() => setProfileOpen(false)}
+                      className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center"
+                    >
+                      <User className="h-4 w-4 mr-2 text-slate-400" />
+                      My Profile
+                    </Link>
+                    <div className="border-t border-slate-100 my-1"></div>
+                    <button 
+                      onClick={() => {
+                        setProfileOpen(false);
+                        logout();
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 flex items-center font-medium"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </header>
@@ -147,6 +229,7 @@ export const SharedShell = () => {
         <main className="flex-1 overflow-auto bg-background p-4 lg:p-8">
           <Outlet />
         </main>
+        <GlobalSearch />
       </div>
     </div>
   );

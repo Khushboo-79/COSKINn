@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../../core/api/orders';
@@ -38,14 +39,14 @@ export const UpdateStatusModal = ({ orderId, currentStatus, onClose }: UpdateSta
       onClose();
     },
     onError: (err: any) => {
-      alert(`Error updating status: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!notes.trim()) {
-      alert("Status update notes are required for audit logs.");
+      toast("Status update notes are required for audit logs.");
       return;
     }
     mutation.mutate({ status: newStatus, notes: notes.trim() });
