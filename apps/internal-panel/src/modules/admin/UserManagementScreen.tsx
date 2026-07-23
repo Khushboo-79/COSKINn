@@ -6,15 +6,19 @@ import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const UserManagementScreen = () => {
   // Use mock data until API is wired
-  const { data: users = [
-    { id: '1', name: 'John Doe', email: 'john@coskinn.com', role: 'Super Admin', status: 'Active' },
-    { id: '2', name: 'Jane Smith', email: 'jane@coskinn.com', role: 'Product Manager', status: 'Active' },
-    { id: '3', name: 'Bob Jones', email: 'bob@coskinn.com', role: 'Customer Support', status: 'Inactive' },
-  ], refetch } = useQuery({
+  const { data: rawUsers = [], refetch } = useQuery({
     queryKey: ['users'],
     queryFn: rbacApi.getUsers,
     retry: false,
   });
+
+  const users = Array.isArray(rawUsers) ? rawUsers.map((u: any) => ({
+    id: u.id,
+    name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Unknown',
+    email: u.email,
+    role: u.roles?.[0]?.role?.name || 'No Role',
+    status: u.isDeleted ? 'Inactive' : 'Active'
+  })) : [];
 
   const columns = [
     { key: 'name', header: 'Name', sortable: true },

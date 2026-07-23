@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
@@ -32,11 +33,11 @@ export const OrderListScreen = () => {
       warehouseId: 'default-warehouse' 
     }),
     onSuccess: (data) => {
-      alert(`Pick list generated successfully! Pick List ID: ${data.id}`);
+      toast.success();
       setSelectedOrderIds([]); // Clear selection
     },
     onError: (err: any) => {
-      alert(`Error generating pick list: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
@@ -60,7 +61,7 @@ export const OrderListScreen = () => {
     setIsBulkUpdating(false);
     queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
     setSelectedOrderIds([]);
-    alert(`Successfully updated ${successCount}/${selectedOrderIds.length} orders.`);
+    toast.success();
   };
 
   const toggleSelection = (id: string) => {
@@ -263,8 +264,10 @@ export const OrderListScreen = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
-                        <div className="text-sm font-medium text-slate-900">{order.user?.name || 'Guest'}</div>
-                        <div className="text-xs text-slate-500 mt-1">{order.user?.email || order.shippingAddress?.email}</div>
+                        <div className="text-sm font-medium text-slate-900">
+                          {order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Guest'}
+                        </div>
+                        <div className="text-xs text-slate-500 mt-1">{order.user?.email || order.address?.email || 'N/A'}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(order.status)}`}>

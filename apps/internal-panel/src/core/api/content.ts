@@ -1,4 +1,4 @@
-import client from './client';
+import { apiClient as client } from './client';
 
 export const contentApi = {
   // Articles (Blogs, Tips, Routines, Legal)

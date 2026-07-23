@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { ArrowLeft, History, Download, Calendar, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -31,7 +32,7 @@ export const MovementLogsScreen = () => {
           </div>
         </div>
         <button 
-          onClick={() => alert("CSV Export triggered! (Mock)")}
+          onClick={() => toast("CSV Export triggered! (Mock)")}
           className="px-4 py-2 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors shadow-sm flex items-center"
         >
           <Download className="h-4 w-4 mr-2" />

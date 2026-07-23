@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
@@ -29,24 +30,24 @@ export const OutboundScreen = () => {
         }));
         setBarcodeInput('');
       } else {
-        alert(data.message);
+        toast(data.message);
       }
     },
     onError: (err: any) => {
-      alert(`Scan failed: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
   const updateStatusMutation = useMutation({
     mutationFn: () => orderApi.updateOrderStatus(packingOrder.id, 'PACKED', 'Packed verified via scanner'),
     onSuccess: () => {
-      alert(`Order ${packingOrder.id.slice(-8).toUpperCase()} packed successfully!`);
+      toast.success();
       queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
       setPackingOrder(null);
       setScannedItems({});
     },
     onError: (err: any) => {
-      alert(`Failed to pack order: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
@@ -63,7 +64,7 @@ export const OutboundScreen = () => {
   };
 
   const isFullyPacked = packingOrder?.items?.every(
-    (item: any) => (scannedItems[item.sku] || 0) >= item.quantity
+    (item: any) => (scannedItems[item.variant?.sku || item.sku] || 0) >= item.quantity
   );
 
   const filteredOrders = orders?.filter((o: any) => 
@@ -184,7 +185,9 @@ export const OutboundScreen = () => {
 
                 <div className="space-y-3">
                   {packingOrder.items.map((item: any) => {
-                    const scanned = scannedItems[item.sku] || 0;
+                    const itemSku = item.variant?.sku || item.sku;
+                    const itemName = item.variant?.product?.name || item.productName || 'Unknown Product';
+                    const scanned = scannedItems[itemSku] || 0;
                     const complete = scanned >= item.quantity;
                     return (
                       <div key={item.id} className={`p-4 rounded-xl border flex items-center justify-between ${complete ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
@@ -193,8 +196,8 @@ export const OutboundScreen = () => {
                             {complete ? <CheckCircle2 className="h-6 w-6" /> : <Package className="h-5 w-5" />}
                           </div>
                           <div>
-                            <p className="font-medium text-slate-900">{item.productName}</p>
-                            <p className="text-sm font-mono text-slate-500">{item.sku}</p>
+                            <p className="font-medium text-slate-900">{itemName}</p>
+                            <p className="text-sm font-mono text-slate-500">{itemSku}</p>
                           </div>
                         </div>
                         <div className="text-right">

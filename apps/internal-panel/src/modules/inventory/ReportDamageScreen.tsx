@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -53,12 +54,12 @@ export const ReportDamageScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stats'] });
-      alert(`${reportType === 'DAMAGED' ? 'Damage' : 'Expiration'} report filed successfully. Inventory adjusted.`);
+      toast.success();
       reset();
       navigate('/inventory');
     },
     onError: (err: any) => {
-      alert(`Error: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 

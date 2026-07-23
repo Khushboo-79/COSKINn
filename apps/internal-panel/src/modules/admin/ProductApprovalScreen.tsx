@@ -31,27 +31,41 @@ export const ProductApprovalScreen = () => {
     retry: false,
   });
 
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+
   const approveMutation = useMutation({
     mutationFn: (id: string) => adminApi.approveProduct(id),
     onSuccess: () => {
-      alert('Approved successfully.');
+      toast.success('Product approved successfully.');
+      setApprovingId(null);
       refetch();
+    },
+    onError: (err: any) => {
+      toast.error(`Error: ${err.response?.data?.message || err.message}`);
+      setApprovingId(null);
     }
   });
 
   const rejectMutation = useMutation({
     mutationFn: ({ id, reason }: { id: string, reason: string }) => adminApi.rejectProduct(id, { reason }),
     onSuccess: () => {
-      alert('Rejected successfully.');
+      toast.success('Product rejected successfully.');
       setRejectingId(null);
       setRejectReason('');
       refetch();
+    },
+    onError: (err: any) => {
+      toast.error(`Error: ${err.response?.data?.message || err.message}`);
     }
   });
 
   const handleApprove = (id: string) => {
-    if (window.confirm('Are you sure you want to approve this? It will go live immediately.')) {
-      approveMutation.mutate(id);
+    setApprovingId(id);
+  };
+
+  const submitApprove = () => {
+    if (approvingId) {
+      approveMutation.mutate(approvingId);
     }
   };
 
@@ -119,6 +133,28 @@ export const ProductApprovalScreen = () => {
                     <span className="block text-xs text-slate-500 font-medium">Batch Number</span>
                     <span className="block text-sm text-slate-900">{item.cosmeticsRules.batchNumber}</span>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Approval Form Inline */}
+            {approvingId === item.id && (
+              <div className="p-4 border-t border-slate-200 bg-emerald-50 flex items-center justify-between gap-3">
+                <span className="text-sm font-medium text-emerald-800">Are you sure you want to approve this product? It will go live immediately.</span>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setApprovingId(null)}
+                    className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded-lg text-sm font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={submitApprove}
+                    disabled={approveMutation.isPending}
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50"
+                  >
+                    Confirm Approve
+                  </button>
                 </div>
               </div>
             )}

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
@@ -21,7 +22,7 @@ export const RefundListScreen = () => {
       setProcessingId(null);
     },
     onError: (err: any) => {
-      alert(`Error processing wallet refund: ${err.response?.data?.message || err.message}`);
+      toast.error();
       setProcessingId(null);
     }
   });
@@ -34,7 +35,7 @@ export const RefundListScreen = () => {
       setProcessingId(null);
     },
     onError: (err: any) => {
-      alert(`Error processing gateway refund: ${err.response?.data?.message || err.message}`);
+      toast.error();
       setProcessingId(null);
     }
   });

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { warehouseApi } from '../../core/api/warehouse';
@@ -39,13 +40,13 @@ export const GRNScreen = () => {
       }))
     }),
     onSuccess: () => {
-      alert('GRN processed successfully. Inventory has been updated.');
+      toast.success();
       queryClient.invalidateQueries({ queryKey: ['admin', 'warehouse', 'pos'] });
       setSelectedPO(null);
       setGrnItems([]);
     },
     onError: (err: any) => {
-      alert(`Error processing GRN: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
@@ -53,12 +54,12 @@ export const GRNScreen = () => {
     // Validate
     const hasError = grnItems.some(i => i.receivedQty !== (i.acceptedQty + i.rejectedQty));
     if (hasError) {
-      alert("Error: For each SKU, Accepted Qty + Rejected Qty must equal Received Qty.");
+      toast.error();
       return;
     }
     const hasRejectionsWithoutReason = grnItems.some(i => i.rejectedQty > 0 && !i.reason.trim());
     if (hasRejectionsWithoutReason) {
-      alert("Error: You must provide a reason for any rejected quantities.");
+      toast.error();
       return;
     }
 
