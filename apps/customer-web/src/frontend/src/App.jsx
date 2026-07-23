@@ -105,6 +105,7 @@ const CareersPage = React.lazy(() => import('./pages/about/CareersPage'));
 const ShopAllCosmeticsPage = React.lazy(() => import('./pages/ShopAllCosmeticsPage'));
 const CosmeticsCategoryPage = React.lazy(() => import('./pages/categories/CosmeticsCategoryPage'));
 const CosmeticsJournalPage = React.lazy(() => import('./pages/journal/CosmeticsJournalPage'));
+const CartPage = React.lazy(() => import('./pages/CartPage'));
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
     <div className="w-12 h-12 rounded-full border-4 border-black/10 border-t-theme-primary animate-spin mb-4"></div>
@@ -134,6 +135,7 @@ const MainLayout = () => {
             <Route path="/" element={<Navigate to="/skincare" replace />} />
             <Route path="/skincare" element={<SkincarePage />} />
             <Route path="/cosmetics" element={<CosmeticsPage />} />
+            <Route path="/cart" element={<CartPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/routine" element={<RoutinePage />} />

@@ -1,11 +1,11 @@
-import lipstickImg from '../assets/images/cosmetics_lipstick.webp';
-import lipstickSide from '../assets/images/cat_magnetic_lipstick.webp';
-import blushImg from '../assets/images/velvet_blush.webp';
+import lipstickImg from '../assets/images/fairy_lipstick_clean.webp';
+import lipstickSide from '../assets/images/fairy_lipstick_clean.webp';
+import blushImg from '../assets/images/fairy_blush_clean.webp';
 import mascaraImg from '../assets/images/lift_curl_mascara.webp';
-import paletteImg from '../assets/images/cat_eyeshadow_palette.webp';
+import paletteImg from '../assets/images/fairy_palette_clean.webp';
 import brushImg from '../assets/images/cat_makeup_brushes.webp';
-import holderImg from '../assets/images/brush_holder.png';
-import perfumeImg from '../assets/images/pocket_perfume.png';
+import holderImg from '../assets/images/brush_holder_fairy.webp';
+import perfumeImg from '../assets/images/pocket_perfume_fairy.webp';
 
 const getGallery = (mainImg, sideImg) => [
   mainImg, 
@@ -21,8 +21,8 @@ const baseLipstickInfo = {
   originalPrice: 1299,
   price: 999,
   badge: "LUXURY PICK",
-  shortDescription: "A weightless, intensely pigmented lipstick with a magnetic velvet-matte finish that lasts all day.",
-  longDescription: "Experience the ultimate in lip luxury. The COSKINn Magnetic Lipstick glides on effortlessly, delivering high-impact color in a single stroke. Formulated with hydrating fruit oils, it provides a comfortable, non-drying velvet-matte finish that stays perfectly in place for up to 12 hours.",
+  shortDescription: "A weightless, intensely pigmented fairytale potion in a gold-winged vessel with a magical magnetic seal.",
+  longDescription: "Encased in a luxurious golden vessel adorned with celestial wings, the COSKINn Magnetic Lipstick delivers rich, one-stroke royalty color. Infused with wild rose extracts and evening primrose oils, it glides like a dream to leave lips with a velvety-matte fairytale flush that feels weightless and lasts through the ball.",
   benefits: ["One-stroke high pigmentation", "12-hour comfortable wear", "Non-drying velvet-matte finish", "Magnetic closure case"],
   keyIngredients: ["Mango Seed Butter", "Vitamin E", "Hyaluronic Acid"],
   howToUse: [
@@ -52,7 +52,7 @@ const baseMascaraInfo = {
   originalPrice: 999,
   price: 799,
   badge: "BEST SELLER",
-  shortDescription: "A revolutionary fruit-powered mascara that instantly lifts, lengthens, and volumizes without clumping.",
+  shortDescription: "A gravity-defying princess lash enhancer that defines, lifts, and curls each individual lash for a dramatic, starry-eyed look.",
   longDescription: "Get the dramatic, wide-eyed look you've always wanted. Our smudge-proof formula is enriched with fruit extracts to condition your lashes while providing gravity-defying lift and curl that lasts all day long.",
   benefits: ["Gravity-defying lift & curl", "Smudge-proof & water-resistant", "Lash-conditioning fruit extracts", "Zero clumping or flaking"],
   keyIngredients: ["Coconut Extract", "Vitamin E", "Panthenol (Pro-Vitamin B5)"],
@@ -82,8 +82,8 @@ const baseEyeshadowInfo = {
   originalPrice: 2499,
   price: 1899,
   badge: "PRO MUST-HAVE",
-  shortDescription: "A luxurious 12-pan eyeshadow palette featuring ultra-pigmented mattes and stunning shimmers.",
-  longDescription: "Unleash your creativity with our premium Eyeshadow Palette. Formulated with our proprietary fruit-pigment technology, these buttery powders blend effortlessly and deliver intense, fallout-free color payoff that lasts all day and night.",
+  shortDescription: "A luxurious fairytale eyeshadow compact featuring nine shades of stardust glitters and velvet roses.",
+  longDescription: "Unlock the magic of starlight with our fairytale Eyeshadow Palette. Housed in a golden vanity case, it reveals nine highly-pigmented matte, shimmer, and diamond-dust shades. Designed to blend like satin, each shade holds a touch of magic for a flawless, fairytale gaze.",
   benefits: ["Intensely pigmented", "Buttery, blendable formula", "Zero fallout", "Matte, shimmer, and metallic finishes"],
   keyIngredients: ["Plum Seed Oil", "Vitamin E", "Mineral Pigments"],
   howToUse: [
@@ -131,7 +131,7 @@ export const cosmeticsProducts = [
   { ...baseEyeshadowInfo, id: 346, name: "COSKINn Berry Muse", rating: 4.6, reviews: 134, stock: 35 },
 
   // Velvet Blush
-  { id: 302, slug: "velvet-blush-soft-pink", name: "COSKINn Velvet Blush - Soft Pink", shade: "Soft Pink", price: 899, originalPrice: 1099, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.9, reviews: 210, longDescription: "A weightless velvet finish that melts seamlessly into the skin for a natural flush.", benefits: ["Cloud-Like Texture", "All-Day Wear", "Seamless blend"], howToUse: "Apply with fingers or brush on the apples of cheeks and blend.", keyIngredients: ["Fruit Extracts", "Vitamin E"] },
+  { id: 302, slug: "velvet-blush-soft-pink", name: "COSKINn Velvet Blush - Soft Pink", shade: "Soft Pink", price: 899, originalPrice: 1099, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.9, reviews: 210, longDescription: "A weightless, cloud-like powder blush adorned with detailed angel carvings. It melts seamlessly onto the cheeks for a natural, fairytale flush.", benefits: ["Detailed angel carving design", "Velvety cloud-like flush", "Seamless buildable coverage"], howToUse: "Apply with fingers or brush on the apples of cheeks and blend.", keyIngredients: ["Fruit Extracts", "Vitamin E"] },
   { id: 351, slug: "velvet-blush-peachy-coral", name: "COSKINn Velvet Blush - Peachy Coral", shade: "Peachy Coral", price: 899, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.8, reviews: 142, longDescription: "A warm peachy coral for a sun-kissed look.", benefits: ["Cloud-Like Texture", "All-Day Wear"] },
   { id: 352, slug: "velvet-blush-berry-flush", name: "COSKINn Velvet Blush - Berry Flush", shade: "Berry Flush", price: 899, originalPrice: 1099, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.7, reviews: 95, longDescription: "A deep berry flush for a dramatic, natural pinch.", benefits: ["Cloud-Like Texture", "All-Day Wear"] },
   { id: 353, slug: "velvet-blush-rose-gold", name: "COSKINn Velvet Blush - Rose Gold", shade: "Rose Gold", price: 949, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.9, reviews: 312, longDescription: "A radiant rose gold that doubles as a blush and highlight.", benefits: ["Cloud-Like Texture", "Radiant Finish"] },
