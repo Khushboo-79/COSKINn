@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { adminApi } from '../../core/api/admin';
@@ -18,11 +19,11 @@ export const StaffTwoFactorScreen = () => {
   const resetMutation = useMutation({
     mutationFn: adminApi.resetStaff2FA,
     onSuccess: () => {
-      alert('2FA has been successfully reset for this user.');
+      toast.success();
       refetch();
     },
     onError: () => {
-      alert('Failed to reset 2FA.');
+      toast.error();
     }
   });
 

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../../core/api/orders';
@@ -22,14 +23,14 @@ export const CancelOrderModal = ({ orderId, onClose }: CancelOrderModalProps) =>
       onClose();
     },
     onError: (err: any) => {
-      alert(`Error cancelling order: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!reason.trim()) {
-      alert("Cancellation reason is required.");
+      toast("Cancellation reason is required.");
       return;
     }
     mutation.mutate({ reason: reason.trim() });

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
@@ -37,18 +38,18 @@ export const StockTransferScreen = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
-      alert(`Stock transfer recorded successfully.`);
+      toast.success();
       reset();
       navigate('/inventory');
     },
     onError: (err: any) => {
-      alert(`Error: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
   const onSubmit = (data: any) => {
     if (data.fromWarehouseId === data.toWarehouseId) {
-      alert("Source and Destination warehouses cannot be the same.");
+      toast("Source and Destination warehouses cannot be the same.");
       return;
     }
     mutation.mutate(data);

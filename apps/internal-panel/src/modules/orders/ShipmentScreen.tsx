@@ -81,7 +81,7 @@ export const ShipmentScreen = () => {
                     <p className="text-slate-500 flex items-center mb-1">
                       <MapPin className="h-3 w-3 mr-1" /> Destination
                     </p>
-                    <p className="font-medium text-slate-900">{shipment.shippingAddress?.city}, {shipment.shippingAddress?.state} {shipment.shippingAddress?.pincode}</p>
+                    <p className="font-medium text-slate-900">{shipment.order?.address?.city || 'N/A'}, {shipment.order?.address?.state || 'N/A'} {shipment.order?.address?.pincode || 'N/A'}</p>
                   </div>
                 </div>
 

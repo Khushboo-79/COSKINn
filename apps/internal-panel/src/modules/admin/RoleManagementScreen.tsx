@@ -29,17 +29,20 @@ export const RoleManagementScreen = () => {
     { 
       key: 'panel_access', 
       header: 'Panels Access',
-      render: (role: any) => (
-        <div className="flex flex-wrap gap-1">
-          {role.panel_access.includes('admin') || role.panel_access.length === PANELS.length ? (
-            <StatusBadge status="All Panels (Super Admin)" variant="success" />
-          ) : (
-            role.panel_access.map((panel: string) => (
-              <StatusBadge key={panel} status={panel} variant="info" className="capitalize" />
-            ))
-          )}
-        </div>
-      )
+      render: (role: any) => {
+        const accessKeys = role.panelAccess || role.panel_access || [];
+        return (
+          <div className="flex flex-wrap gap-1">
+            {accessKeys.includes('admin') || accessKeys.length === PANELS.length ? (
+              <StatusBadge status="All Panels (Super Admin)" variant="success" />
+            ) : (
+              accessKeys.map((panel: string) => (
+                <StatusBadge key={panel} status={panel} variant="info" className="capitalize" />
+              ))
+            )}
+          </div>
+        );
+      }
     },
     {
       key: 'status',
@@ -107,7 +110,8 @@ export const RoleManagementScreen = () => {
                   <h4 className="text-sm font-medium text-slate-700 mb-3 border-b pb-2">Panel Access Matrix</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {PANELS.map((panel) => {
-                      const hasAccess = selectedRole.panel_access.includes(panel) || selectedRole.panel_access.includes('admin');
+                      const accessKeys = selectedRole.panelAccess || selectedRole.panel_access || [];
+                      const hasAccess = accessKeys.includes(panel) || accessKeys.includes('admin');
                       const isSuperAdmin = selectedRole.name === 'Super Admin';
                       return (
                         <div key={panel} className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-slate-50 transition-colors">

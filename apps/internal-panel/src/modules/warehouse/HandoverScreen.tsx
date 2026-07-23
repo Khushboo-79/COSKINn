@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
@@ -39,7 +40,7 @@ export const HandoverScreen = () => {
     setIsShipping(false);
     queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
     setSelectedOrderIds([]);
-    alert(`Successfully handed over and shipped ${successCount}/${selectedOrderIds.length} orders.`);
+    toast.success();
   };
 
   const toggleSelection = (id: string) => {

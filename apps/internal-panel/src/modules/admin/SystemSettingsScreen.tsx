@@ -1,5 +1,6 @@
+import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { adminApi } from '../../core/api/admin';
 import { Settings, Save, AlertTriangle, ShieldCheck, Wallet, Database, Loader2, Info } from 'lucide-react';
 
@@ -34,14 +35,22 @@ export const SystemSettingsScreen = () => {
     }
   }, [remoteSettings]);
 
-  const handleSave = () => {
-    setIsSaving(true);
-    // Simulate network request to save policies
-    setTimeout(() => {
+  const updateMutation = useMutation({
+    mutationFn: adminApi.updateSettings,
+    onSuccess: () => {
       setIsSaving(false);
       setSuccessMsg('System settings and policies updated successfully.');
       setTimeout(() => setSuccessMsg(''), 3000);
-    }, 800);
+    },
+    onError: () => {
+      setIsSaving(false);
+      toast.error();
+    }
+  });
+
+  const handleSave = () => {
+    setIsSaving(true);
+    updateMutation.mutate(settings);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

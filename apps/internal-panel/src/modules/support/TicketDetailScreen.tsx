@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState, useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -120,7 +121,7 @@ export const TicketDetailScreen = () => {
   const escalateMutation = useMutation({
     mutationFn: () => supportApi.escalateTicket(id!),
     onSuccess: () => {
-      alert('Ticket escalated.');
+      toast('Ticket escalated.');
       queryClient.invalidateQueries({ queryKey: ['admin', 'tickets'] });
     }
   });
@@ -128,18 +129,18 @@ export const TicketDetailScreen = () => {
   const assignMutation = useMutation({
     mutationFn: (adminId: string) => supportApi.assignTicket(id!, { adminId }),
     onSuccess: () => {
-      alert('Ticket assigned successfully.');
+      toast.success();
       queryClient.invalidateQueries({ queryKey: ['admin', 'tickets'] });
     },
     onError: (err: any) => {
-      alert(`Assignment failed: ${err.message}`);
+      toast.error();
     }
   });
 
   const closeMutation = useMutation({
     mutationFn: () => supportApi.closeTicket(id!),
     onSuccess: () => {
-      alert('Ticket closed.');
+      toast('Ticket closed.');
       queryClient.invalidateQueries({ queryKey: ['admin', 'tickets'] });
     }
   });
@@ -372,7 +373,7 @@ export const TicketDetailScreen = () => {
                 value={ticket.category || ''}
                 onChange={(e) => {
                   // In a real app, this would hit a PUT /tickets/:id endpoint
-                  alert(`Category changed to ${e.target.value}. (Mocked for Phase 1)`);
+                  toast(`Category changed to ${e.target.value}. (Mocked for Phase 1)`);
                 }}
               >
                 <option value="">-- Select Category --</option>

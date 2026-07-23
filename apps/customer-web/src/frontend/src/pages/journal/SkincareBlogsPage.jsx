@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Search, ArrowRight, Clock, User, ChevronRight } from 'lucide-react';
 import Footer from '../../components/common/Footer';
 import ArticleModal from '../../components/journal/ArticleModal';
-import heroImg from '../../assets/images/journal_blogs_hero.png';
+import heroImg from '../../assets/images/journal_blogs_hero.webp';
 import apiClient from '../../utils/apiClient';
 
 export default function SkincareBlogsPage() {

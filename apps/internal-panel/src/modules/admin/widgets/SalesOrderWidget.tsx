@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { orderApi } from '../../../core/api/orders';
 import { ShoppingBag, TrendingUp, Package, Loader2 } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 export const SalesOrderWidget = () => {
   const { data: orders, isLoading } = useQuery({
@@ -21,9 +22,16 @@ export const SalesOrderWidget = () => {
   const totalVolume = orders?.length || 0;
   const pendingCount = orders?.filter((o: any) => o.status === 'PENDING').length || 0;
   const shippedCount = orders?.filter((o: any) => o.status === 'SHIPPED').length || 0;
+  const deliveredCount = orders?.filter((o: any) => o.status === 'DELIVERED').length || 0;
   
   // Calculate total revenue from successful payments or total amounts
   const totalRevenue = orders?.reduce((sum: number, o: any) => sum + o.totalAmount, 0) || 0;
+
+  const chartData = [
+    { name: 'Pending Processing', value: pendingCount, color: '#fbbf24' },
+    { name: 'Shipped', value: shippedCount, color: '#6366f1' },
+    { name: 'Delivered', value: deliveredCount, color: '#10b981' }
+  ].filter(d => d.value > 0);
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
@@ -57,25 +65,43 @@ export const SalesOrderWidget = () => {
 
       <div>
         <p className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Status Mix</p>
+        {chartData.length > 0 ? (
+          <div className="h-40 mb-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={30}
+                  outerRadius={60}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="h-40 mb-4 flex items-center justify-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            <p className="text-slate-400 text-sm font-medium">No recent orders found</p>
+          </div>
+        )}
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center text-slate-600">
-              <span className="h-2 w-2 rounded-full bg-amber-400 mr-2"></span> Pending Processing
-            </span>
-            <span className="font-medium text-slate-900">{pendingCount}</span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center text-slate-600">
-              <span className="h-2 w-2 rounded-full bg-indigo-500 mr-2"></span> Shipped
-            </span>
-            <span className="font-medium text-slate-900">{shippedCount}</span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center text-slate-600">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 mr-2"></span> Delivered
-            </span>
-            <span className="font-medium text-slate-900">{orders?.filter((o: any) => o.status === 'DELIVERED').length || 0}</span>
-          </div>
+          {chartData.map((data, index) => (
+            <div key={index} className="flex items-center justify-between text-sm">
+              <span className="flex items-center text-slate-600">
+                <span className="h-2 w-2 rounded-full mr-2" style={{ backgroundColor: data.color }}></span> {data.name}
+              </span>
+              <span className="font-medium text-slate-900">{data.value}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

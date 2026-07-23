@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { hrApi } from '../../core/api/hr';
@@ -21,7 +22,7 @@ export const EmployeeDocumentsScreen = () => {
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     if (!selectedEmp) {
-      alert("Please select an employee first.");
+      toast("Please select an employee first.");
       return;
     }
 
@@ -45,7 +46,7 @@ export const EmployeeDocumentsScreen = () => {
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
       console.error("Upload failed", err);
-      alert("Failed to upload document.");
+      toast.error();
     } finally {
       setIsUploading(false);
     }

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -29,11 +30,11 @@ export const OrderDetailScreen = () => {
       boxWeight: 0.5
     }),
     onSuccess: () => {
-      alert('Shipment (AWB) generated successfully!');
+      toast.success();
       queryClient.invalidateQueries({ queryKey: ['admin', 'order', id] });
     },
     onError: (err: any) => {
-      alert(`Error creating shipment: ${err.response?.data?.message || err.message}`);
+      toast.error();
     }
   });
 
@@ -146,9 +147,9 @@ export const OrderDetailScreen = () => {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-medium text-slate-900">{item.productName || 'Product'}</h4>
+                        <h4 className="font-medium text-slate-900">{item.variant?.product?.name || item.productName || 'Unknown Product'}</h4>
                         <div className="flex items-center gap-2 mt-1">
-                          <p className="text-sm text-slate-500">SKU: {item.sku}</p>
+                          <p className="text-sm text-slate-500">SKU: {item.variant?.sku || item.sku}</p>
                           {['PLACED', 'PAYMENT_CONFIRMED', 'PROCESSING'].includes(order.status) && (
                             <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200" title="This stock is actively locked in the global inventory pool.">
                               Reserved in Inventory
@@ -215,9 +216,9 @@ export const OrderDetailScreen = () => {
             <div className="p-6 space-y-4">
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Customer</p>
-                <p className="font-medium text-slate-900">{order.user?.name || 'Guest'}</p>
-                <p className="text-sm text-slate-600 mt-1">{order.user?.email || order.shippingAddress?.email}</p>
-                <p className="text-sm text-slate-600 mt-1">{order.user?.mobile || order.shippingAddress?.mobile}</p>
+                <p className="font-medium text-slate-900">{order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Guest'}</p>
+                <p className="text-sm text-slate-600 mt-1">{order.user?.email || order.shippingAddress?.email || 'N/A'}</p>
+                <p className="text-sm text-slate-600 mt-1">{order.user?.phone || order.shippingAddress?.mobile || 'N/A'}</p>
               </div>
               <div className="pt-4 border-t border-slate-100">
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Shipping Address</p>

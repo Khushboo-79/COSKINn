@@ -1,9 +1,11 @@
-import lipstickImg from '../assets/images/cosmetics_lipstick.webp';
-import lipstickSide from '../assets/images/cat_magnetic_lipstick.webp';
-import blushImg from '../assets/images/velvet_blush.webp';
+import lipstickImg from '../assets/images/fairy_lipstick_clean.webp';
+import lipstickSide from '../assets/images/fairy_lipstick_clean.webp';
+import blushImg from '../assets/images/fairy_blush_clean.webp';
 import mascaraImg from '../assets/images/lift_curl_mascara.webp';
-import paletteImg from '../assets/images/cat_eyeshadow_palette.webp';
+import paletteImg from '../assets/images/fairy_palette_clean.webp';
 import brushImg from '../assets/images/cat_makeup_brushes.webp';
+import holderImg from '../assets/images/brush_holder_fairy.webp';
+import perfumeImg from '../assets/images/pocket_perfume_fairy.webp';
 
 const getGallery = (mainImg, sideImg) => [
   mainImg, 
@@ -19,8 +21,8 @@ const baseLipstickInfo = {
   originalPrice: 1299,
   price: 999,
   badge: "LUXURY PICK",
-  shortDescription: "A weightless, intensely pigmented lipstick with a magnetic velvet-matte finish that lasts all day.",
-  longDescription: "Experience the ultimate in lip luxury. The COSKINn Magnetic Lipstick glides on effortlessly, delivering high-impact color in a single stroke. Formulated with hydrating fruit oils, it provides a comfortable, non-drying velvet-matte finish that stays perfectly in place for up to 12 hours.",
+  shortDescription: "A weightless, intensely pigmented fairytale potion in a gold-winged vessel with a magical magnetic seal.",
+  longDescription: "Encased in a luxurious golden vessel adorned with celestial wings, the COSKINn Magnetic Lipstick delivers rich, one-stroke royalty color. Infused with wild rose extracts and evening primrose oils, it glides like a dream to leave lips with a velvety-matte fairytale flush that feels weightless and lasts through the ball.",
   benefits: ["One-stroke high pigmentation", "12-hour comfortable wear", "Non-drying velvet-matte finish", "Magnetic closure case"],
   keyIngredients: ["Mango Seed Butter", "Vitamin E", "Hyaluronic Acid"],
   howToUse: [
@@ -50,7 +52,7 @@ const baseMascaraInfo = {
   originalPrice: 999,
   price: 799,
   badge: "BEST SELLER",
-  shortDescription: "A revolutionary fruit-powered mascara that instantly lifts, lengthens, and volumizes without clumping.",
+  shortDescription: "A gravity-defying princess lash enhancer that defines, lifts, and curls each individual lash for a dramatic, starry-eyed look.",
   longDescription: "Get the dramatic, wide-eyed look you've always wanted. Our smudge-proof formula is enriched with fruit extracts to condition your lashes while providing gravity-defying lift and curl that lasts all day long.",
   benefits: ["Gravity-defying lift & curl", "Smudge-proof & water-resistant", "Lash-conditioning fruit extracts", "Zero clumping or flaking"],
   keyIngredients: ["Coconut Extract", "Vitamin E", "Panthenol (Pro-Vitamin B5)"],
@@ -80,8 +82,8 @@ const baseEyeshadowInfo = {
   originalPrice: 2499,
   price: 1899,
   badge: "PRO MUST-HAVE",
-  shortDescription: "A luxurious 12-pan eyeshadow palette featuring ultra-pigmented mattes and stunning shimmers.",
-  longDescription: "Unleash your creativity with our premium Eyeshadow Palette. Formulated with our proprietary fruit-pigment technology, these buttery powders blend effortlessly and deliver intense, fallout-free color payoff that lasts all day and night.",
+  shortDescription: "A luxurious fairytale eyeshadow compact featuring nine shades of stardust glitters and velvet roses.",
+  longDescription: "Unlock the magic of starlight with our fairytale Eyeshadow Palette. Housed in a golden vanity case, it reveals nine highly-pigmented matte, shimmer, and diamond-dust shades. Designed to blend like satin, each shade holds a touch of magic for a flawless, fairytale gaze.",
   benefits: ["Intensely pigmented", "Buttery, blendable formula", "Zero fallout", "Matte, shimmer, and metallic finishes"],
   keyIngredients: ["Plum Seed Oil", "Vitamin E", "Mineral Pigments"],
   howToUse: [
@@ -128,10 +130,31 @@ export const cosmeticsProducts = [
   { ...baseEyeshadowInfo, id: 345, name: "COSKINn Golden Glam", rating: 4.8, reviews: 289, stock: 55, discountBadge: "20% OFF" },
   { ...baseEyeshadowInfo, id: 346, name: "COSKINn Berry Muse", rating: 4.6, reviews: 134, stock: 35 },
 
-  // Skeletal related products
-  { id: 302, name: "COSKINn Velvet Blush", price: 899, category: "Face", image: blushImg, images: [blushImg] },
+  // Velvet Blush
+  { id: 302, slug: "velvet-blush-soft-pink", name: "COSKINn Velvet Blush - Soft Pink", shade: "Soft Pink", price: 899, originalPrice: 1099, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.9, reviews: 210, longDescription: "A weightless, cloud-like powder blush adorned with detailed angel carvings. It melts seamlessly onto the cheeks for a natural, fairytale flush.", benefits: ["Detailed angel carving design", "Velvety cloud-like flush", "Seamless buildable coverage"], howToUse: "Apply with fingers or brush on the apples of cheeks and blend.", keyIngredients: ["Fruit Extracts", "Vitamin E"] },
+  { id: 351, slug: "velvet-blush-peachy-coral", name: "COSKINn Velvet Blush - Peachy Coral", shade: "Peachy Coral", price: 899, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.8, reviews: 142, longDescription: "A warm peachy coral for a sun-kissed look.", benefits: ["Cloud-Like Texture", "All-Day Wear"] },
+  { id: 352, slug: "velvet-blush-berry-flush", name: "COSKINn Velvet Blush - Berry Flush", shade: "Berry Flush", price: 899, originalPrice: 1099, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.7, reviews: 95, longDescription: "A deep berry flush for a dramatic, natural pinch.", benefits: ["Cloud-Like Texture", "All-Day Wear"] },
+  { id: 353, slug: "velvet-blush-rose-gold", name: "COSKINn Velvet Blush - Rose Gold", shade: "Rose Gold", price: 949, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.9, reviews: 312, longDescription: "A radiant rose gold that doubles as a blush and highlight.", benefits: ["Cloud-Like Texture", "Radiant Finish"] },
 
-  { id: 305, name: "COSKINn Professional Makeup Brush Set", price: 2499, category: "Tools", image: brushImg, images: [brushImg] },
-  { id: 306, name: "COSKINn Precision Lip Liner", price: 499, category: "Lips", image: lipstickImg, images: [lipstickImg] },
-  { id: 307, name: "COSKINn Lip Blur", price: 699, category: "Lips", image: lipstickImg, images: [lipstickImg] }
+  // Makeup Brushes
+  { id: 305, slug: "professional-brush-set", name: "COSKINn Professional Makeup Brush Set", price: 2499, originalPrice: 2999, category: "Tools", image: brushImg, images: getGallery(brushImg, brushImg), rating: 4.9, reviews: 184, longDescription: "A curated 6-piece luxury brush set designed to blend, contour, and highlight with absolute perfection. 100% vegan, cruelty-free synthetic bristles.", benefits: ["Ultra-soft vegan bristles", "Ergonomic handles", "Seamless blending", "Professional grade"], howToUse: "Use each brush for its intended purpose (foundation, powder, blending, etc.). Clean regularly with gentle soap.", keyIngredients: ["Synthetic Vegan Fibers", "Rose Gold Ferrule", "Matte Wood Handle"] },
+  { id: 355, slug: "foundation-brush", name: "COSKINn Foundation Brush", price: 899, category: "Tools", image: brushImg, images: getGallery(brushImg, brushImg), rating: 4.8, reviews: 92, longDescription: "The perfect dense brush for flawless liquid and cream foundation application.", benefits: ["Streak-free application", "Dense vegan bristles", "Ergonomic grip"] },
+  { id: 356, slug: "powder-brush", name: "COSKINn Powder Brush", price: 999, category: "Tools", image: brushImg, images: getGallery(brushImg, brushImg), rating: 4.9, reviews: 145, longDescription: "An ultra-fluffy large brush for dusting setting powder perfectly.", benefits: ["Cloud-like softness", "Even powder distribution"] },
+  { id: 357, slug: "eyeshadow-brush", name: "COSKINn Eyeshadow Brush", price: 499, category: "Tools", image: brushImg, images: getGallery(brushImg, brushImg), rating: 4.7, reviews: 88, longDescription: "A precise, fluffy eye brush for seamless eyeshadow blending.", benefits: ["Perfect crease blending", "Soft precision"] },
+  { id: 358, slug: "blush-brush", name: "COSKINn Blush Brush", price: 699, category: "Tools", image: brushImg, images: getGallery(brushImg, brushImg), rating: 4.9, reviews: 210, longDescription: "A fluffy angled brush perfect for sweeping blush across the cheeks.", benefits: ["Seamless application", "Ergonomic design"] },
+
+  // Brush Holders
+  { id: 308, slug: "crystal-brush-holder", name: "COSKINn Crystal Brush Holder", price: 1299, originalPrice: 1599, category: "Tools", image: holderImg, images: getGallery(holderImg, holderImg), rating: 4.9, reviews: 78, longDescription: "A stunning fluted glass centerpiece for your vanity that beautifully organizes your luxury tools with a rose gold trim.", benefits: ["Elegant fluted glass", "Rose gold details", "Heavy sturdy base", "Holds up to 20 brushes"], howToUse: "Place on vanity and store your clean brushes upright.", keyIngredients: ["Premium Glass", "Rose Gold Plated Rim"] },
+  { id: 361, slug: "glass-holder", name: "COSKINn Glass Holder", price: 1299, category: "Tools", image: holderImg, images: getGallery(holderImg, holderImg), rating: 4.8, reviews: 45, longDescription: "A sleek clear edition of our famous brush holder.", benefits: ["Modern finish", "Fingerprint resistant"] },
+  { id: 362, slug: "premium-leather-holder", name: "COSKINn Premium Leather Holder", price: 1099, category: "Tools", image: holderImg, images: getGallery(holderImg, holderImg), rating: 4.7, reviews: 62, longDescription: "A minimalist leather-bound holder for a clean, simple vanity.", benefits: ["Minimalist design", "Easy to clean"] },
+  { id: 363, slug: "travel-holder", name: "COSKINn Travel Holder", price: 1299, category: "Tools", image: holderImg, images: getGallery(holderImg, holderImg), rating: 4.9, reviews: 89, longDescription: "Compact and protective for on-the-go brush storage.", benefits: ["Sturdy base", "Protective cover"] },
+  { id: 364, slug: "acrylic-holder", name: "COSKINn Acrylic Holder", price: 899, category: "Tools", image: holderImg, images: getGallery(holderImg, holderImg), rating: 4.8, reviews: 102, longDescription: "Classic acrylic for easy visibility and cleaning.", benefits: ["Clear design", "Easy to clean"] },
+
+  // Pocket Perfumes
+  { id: 309, slug: "pocket-perfume-collection", name: "COSKINn Pocket Perfume Collection", price: 1899, originalPrice: 2299, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.8, reviews: 215, longDescription: "A curated trio of our most loved fragrances, designed to take you from day to night in sleek, pocket-sized sprays.", benefits: ["Travel friendly", "Long-lasting sillage", "Premium atomizers", "3 signature scents"], howToUse: "Spray on pulse points (wrists, neck) as desired.", keyIngredients: ["Perfume Oils", "Alcohol Denat", "Water"] },
+  { id: 371, slug: "pocket-perfume-floral", name: "COSKINn Floral Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.7, reviews: 110, longDescription: "A blooming bouquet of jasmine and rose.", benefits: ["Fresh floral notes", "Pocket sized"] },
+  { id: 372, slug: "pocket-perfume-vanilla", name: "COSKINn Vanilla Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.9, reviews: 340, longDescription: "A warm, comforting blend of madagascar vanilla and amber.", benefits: ["Warm gourmand scent", "Pocket sized"] },
+  { id: 373, slug: "pocket-perfume-rose", name: "COSKINn Rose Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.8, reviews: 120, longDescription: "Pure, elegant damascus rose essence.", benefits: ["Classic rose scent", "Pocket sized"] },
+  { id: 374, slug: "pocket-perfume-peach", name: "COSKINn Peach Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.6, reviews: 85, longDescription: "A crisp, refreshing peachy fragrance.", benefits: ["Clean fresh scent", "Pocket sized"] },
+  { id: 375, slug: "pocket-perfume-jasmine", name: "COSKINn Jasmine Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.8, reviews: 190, longDescription: "A deep, sensual jasmine for evening wear.", benefits: ["Sensual night scent", "Pocket sized"] }
 ];

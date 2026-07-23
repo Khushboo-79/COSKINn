@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { s3Client } from '../../core/api/s3Client';
 import { Video, Upload, PlayCircle, Loader2, Link as LinkIcon, Trash2, CheckCircle2 } from 'lucide-react';
@@ -13,7 +14,7 @@ export const VideoTutorialsScreen = () => {
       
       // Basic validation
       if (!file.type.startsWith('video/')) {
-        alert("Please upload a valid video file.");
+        toast("Please upload a valid video file.");
         return;
       }
       
@@ -41,7 +42,7 @@ export const VideoTutorialsScreen = () => {
         setTimeout(() => setUploadProgress(0), 1000);
       } catch (err) {
         console.error("Video upload failed", err);
-        alert("Video upload failed");
+        toast.error();
         setUploadProgress(0);
       } finally {
         setUploading(false);
@@ -55,7 +56,7 @@ export const VideoTutorialsScreen = () => {
 
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url);
-    alert('Video URL copied to clipboard!');
+    toast('Video URL copied to clipboard!');
   };
 
   return (

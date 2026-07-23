@@ -115,36 +115,57 @@ export class FinanceReportService {
   async getMonthlyBreakdown() {
     const currentYear = new Date().getFullYear();
     
-    const orders = await this.prisma.order.findMany({
-      where: {
-        createdAt: {
-          gte: new Date(`${currentYear}-01-01`),
-          lte: new Date(`${currentYear}-12-31`)
+    const [orders, entries, returns] = await Promise.all([
+      this.prisma.order.findMany({
+        where: {
+          createdAt: {
+            gte: new Date(`${currentYear}-01-01`),
+            lte: new Date(`${currentYear}-12-31`)
+          },
+          status: { not: 'CANCELLED' }
+        }
+      }),
+      this.prisma.journalEntry.findMany({
+        where: {
+          createdAt: {
+            gte: new Date(`${currentYear}-01-01`),
+            lte: new Date(`${currentYear}-12-31`)
+          },
+          type: 'DEBIT'
+        }
+      }),
+      this.prisma.return.findMany({
+        where: {
+          createdAt: {
+            gte: new Date(`${currentYear}-01-01`),
+            lte: new Date(`${currentYear}-12-31`)
+          },
+          status: 'RECEIVED'
         },
-        status: { not: 'CANCELLED' }
-      }
-    });
-
-    const entries = await this.prisma.journalEntry.findMany({
-      where: {
-        createdAt: {
-          gte: new Date(`${currentYear}-01-01`),
-          lte: new Date(`${currentYear}-12-31`)
-        },
-        type: 'DEBIT'
-      }
-    });
+        include: { order: true }
+      })
+    ]);
 
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
     const breakdown = monthNames.map((month, index) => {
       const monthOrders = orders.filter(o => o.createdAt.getMonth() === index);
       const monthEntries = entries.filter(e => e.createdAt.getMonth() === index);
+      const monthReturns = returns.filter(r => r.createdAt.getMonth() === index);
       
+      const revenue = monthOrders.reduce((sum, order) => sum + order.finalAmount, 0);
+      const tax = monthOrders.reduce((sum, order) => sum + order.taxAmount, 0);
+      const expenses = monthEntries.reduce((sum, entry) => sum + entry.amount, 0);
+      const refunds = monthReturns.reduce((sum, ret) => sum + (ret.order?.finalAmount || 0), 0);
+      const net = revenue - expenses - refunds;
+
       return {
         month,
-        revenue: monthOrders.reduce((sum, order) => sum + order.finalAmount, 0),
-        expenses: monthEntries.reduce((sum, entry) => sum + entry.amount, 0)
+        revenue,
+        expenses,
+        tax,
+        refunds,
+        net
       };
     });
 

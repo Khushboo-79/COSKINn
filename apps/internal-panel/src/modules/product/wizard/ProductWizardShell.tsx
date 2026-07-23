@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +11,8 @@ import { Step5SeoContent } from './Step5SeoContent';
 import { Step6ReviewSubmit } from './Step6ReviewSubmit';
 import { Check, ChevronRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { productApi } from '../../../core/api/product';
 
 // Comprehensive schema for all wizard steps
 const productWizardSchema = z.object({
@@ -72,11 +75,33 @@ export const ProductWizardShell = () => {
     }
   };
 
+  const createMutation = useMutation({
+    mutationFn: productApi.createProduct,
+    onSuccess: () => {
+      toast.success();
+      navigate('/product');
+    },
+    onError: (error: any) => {
+      toast.error();
+    }
+  });
+
   const onSubmit = (data: any) => {
     console.log("Submitting Product:", data);
-    // TODO: Call API
-    alert('Product Created Successfully! (Mock)');
-    navigate('/product');
+    
+    // Map form data to DTO expected by backend
+    const dto = {
+      name: data.name,
+      categoryId: data.categoryId,
+      description: data.description,
+      mrp: data.price || 0,
+      discountPrice: data.price || 0,
+      gstRate: data.gstRate,
+      status: 'LIVE',
+      productLine: 'BOTH'
+    };
+
+    createMutation.mutate(dto);
   };
 
   return (
