@@ -2,13 +2,13 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-// We use localhost so that physical Android devices can connect via 'adb reverse tcp:3000 tcp:3000'
+// We use the PC's local IP address so that physical Android devices on the same Wi-Fi can connect
 // The backend uses a global prefix '/api', so we must append it.
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = 'http://127.0.0.1:3000/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },

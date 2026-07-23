@@ -22,6 +22,10 @@ const AccountScreen = () => {
   const isCosmetics = activeDomain === 'cosmetics';
 
   React.useEffect(() => {
+    console.log('AccountScreen mounted/updated. profileData:', profileData);
+  }, [profileData]);
+
+  React.useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
 
@@ -80,7 +84,7 @@ const AccountScreen = () => {
       
       {/* Reusable Profile Header */}
       <ProfileHeader 
-        name={profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}` : 'Loading...'}
+        name={loading && !profileData ? 'Loading...' : (profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}`.trim() : 'User')}
         phone={profileData?.phone || ''}
       />
 
