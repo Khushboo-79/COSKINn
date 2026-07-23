@@ -161,7 +161,7 @@ const CosmeticsDashboardScreen = () => {
           style={styles.origHeartIconContainer}
           onPress={() => dispatch(toggleWishlist(item.id))}
         >
-          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#666"} />
+          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? AppTheme.colors.cosmeticsPrimary : "#666"} />
         </TouchableOpacity>
         <Image source={item?.images?.[0]?.url ? { uri: getImageUrl(item.images[0].url) } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
         <View style={styles.origCardDetails}>
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
   },
   milkAddToCartWrapper: {
-    minHeight: scalev(35),
+    height: scalev(35),
     justifyContent: 'center',
     marginTop: scalev(5),
     marginBottom: scalev(10),
@@ -661,7 +661,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: scaleh(15),
-    borderWidth: 1,
+    //borderWidth: 1,
     borderColor: '#FF0069',
     height: '100%',
   },
@@ -1001,6 +1001,11 @@ const styles = StyleSheet.create({
     width: 1.5,
     height: '100%',
     backgroundColor: '#FFC2D1',
+  },
+  origAddToCartWrapper: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
   },
   origFooterCartBtn: {
     flex: 1,

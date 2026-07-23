@@ -102,10 +102,12 @@ const profileSlice = createSlice({
       })
       // Update profile cases
       .addCase(updateProfile.pending, (state) => {
+        console.log('updateProfile.pending');
         state.loading = true;
         state.error = null;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
+        console.log('updateProfile.fulfilled - Profile updated successfully:', action.payload);
         state.loading = false;
         // Optionally update the state with the response if it returns the updated profile
         if (action.payload && typeof action.payload === 'object') {
@@ -113,6 +115,7 @@ const profileSlice = createSlice({
         }
       })
       .addCase(updateProfile.rejected, (state, action) => {
+        console.log('updateProfile.rejected - Error updating profile:', action.payload);
         state.loading = false;
         state.error = action.payload || 'Failed to update profile';
       })

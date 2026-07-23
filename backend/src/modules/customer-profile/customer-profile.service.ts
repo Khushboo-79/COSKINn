@@ -25,15 +25,44 @@ export class CustomerProfileService {
     });
 
     if (!profile) {
-      throw new NotFoundException('Customer profile not found');
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (!user) throw new NotFoundException('User not found');
+      return {
+        id: null,
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        skinProfile: null,
+        makeupPreference: null,
+      };
     }
-    return profile;
+    
+    return {
+      ...profile,
+      firstName: profile.user.firstName,
+      lastName: profile.user.lastName,
+      email: profile.user.email,
+      phone: profile.user.phone,
+    };
   }
 
   async upsertProfile(userId: string, dto: UpdateCustomerProfileDto) {
     const dateOfBirth = dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined;
     
     return this.prisma.$transaction(async (tx) => {
+      if (dto.firstName || dto.lastName || dto.email) {
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            ...(dto.firstName && { firstName: dto.firstName }),
+            ...(dto.lastName && { lastName: dto.lastName }),
+            ...(dto.email && { email: dto.email }),
+          }
+        });
+      }
+
       const profile = await tx.customerProfile.upsert({
         where: { userId },
         update: {
@@ -75,7 +104,7 @@ export class CustomerProfileService {
         });
       }
 
-      return await tx.customerProfile.findUnique({
+      const updatedProfile = await tx.customerProfile.findUnique({
         where: { userId },
         include: {
           skinProfile: true,
@@ -83,6 +112,16 @@ export class CustomerProfileService {
           user: { select: { email: true, phone: true, firstName: true, lastName: true } }
         }
       });
+      
+      if (!updatedProfile) return null;
+      
+      return {
+        ...updatedProfile,
+        firstName: updatedProfile.user.firstName,
+        lastName: updatedProfile.user.lastName,
+        email: updatedProfile.user.email,
+        phone: updatedProfile.user.phone,
+      };
     });
   }
 
