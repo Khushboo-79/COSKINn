@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Footer from '../components/common/Footer';
 import SEO from '../components/common/SEO';
+import Hero from '../components/cosmetics/Hero';
 import { cosmeticsProducts } from '../constants/cosmeticsProducts';
 import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Star, Gift } from 'lucide-react';
 
@@ -43,303 +44,23 @@ import catEyesModel from '../assets/images/cat_eyes_1784312591092.webp';
 import catLipModel from '../assets/images/cat_lip_liner_model.webp';
 
 export default function CosmeticsPage() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
-
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      const { clientX, clientY } = e;
-      const x = (clientX - window.innerWidth / 2) / 35;
-      const y = (clientY - window.innerHeight / 2) / 35;
-      setMousePosition({ x, y });
-    };
-
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
+    window.scrollTo(0, 0);
   }, []);
 
 
 
   return (
     <div className="min-h-screen w-full bg-[#FAFAFA] font-body text-[#4A4A4A] overflow-x-hidden">
-      <SEO title="COSKINn Cosmetics | Official Site" description="Luxury fairytale cosmetics." />
+      <SEO 
+        title="COSKINn Cosmetics | Luxury Fairytale Makeup & Beauty" 
+        description="Experience luxury fairytale cosmetics by COSKINn. Discover our velvet blushes, magnetic lipsticks, and magical eyeshadows crafted for a flawless, enchanted look." 
+        url="https://www.coskinn.com/cosmetics"
+      />
 
-      <style>{`
-        @keyframes shine-sweep {
-          0% { transform: translateX(-150%) rotate(30deg); }
-          100% { transform: translateX(150%) rotate(30deg); }
-        }
-        .luxury-shine {
-          position: relative;
-          overflow: hidden;
-        }
-        .luxury-shine::after {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -60%;
-          width: 30%;
-          height: 200%;
-          background: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.75) 50%,
-            rgba(255, 255, 255, 0) 100%
-          );
-          transform: rotate(30deg);
-          animation: shine-sweep 6s infinite ease-in-out;
-        }
+      <Hero />
+      <div className="relative z-20 bg-[#FAFAFA]">
 
-        @keyframes ripple-wave {
-          0% { transform: scale(0.95); opacity: 0.2; }
-          50% { transform: scale(1.05); opacity: 0.35; }
-          100% { transform: scale(1.15); opacity: 0; }
-        }
-        .ripple-effect {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 25%;
-          background: radial-gradient(circle at 75% 100%, rgba(255,224,233,0.3) 0%, transparent 70%);
-          pointer-events: none;
-        }
-        .ripple-effect::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          right: 15%;
-          width: 350px;
-          height: 80px;
-          border-radius: 50%;
-          border: 1px solid rgba(255, 255, 255, 0.35);
-          animation: ripple-wave 8s infinite ease-in-out;
-          pointer-events: none;
-        }
-
-        @keyframes dust-float-slow {
-          0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
-          15% { opacity: 0.5; }
-          85% { opacity: 0.5; }
-          100% { transform: translateY(-90px) translateX(30px) scale(1.1); opacity: 0; }
-        }
-        .dust-particle {
-          animation: dust-float-slow infinite linear;
-        }
-
-        @keyframes sparkle-glow {
-          0%, 100% { opacity: 0.1; transform: scale(0.8); }
-          50% { opacity: 0.95; transform: scale(1.2); }
-        }
-        .sparkle-decor {
-          animation: sparkle-glow 3s infinite ease-in-out;
-        }
-      `}</style>
-
-      {/* =========================================
-          1. LUXURY COSMETICS HERO
-          ========================================= */}
-      <section className="relative w-full h-[95vh] lg:h-[100vh] flex items-center overflow-hidden pt-[62px] bg-[#FFF2F5]">
-
-        {/* Full Width Background Image - Single Premium Product Display */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src={enchantedButterfliesHeroClean}
-            alt="COSKINn Enchanted Butterflies Collection"
-            className="absolute inset-0 w-full h-full object-cover object-center scale-[1.03]"
-            style={{
-              transform: `translate3d(${mousePosition.x * 0.15}px, ${mousePosition.y * 0.15 + scrollY * 0.1}px, 0)`,
-              transition: 'transform 0.4s ease-out'
-            }}
-          />
-          {/* Reflective floor ripple wave */}
-          <div className="ripple-effect"></div>
-        </div>
-
-        {/* Magic Dust: Low opacity floating particles */}
-        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-          {[...Array(25)].map((_, i) => {
-            const randomSize = Math.random() * 3 + 1.5;
-            const randomLeft = Math.random() * 100;
-            const randomBottom = Math.random() * 40 + 10;
-            const randomDelay = Math.random() * 8;
-            const randomDuration = Math.random() * 8 + 7;
-            return (
-              <div
-                key={`dust-${i}`}
-                className="absolute rounded-full bg-white shadow-[0_0_6px_1.5px_rgba(255,200,215,0.7)] dust-particle"
-                style={{
-                  width: `${randomSize}px`,
-                  height: `${randomSize}px`,
-                  left: `${randomLeft}%`,
-                  bottom: `${randomBottom}%`,
-                  animationDuration: `${randomDuration}s`,
-                  animationDelay: `${randomDelay}s`,
-                  willChange: 'transform, opacity'
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* Random Ethereal Stars & Diamonds in Background */}
-        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-          {[...Array(10)].map((_, i) => {
-            const randomLeft = Math.random() * 100;
-            const randomTop = Math.random() * 60;
-            const randomDelay = Math.random() * 5;
-            const randomDuration = Math.random() * 4 + 3;
-            return (
-              <div
-                key={`sparkle-${i}`}
-                className="absolute text-[#FFEAEF] sparkle-decor pointer-events-none opacity-40"
-                style={{
-                  left: `${randomLeft}%`,
-                  top: `${randomTop}%`,
-                  animationDelay: `${randomDelay}s`,
-                  animationDuration: `${randomDuration}s`
-                }}
-              >
-                <Sparkles className="w-4 h-4 text-white/50" />
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Floating Glass/Pearl Orbs */}
-        <div
-          className="absolute inset-0 pointer-events-none z-15 hidden lg:block overflow-hidden"
-          style={{
-            transform: `translate3d(${mousePosition.x * 0.4}px, ${mousePosition.y * 0.4}px, 0)`,
-            transition: 'transform 0.4s ease-out'
-          }}
-        >
-          <div className="absolute top-[18%] right-[42%] w-4 h-4 rounded-full bg-white/45 blur-[0.5px] border border-white/20 shadow-md"></div>
-          <div className="absolute bottom-[35%] right-[28%] w-3 h-3 rounded-full bg-white/55 blur-[0.5px] border border-white/25 shadow-md"></div>
-          <div className="absolute top-[50%] right-[8%] w-5 h-5 rounded-full bg-white/35 blur-[0.5px] border border-white/10 shadow-md"></div>
-        </div>
-
-        {/* Floating 3D Butterflies */}
-        <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-          {[...Array(4)].map((_, i) => {
-            const delay = i * 2;
-            const leftPos = 55 + i * 8;
-            const topPos = 18 + i * 15;
-            const scale = 0.7 + (i % 2) * 0.3;
-            return (
-              <motion.div
-                key={`bf-${i}`}
-                className="absolute pointer-events-none"
-                style={{
-                  left: `${leftPos}%`,
-                  top: `${topPos}%`,
-                }}
-                animate={{
-                  y: [0, -30, 0],
-                  x: [0, 20, 0],
-                  rotateY: [0, 50, 0],
-                  rotateZ: [0, 12, 0]
-                }}
-                transition={{
-                  duration: 7 + i * 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: delay
-                }}
-              >
-                <svg width="55" height="55" viewBox="0 0 100 100" fill="none" className="opacity-80 drop-shadow-[0_4px_12px_rgba(255,143,177,0.55)]" style={{ transform: `scale(${scale})` }}>
-                  <path d="M50 50 C40 30, 20 20, 15 35 C10 50, 30 60, 50 55 C70 60, 90 50, 85 35 C80 20, 60 30, 50 50 Z" fill="url(#bf-grad-${i})" />
-                  <path d="M50 50 C45 70, 30 90, 25 80 C20 70, 35 60, 50 55 C65 60, 80 70, 75 80 C70 90, 55 70, 50 50 Z" fill="url(#bf-grad-bottom-${i})" />
-                  <defs>
-                    <linearGradient id={`bf-grad-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#FFF2F5" stopOpacity="0.85" />
-                      <stop offset="100%" stopColor="#FFA6BD" stopOpacity="0.95" />
-                    </linearGradient>
-                    <linearGradient id={`bf-grad-bottom-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#FFA6BD" stopOpacity="0.95" />
-                      <stop offset="100%" stopColor="#FFF2F5" stopOpacity="0.85" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <div className="w-full max-w-[1600px] mx-auto flex flex-col lg:flex-row h-full relative z-25 px-6 lg:px-12">
-
-          {/* Content Area - Premium Direct Text Overlay */}
-          <div className="w-full lg:w-[48%] flex flex-col justify-center pb-20 pt-32 lg:pb-32 lg:pt-36 z-25 text-[#5E1930] text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 40, filter: "blur(20px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              style={{
-                transform: `translate3d(${mousePosition.x * 0.4}px, ${mousePosition.y * 0.4 + scrollY * 0.08}px, 0)`,
-                transition: 'transform 0.4s ease-out'
-              }}
-            >
-              {/* Subtitle Badge */}
-              <div className="flex items-center gap-2 mb-3 opacity-90">
-                <Sparkles className="w-3.5 h-3.5 text-[#E39BB0]" />
-                <span className="text-xs font-bold tracking-[0.3em] text-[#C96E8A] uppercase">
-                  FAIRY TALE BEAUTY
-                </span>
-              </div>
-
-              {/* Title: Where Beauty Meets Magic */}
-              <h1 className="text-6xl md:text-7xl font-heading font-medium mb-3 leading-[1.15] tracking-tight text-[#5E1930] font-playfair">
-                Where Beauty <br />
-                Meets <span className="font-cursive text-7xl md:text-8xl text-[#D74D76] font-normal italic inline-block mt-1 pl-2">Magic</span>
-              </h1>
-
-              {/* Delicate Plaque Divider */}
-              <div className="flex items-center gap-4 my-6 opacity-80">
-                <div className="h-[1px] bg-[#EFA8A8] w-12"></div>
-                <div className="w-1.5 h-1.5 rotate-45 bg-[#EFA8A8]"></div>
-                <div className="h-[1px] bg-[#EFA8A8] w-12"></div>
-              </div>
-
-              {/* Paragraph Description */}
-              <p className="text-[#5E1930]/80 text-sm md:text-base leading-relaxed mb-10 max-w-md font-medium">
-                Step into a world of enchantment with COSKINn. Luxury cosmetics inspired by fairytales, crafted to make you feel like the most beautiful you.
-              </p>
-
-              {/* Plaque Style Button */}
-              <motion.div
-                whileHover={{
-                  y: -3,
-                  boxShadow: "0 10px 25px rgba(215,77,118,0.4)",
-                  scale: 1.02
-                }}
-                transition={{ type: "spring", stiffness: 450, damping: 14 }}
-                className="inline-block"
-              >
-                <Link to="/shop" className="relative group px-10 py-4 bg-gradient-to-r from-[#D74D76] to-[#E56B91] text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3 border border-[#F4B4C8]/50 overflow-hidden shadow-md">
-                  {/* Decorative Corner Plaque Notches */}
-                  <div className="absolute top-1 left-1 w-1 h-1 bg-white/40"></div>
-                  <div className="absolute top-1 right-1 w-1 h-1 bg-white/40"></div>
-                  <div className="absolute bottom-1 left-1 w-1 h-1 bg-white/40"></div>
-                  <div className="absolute bottom-1 right-1 w-1 h-1 bg-white/40"></div>
-
-                  <span className="relative z-10">Discover Collection</span>
-                  <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-
-        </div>
-      </section>
       {/* =========================================
           2. VELVET FAIRYTALE (CLEAN LAYOUT WITH MAGIC)
           ========================================= */}
@@ -391,7 +112,7 @@ export default function CosmeticsPage() {
           <div className="flex flex-row gap-6 overflow-x-auto pt-16 pb-8 snap-x snap-mandatory -mt-16 scrollbar-thin scrollbar-thumb-pink-200 scrollbar-track-transparent">
 
             {/* Card 1: Eyeshadow Palette */}
-            <Link to="/collections/eyeshadow" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
+            <Link to="/product/coskinn-nude-elegance" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
               <div className="w-full aspect-square mb-6 flex items-center justify-center p-4 relative">
                 <motion.img
                   animate={{ y: [0, -10, 0] }}
@@ -412,7 +133,7 @@ export default function CosmeticsPage() {
             </Link>
 
             {/* Card 2: Satin Blush */}
-            <Link to="/collections/blush" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
+            <Link to="/product/velvet-blush-soft-pink" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
               <div className="w-full aspect-square mb-6 flex items-center justify-center p-4 relative">
                 <motion.img
                   animate={{ y: [0, -12, 0] }}
@@ -433,7 +154,7 @@ export default function CosmeticsPage() {
             </Link>
 
             {/* Card 3: Magnetic Lipstick */}
-            <Link to="/collections/lips" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
+            <Link to="/product/coskinn-magnetic-lipstick-ruby-red" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
               <div className="w-full aspect-square mb-6 flex items-center justify-center p-4 relative">
                 <motion.img
                   animate={{ y: [0, -11, 0] }}
@@ -453,7 +174,7 @@ export default function CosmeticsPage() {
             </Link>
 
             {/* Card 4: Pocket Perfume */}
-            <Link to="/collections/perfume" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
+            <Link to="/product/pocket-perfume-collection" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
               <div className="w-full aspect-square mb-6 flex items-center justify-center p-4 relative">
                 <motion.img
                   animate={{ y: [0, -10, 0] }}
@@ -473,7 +194,7 @@ export default function CosmeticsPage() {
             </Link>
 
             {/* Card 5: Makeup Brushes */}
-            <Link to="/collections/brushes" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
+            <Link to="/product/professional-brush-set" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
               <div className="w-full aspect-square mb-6 flex items-center justify-center p-4 relative">
                 <motion.img
                   animate={{ y: [0, -13, 0] }}
@@ -811,6 +532,8 @@ export default function CosmeticsPage() {
           </h2>
         </div>
       </section>
+
+      </div>
 
       <Footer />
     </div>
