@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { ArrowRight, Star, SlidersHorizontal, X } from 'lucide-react';
+import { Star, SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FilterSidebar from '../components/shop/FilterSidebar';
 
