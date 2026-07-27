@@ -11,6 +11,7 @@ import apiClient from '../utils/apiClient';
 import ProductCard from '../components/common/ProductCard';
 import Footer from '../components/common/Footer';
 import CategoryFAQ from '../components/categories/CategoryFAQ';
+import { skincareProducts } from '../constants/skincareProducts';
 
 import shopAllHeroImg from '../assets/images/shop_all_hero.webp';
 import reviewImg1 from '../assets/images/cleanser_hero_lifestyle.webp';
@@ -79,8 +80,8 @@ export default function ShopAllSkincarePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('Featured');
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(skincareProducts);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentReview, setCurrentReview] = useState(0);
 
@@ -90,7 +91,7 @@ export default function ShopAllSkincarePage() {
         setLoading(true);
         // Fetch all products for local filtering
         const res = await apiClient.get('/catalog/products?limit=100');
-        if (res.data && res.data.items) {
+        if (res.data && res.data.items && res.data.items.length > 0) {
           // Map backend products to frontend shape
           const mapped = res.data.items.map(p => ({
             id: p.id,
@@ -115,10 +116,13 @@ export default function ShopAllSkincarePage() {
             stock: 100
           }));
           setProducts(mapped);
+        } else {
+          setProducts(skincareProducts);
         }
       } catch (err) {
-        console.error('Failed to fetch products', err);
-        setError('Failed to load products');
+        console.error('Failed to fetch products, falling back to local catalog', err);
+        setProducts(skincareProducts);
+        setError(null);
       } finally {
         setLoading(false);
       }
@@ -181,11 +185,11 @@ export default function ShopAllSkincarePage() {
     }
 
     return result;
-  }, [searchQuery, activeFilters, sortBy]);
+  }, [products, searchQuery, activeFilters, sortBy]);
 
   const bestSellers = useMemo(() => {
     return [...products].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 6);
-  }, []);
+  }, [products]);
 
   const scrollBestSellers = (direction) => {
     if (bestSellersRef.current) {

@@ -91,7 +91,7 @@ export default function Hero() {
       mouseX.set(x);
       mouseY.set(y);
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     // Carousel logic (2 seconds)
     const interval = setInterval(() => {

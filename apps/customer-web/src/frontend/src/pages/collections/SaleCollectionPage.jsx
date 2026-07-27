@@ -4,7 +4,7 @@ import ProductCard from '../../components/common/ProductCard';
 import { skincareProducts } from '../../constants/skincareProducts';
 import { cosmeticsProducts } from '../../constants/cosmeticsProducts';
 import { Clock, ArrowRight, Tag, Star } from 'lucide-react';
-import premiumModelImg from '../../assets/images/premium_hero_model.webp';
+import premiumModelImg from '../../assets/images/fairytale_desktop_hero_noflowers.webp';
 import floatingLipstickImg from '../../assets/images/cosmetics_lipstick.webp';
 import floatingBlushImg from '../../assets/images/velvet_blush.webp';
 

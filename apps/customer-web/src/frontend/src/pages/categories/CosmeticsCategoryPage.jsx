@@ -7,9 +7,9 @@ import ProductCard from '../../components/common/ProductCard';
 import { cosmeticsProducts } from '../../constants/cosmeticsProducts';
 
 // Images (Using existing ones or fallbacks)
-import editorial1 from '../../assets/images/cosmetics_editorial_lifestyle.webp';
-import editorial2 from '../../assets/images/cat_eyes_1784312591092.webp';
-import editorial3 from '../../assets/images/cat_lips_1784312601813.webp';
+import editorial1 from '../../assets/images/enchanted_butterflies_hero_clean.webp';
+import editorial2 from '../../assets/images/fairytale_desktop_hero_noflowers.webp';
+import editorial3 from '../../assets/images/fairytale_desktop_hero.webp';
 
 const categoryData = {
   'face': {
@@ -67,7 +67,7 @@ export default function CosmeticsCategoryPage() {
       {/* 1. HERO SECTION */}
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-[#FFF0F4]">
         <div className="absolute inset-0 z-0">
-          <img src={data.heroImg} alt={data.title} className="w-full h-full object-cover object-center opacity-40 mix-blend-multiply" />
+          <img src={data.heroImg} alt={data.title} className="w-full h-full object-cover object-center opacity-60 blur-[4px] scale-[1.02]" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#FFFDFD] via-transparent to-transparent"></div>
         </div>
 
@@ -150,17 +150,20 @@ export default function CosmeticsCategoryPage() {
       </section>
 
       {/* 3. PROMO BANNER */}
-      <section className="py-32 bg-[#FF8FB1] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 text-white">
-          <h2 className="text-4xl md:text-6xl font-serif italic mb-8 drop-shadow-md">
-            "Artistry meets luxury in every stroke."
+      <section className="relative py-20 overflow-hidden flex items-center justify-center">
+        <img src={data.heroImg} alt="Magic Beauty" className="absolute inset-0 w-full h-full object-cover blur-[4px] scale-105 z-0" />
+        <div className="absolute inset-0 bg-[#75263F]/50 z-0" />
+        
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 text-white bg-white/10 backdrop-blur-md border border-white/20 p-8 md:p-12 rounded-[40px] shadow-2xl">
+          <Sparkles className="w-8 h-8 text-[#FFC2D1] mx-auto mb-4" />
+          <h2 className="text-3xl md:text-5xl font-serif italic mb-4 drop-shadow-xl" style={{ fontFamily: 'var(--font-heading)' }}>
+            "Magic in every stroke, beauty in every spell."
           </h2>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
-            Every product is meticulously crafted to deliver unparalleled performance while maintaining the highest standards of clean, cruelty-free beauty.
+          <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-8 font-medium leading-relaxed drop-shadow-md">
+            Discover a realm where enchanting colors meet luxurious, fairy-dusted formulas. Elevate your everyday ritual into a captivating fairytale.
           </p>
-          <Link to="/shop" className="inline-flex items-center gap-2 px-10 py-4 bg-white text-[#FF8FB1] rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#FF0069] hover:text-white transition-all shadow-[0_10px_30px_rgba(255,255,255,0.2)]">
-            Explore All Cosmetics <ArrowRight size={16} />
+          <Link to="/shop" className="inline-flex items-center gap-2 px-8 py-3 bg-white/20 backdrop-blur-md border border-white/50 text-white rounded-full font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-[#FF0069] hover:scale-105 transition-all duration-300 shadow-[0_10px_30px_rgba(255,255,255,0.2)]">
+            Explore The Magic <ArrowRight size={14} />
           </Link>
         </div>
       </section>

@@ -11,8 +11,8 @@ import { ShopMegaMenu, CategoriesMegaMenu, RoutineMenu, JournalMenu } from './Me
 import MobileMenu from './MobileMenu';
 import AuthModal from './AuthModal';
 
-const CoskinnLogo = ({ isScrolled }) => (
-  <svg className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+const CoskinnLogo = ({ isScrolled, forceWhite }) => (
+  <svg role="img" aria-label="COSKINn Logo" className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#FF0069" />  {/* Hot Pink */}
@@ -60,7 +60,8 @@ const CoskinnLogo = ({ isScrolled }) => (
       x="105"
       y="95"
       fontFamily="var(--font-heading)"
-      fill="black"
+      fill={forceWhite ? "white" : "black"}
+      style={{ transition: 'fill 0.3s ease' }}
     >
       <tspan fontSize="85" fontWeight="600" letterSpacing="2">OSKIN</tspan>
       <tspan fontSize="65" fontWeight="600">n</tspan>
@@ -105,7 +106,7 @@ const prefetchPage = (pagePath) => {
 };
 
 // Desktop Navigation Item Wrapper
-const NavItem = ({ title, to, children, isActive, isScrolled, theme }) => {
+const NavItem = ({ title, to, children, isActive, isScrolled, theme, forceWhite }) => {
   const [isOpen, setIsOpen] = useState(false);
   let timeoutRef = useRef(null);
   const location = useLocation();
@@ -137,12 +138,12 @@ const NavItem = ({ title, to, children, isActive, isScrolled, theme }) => {
       {to ? (
         <Link
           to={to}
-          className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 focus:outline-none ${isActive ? "text-black font-semibold" : "text-black font-medium"}`}
+          className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 focus:outline-none ${isActive ? (forceWhite ? "text-white font-bold drop-shadow-md" : "text-black font-semibold") : (forceWhite ? "text-white/90 font-medium drop-shadow-sm hover:text-white" : "text-black font-medium")}`}
         >
           {title}
         </Link>
       ) : (
-        <button className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 cursor-pointer focus:outline-none text-black font-medium`}>
+        <button className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 cursor-pointer focus:outline-none ${forceWhite ? "text-white/90 font-medium drop-shadow-sm hover:text-white" : "text-black font-medium"}`}>
           {title}
         </button>
       )}
@@ -249,6 +250,10 @@ export default function Navbar() {
       }
     }
   });
+
+  const isCosmeticsAboutPage = theme === 'cosmetics' && location.pathname === '/about';
+  const isWhiteNavPage = location.pathname.includes('/collections/precision-lip-liner') || isCosmeticsAboutPage;
+  const forceWhite = isWhiteNavPage && !isScrolled;
 
   // Handle Desktop Hover for User Profile
   const handleMouseEnter = () => {
@@ -470,41 +475,41 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative">
-          <CoskinnLogo isScrolled={isScrolled} />
+          <CoskinnLogo isScrolled={isScrolled} forceWhite={forceWhite} />
         </Link>
 
         {/* Desktop Navigation Links */}
         <div className="hidden lg:flex items-center justify-center gap-10 text-[20px] font-body flex-1 ml-10">
-          <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} isScrolled={isScrolled} theme={theme} />
+          <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
 
-          <NavItem title="Shop" isScrolled={isScrolled} theme={theme}>
+          <NavItem title="Shop" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <ShopMegaMenu theme={theme} />
           </NavItem>
 
-          <NavItem title="Categories" isScrolled={isScrolled} theme={theme}>
+          <NavItem title="Categories" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <CategoriesMegaMenu theme={theme} />
           </NavItem>
           
           {theme === 'skincare' && (
-            <NavItem title="Routine" isScrolled={isScrolled} theme={theme}>
+            <NavItem title="Routine" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
               <RoutineMenu theme={theme} />
             </NavItem>
           )}
 
-          <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} isScrolled={isScrolled} theme={theme} />
+          <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
 
-          <NavItem title="Journal" isScrolled={isScrolled} theme={theme}>
+          <NavItem title="Journal" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <JournalMenu theme={theme} />
           </NavItem>
 
-          <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} isScrolled={isScrolled} theme={theme} />
+          <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
         </div>
 
         {/* Spacer for Mobile layout balancing */}
         <div className="flex-1 lg:hidden"></div>
 
         {/* Icons */}
-        <div className={`flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 relative flex-shrink-0 transition-colors duration-300 text-black`}>
+        <div className={`flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 relative flex-shrink-0 transition-colors duration-300 ${forceWhite ? 'text-white' : 'text-black'}`}>
           {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -538,13 +543,13 @@ export default function Navbar() {
               {user ? (
                 <>
                   {user.avatarUrl ? (
-                    <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover shadow-sm border border-white" />
+                    <img loading="lazy" src={user.avatarUrl} alt="Avatar" className={`w-8 h-8 rounded-full object-cover shadow-sm border ${forceWhite ? 'border-white/50' : 'border-white'}`} />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-theme-primary text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
-                  <span className="text-[14px] font-bold text-black hidden sm:block">{user.name ? user.name.split(' ')[0] : 'User'}</span>
+                  <span className={`text-[14px] font-bold hidden sm:block transition-colors duration-300 ${forceWhite ? 'text-white' : 'text-black'}`}>{user.name ? user.name.split(' ')[0] : 'User'}</span>
                 </>
               ) : (
                 <User size={24} strokeWidth={1.5} />
