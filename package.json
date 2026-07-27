@@ -5,6 +5,7 @@
   "packageManager": "npm@10.8.0",
   "workspaces": [
     "apps/*",
+    "apps/New/apps/*",
     "backend",
     "packages/*"
   ],
