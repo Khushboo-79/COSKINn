@@ -251,9 +251,9 @@ export default function NewArrivalsPage() {
                   </div>
                   <button 
                     onClick={(e) => { e.preventDefault(); addToCart(item); }}
-                    className="mt-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-black/60 hover:text-theme-primary group-hover:text-theme-primary transition-colors"
+                    className="mt-4 w-full py-3 bg-gradient-to-r from-[#FF0069] to-[#FF4F9A] text-white shadow-md hover:shadow-lg hover:scale-[1.02] rounded-full flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-all"
                   >
-                    Add to Cart <ArrowRight className="w-4 h-4 transform group-hover:translate-x-2 transition-transform" />
+                    Add to Cart <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
               </motion.div>
