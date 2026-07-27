@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  View, Text, StyleSheet, TouchableOpacity, TextInput, 
+import {
+  View, Text, StyleSheet, TouchableOpacity, TextInput,
   ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, Modal
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addAddress, updateAddress, fetchLiveLocation } from '../../../../redux/slices/addressSlice';
 import { Image, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -24,15 +25,71 @@ const CustomInput = ({ placeholder, value, onChangeText, isCosmetics }) => (
 const AddressScreen = () => {
   const navigation = useNavigation();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const { data: profileData } = useSelector(state => state.profile);
+  const { items: addresses } = useSelector(state => state.address);
+  const dispatch = useDispatch();
   const isCosmetics = activeDomain === 'cosmetics';
-  const [showModal, setShowModal] = useState(true);
+  const existingAddress = addresses && addresses.length > 0 ? addresses[0] : null;
+  const [showModal, setShowModal] = useState(!existingAddress);
+  const [loading, setLoading] = useState(false);
 
-  // Form states
-  const [pincode, setPincode] = useState('');
-  const [house, setHouse] = useState('');
-  const [road, setRoad] = useState('');
-  const [contactName, setContactName] = useState('Khushboo Sharma');
-  const [phone, setPhone] = useState('');
+  // Form states - prepopulate with existing address if available
+  const [pincode, setPincode] = useState(existingAddress?.pincode || '');
+  const [house, setHouse] = useState(existingAddress?.addressLine1 || '');
+  const [road, setRoad] = useState(existingAddress?.addressLine2 || '');
+  const [city, setCity] = useState(existingAddress?.city || '');
+  const [stateName, setStateName] = useState(existingAddress?.state || '');
+  const [contactName, setContactName] = useState(existingAddress?.fullName || (profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}`.trim() : ''));
+  const [phone, setPhone] = useState(existingAddress?.phone || profileData?.phone || '');
+
+  const handleSaveAddress = async () => {
+    if (!pincode || !house || !road || !contactName || !phone) {
+      alert('Please fill all fields');
+      return;
+    }
+    setLoading(true);
+    const payload = {
+      pincode: pincode,
+      addressLine1: house,
+      addressLine2: road,
+      city: city || 'Unknown City',
+      state: stateName || 'Unknown State',
+      country: 'India',
+      isDefault: true,
+      fullName: contactName,
+      phone: phone,
+    };
+    try {
+      if (existingAddress) {
+        await dispatch(updateAddress({ id: existingAddress.id, data: payload })).unwrap();
+      } else {
+        await dispatch(addAddress(payload)).unwrap();
+      }
+      navigation.goBack();
+    } catch (error) {
+      alert('Error saving address');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDetectLocation = async () => {
+    setShowModal(false);
+    try {
+      const locationData = await dispatch(fetchLiveLocation()).unwrap();
+      if (locationData) {
+        setPincode(locationData.postal || '400001'); // Mock postal if missing
+        if (locationData.city || locationData.region) {
+          setRoad(`${locationData.city || ''} ${locationData.region || ''}`.trim());
+          setCity(locationData.city || '');
+          setStateName(locationData.region || '');
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Failed to detect location');
+    }
+  };
 
   const renderModal = () => (
     <Modal
@@ -43,9 +100,9 @@ const AddressScreen = () => {
     >
       <View style={[styles.modalOverlay, isCosmetics && { backgroundColor: 'transparent' }]}>
         <View style={styles.bottomSheet}>
-          
-          <TouchableOpacity 
-            style={styles.closeIconWrapper} 
+
+          <TouchableOpacity
+            style={styles.closeIconWrapper}
             onPress={() => setShowModal(false)}
             activeOpacity={0.8}
           >
@@ -65,21 +122,18 @@ const AddressScreen = () => {
           </Text>
 
           <View style={styles.modalButtonRow}>
-            <TouchableOpacity 
-              style={[styles.addManuallyBtn, isCosmetics && { borderColor: '#FFC2D1' }]} 
+            <TouchableOpacity
+              style={[styles.addManuallyBtn, isCosmetics && { borderColor: '#FFC2D1' }]}
               onPress={() => setShowModal(false)}
               activeOpacity={0.8}
             >
               <Text style={[styles.addManuallyText, isCosmetics && { color: '#FF0069' }]}>Add manually</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.detectLocationBtn, isCosmetics && { backgroundColor: '#FFD1E3' }]}
               activeOpacity={0.8}
-              onPress={() => {
-                // handle detect location logic
-                setShowModal(false);
-              }}
+              onPress={handleDetectLocation}
             >
               <Text style={[styles.detectLocationText, isCosmetics && { color: '#1A1A1A' }]}>Detect location</Text>
             </TouchableOpacity>
@@ -92,7 +146,7 @@ const AddressScreen = () => {
   return (
     <View style={[styles.container, isCosmetics && { backgroundColor: '#FFF0F5' }]}>
       <SafeAreaView style={styles.safeArea}>
-        
+
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -103,16 +157,20 @@ const AddressScreen = () => {
         </View>
         <View style={styles.headerDivider} />
 
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.formContainer}
         >
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            
+
             {/* Current Location Box */}
-            <TouchableOpacity activeOpacity={0.8} style={[styles.currentLocationBox, isCosmetics && { backgroundColor: '#FFE5EC', borderWidth: 0 }]}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.currentLocationBox, isCosmetics && { backgroundColor: '#FFE5EC', borderWidth: 0 }]}
+              onPress={handleDetectLocation}
+            >
               <View style={[styles.targetIconWrapper, isCosmetics && { backgroundColor: '#FFC2D1' }]}>
-                <Icon name="crosshair" size={scaleh(24)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} />
+                <Icon name="gps-fixed" size={scaleh(24)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} />
               </View>
               <View style={styles.currentLocationTexts}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -127,15 +185,17 @@ const AddressScreen = () => {
             <CustomInput placeholder="Pincode" value={pincode} onChangeText={setPincode} isCosmetics={isCosmetics} />
             <CustomInput placeholder="House / Flat / Building No." value={house} onChangeText={setHouse} isCosmetics={isCosmetics} />
             <CustomInput placeholder="Road Name / Area / Colony" value={road} onChangeText={setRoad} isCosmetics={isCosmetics} />
-            
+            <CustomInput placeholder="City" value={city} onChangeText={setCity} isCosmetics={isCosmetics} />
+            <CustomInput placeholder="State" value={stateName} onChangeText={setStateName} isCosmetics={isCosmetics} />
+
             <Text style={styles.primaryInfoText}>This will be saved as your primary address.</Text>
-            
+
             <View style={styles.dividerLine} />
 
             {/* Contact Details */}
             <Text style={styles.sectionLabel}>Contact Name</Text>
             <CustomInput placeholder="Contact Name" value={contactName} onChangeText={setContactName} isCosmetics={isCosmetics} />
-            
+
             <CustomInput placeholder="Phone Number" value={phone} onChangeText={setPhone} isCosmetics={isCosmetics} />
 
             {/* Security Text */}
@@ -143,7 +203,7 @@ const AddressScreen = () => {
               <Text style={styles.securityText}>
                 Your data is stored securely and shared only for the purpose of delivery.
               </Text>
-              <Icon name="shield" size={scaleh(20)} color={isCosmetics ? '#FF0069' : AppTheme.colors.primary} style={styles.shieldIcon} />
+              <Icon name="shield" size={scaleh(20)} color={isCosmetics ? AppTheme.colors.primary : AppTheme.colors.primary} style={styles.shieldIcon} />
             </View>
 
           </ScrollView>
@@ -151,11 +211,15 @@ const AddressScreen = () => {
 
         {/* Save Address Button */}
         <View style={[styles.bottomButtonContainer, isCosmetics && { backgroundColor: 'transparent' }]}>
-          <TouchableOpacity 
-            style={[styles.saveButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]} 
+          <TouchableOpacity
+            style={[styles.saveButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]}
             activeOpacity={0.8}
+            onPress={handleSaveAddress}
+            disabled={loading}
           >
-            <Text style={[styles.saveButtonText, isCosmetics && { color: '#1A1A1A' }]}>Save Address</Text>
+            <Text style={[styles.saveButtonText, isCosmetics && { color: '#1A1A1A' }]}>
+              {loading ? 'Saving...' : 'Save Address'}
+            </Text>
           </TouchableOpacity>
         </View>
 

@@ -17,9 +17,12 @@ export const fetchMyOrders = createAsyncThunk(
   'order/fetchMyOrders',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('Fetching orders from backend API...');
       const response = await orderService.getOrders();
+      console.log('Orders fetched successfully:', response);
       return response;
     } catch (error) {
+      console.error('Failed to fetch orders:', error);
       return rejectWithValue(error);
     }
   }

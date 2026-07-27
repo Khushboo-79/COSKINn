@@ -59,9 +59,12 @@ export const fetchMembershipTier = createAsyncThunk(
   'profile/fetchMembershipTier',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('Fetching membership tier from backend API...');
       const response = await membershipService.getMyTier();
+      console.log('Membership tier fetched successfully:', response);
       return response;
     } catch (error) {
+      console.error('Failed to fetch membership tier:', error);
       return rejectWithValue(error);
     }
   }
@@ -71,6 +74,7 @@ const initialState = {
   data: null, // Holds profile data like { firstName, lastName, email, phone, etc. }
   walletBalance: 0,
   rewardPoints: 0,
+  rewardHistory: [],
   membershipTier: null,
   loading: false,
   error: null,
@@ -125,7 +129,9 @@ const profileSlice = createSlice({
       })
       // Fetch reward points
       .addCase(fetchRewardPoints.fulfilled, (state, action) => {
-        state.rewardPoints = action.payload?.points || action.payload?.data?.points || 0;
+        const data = action.payload?.data || action.payload || {};
+        state.rewardPoints = data.balance || data.points || 0;
+        state.rewardHistory = data.history || [];
       })
       // Fetch membership tier
       .addCase(fetchMembershipTier.fulfilled, (state, action) => {

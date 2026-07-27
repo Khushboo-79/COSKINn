@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Ima
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
 import Header from '../../../../components/Header';
 
@@ -12,24 +13,14 @@ const tabs = [
   'Exfoliants & Scrubs', 'Hands & Feet', 'Specialized Skincare', 'Kits & Combos', 'Gifts'
 ];
 
-const dummyProducts = Array(8).fill({
-  id: '1',
-  title: 'Vitamin C + E Sunscreen',
-  subtitle1: 'SPF 50 PA++++ with',
-  subtitle2: 'New-Age UV Filters',
-  skinType: 'All Skin Types',
-  rating: '4.81',
-  reviews: '(5698)',
-  weight: '50g',
-  offer1: 'Upto 20% OFF + Free Gifts',
-  offer2: 'Get 5% Cashback',
-  price: '₹899',
-  image: require('../../../../images/bgImages/productImg.webp') // using available image
-}).map((item, index) => ({ ...item, id: index.toString() }));
+
 
 
 
 const ViewAllCategoriesScreen = () => {
+  const homeData = useSelector(state => state.catalog?.homeData);
+  const liveProducts = homeData?.bestsellers || [];
+
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('All');
 
@@ -146,7 +137,7 @@ const ViewAllCategoriesScreen = () => {
         {/* Vertical Scrollable Products Grid */}
         <FlatList
           style={{ backgroundColor: '#FFFFFF' }}
-          data={dummyProducts}
+          data={liveProducts}
           numColumns={2}
           keyExtractor={(item) => item.id}
           renderItem={renderProductCard}

@@ -13,9 +13,9 @@ const TopHeader = () => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const selectedAddress = useSelector(state => state.address?.selectedAddress);
   const isThemeDark = activeDomain === 'skincare';
-  
+
   const [isLocationModalVisible, setLocationModalVisible] = React.useState(false);
-  
+
   // Local state for instant toggle animation
   const [localTheme, setLocalTheme] = React.useState(isThemeDark);
 
@@ -31,7 +31,7 @@ const TopHeader = () => {
   const handleToggle = () => {
     const nextVal = !localTheme;
     setLocalTheme(nextVal); // Update UI instantly to start toggle animation
-    
+
     // Defer heavy Redux update so the UI thread can finish the animation first
     InteractionManager.runAfterInteractions(() => {
       // Also wrap in a slight timeout as an extra precaution since Redux state changes cause massive re-renders

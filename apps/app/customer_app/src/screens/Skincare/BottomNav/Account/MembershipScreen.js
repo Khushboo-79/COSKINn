@@ -65,9 +65,7 @@ const MembershipScreen = () => {
     <View style={styles.container}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: scalev(40) }}>
-        
-        <LinearGradient
+      <LinearGradient
           colors={gradientColors}
           style={[styles.headerGradient, { paddingTop: insets.top + scalev(10) }]}
         >
@@ -88,10 +86,15 @@ const MembershipScreen = () => {
           </View>
         </LinearGradient>
 
-        <View style={styles.contentArea}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        style={{ flex: 1, marginTop: scalev(-60) }}
+        contentContainerStyle={{ paddingBottom: scalev(40) }}
+      >
+        <View style={[styles.contentArea, { marginTop: 0 }]}>
           
           <View style={styles.progressCard}>
-            <Text style={styles.progressCardTitle}>{membershipTier?.tier || 'Member'} Since {new Date(userProfile?.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric'})}</Text>
+            <Text style={styles.progressCardTitle}>{membershipTier?.tier?.name || 'Member'} Since {new Date(userProfile?.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric'})}</Text>
             
             <View style={styles.progressSection}>
               <View style={styles.progressLineBg} />
@@ -140,7 +143,7 @@ const MembershipScreen = () => {
                 <Text style={styles.rewardsText}>{rewardPoints || 0} Reward Points</Text>
               </View>
               
-              <TouchableOpacity style={styles.viewHistoryBtn}>
+              <TouchableOpacity style={styles.viewHistoryBtn} onPress={() => navigation.navigate('RewardsScreen')}>
                 <Text style={styles.viewHistoryText}>View History </Text>
                 <Icon name="chevron-right" size={scaleh(14)} color="#FF0069" />
               </TouchableOpacity>
@@ -250,7 +253,7 @@ const MembershipScreen = () => {
                   
                   <View style={styles.upgradeRow}>
                     <Text style={styles.upgradeText}>Want to Upgrade to Gold?</Text>
-                    <TouchableOpacity style={styles.shopNowBtn}>
+                    <TouchableOpacity style={styles.shopNowBtn} onPress={() => navigation.navigate('Dashboard')}>
                       <Text style={styles.shopNowText}>Shop Now</Text>
                     </TouchableOpacity>
                   </View>
@@ -334,7 +337,7 @@ const MembershipScreen = () => {
                   
                   <View style={[styles.upgradeRow, { marginTop: scalev(15) }]}>
                     <Text style={styles.upgradeText}>Want to Upgrade to Platinum?</Text>
-                    <TouchableOpacity style={styles.shopNowBtn}>
+                    <TouchableOpacity style={styles.shopNowBtn} onPress={() => navigation.navigate('Dashboard')}>
                       <Text style={styles.shopNowText}>Shop Now</Text>
                     </TouchableOpacity>
                   </View>
@@ -417,7 +420,7 @@ const MembershipScreen = () => {
                 <View style={[styles.unlockMoreSection, { backgroundColor: '#FFFFFF' }]}>
                   <View style={[styles.upgradeRow, { marginTop: scalev(5) }]}>
                     <Text style={styles.upgradeText}>Want to Upgrade to Platinum?</Text>
-                    <TouchableOpacity style={styles.shopNowBtn}>
+                    <TouchableOpacity style={styles.shopNowBtn} onPress={() => navigation.navigate('Dashboard')}>
                       <Text style={styles.shopNowText}>Shop Now</Text>
                     </TouchableOpacity>
                   </View>
@@ -458,14 +461,14 @@ const MembershipScreen = () => {
               answer="You only need to keep shopping - spend Rs. 2,000 to become Prive Member, Rs. 5,000 to become Prive Gold and Rs. 10,000 to become Prive Platinum in last 365 days. As soon as you spend any of the above mentioned amount (and within 4 weeks from date of delivery), you will be automatically upgraded to the next tier."
             />
             
-            <TouchableOpacity style={styles.viewMoreFaqsBtn}>
+            <TouchableOpacity style={styles.viewMoreFaqsBtn} onPress={() => navigation.navigate('MembershipFAQScreen')}>
               <Text style={styles.viewMoreFaqsText}>View more FAQS</Text>
               <Icon name="arrow-right" size={scaleh(16)} color="#FF0069" style={styles.faqArrowIcon} />
             </TouchableOpacity>
           </View>
           
           {/* Terms & Conditions Section */}
-          <TouchableOpacity style={styles.termsContainer} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.termsContainer} activeOpacity={0.8} onPress={() => navigation.navigate('TermsAndConditionsScreen')}>
             <Text style={styles.termsText}>Terms & Conditions</Text>
             <Icon name="arrow-right" size={scaleh(16)} color="#FF0069" style={styles.faqArrowIcon} />
           </TouchableOpacity>

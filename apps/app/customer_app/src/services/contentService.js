@@ -10,6 +10,15 @@ export const contentService = {
     }
   },
 
+  getArticleBySlug: async (slug) => {
+    try {
+      const response = await api.get(`/content/articles/${slug}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   submitTicket: async (ticketData) => {
     try {
       const response = await api.post('/support/tickets', ticketData);
