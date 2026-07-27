@@ -30,7 +30,7 @@ const ReturnPolicyScreen = () => {
           <Text style={styles.mainHeading}>Shipping & Returns</Text>
           
           <Text style={styles.paragraph}>
-            COSKINn delivers products to selected locations across India through trusted 
+            FAIRENNE delivers products to selected locations across India through trusted 
             courier and delivery partners. Delivery availability may depend on your pin 
             code, product type, courier serviceability, payment method, and order value.
           </Text>
@@ -46,7 +46,7 @@ const ReturnPolicyScreen = () => {
 
           <Text style={styles.paragraph}>
             Customers must provide a complete and accurate delivery address, mobile 
-            number, and pin code. COSKINn will not be responsible for failed delivery due to 
+            number, and pin code. FAIRENNE will not be responsible for failed delivery due to 
             incorrect address, unavailable customer, locked premises, 
             unreachable phone number, or refusal to accept the order. If the order returns 
             to us due to customer-related issues, re-shipping charges may apply. Due to 

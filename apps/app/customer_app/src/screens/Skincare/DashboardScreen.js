@@ -37,7 +37,7 @@ const DashboardScreen = () => {
     dispatch(fetchCart()); // Fetch cart on load to sync state
   }, [dispatch]);
   const [activeMainBannerIndex, setActiveMainBannerIndex] = useState(0);
-  const mainBannerData = [1, 2, 3, 4, 5, 6];
+  const mainBannerData = homeData?.heroBanners?.length > 0 ? homeData.heroBanners : [1, 2, 3, 4, 5, 6];
 
   const [activeComboBannerIndex, setActiveComboBannerIndex] = useState(0);
   const comboBannerData = [
@@ -239,7 +239,7 @@ const DashboardScreen = () => {
               showsHorizontalScrollIndicator={false}
               onScroll={handleMainScroll}
               scrollEventThrottle={16}
-              keyExtractor={(item) => item.toString()}
+              keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
               renderItem={renderMainBannerItem}
               initialNumToRender={2}
               maxToRenderPerBatch={3}

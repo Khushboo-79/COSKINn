@@ -29,7 +29,7 @@ const ExitConfirmationModal = ({ visible, onClose, onContinuePayment, onExit }) 
               <View style={styles.contentContainer}>
                 <Text style={styles.title}>Are you sure you want to exit?</Text>
                 <Text style={styles.subtitle}>
-                  You will be taken back to COSKINn website
+                  You will be taken back to FAIRENNE website
                 </Text>
 
                 {/* Continue to Payment Button (Outlined) */}

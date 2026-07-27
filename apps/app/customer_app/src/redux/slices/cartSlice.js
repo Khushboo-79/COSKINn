@@ -1,5 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { cartService } from '../../services/cartService';
+import { offerService } from '../../services/offerService';
+
+export const fetchOffers = createAsyncThunk(
+  'cart/fetchOffers',
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log('Fetching cart offers from backend API...');
+      const response = await offerService.getActiveOffers();
+      console.log('Cart offers fetched successfully:', response);
+      return response;
+    } catch (error) {
+      console.error('Failed to fetch cart offers:', error);
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const fetchCart = createAsyncThunk(
   'cart/fetchCart',
@@ -56,6 +72,21 @@ export const removeFromCart = createAsyncThunk(
       return response;
     } catch (error) {
       console.error('Remove from cart failed:', error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const clearCartAsync = createAsyncThunk(
+  'cart/clearCartAsync',
+  async (_, { rejectWithValue }) => {
+    try {
+      console.log('Clearing cart API...');
+      const response = await cartService.clearCart();
+      console.log('Clear cart success:', response);
+      return response;
+    } catch (error) {
+      console.error('Clear cart failed:', error);
       return rejectWithValue(error);
     }
   }
@@ -133,6 +164,17 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Failed to fetch cart';
       })
+      // Fetch Offers
+      .addCase(fetchOffers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchOffers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.offers = action.payload;
+      })
+      .addCase(fetchOffers.rejected, (state, action) => {
+        state.loading = false;
+      })
       // Add to Cart
       .addCase(addToCart.pending, (state) => {
         state.loading = true;
@@ -171,6 +213,19 @@ const cartSlice = createSlice({
       .addCase(removeFromCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to remove from cart';
+      })
+      // Clear Cart Async
+      .addCase(clearCartAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(clearCartAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.cart = action.payload;
+        state.items = action.payload?.items || [];
+      })
+      .addCase(clearCartAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to clear cart';
       })
       // Fetch Available Coupons
       .addCase(fetchAvailableCoupons.pending, (state) => {
