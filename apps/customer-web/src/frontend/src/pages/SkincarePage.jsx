@@ -14,7 +14,11 @@ const Footer = React.lazy(() => import('../components/common/Footer'));
 export default function SkincarePage() {
   return (
     <div className="min-h-screen w-full bg-theme-surface font-sans text-theme-dark selection:bg-theme-secondary selection:text-theme-dark overflow-x-hidden">
-      <SEO title="Skincare Collections" description="Explore our premium skincare range. Transform your daily routine with clean ingredients." url="https://www.coskinn.com/skincare" />
+      <SEO 
+        title="COSKINn Skincare | Clean & Effective Botanical Beauty" 
+        description="Explore our premium skincare range. Transform your daily routine with clean, cruelty-free, and science-backed ingredients like Niacinamide, Vitamin C, and Mango Butter." 
+        url="https://www.coskinn.com/skincare" 
+      />
       <OffersCarousel />
       <Hero />
       <Suspense fallback={<div className="h-40 w-full flex items-center justify-center">Loading...</div>}>

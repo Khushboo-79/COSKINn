@@ -1,9 +1,9 @@
 import lipstickImg from '../assets/images/fairy_lipstick_clean.webp';
 import lipstickSide from '../assets/images/fairy_lipstick_clean.webp';
 import blushImg from '../assets/images/fairy_blush_clean.webp';
-import mascaraImg from '../assets/images/lift_curl_mascara.webp';
+import mascaraImg from '../assets/images/fairy_set_unicorn_grace.webp';
 import paletteImg from '../assets/images/fairy_palette_clean.webp';
-import brushImg from '../assets/images/cat_makeup_brushes.webp';
+import brushImg from '../assets/images/premium_fairy_hero_products.webp';
 import holderImg from '../assets/images/brush_holder_fairy.webp';
 import perfumeImg from '../assets/images/pocket_perfume_fairy.webp';
 
@@ -136,6 +136,12 @@ export const cosmeticsProducts = [
   { id: 352, slug: "velvet-blush-berry-flush", name: "COSKINn Velvet Blush - Berry Flush", shade: "Berry Flush", price: 899, originalPrice: 1099, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.7, reviews: 95, longDescription: "A deep berry flush for a dramatic, natural pinch.", benefits: ["Cloud-Like Texture", "All-Day Wear"] },
   { id: 353, slug: "velvet-blush-rose-gold", name: "COSKINn Velvet Blush - Rose Gold", shade: "Rose Gold", price: 949, category: "Face", image: blushImg, images: getGallery(blushImg, blushImg), rating: 4.9, reviews: 312, longDescription: "A radiant rose gold that doubles as a blush and highlight.", benefits: ["Cloud-Like Texture", "Radiant Finish"] },
 
+  // Lip Liners
+  { id: 306, slug: "precision-lip-liner", name: "COSKINn Precision Lip Liner", price: 699, originalPrice: 899, category: "Lips", image: lipstickImg, images: getGallery(lipstickImg, lipstickImg), rating: 4.8, reviews: 245, longDescription: "Master the art of the perfect pout. Waterproof, 12-hour wear that glides like velvet and sets flawlessly. Six universal hues crafted for every skin tone.", benefits: ["Waterproof", "12-Hour Wear", "Velvet glide", "No feathering"], howToUse: "Line lips starting from the cupid's bow and moving outwards. Fill in for a matte base.", keyIngredients: ["Jojoba Oil", "Vitamin E"] },
+
+  // Lip Blurs
+  { id: 307, slug: "lip-blur", name: "COSKINn Lip Blur", price: 699, originalPrice: 899, category: "Lips", image: lipstickImg, images: getGallery(lipstickImg, lipstickImg), rating: 4.9, reviews: 320, longDescription: "A feather-light, cloud-like formula that instantly diffuses and perfects. High-impact color with absolute zero weight. Discover the art of flawless definition with our velvet-matte lip blur.", benefits: ["Feather-Light Formula", "Cloud Blur Effect", "Comfortable All-Day Wear", "Blendable Texture"], howToUse: "Swipe onto lips directly or dab with fingertips for a diffused, romantic stain.", keyIngredients: ["Hyaluronic Spheres", "Vitamin E"] },
+
   // Makeup Brushes
   { id: 305, slug: "professional-brush-set", name: "COSKINn Professional Makeup Brush Set", price: 2499, originalPrice: 2999, category: "Tools", image: brushImg, images: getGallery(brushImg, brushImg), rating: 4.9, reviews: 184, longDescription: "A curated 6-piece luxury brush set designed to blend, contour, and highlight with absolute perfection. 100% vegan, cruelty-free synthetic bristles.", benefits: ["Ultra-soft vegan bristles", "Ergonomic handles", "Seamless blending", "Professional grade"], howToUse: "Use each brush for its intended purpose (foundation, powder, blending, etc.). Clean regularly with gentle soap.", keyIngredients: ["Synthetic Vegan Fibers", "Rose Gold Ferrule", "Matte Wood Handle"] },
   { id: 355, slug: "foundation-brush", name: "COSKINn Foundation Brush", price: 899, category: "Tools", image: brushImg, images: getGallery(brushImg, brushImg), rating: 4.8, reviews: 92, longDescription: "The perfect dense brush for flawless liquid and cream foundation application.", benefits: ["Streak-free application", "Dense vegan bristles", "Ergonomic grip"] },
@@ -157,4 +163,7 @@ export const cosmeticsProducts = [
   { id: 373, slug: "pocket-perfume-rose", name: "COSKINn Rose Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.8, reviews: 120, longDescription: "Pure, elegant damascus rose essence.", benefits: ["Classic rose scent", "Pocket sized"] },
   { id: 374, slug: "pocket-perfume-peach", name: "COSKINn Peach Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.6, reviews: 85, longDescription: "A crisp, refreshing peachy fragrance.", benefits: ["Clean fresh scent", "Pocket sized"] },
   { id: 375, slug: "pocket-perfume-jasmine", name: "COSKINn Jasmine Pocket Perfume", price: 799, category: "Fragrance", image: perfumeImg, images: getGallery(perfumeImg, perfumeImg), rating: 4.8, reviews: 190, longDescription: "A deep, sensual jasmine for evening wear.", benefits: ["Sensual night scent", "Pocket sized"] }
-];
+].map(p => ({
+  ...p,
+  slug: p.slug || p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+}));

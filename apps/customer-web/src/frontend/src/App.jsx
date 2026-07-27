@@ -145,7 +145,7 @@ const MainLayout = () => {
             <Route path="/journal/ingredient-guides" element={<IngredientGuidesPage />} />
             <Route path="/journal/skin-education" element={<SkinEducationPage />} />
             <Route path="/account/*" element={<AccountPage />} />
-            
+
             {/* Footer Pages */}
             <Route path="/help-center" element={<HelpCenterPage />} />
             <Route path="/faqs" element={<FAQsPage />} />
@@ -203,7 +203,7 @@ const MainLayout = () => {
             <Route path="/categories/sensitive-skin" element={<SensitiveSkinPage />} />
             <Route path="/categories/dry-skin" element={<DrySkinPage />} />
             <Route path="/categories/oily-skin" element={<OilySkinPage />} />
-            
+
             {/* Cosmetics Added Routes */}
             <Route path="/shop" element={<ShopAllCosmeticsPage />} />
             <Route path="/categories/face" element={<CosmeticsCategoryPage />} />
@@ -211,7 +211,7 @@ const MainLayout = () => {
             <Route path="/categories/lips" element={<CosmeticsCategoryPage />} />
             <Route path="/categories/accessories" element={<CosmeticsCategoryPage />} />
             <Route path="/categories/fragrance" element={<CosmeticsCategoryPage />} />
-            
+
             <Route path="/journal/guides" element={<CosmeticsJournalPage />} />
             <Route path="/journal/tutorials" element={<CosmeticsJournalPage />} />
             <Route path="/journal/tips" element={<CosmeticsJournalPage />} />

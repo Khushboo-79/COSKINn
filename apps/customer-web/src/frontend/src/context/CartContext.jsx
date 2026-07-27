@@ -54,35 +54,38 @@ export function CartProvider({ children }) {
       return;
     }
 
+    // Optimistic Update
+    setCart(prev => {
+      const existing = prev.find(item => item.id === product.id);
+      if (existing) {
+        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + qty } : item);
+      }
+      return [...prev, {
+        cartItemId: Math.random().toString(36).substr(2, 9),
+        id: product.id,
+        name: product.name,
+        slug: product.slug || '',
+        price: product.price || product.discountPrice || product.originalPrice,
+        originalPrice: product.originalPrice,
+        image: product.image || product.images?.[0] || '',
+        quantity: qty
+      }];
+    });
+
+    showToast(`✓ ${product.name} added to your cart.`, 'success');
+    setIsCartDrawerOpen(true);
+
     try {
       await apiClient.post('/cart/items', { productId: product.id, quantity: qty });
-      showToast(`✓ ${product.name} added to your cart.`, 'success');
       await fetchCart();
-      setIsCartDrawerOpen(true);
     } catch (err) {
-      console.warn('Backend cart failed, using local fallback for:', product.name);
-      setCart(prev => {
-        const existing = prev.find(item => item.id === product.id);
-        if (existing) {
-          return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + qty } : item);
-        }
-        return [...prev, {
-          cartItemId: Math.random().toString(36).substr(2, 9),
-          id: product.id,
-          name: product.name,
-          slug: product.slug || '',
-          price: product.price || product.discountPrice || product.originalPrice,
-          originalPrice: product.originalPrice,
-          image: product.image || product.images?.[0] || '',
-          quantity: qty
-        }];
-      });
-      showToast(`✓ ${product.name} added to your cart (Offline Mode).`, 'success');
-      setIsCartDrawerOpen(true);
+      console.warn('Backend cart sync failed, local state retained.');
     }
   }, [user, openAuthModal, showToast, fetchCart]);
 
   const removeFromCart = useCallback(async (productId) => {
+    setCart(prev => prev.filter(item => item.id !== productId));
+    
     try {
       const item = cart.find(i => i.id === productId);
       if (item && item.cartItemId) {
@@ -90,12 +93,18 @@ export function CartProvider({ children }) {
         await fetchCart();
       }
     } catch (err) {
-      console.warn('Backend cart failed, using local fallback to remove');
-      setCart(prev => prev.filter(item => item.id !== productId));
+      console.warn('Backend cart sync failed on remove');
     }
   }, [cart, fetchCart]);
 
   const updateQuantity = useCallback(async (productId, delta) => {
+    setCart(prev => prev.map(item => {
+      if (item.id === productId) {
+        return { ...item, quantity: Math.max(1, item.quantity + delta) };
+      }
+      return item;
+    }));
+
     try {
       const item = cart.find(i => i.id === productId);
       if (item && item.cartItemId) {
@@ -104,13 +113,7 @@ export function CartProvider({ children }) {
         await fetchCart();
       }
     } catch (err) {
-      console.warn('Backend cart failed, using local fallback to update quantity');
-      setCart(prev => prev.map(item => {
-        if (item.id === productId) {
-          return { ...item, quantity: Math.max(1, item.quantity + delta) };
-        }
-        return item;
-      }));
+      console.warn('Backend cart sync failed on update quantity');
     }
   }, [cart, fetchCart]);
 

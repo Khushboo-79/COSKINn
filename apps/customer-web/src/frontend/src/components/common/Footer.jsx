@@ -66,7 +66,7 @@ const LeafIcon = ({ className }) => (
 );
 
 const SocialIcon = ({ children, ariaLabel }) => (
-  <a href="#" aria-label={ariaLabel} className="w-11 h-11 lg:w-12 lg:h-12 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-[#2B5968] hover:text-white hover:bg-pink-400 hover:border-[#F7DCE0] shadow-[0_4px_15px_rgba(202,186,177,0.2)] hover:shadow-[0_8px_25px_rgba(247,220,224,0.6)] transition-all duration-500 group">
+  <a href="#" target="_blank" rel="noopener noreferrer" aria-label={ariaLabel} className="w-11 h-11 lg:w-12 lg:h-12 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-[#2B5968] hover:text-white hover:bg-pink-400 hover:border-[#F7DCE0] shadow-[0_4px_15px_rgba(202,186,177,0.2)] hover:shadow-[0_8px_25px_rgba(247,220,224,0.6)] transition-all duration-500 group">
     <div className="transform transition-transform duration-500 group-hover:-translate-y-1">
       {children}
     </div>

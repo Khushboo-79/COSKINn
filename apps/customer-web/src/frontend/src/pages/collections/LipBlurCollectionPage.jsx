@@ -10,13 +10,14 @@ import SEO from '../../components/common/SEO';
 // Import images (Using existing assets)
 import lipstickImg from '../../assets/images/cosmetics_lipstick.webp';
 import heroImg from '../../assets/images/cosmetics_main_hero.webp';
-import modelImg from '../../assets/images/cat_blur_model.webp'; // Assuming this exists based on previous file list
+import modelImg from '../../assets/images/fairytale_desktop_hero.webp';
+import fairyLipstick from '../../assets/images/fairy_lipstick_clean.webp';
 import floatingLipstick from '../../assets/images/cosmetics_floating_lipstick.webp';
 
-import imgSoftBlur from '../../assets/images/lip_balm_glossy_lips.webp';
-import imgVelvetBlur from '../../assets/images/velvet_blush.webp';
-import imgNaturalBlur from '../../assets/images/cat_lips_1784312601813.webp';
-import imgMatteBlur from '../../assets/images/cosmetics_silk_waves.webp';
+import imgSoftBlur from '../../assets/images/premium_fairy_hero_products.webp';
+import imgVelvetBlur from '../../assets/images/fairy_set_rosy_daydream.webp';
+import imgNaturalBlur from '../../assets/images/fairy_set_unicorn_grace.webp';
+import imgMatteBlur from '../../assets/images/fairy_set_unicorn_treasure.webp';
 
 const lipBlurProducts = [
   {
@@ -25,7 +26,7 @@ const lipBlurProducts = [
     shade: "Signature Pink",
     price: 699,
     originalPrice: 899,
-    image: lipstickImg,
+    image: fairyLipstick,
     badge: "Bestseller",
     discountBadge: "22% OFF"
   },
@@ -35,7 +36,7 @@ const lipBlurProducts = [
     shade: "Velvet Rose",
     price: 699,
     originalPrice: 899,
-    image: lipstickImg,
+    image: fairyLipstick,
     discountBadge: "22% OFF"
   },
   {
@@ -44,7 +45,7 @@ const lipBlurProducts = [
     shade: "Peach Cloud",
     price: 699,
     originalPrice: 899,
-    image: lipstickImg,
+    image: fairyLipstick,
     discountBadge: "22% OFF"
   },
   {
@@ -53,7 +54,7 @@ const lipBlurProducts = [
     shade: "Berry Matte",
     price: 699,
     originalPrice: 899,
-    image: lipstickImg,
+    image: fairyLipstick,
     discountBadge: "22% OFF"
   }
 ];
@@ -130,29 +131,42 @@ export default function LipBlurCollectionPage() {
       {/* =========================================
           SECTION 1: LUXURY HERO
           ========================================= */}
-      <section className="relative w-full min-h-screen flex flex-col lg:flex-row items-center pt-[110px] bg-[#FFFDFD] overflow-hidden">
+      <section className="relative w-full min-h-[100svh] flex flex-col justify-center pt-[110px] pb-20 overflow-hidden">
         
-        {/* Background Gradients (Starts from very top, covers entire hero) */}
-        <div className="absolute top-0 left-0 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-gradient-to-br from-[#FFC2D1]/40 to-[#FF8FB1]/20 rounded-full blur-[100px] -translate-x-1/4 -translate-y-1/4 pointer-events-none z-0" />
+        {/* Full Bleed Background Image */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <motion.img 
+            initial={{ scale: 1.35 }}
+            animate={{ scale: 1.25 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+            src={modelImg} 
+            alt="Model wearing Lip Blur" 
+            className="w-full h-full object-cover object-center"
+            onError={(e) => { e.target.src = heroImg }} 
+          />
+          {/* Gradients to ensure text readability */}
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent w-full md:w-[80%] lg:w-[60%]" />
+        </div>
 
         {/* Main Content Container */}
-        <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 relative z-20 flex flex-col lg:flex-row h-full">
+        <div className="max-w-[1400px] w-full mx-auto px-6 lg:px-12 relative z-20 flex flex-col h-full">
           
           {/* Left: Typography & CTA */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left pb-20 lg:pb-32 pt-16 lg:pt-32"
+            transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+            className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left py-10 lg:py-20"
           >
-            <span className="text-xs md:text-sm font-bold uppercase tracking-[0.4em] text-[#FF8FB1] mb-6 block bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-[#FFC2D1]/30 shadow-sm">
+            <span className="text-xs md:text-sm font-bold uppercase tracking-[0.4em] text-[#FF8FB1] mb-6 block bg-white/70 backdrop-blur-md px-4 py-2 rounded-full border border-[#FFC2D1]/50 shadow-sm">
               The New Era of Color
             </span>
-            <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading font-black tracking-tighter text-[#75263F] mb-6 leading-[1.05]">
+            <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading font-black tracking-tighter text-[#75263F] mb-6 leading-[1.05] drop-shadow-sm">
               Meet The <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#75263F] to-[#FF8FB1]">Lip Blur.</span>
             </h1>
-            <p className="text-lg md:text-xl text-[#75263F]/70 font-medium max-w-lg mb-10 leading-relaxed mx-auto lg:mx-0">
+            <p className="text-lg md:text-xl text-[#75263F]/90 font-medium max-w-lg mb-10 leading-relaxed mx-auto lg:mx-0 drop-shadow-sm">
               A feather-light, cloud-like formula that instantly diffuses and perfects. High-impact color with absolute zero weight.
             </p>
             <button 
@@ -165,47 +179,12 @@ export default function LipBlurCollectionPage() {
           </motion.div>
           
         </div>
-
-        {/* Right: Full Bleed Editorial Imagery (Positioned absolutely so it covers the right side but stays below navbar) */}
-        <div className="absolute bottom-0 right-0 w-full lg:w-[55%] h-[60%] lg:h-[85%] z-10 pointer-events-none">
-          <motion.div
-             initial={{ opacity: 0 }}
-             animate={{ opacity: 1 }}
-             transition={{ duration: 1.5, ease: "easeOut" }}
-             className="w-full h-full relative"
-          >
-            {/* Top Edge Fade Mask */}
-            <div 
-              className="w-full h-full"
-              style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 100%)' }}
-            >
-              {/* Bottom Edge Fade Mask */}
-              <div 
-                className="w-full h-full"
-                style={{ maskImage: 'linear-gradient(to top, transparent 0%, black 15%, black 100%)', WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 15%, black 100%)' }}
-              >
-                {/* Left Edge Fade Mask */}
-                <div 
-                  className="w-full h-full"
-                  style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)' }}
-                >
-                  <img 
-                    src={modelImg} 
-                    alt="Model wearing Lip Blur" 
-                    className="w-full h-full object-cover object-top lg:object-[center_10%] mix-blend-multiply"
-                    onError={(e) => { e.target.src = heroImg }} 
-                  />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
       </section>
 
       {/* =========================================
           SECTION 2: THE LIP BLUR COLLECTION
           ========================================= */}
-      <section id="collection" className="py-24 bg-[#FFFDFD] relative z-20">
+      <section id="collection" className="pt-[2px] pb-24 bg-[#FFFDFD] relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -283,7 +262,7 @@ export default function LipBlurCollectionPage() {
       {/* =========================================
           SECTION 3: FIND YOUR PERFECT FINISH
           ========================================= */}
-      <section className="py-16 bg-[#FFFDFD] relative overflow-hidden mt-[2px]">
+      <section className="pt-[3px] pb-16 bg-[#FFFDFD] relative overflow-hidden mt-[2px]">
         {/* Luxury Background Effects */}
         <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-gradient-to-bl from-[#FFC2D1]/20 to-[#FFFDFD] rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-gradient-to-tr from-[#FF8FB1]/15 to-[#FFFDFD] rounded-full blur-[100px] pointer-events-none" />
@@ -346,46 +325,7 @@ export default function LipBlurCollectionPage() {
         </div>
       </section>
 
-      {/* =========================================
-          SECTION 4: WHY LIP BLUR IS DIFFERENT
-          ========================================= */}
-      <section className="py-24 bg-[#FFFDFD] relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#FF8FB1]/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-5xl font-heading font-black text-[#75263F] tracking-wide uppercase">
-              Why It's Different
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
-            {features.map((feature, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="flex items-start gap-6 bg-white/60 backdrop-blur-md p-8 rounded-[30px] border border-white shadow-[0_10px_40px_rgba(255,194,209,0.3)] hover:bg-white transition-colors"
-              >
-                <div className="mt-1">
-                  <CheckCircle className="text-[#FF8FB1] w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-heading font-bold text-[#75263F] mb-3">{feature.title}</h4>
-                  <p className="text-[#75263F]/70 font-medium leading-relaxed">{feature.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

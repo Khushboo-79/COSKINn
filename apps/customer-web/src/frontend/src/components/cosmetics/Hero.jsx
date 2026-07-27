@@ -1,379 +1,312 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useTransform, useSpring } from 'framer-motion';
-import { cosmeticColors, fonts } from '../../constants/theme';
-import { ArrowRight, Sparkles, Heart, ShieldCheck, Clock, Gem } from 'lucide-react';
-import heroImage from '../../assets/images/cosmetics_hero_cluster.webp';
+import { motion, useTransform, useSpring, useScroll, useMotionValue } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { fonts } from '../../constants/theme';
+import { Sparkles, ArrowDown } from 'lucide-react';
+
+// Product Images
+import fairyPaletteClean from '../../assets/images/eyeshadow_hero_transparent.png';
+import fairyBlushClean from '../../assets/images/velvet_blush.png';
+import catPerfume from '../../assets/images/pocket_perfume.png';
+// Background
+import cosmeticsMagicalHeroBg from '../../assets/images/cosmetics_magical_hero_bg.png';
+
+const FloatingCrystal = ({ style, className }) => (
+  <motion.div className={`absolute ${className} aspect-[2/3]`} style={style}>
+    {/* Real Glass/Refractive Diamond using CSS Glassmorphism */}
+    <div
+      className="w-full h-full absolute top-0 left-0"
+      style={{
+        clipPath: 'polygon(50% 0%, 100% 30%, 50% 100%, 0% 30%)',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.02) 100%)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }}
+    >
+      {/* 3D Facet Lines */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-white/50"></div>
+      <div className="absolute top-[30%] left-0 w-full h-[1px] bg-white/40"></div>
+
+      {/* Shiny edge reflection */}
+      <div
+        className="absolute top-0 left-0 w-[50%] h-full"
+        style={{
+          background: 'linear-gradient(to right, rgba(255,255,255,0.3) 0%, transparent 100%)',
+          clipPath: 'polygon(100% 0%, 100% 100%, 0% 30%)'
+        }}
+      ></div>
+    </div>
+  </motion.div>
+);
 
 export default function Hero() {
   const containerRef = useRef(null);
+  const { scrollY } = useScroll();
 
-  // Scroll Parallax removed
+  // Scroll Parallax for Crystals
+  const c1Scale = useTransform(scrollY, [0, 800], [1, 6]);
+  const c1X = useTransform(scrollY, [0, 800], [0, -300]);
+  const c1Y = useTransform(scrollY, [0, 800], [0, -100]);
+  const c1Rotate = useTransform(scrollY, [0, 800], [15, -45]);
 
-  // 4. Mouse Parallax setup
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const c2Scale = useTransform(scrollY, [0, 800], [0.8, 5]);
+  const c2X = useTransform(scrollY, [0, 800], [0, 400]);
+  const c2Y = useTransform(scrollY, [0, 800], [0, 200]);
+  const c2Rotate = useTransform(scrollY, [0, 800], [-20, 60]);
+
+  const c3Scale = useTransform(scrollY, [0, 800], [0.6, 4.5]);
+  const c3Y = useTransform(scrollY, [0, 800], [0, -250]);
+  const c3Rotate = useTransform(scrollY, [0, 800], [45, 90]);
+
+  // Mouse Parallax setup with useMotionValue to prevent React re-renders
+  const mouseXRaw = useMotionValue(0);
+  const mouseYRaw = useMotionValue(0);
+
+  const mouseX = useSpring(mouseXRaw, { stiffness: 60, damping: 22 });
+  const mouseY = useSpring(mouseYRaw, { stiffness: 60, damping: 22 });
+
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
     const { left, top, width, height } = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - left) / width - 0.5;
     const y = (e.clientY - top) / height - 0.5;
-    setMousePosition({ x, y });
+    mouseXRaw.set(x);
+    mouseYRaw.set(y);
   };
 
-  const mouseX = useSpring(mousePosition.x * 20, { stiffness: 50, damping: 20 });
-  const mouseY = useSpring(mousePosition.y * 20, { stiffness: 50, damping: 20 });
+  // Parallax transforms for products
+  const px1 = useTransform(mouseX, (x) => x * -20);
+  const py1 = useTransform(mouseY, (y) => y * -20);
+  const px2 = useTransform(mouseX, (x) => x * 35);
+  const py2 = useTransform(mouseY, (y) => y * 35);
+  const px3 = useTransform(mouseX, (x) => x * -40);
+  const py3 = useTransform(mouseY, (y) => y * -40);
+  const px4 = useTransform(mouseX, (x) => x * 25);
+  const py4 = useTransform(mouseY, (y) => y * 25);
 
-  const imageX = useTransform(mouseX, value => value * -0.5); // Image moves slightly 
-  const imageY = useTransform(mouseY, value => value * -0.5);
-  const textX = useTransform(mouseX, value => value * -0.2);  // Text moves less
-  const textY = useTransform(mouseY, value => value * -0.2);
+  // Animation variants for staggered entrance
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2, delayChildren: 0.1 }
+    }
+  };
 
-  // 10. Luxury Light Particles
-  const [particles, setParticles] = useState([]);
-  useEffect(() => {
-    setParticles(Array.from({ length: 15 }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      duration: Math.random() * 20 + 20,
-      delay: Math.random() * 5
-    })));
-  }, []);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.9 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { type: 'spring', stiffness: 50, damping: 15 }
+    }
+  };
+
+  const productFloat = {
+    animate: (custom) => ({
+      y: [0, custom.y, 0],
+      rotate: [custom.r, custom.r + 2, custom.r - 2, custom.r],
+      transition: {
+        duration: custom.duration,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: custom.delay
+      }
+    })
+  };
 
   return (
-    <motion.section
+    <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      style={{ backgroundColor: '#FCF8F9' }}
-      className="relative w-full min-h-[90vh] lg:min-h-[850px] overflow-hidden flex items-center transform-gpu"
+      className="cosmetics-hero-wrapper relative w-full h-[100vh]"
     >
+      {/* =========================================
+          FIXED LAYER: Background & Products
+          This stays pinned in place while the page scrolls!
+          ========================================= */}
+      <div className="fixed top-0 left-0 w-full h-full z-0 overflow-hidden pointer-events-none">
 
-      {/* 
-        =========================================
-        5. Background Motion
-        =========================================
-      */}
-      <motion.div
-        animate={{ opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
-      >
-        <div
-          className="absolute top-[-20%] left-[-10%] w-[60%] h-[70%] rounded-[100%] blur-[100px]"
-          style={{ background: cosmeticColors.primary }}
-        />
-        <div
-          className="absolute right-[5%] top-[10%] w-[50vw] h-[80vh] border-[1px] rounded-full opacity-20"
-          style={{ borderColor: cosmeticColors.accent }}
-        />
-      </motion.div>
-
-      {/* 
-        =========================================
-        10. Luxury Light Particles
-        =========================================
-      */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {particles.map(p => (
-          <motion.div
-            key={p.id}
-            initial={{ y: `${p.y}vh`, x: `${p.x}vw`, opacity: 0 }}
-            animate={{
-              y: [`${p.y}vh`, `${p.y - 20}vh`],
-              opacity: [0, 0.3, 0]
-            }}
-            transition={{
-              duration: p.duration,
-              delay: p.delay,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute rounded-full bg-white blur-[1px]"
-            style={{ width: p.size, height: p.size }}
-          />
-        ))}
-      </div>
-
-      {/* 
-        =========================================
-        HERO IMAGE (Requirement 2, 3, 4)
-        =========================================
-      */}
-      <motion.div
-        style={{ x: imageX, y: imageY }}
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-        className="hidden lg:block absolute top-0 right-0 w-[65%] h-full pointer-events-none z-0"
-      >
-        {/* 2. Luxury Product Floating Effect */}
-        <motion.div
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-          className="w-full h-full relative"
-        >
-          {/* 3. Soft Product Glow */}
-          <motion.div
-            animate={{ opacity: [0, 0.3, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0 bg-white/30 blur-3xl mix-blend-overlay"
-          />
+        {/* Magical Background Image */}
+        <div className="absolute inset-0 z-0">
           <img
-            src={heroImage}
-            alt="COSKINn Luxury Cosmetics Collection"
-            className="w-full h-full object-cover object-[center_right]"
-            style={{
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
-              maskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)'
-            }}
+            src={cosmeticsMagicalHeroBg}
+            alt="Magical Background"
+            className="w-full h-full object-cover object-center opacity-90 mix-blend-multiply"
           />
-        </motion.div>
-      </motion.div>
+          <div className="hero-bg-overlay absolute inset-0 bg-gradient-to-r from-[#FFF0F4]/80 via-[#FFF0F4]/30 to-transparent"></div>
 
-      {/* 
-        =========================================
-        CONTENT COMPOSITION (Requirement 1)
-        =========================================
-      */}
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-2 h-full pt-[100px] lg:pt-0 pb-10 lg:pb-0 items-center pointer-events-auto">
+          {/* Glowing Arch Simulation */}
+          <div className="absolute top-1/2 right-[25%] -translate-y-1/2 w-[60vh] h-[60vh] rounded-full border-[10px] border-white/20 shadow-[0_0_80px_rgba(255,255,255,0.4)] pointer-events-none"></div>
+          <div className="absolute top-1/2 right-[25%] -translate-y-1/2 w-[55vh] h-[55vh] rounded-full bg-white/10 blur-xl pointer-events-none"></div>
+        </div>
 
-        {/* --- DESKTOP ONLY SIDE: TYPOGRAPHY & BUTTONS --- */}
-        <motion.div
-          style={{ x: textX, y: textY }}
-          initial="hidden"
-          animate="visible"
-          variants={{
-            visible: { transition: { staggerChildren: 0.15 } }
-          }}
-          className="hidden lg:flex flex-col justify-center w-full max-w-xl z-20 mt-4 lg:mt-0"
-        >
-          {/* Badge */}
+        {/* Floating Sparks */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-white rounded-full shadow-[0_0_10px_3px_rgba(255,255,255,0.8)]"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                scale: Math.random() * 0.5 + 0.5,
+              }}
+              animate={{
+                y: [0, -40, 0],
+                opacity: [0.2, 0.8, 0.2]
+              }}
+              transition={{
+                duration: Math.random() * 3 + 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: Math.random() * 2
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Scroll-Animated Floating Crystals */}
+        <FloatingCrystal
+          className="top-[20%] left-[10%] w-[90px] z-10"
+          style={{ scale: c1Scale, x: c1X, y: c1Y, rotate: c1Rotate }}
+        />
+        <FloatingCrystal
+          className="top-[45%] right-[25%] w-[110px] z-10"
+          style={{ scale: c2Scale, x: c2X, y: c2Y, rotate: c2Rotate }}
+        />
+        <FloatingCrystal
+          className="bottom-[15%] left-[45%] w-[70px] z-10"
+          style={{ scale: c3Scale, y: c3Y, rotate: c3Rotate }}
+        />
+
+        {/* Fixed Products Layout */}
+        <div className="relative z-10 w-full h-full max-w-[1600px] mx-auto flex flex-col lg:flex-row items-center justify-between px-6 lg:px-16 pt-32 lg:pt-40">
+          {/* Empty spacer for the left side text */}
+          <div className="w-full lg:w-[45%] hidden lg:block"></div>
+
+          {/* RIGHT: Staggered Floating Products */}
           <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 15 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-            }}
-            className="flex items-center gap-2 mb-4 lg:mb-6"
+            className="w-full lg:w-[55%] h-full relative mt-10 lg:mt-0"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
           >
-            <span className="text-[10px] lg:text-xs tracking-[0.25em] font-bold uppercase flex items-center gap-2" style={{ color: cosmeticColors.accent }}>
-              New Collection <Sparkles size={14} />
-            </span>
-          </motion.div>
-
-          {/* Heading */}
-          <motion.h1
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } }
-            }}
-            className="text-[42px] md:text-6xl lg:text-[5rem] xl:text-[5.5rem] font-normal text-gray-900 leading-[1.1] mb-4 lg:mb-6"
-            style={{ fontFamily: fonts.cosmetics.heading }}
-          >
-            Reveal Your <br />
-            <span className="italic text-[44px] md:text-6xl lg:text-[5rem] xl:text-[5.5rem]" style={{ color: cosmeticColors.accent, fontWeight: 300 }}>
-              Natural Glow
-            </span>
-          </motion.h1>
-
-          {/* Description */}
-          <motion.p
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-            }}
-            className="text-[15px] lg:text-lg text-gray-700 font-medium max-w-md leading-[1.6] lg:leading-[1.7] mb-6 lg:mb-10"
-            style={{ fontFamily: fonts.cosmetics.body }}
-          >
-            High-performance cosmetics that enhance your natural beauty with elegance and confidence.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-            }}
-            className="flex flex-col sm:flex-row items-center gap-3 lg:gap-4 w-full sm:w-auto mb-6 lg:mb-12"
-          >
-            <button
-              className="w-full sm:w-auto px-8 py-3.5 lg:py-3.5 text-white rounded-full transition-transform duration-500 hover:-translate-y-1 relative overflow-hidden group shadow-[0_10px_25px_-5px_rgba(255,143,177,0.5)]"
-              style={{ background: `linear-gradient(90deg, ${cosmeticColors.accent} 0%, ${cosmeticColors.primary} 100%)` }}
-            >
-              <span className="relative z-10 text-[13px] lg:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center gap-2">
-                Shop Cosmetics
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </span>
-              <motion.div
-                animate={{ x: ['-200%', '300%'] }}
-                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4, ease: "linear" }}
-                className="absolute inset-0 w-[30%] bg-white/30 -skew-x-12 z-0"
-              />
-              <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-in-out" />
-            </button>
-
-            <button
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-transparent text-gray-900 border border-gray-300 transition-all duration-500 hover:-translate-y-1 hover:border-gray-500 hover:bg-white"
-            >
-              <span className="text-[13px] lg:text-xs tracking-[0.1em] font-bold uppercase flex items-center justify-center">
-                Explore Collection
-              </span>
-            </button>
-          </motion.div>
-
-          {/* Trust Badges */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-            }}
-            className="grid grid-cols-2 gap-x-2 lg:gap-x-4 gap-y-4 lg:gap-y-6 max-w-lg"
-          >
-            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
-              <Heart size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
-              <div className="flex flex-col">
-                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Cruelty Free</span>
-                <span className="text-[9px] lg:text-[10px] text-gray-500">Love Animals</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
-              <ShieldCheck size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
-              <div className="flex flex-col">
-                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Dermatologist Tested</span>
-                <span className="text-[9px] lg:text-[10px] text-gray-500">Gentle on Skin</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
-              <Sparkles size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
-              <div className="flex flex-col">
-                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Long Lasting</span>
-                <span className="text-[9px] lg:text-[10px] text-gray-500">All Day Wear</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 lg:gap-3 group cursor-default">
-              <Gem size={16} strokeWidth={1.5} className="text-gray-800 transition-transform group-hover:scale-110 lg:w-5 lg:h-5" />
-              <div className="flex flex-col">
-                <span className="text-[10px] lg:text-[11px] font-bold text-gray-900 leading-tight">Premium Quality</span>
-                <span className="text-[9px] lg:text-[10px] text-gray-500">Made With Care</span>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* 
-          =========================================
-          MOBILE ONLY DEDICATED LAYOUT
-          =========================================
-        */}
-        <div className="flex lg:hidden flex-col items-center w-full z-20 pt-16 pb-12 relative text-center">
-          
-          {/* Subtle Mobile Particles */}
-          <div className="absolute inset-0 pointer-events-none z-0">
-            <motion.div animate={{ opacity: [0.3, 0.8, 0.3], scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-10 left-10 w-1.5 h-1.5 bg-white rounded-full blur-[1px]" />
-            <motion.div animate={{ opacity: [0.2, 0.6, 0.2] }} transition={{ duration: 5, repeat: Infinity }} className="absolute top-40 right-6 w-2 h-2 bg-pink-200 rounded-full blur-[2px]" />
-            <motion.div animate={{ opacity: [0.4, 0.9, 0.4] }} transition={{ duration: 3, repeat: Infinity }} className="absolute bottom-40 left-8 w-1 h-1 bg-white rounded-full" />
-            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[90vw] h-[30vh] bg-white/20 blur-[60px] rounded-full" />
-          </div>
-
-          <div className="relative z-10 flex flex-col items-center w-full">
-            
-            {/* Label */}
-            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="mb-6">
-              <span className="text-[10px] tracking-[0.25em] font-bold uppercase flex items-center justify-center gap-2" style={{ color: cosmeticColors.accent }}>
-                New Collection <Sparkles size={12} />
-              </span>
-            </motion.div>
-
-            {/* Headline */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.1, ease: "easeOut" }}
-              className="text-[44px] font-normal text-gray-900 leading-[1.05] mb-5"
-              style={{ fontFamily: fonts.cosmetics.heading }}
-            >
-              Reveal Your <br />
-              <span className="italic text-[48px]" style={{ color: cosmeticColors.accent, fontWeight: 300 }}>
-                Natural Glow
-              </span>
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="text-[15px] text-gray-700 font-medium max-w-[280px] leading-[1.6] mb-8"
-              style={{ fontFamily: fonts.cosmetics.body }}
-            >
-              Luxury cosmetics crafted to enhance beauty.
-            </motion.p>
-
-            {/* Buttons */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-              className="flex flex-col items-center w-full max-w-[280px] gap-6 mb-2"
-            >
-              <button
-                className="w-full py-4 text-white rounded-full transition-transform duration-500 hover:-translate-y-1 relative overflow-hidden shadow-[0_15px_30px_-10px_rgba(255,143,177,0.6)]"
-                style={{ background: `linear-gradient(90deg, ${cosmeticColors.accent} 0%, ${cosmeticColors.primary} 100%)` }}
-              >
-                <span className="relative z-10 text-[12px] tracking-[0.15em] font-bold uppercase flex items-center justify-center">
-                  Shop Cosmetics
-                </span>
-                <motion.div animate={{ x: ['-200%', '300%'] }} transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4, ease: "linear" }} className="absolute inset-0 w-[30%] bg-white/30 -skew-x-12 z-0" />
-              </button>
-              
-              <button className="text-[12px] tracking-[0.1em] font-bold uppercase text-gray-500 flex items-center gap-1 hover:text-gray-900 transition-colors">
-                Explore Collection <ArrowRight size={14} />
-              </button>
-            </motion.div>
-
-            {/* Floating Luxury Image Composition */}
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.5, delay: 0.4, ease: "easeOut" }}
-              className="w-full relative mt-8 mb-12 flex justify-center items-center"
-            >
-              <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="w-[120%] max-w-[450px] relative z-10 flex justify-center -ml-4">
-                {/* 
-                  mix-blend-multiply dissolves the white bounding box of the image, 
-                  making the products appear seamlessly floating on the editorial background 
-                */}
-                <img
-                  src={heroImage}
-                  alt="Floating Cosmetics"
-                  className="w-full h-auto object-contain mix-blend-multiply"
+            {/* 1. Eyeshadow Palette (Center Right) */}
+            <motion.div variants={itemVariants} className="hero-product absolute top-[25%] right-[5%] lg:right-[10%] w-[380px] lg:w-[480px] z-40">
+              <motion.div style={{ x: px3, y: py3 }}>
+                <motion.img
+                  custom={{ y: -15, r: -5, duration: 6, delay: 0.2 }}
+                  variants={productFloat}
+                  animate="animate"
+                  src={fairyPaletteClean}
+                  alt="Eyeshadow Palette"
+                  className="w-full object-contain drop-shadow-[0_25px_50px_rgba(117,38,63,0.35)]"
                 />
-                {/* Back glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-white/70 blur-[40px] rounded-full -z-10" />
-                {/* Ground shadow simulation */}
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[60%] h-6 bg-[#FF0069]/10 blur-xl rounded-full -z-10" />
               </motion.div>
             </motion.div>
 
-            {/* 2x2 Minimal Feature Grid */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-              className="grid grid-cols-2 gap-x-8 gap-y-10 w-full max-w-[320px]"
-            >
-              <div className="flex flex-col items-center gap-2.5">
-                <Heart size={20} strokeWidth={1} className="text-gray-900" />
-                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Cruelty Free</span>
-              </div>
-              <div className="flex flex-col items-center gap-2.5">
-                <ShieldCheck size={20} strokeWidth={1} className="text-gray-900" />
-                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Dermatologist<br/>Tested</span>
-              </div>
-              <div className="flex flex-col items-center gap-2.5">
-                <Sparkles size={20} strokeWidth={1} className="text-gray-900" />
-                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Long Lasting</span>
-              </div>
-              <div className="flex flex-col items-center gap-2.5">
-                <Gem size={20} strokeWidth={1} className="text-gray-900" />
-                <span className="text-[10px] font-bold text-gray-900 tracking-wider uppercase text-center">Premium<br/>Quality</span>
-              </div>
+            {/* 2. Velvet Blush (Bottom Left) */}
+            <motion.div variants={itemVariants} className="hero-product absolute bottom-[15%] left-[5%] lg:left-[15%] w-[260px] lg:w-[320px] z-30">
+              <motion.div style={{ x: px4, y: py4 }}>
+                <motion.img
+                  custom={{ y: -25, r: 10, duration: 5, delay: 0.5 }}
+                  variants={productFloat}
+                  animate="animate"
+                  src={fairyBlushClean}
+                  alt="Velvet Blush"
+                  className="w-full object-contain drop-shadow-[0_20px_40px_rgba(117,38,63,0.35)]"
+                />
+              </motion.div>
             </motion.div>
 
-          </div>
+            {/* 3. Pocket Perfume (Top Center) */}
+            <motion.div variants={itemVariants} className="hero-product absolute top-[10%] right-[40%] lg:right-[45%] w-[160px] lg:w-[220px] z-20">
+              <motion.div style={{ x: px2, y: py1 }}>
+                <motion.img
+                  custom={{ y: -18, r: 15, duration: 5.5, delay: 0.8 }}
+                  variants={productFloat}
+                  animate="animate"
+                  src={catPerfume}
+                  alt="Pocket Perfume"
+                  className="w-full object-contain drop-shadow-[0_20px_40px_rgba(117,38,63,0.35)]"
+                />
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
-
-        <div className="hidden lg:block pointer-events-none" />
       </div>
-    </motion.section>
+
+      {/* =========================================
+          RELATIVE LAYER: Text Content
+          This scrolls up naturally with the page!
+          ========================================= */}
+      <div className="relative z-10 w-full h-full max-w-[1600px] mx-auto flex flex-col lg:flex-row items-center justify-between px-6 lg:px-16 pt-32 lg:pt-40 pointer-events-none">
+
+        {/* LEFT: Text Content */}
+        <motion.div
+          className="hero-text-content w-full lg:w-[45%] flex flex-col justify-center text-[#75263F] z-20 mt-16 lg:mt-12 pointer-events-auto"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-[1px] w-12 bg-[#D74D76]"></div>
+            <span className="text-xs font-bold tracking-[0.25em] text-[#D74D76] uppercase">
+              THE FAIRYTALE COLLECTION
+            </span>
+            <Sparkles className="w-4 h-4 text-[#D74D76]" />
+          </div>
+
+          <h1 className="text-6xl md:text-[5.5rem] lg:text-[6.5rem] leading-[1.05] tracking-tight mb-6" style={{ fontFamily: fonts.cosmetics.heading }}>
+            Where <span className="font-cursive italic text-[#D74D76] font-normal pr-4">Magic</span><br />
+            Meets Beauty
+          </h1>
+
+          <p className="text-base md:text-lg text-[#75263F]/80 max-w-md font-medium mb-10 leading-relaxed" style={{ fontFamily: fonts.cosmetics.body }}>
+            Luxury cosmetics crafted with enchanted elegance and timeless beauty.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4 mb-12">
+            <Link to="/shop" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#D74D76] to-[#E56B91] text-white text-xs font-bold tracking-widest uppercase rounded-md shadow-[0_10px_25px_rgba(215,77,118,0.3)] hover:shadow-[0_15px_30px_rgba(215,77,118,0.4)] transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+              Explore Collection <Sparkles className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Trust Badge */}
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-3">
+              <img src="https://i.pravatar.cc/100?img=5" alt="User" className="w-10 h-10 rounded-full border-2 border-[#FFF0F4] object-cover" />
+              <img src="https://i.pravatar.cc/100?img=1" alt="User" className="w-10 h-10 rounded-full border-2 border-[#FFF0F4] object-cover" />
+              <img src="https://i.pravatar.cc/100?img=9" alt="User" className="w-10 h-10 rounded-full border-2 border-[#FFF0F4] object-cover" />
+              <img src="https://i.pravatar.cc/100?img=4" alt="User" className="w-10 h-10 rounded-full border-2 border-[#FFF0F4] object-cover" />
+              <div className="w-10 h-10 rounded-full border-2 border-[#FFF0F4] bg-[#D74D76] text-white text-[10px] font-bold flex items-center justify-center z-10">
+                50K+
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-[#75263F]">50K+ Happy Beauty Lovers</span>
+              <span className="text-xs text-[#75263F]/70 font-medium">Trusted by beauty creators worldwide</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Empty space on right so the fixed products show through */}
+        <div className="w-full lg:w-[55%] h-full hidden lg:block"></div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 opacity-70">
+        <span className="text-[9px] font-bold tracking-[0.2em] text-[#75263F] uppercase">Scroll to explore</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ArrowDown className="w-4 h-4 text-[#75263F]" />
+        </motion.div>
+      </div>
+
+    </div>
   );
 }

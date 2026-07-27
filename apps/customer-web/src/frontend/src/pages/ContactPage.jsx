@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { 
-  MapPin, Phone, Mail, MessageCircle, 
+import {
+  MapPin, Phone, Mail, MessageCircle,
   ChevronDown, HelpCircle, Package, HeartHandshake,
   ArrowRight, Send, Map, Navigation
 } from 'lucide-react';
 import Footer from '../components/common/Footer';
 import heroImg from '../assets/images/contact_hero_desk.webp';
+import cosmeticsHeroImg from '../assets/images/fairy_events_campaign_bright.webp';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import apiClient from '../utils/apiClient';
+import SEO from '../components/common/SEO';
 
 export default function ContactPage() {
+  const { theme } = useTheme();
+  const isCosmetics = theme === 'cosmetics';
   const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -58,17 +63,17 @@ export default function ContactPage() {
     setLoading(true);
     setErrorMsg("");
     setSuccessMsg("");
-    
+
     try {
       const userId = user?.id || "guest"; // Fallback if not logged in
       const combinedSubject = `${formState.subject} - From: ${formState.name} (${formState.email}) - Message: ${formState.message}`;
-      
+
       await apiClient.post('/support/tickets', {
         userId,
         subject: combinedSubject,
         priority: 'NORMAL'
       });
-      
+
       setSuccessMsg('Message Sent Successfully! We will get back to you soon.');
       setFormState({ name: '', email: '', phone: '', subject: 'Product Question', message: '' });
     } catch (err) {
@@ -81,27 +86,32 @@ export default function ContactPage() {
 
   return (
     <div className="bg-[#FFFDFD] min-h-screen font-sans selection:bg-[#FF2D7A]/20">
+      <SEO 
+        title="Contact COSKINn | Get in Touch" 
+        description="Have questions about our skincare or cosmetics? Contact the COSKINn team for support, orders, and inquiries."
+        url="https://www.coskinn.com/contact"
+      />
       
       {/* 1. PREMIUM HERO SECTION */}
       <section className="relative w-full overflow-hidden bg-gradient-to-br from-[#FFF0F5] via-[#FFFDFD] to-[#FFF5F8]">
         {/* Right Side Image */}
         <div className="absolute inset-0 z-0 flex justify-end">
           <div className="w-full lg:w-[55%] h-full relative">
-            <motion.img 
+            <motion.img
               initial={{ opacity: 0, scale: 1.05 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              src={heroImg} 
-              alt="COSKINn Luxury Skincare Contact Desk" 
-              className="w-full h-full object-cover object-center" 
+              src={isCosmetics ? cosmeticsHeroImg : heroImg}
+              alt={isCosmetics ? "COSKINn Magical Cosmetics Contact" : "COSKINn Luxury Skincare Contact Desk"}
+              className="w-full h-full object-cover object-center"
             />
             {/* Gradient Overlay for seamless blending (softened to remove harsh center line) */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDFD] via-[#FFFDFD]/60 to-transparent w-full"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#FFFDFD] via-[#FFFDFD]/80 to-transparent lg:hidden h-full"></div>
 
             {/* Floating Cards (Moved inside the image container so they float naturally over it) */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }} 
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="hidden lg:flex absolute left-8 top-[30%] bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-[#FF2D7A]/10 shadow-[0_10px_30px_rgba(0,0,0,0.05)] items-center gap-3 z-20"
             >
@@ -114,8 +124,8 @@ export default function ContactPage() {
               </div>
             </motion.div>
 
-            <motion.div 
-              animate={{ y: [0, 10, 0] }} 
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               className="hidden lg:flex absolute right-12 bottom-[20%] bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-[#FF2D7A]/10 shadow-[0_10px_30px_rgba(0,0,0,0.05)] items-center gap-3 z-20"
             >
@@ -133,7 +143,7 @@ export default function ContactPage() {
         {/* Left Side Content */}
         <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-12 relative z-10 pt-[140px] lg:pt-[180px] pb-20 lg:pb-28">
           <div className="w-full lg:w-[50%] lg:pr-12 relative">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
@@ -143,21 +153,21 @@ export default function ContactPage() {
                 <span>/</span>
                 <span className="text-[#FF2D7A]">Contact</span>
               </div>
-              
+
               <span className="inline-block px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[#FF2D7A]/20 text-[#FF2D7A] text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
                 CONTACT COSKINn
               </span>
 
               <h1 className="text-5xl lg:text-7xl font-heading font-black text-[#1B1B1B] leading-[1.1] mb-6 tracking-tight">
-                Let's Talk <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2D7A] to-[#FF8EAA] italic font-light">About Your Skin.</span>
+                Let's Talk <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF2D7A] to-[#FF8EAA] italic font-light">About Your Skin.</span>
               </h1>
-              
+
               <p className="text-lg lg:text-xl text-gray-600 font-medium leading-relaxed max-w-md mb-10">
                 Whether you need skincare advice, help with your order, or want to collaborate with COSKINn, our team is always here for you.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button 
+                <button
                   onClick={() => document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' })}
                   className="px-8 py-4 bg-[#FF2D7A] text-white rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#E01B63] hover:shadow-[0_10px_30px_rgba(255,45,122,0.4)] transition-all duration-300 w-max"
                 >
@@ -178,7 +188,7 @@ export default function ContactPage() {
               { icon: Phone, title: "Call Us", info: "+91 98765 43210", desc: "Mon-Sat, 9am - 6pm IST" },
               { icon: Mail, title: "Email", info: "hello@coskinn.com", desc: "We aim to reply within 24h." }
             ].map((card, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -202,10 +212,10 @@ export default function ContactPage() {
       <section id="contact-form" className="py-16 lg:py-24 bg-[#FFFDFD]">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
-            
+
             {/* Left: Form */}
             <div className="w-full lg:w-[55%]">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -219,7 +229,7 @@ export default function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Full Name *</label>
-                      <input 
+                      <input
                         type="text" required name="name" value={formState.name} onChange={handleInputChange}
                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:border-[#FF2D7A] focus:ring-1 focus:ring-[#FF2D7A] transition-all"
                         placeholder="Jane Doe"
@@ -227,18 +237,18 @@ export default function ContactPage() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Email Address *</label>
-                      <input 
+                      <input
                         type="email" required name="email" value={formState.email} onChange={handleInputChange}
                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:border-[#FF2D7A] focus:ring-1 focus:ring-[#FF2D7A] transition-all"
                         placeholder="jane@example.com"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Phone Number</label>
-                      <input 
+                      <input
                         type="tel" name="phone" value={formState.phone} onChange={handleInputChange}
                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:border-[#FF2D7A] focus:ring-1 focus:ring-[#FF2D7A] transition-all"
                         placeholder="+1 (555) 000-0000"
@@ -247,7 +257,7 @@ export default function ContactPage() {
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Subject *</label>
                       <div className="relative">
-                        <select 
+                        <select
                           required name="subject" value={formState.subject} onChange={handleInputChange}
                           className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:border-[#FF2D7A] focus:ring-1 focus:ring-[#FF2D7A] transition-all appearance-none cursor-pointer"
                         >
@@ -265,7 +275,7 @@ export default function ContactPage() {
 
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Message *</label>
-                    <textarea 
+                    <textarea
                       required name="message" value={formState.message} onChange={handleInputChange}
                       rows="5"
                       className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:border-[#FF2D7A] focus:ring-1 focus:ring-[#FF2D7A] transition-all resize-none"
@@ -276,8 +286,8 @@ export default function ContactPage() {
                   {successMsg && <p className="text-green-600 font-bold text-sm">{successMsg}</p>}
                   {errorMsg && <p className="text-red-500 font-bold text-sm">{errorMsg}</p>}
 
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={loading}
                     className="w-full bg-[#FF2D7A] text-white rounded-xl py-4 font-bold uppercase tracking-widest text-sm hover:bg-[#E01B63] hover:shadow-[0_10px_30px_rgba(255,45,122,0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -326,10 +336,10 @@ export default function ContactPage() {
             <h2 className="text-4xl lg:text-5xl font-heading font-black text-[#1B1B1B] mb-4">Common Questions</h2>
             <p className="text-gray-600 font-medium">Quick answers to things you might be wondering about.</p>
           </div>
-          
+
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -337,7 +347,7 @@ export default function ContactPage() {
                 transition={{ delay: idx * 0.1 }}
                 className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm"
               >
-                <button 
+                <button
                   onClick={() => setOpenFaq(openFaq === idx ? -1 : idx)}
                   className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors focus:outline-none"
                 >
@@ -374,7 +384,7 @@ export default function ContactPage() {
           <div className="bg-gray-50 rounded-[3rem] p-8 lg:p-16 flex flex-col md:flex-row items-center justify-between gap-10 overflow-hidden relative">
             {/* Background Map Graphic (Subtle) */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-            
+
             <div className="w-full md:w-1/2 relative z-10">
               <div className="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-[#FF2D7A] mb-6">
                 <MapPin size={28} />
@@ -412,17 +422,17 @@ export default function ContactPage() {
       <section className="py-16 bg-[#FFFDFD]">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
+
             {/* Newsletter */}
             <div className="bg-gradient-to-br from-[#FF2D7A] to-[#FF8EAA] rounded-[2.5rem] p-10 lg:p-14 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[60px] pointer-events-none"></div>
               <h2 className="text-3xl lg:text-4xl font-heading font-black mb-4 relative z-10">Stay Connected</h2>
               <p className="font-medium opacity-90 mb-8 relative z-10 max-w-sm">Receive skincare tips, new launches and exclusive offers directly to your inbox.</p>
-              
+
               <form className="relative z-10 flex flex-col sm:flex-row gap-3">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email" 
+                <input
+                  type="email"
+                  placeholder="Enter your email"
                   className="flex-1 bg-white/20 border border-white/30 rounded-full px-6 py-4 text-white placeholder:text-white/70 focus:outline-none focus:bg-white/30 transition-colors"
                 />
                 <button type="submit" className="px-8 py-4 bg-white text-[#FF2D7A] rounded-full font-bold uppercase tracking-widest text-xs hover:bg-gray-50 transition-colors shadow-lg">
@@ -435,15 +445,15 @@ export default function ContactPage() {
             <div className="bg-gray-50 rounded-[2.5rem] p-10 lg:p-14 flex flex-col justify-center items-center text-center">
               <h2 className="text-3xl lg:text-4xl font-heading font-black text-[#1B1B1B] mb-4">Follow Our Journey</h2>
               <p className="text-gray-500 font-medium mb-10 max-w-sm">Join our community for daily skincare routines, glowing results, and behind-the-scenes.</p>
-              
+
               <div className="flex flex-wrap justify-center gap-4">
                 {['Instagram', 'Pinterest', 'Facebook', 'YouTube'].map((social, idx) => (
-                  <a 
-                    key={idx} 
-                    href="#" 
+                  <a
+                    key={idx}
+                    href="#"
                     className="w-16 h-16 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-[#1B1B1B] hover:bg-[#FF2D7A] hover:text-white hover:shadow-[0_10px_20px_rgba(255,45,122,0.3)] hover:-translate-y-1 transition-all duration-300"
                   >
-                    <span className="text-xs font-bold tracking-wider uppercase">{social.slice(0,2)}</span>
+                    <span className="text-xs font-bold tracking-wider uppercase">{social.slice(0, 2)}</span>
                   </a>
                 ))}
               </div>
@@ -459,7 +469,7 @@ export default function ContactPage() {
           <h2 className="text-4xl lg:text-5xl font-heading font-black text-[#1B1B1B] mb-6">Still Have Questions?</h2>
           <p className="text-xl text-gray-500 font-medium mb-10">Our skincare experts are ready to help you achieve your best skin yet.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button 
+            <button
               onClick={() => document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' })}
               className="px-8 py-4 bg-[#FF2D7A] text-white rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#E01B63] hover:shadow-[0_10px_30px_rgba(255,45,122,0.3)] transition-all duration-300"
             >
