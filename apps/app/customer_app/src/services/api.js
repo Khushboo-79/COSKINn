@@ -2,9 +2,10 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-// We use the PC's local IP address so that physical Android devices on the same Wi-Fi can connect
-// The backend uses a global prefix '/api', so we must append it.
-const BASE_URL = 'http://127.0.0.1:3000/api';
+import { Config } from '../config';
+
+// Base URL is now dynamically selected based on the environment (DEV vs PROD)
+const BASE_URL = Config.API_URL;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -50,6 +51,9 @@ api.interceptors.response.use(
           position: 'top',
         });
         // In a real app, you would dispatch a logout action here or trigger a navigation event
+        const { store } = require('../redux/store');
+        const { logout } = require('../redux/slices/authSlice');
+        store.dispatch(logout());
       } else if (status >= 500) {
         // Server Error
         Toast.show({

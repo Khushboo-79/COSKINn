@@ -1,4 +1,4 @@
-package com.customer_app
+package com.fairenne.app
 
 import android.app.Application
 import com.facebook.react.PackageList

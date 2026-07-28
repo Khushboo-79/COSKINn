@@ -10,6 +10,7 @@ import { setCredentials } from '../redux/slices/authSlice';
 import { fetchProfile } from '../redux/slices/profileSlice';
 import AuthScreen from '../screens/Auth/AuthScreen';
 import OtpScreen from '../screens/Auth/OtpScreen';
+import SplashScreen from '../screens/Shared/SplashScreen';
 import DashboardScreen from '../screens/Skincare/DashboardScreen';
 import SearchScreen from '../screens/Shared/SearchScreen';
 import WishlistScreen from '../screens/Shared/Wishlist/WishlistScreen';
@@ -41,6 +42,7 @@ import RewardsScreen from '../screens/Skincare/BottomNav/Rewards/RewardsScreen';
 import FilterScreen from '../screens/Skincare/BottomNav/Shop/FilterScreen';
 import AccountScreen from '../screens/Skincare/BottomNav/Account/AccountScreen';
 import MembershipScreen from '../screens/Skincare/BottomNav/Account/MembershipScreen';
+import MembershipFAQScreen from '../screens/Skincare/BottomNav/Account/MembershipFAQScreen';
 import ProfileScreen from '../screens/Skincare/BottomNav/Account/ProfileScreen';
 import AddressScreen from '../screens/Skincare/BottomNav/Account/AddressScreen';
 import OrdersListScreen from '../screens/Skincare/BottomNav/Account/OrdersListScreen';
@@ -114,6 +116,7 @@ const SkincareNavigator = () => {
       <Stack.Screen name="RewardsScreen" component={RewardsScreen} />
       <Stack.Screen name="AccountScreen" component={AccountScreen} />
       <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
+      <Stack.Screen name="MembershipFAQScreen" component={MembershipFAQScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
@@ -162,31 +165,29 @@ const MainDomainNavigator = () => {
 const AppNavigator = () => {
   const { isAuthenticated } = useSelector(state => state.auth || {});
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const bootstrapAsync = async () => {
+    const loadApp = async () => {
+      // Simulate splash screen delay for smooth animation viewing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       try {
         const token = await AsyncStorage.getItem('access_token');
         if (token) {
           dispatch(setCredentials({ access_token: token }));
-          // Fetch profile data after setting credentials
           dispatch(fetchProfile());
         }
       } catch (e) {
         console.error(e);
       }
-      setLoading(false);
+      setIsReady(true);
     };
-    bootstrapAsync();
+    loadApp();
   }, [dispatch]);
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
-        <ActivityIndicator size="large" color="#FF0069" />
-      </View>
-    );
+  if (!isReady) {
+    return <SplashScreen />;
   }
 
   return (

@@ -7,22 +7,23 @@ import BottomNavBar from '../../../../constants/BottomNavBar';
 import Header from '../../../../components/Header';
 import TopHeader from '../../../../components/TopHeader';
 import SearchBarRow from '../../../../components/SearchBarRow';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Image } from 'react-native';
+import { useEffect } from 'react';
+import { fetchRewardPoints } from '../../../../redux/slices/profileSlice';
 
-const dummyTransactions = Array.from({ length: 8 }, (_, i) => ({
-  id: i.toString(),
-  orderNo: 'CSKN-123456789-123456',
-  txnId: '987654321',
-  amount: '+₹4.72',
-  date: '6th Jun, 2026',
-  points: '442 Points',
-}));
+// Live transaction data fetched from Redux
 
 const RewardsScreen = () => {
   const navigation = useNavigation();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
+  const { rewardPoints, rewardHistory } = useSelector(state => state.profile);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchRewardPoints());
+  }, [dispatch]);
 
   const handleTabPress = (tabId) => {
     if (tabId === 'home') navigation.navigate('Dashboard');
@@ -36,14 +37,16 @@ const RewardsScreen = () => {
     <View style={styles.transactionCard}>
       <View style={styles.txnLeft}>
         <Text style={styles.txnLabel}>Order No</Text>
-        <Text style={styles.txnValue}>{item.orderNo}</Text>
-        <Text style={styles.txnLabel}>Txn ID {item.txnId}</Text>
-        <Text style={styles.txnLabel}>COSKINn</Text>
+        <Text style={styles.txnValue}>{item.orderId || 'N/A'}</Text>
+        <Text style={styles.txnLabel}>Txn ID {item.id}</Text>
+        <Text style={styles.txnLabel}>FAIRENNE</Text>
       </View>
       <View style={styles.txnRight}>
-        <Text style={styles.txnAmount}>{item.amount}</Text>
-        <Text style={styles.txnDate}>{item.date}</Text>
-        <Text style={styles.txnPoints}>{item.points}</Text>
+        <Text style={[styles.txnAmount, item.type === 'DEBIT' && { color: '#FF0000' }]}>
+          {item.type === 'CREDIT' ? '+' : '-'}{item.points} Points
+        </Text>
+        <Text style={styles.txnDate}>{new Date(item.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</Text>
+        <Text style={styles.txnPoints}>{item.description}</Text>
       </View>
     </View>
   );
@@ -77,19 +80,23 @@ const RewardsScreen = () => {
         <ScrollView style={styles.contentScroll} showsVerticalScrollIndicator={false}>
           
           <View style={styles.totalRewardsRow}>
-            <Text style={styles.totalRewardsText}>Total rewards (1234 points)</Text>
-            <Text style={styles.totalRewardsValue}>₹34.12</Text>
+            <Text style={styles.totalRewardsText}>Total rewards balance</Text>
+            <Text style={styles.totalRewardsValue}>{rewardPoints} points</Text>
           </View>
 
           <Text style={styles.sectionTitle}>Transaction History</Text>
 
-          <FlatList
-            data={dummyTransactions}
-            keyExtractor={(item) => item.id}
-            renderItem={renderTransaction}
-            scrollEnabled={false}
-            contentContainerStyle={styles.transactionList}
-          />
+          {rewardHistory && rewardHistory.length > 0 ? (
+            <FlatList
+              data={rewardHistory}
+              keyExtractor={(item) => item.id}
+              renderItem={renderTransaction}
+              scrollEnabled={false}
+              contentContainerStyle={styles.transactionList}
+            />
+          ) : (
+            <Text style={{ textAlign: 'center', marginTop: scalev(40), color: '#666' }}>No transactions found.</Text>
+          )}
 
         </ScrollView>
       </SafeAreaView>

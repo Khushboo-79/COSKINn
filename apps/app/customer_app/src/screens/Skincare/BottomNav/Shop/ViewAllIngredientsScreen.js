@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, StatusBa
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
 import BottomNavBar from '../../../../constants/BottomNavBar';
 import Header from '../../../../components/Header';
@@ -22,6 +23,9 @@ const dummyProducts = Array.from({ length: 10 }, (_, i) => ({
 })).map((item, index) => ({ ...item, id: index.toString() }));
 
 const ViewAllIngredientsScreen = () => {
+  const homeData = useSelector(state => state.catalog?.homeData);
+  const liveProducts = homeData?.bestsellers || [];
+
   const navigation = useNavigation();
   const [activeIngredient, setActiveIngredient] = useState('1'); // Select first ingredient initially
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
@@ -155,7 +159,7 @@ const ViewAllIngredientsScreen = () => {
         {/* Vertical Scrollable Products Grid */}
         <FlatList
           style={{ backgroundColor: '#FFFFFF' }}
-          data={dummyProducts}
+          data={liveProducts}
           numColumns={2}
           keyExtractor={(item) => item.id}
           renderItem={renderProductCard}

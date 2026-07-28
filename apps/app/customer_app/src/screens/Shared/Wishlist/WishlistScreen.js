@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../../components/Header';
 import WishlistEmpty from './WishlistEmpty';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleWishlist } from '../../../redux/slices/wishlistSlice';
+import { toggleWishlist, fetchWishlist } from '../../../redux/slices/wishlistSlice';
 import { addToCart, updateCartItem, removeFromCart } from '../../../redux/slices/cartSlice';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
@@ -47,6 +47,10 @@ const WishlistScreen = () => {
   const cartItems = useSelector(state => state.cart.items) || [];
   const dispatch = useDispatch();
   const isCosmetics = activeDomain === 'cosmetics';
+
+  React.useEffect(() => {
+    dispatch(fetchWishlist());
+  }, [dispatch]);
 
   const renderFilled = () => (
     <View style={styles.filledContainer}>

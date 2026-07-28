@@ -142,7 +142,7 @@ const CheckoutModal = ({ visible, onClose, finalTotal }) => {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: scalev(250) }}>
           {addresses.map((item) => {
-            const isSelected = selectedAddress && (selectedAddress._id === item._id || selectedAddress.id === item.id);
+            const isSelected = selectedAddress && ((item._id && selectedAddress._id === item._id) || (item.id && selectedAddress.id === item.id));
             return (
               <TouchableOpacity
                 key={item._id || item.id}
@@ -178,7 +178,13 @@ const CheckoutModal = ({ visible, onClose, finalTotal }) => {
                   ) : (
                     <View style={[styles.radioCircle, isSelected ? [styles.radioSelected, { backgroundColor: primaryColor }] : styles.radioUnselected]} />
                   )}
-                  <TouchableOpacity style={{ marginTop: scalev(5) }}>
+                  <TouchableOpacity 
+                    style={{ marginTop: scalev(5) }}
+                    onPress={() => {
+                      handleClose();
+                      navigation.navigate('AddressScreen', { editAddress: item });
+                    }}
+                  >
                     <Text style={[styles.editText, { color: primaryColor }]}>Edit</Text>
                   </TouchableOpacity>
                 </View>
@@ -187,22 +193,6 @@ const CheckoutModal = ({ visible, onClose, finalTotal }) => {
           })}
         </ScrollView>
       )}
-
-      {/* OR Divider */}
-      <View style={styles.orDividerContainer}>
-        <View style={styles.orLine} />
-        <Text style={styles.orText}>OR</Text>
-        <View style={styles.orLine} />
-      </View>
-
-      {/* Pincode Input */}
-      <View style={styles.pincodeInputContainer}>
-        <TextInput
-          style={[styles.pincodeInput, { borderColor: primaryColor }]}
-          placeholder="Enter pincode"
-          placeholderTextColor="#999"
-        />
-      </View>
 
     </View>
   );
@@ -216,7 +206,7 @@ const CheckoutModal = ({ visible, onClose, finalTotal }) => {
     >
       <TouchableWithoutFeedback onPress={handleClose}>
         <LinearGradient
-          colors={isCosmetics ? ['rgba(255, 194, 209, 0.8)', 'rgba(0, 0, 0, 0.8)'] : ['rgba(255, 0, 105, 0.8)', 'rgba(0, 0, 0, 0.8)']}
+          colors={isCosmetics ? ['rgba(255, 194, 209, 0.25)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(255, 0, 105, 0.15)', 'rgba(0, 0, 0, 0.7)']}
           style={styles.modalOverlay}
         >
           <TouchableWithoutFeedback>

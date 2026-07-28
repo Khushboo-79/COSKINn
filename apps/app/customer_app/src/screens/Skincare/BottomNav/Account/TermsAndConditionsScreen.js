@@ -1,11 +1,58 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
-import { scaleh, scalev } from '../../../../constants/AppTheme';
+import { scaleh, scalev, AppTheme } from '../../../../constants/AppTheme';
+import { contentService } from '../../../../services/contentService';
 
 const TermsAndConditionsScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // You can pass a custom slug, defaults to 'terms-and-conditions'
+  const slug = route.params?.slug || 'terms-and-conditions';
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        setLoading(true);
+        const article = await contentService.getArticleBySlug(slug);
+        
+        let parsedContent = null;
+        if (article && article.contentJson) {
+          parsedContent = JSON.parse(article.contentJson);
+        }
+        setContent({ title: article?.title || 'Terms & Conditions', blocks: parsedContent?.blocks || [] });
+      } catch (error) {
+        console.error('Error fetching terms:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, [slug]);
+
+  const renderBlock = (block, index) => {
+    switch (block.type) {
+      case 'heading':
+        return <Text key={index} style={styles.mainHeading}>{block.text}</Text>;
+      case 'subheading':
+        return <Text key={index} style={styles.subHeading}>{block.text}</Text>;
+      case 'paragraph':
+        return <Text key={index} style={styles.paragraph}>{block.text}</Text>;
+      case 'bullet':
+        return (
+          <View key={index} style={styles.bulletRow}>
+            <Text style={styles.bulletPoint}>•</Text>
+            <Text style={styles.bulletText}>{block.text}</Text>
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -17,7 +64,7 @@ const TermsAndConditionsScreen = () => {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Icon name="chevron-left" size={scaleh(24)} color="#1A1A1A" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Terms & Conditions</Text>
+          <Text style={styles.headerTitle}>{content?.title || 'Terms & Conditions'}</Text>
           <View style={{ width: scaleh(24) }} />
         </View>
         <View style={styles.headerDivider} />
@@ -27,43 +74,13 @@ const TermsAndConditionsScreen = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.mainHeading}>Terms & Conditions</Text>
-          
-          <Text style={styles.paragraph}>
-            COSKINn offers skincare, makeup, beauty, and personal care products. 
-            Product images, shades, textures, packaging, and results may slightly vary 
-            from the actual product due to lighting, screen settings, batch differences, or 
-            individual skin type. Our products are cosmetic products and are not intended 
-            to diagnose, treat, cure, or prevent any medical condition.
-          </Text>
-
-          <Text style={styles.paragraph}>
-            Before using any skincare or makeup product, please read the ingredients, 
-            usage instructions, warnings, expiry date, and storage instructions carefully.
-          </Text>
-
-          <Text style={styles.paragraph}>
-            We recommend doing a patch test before using any new product, 
-            especially if you have sensitive skin, allergies, acne-prone skin, or any 
-            existing skin condition. Stop using the product immediately if irritation, 
-            redness, itching, burning, swelling, rash, or allergy occurs, and consult a 
-            dermatologist if needed. COSKINn will not be responsible for reactions caused 
-            by misuse, overuse, incorrect application, known allergies, or 
-            individual skin sensitivity.
-          </Text>
-
-          <Text style={styles.paragraph}>
-            You agree to provide true and complete information while creating an account, 
-            and to update your information promptly. You are solely responsible for maintaining 
-            the confidentiality of your account password and for all activities that occur under your account.
-          </Text>
-
-          <Text style={styles.paragraph}>
-            COSKINn reserves the right to modify these terms and conditions at any time 
-            without prior notice. Your continued use of the app signifies your acceptance 
-            of the updated terms.
-          </Text>
-          
+          {loading ? (
+            <ActivityIndicator size="large" color={AppTheme.colors.primary} style={{ marginTop: scalev(40) }} />
+          ) : content && content.blocks.length > 0 ? (
+            content.blocks.map((block, idx) => renderBlock(block, idx))
+          ) : (
+            <Text style={styles.paragraph}>No terms and conditions found.</Text>
+          )}
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -114,18 +131,42 @@ const styles = StyleSheet.create({
     paddingBottom: scalev(50),
   },
   mainHeading: {
-    fontSize: scaleh(18),
+    fontSize: scaleh(20),
     fontWeight: '700',
     color: '#1A1A1A',
-    textAlign: 'center',
-    marginBottom: scalev(25),
+    marginBottom: scalev(15),
+  },
+  subHeading: {
+    fontSize: scaleh(16),
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginTop: scalev(15),
+    marginBottom: scalev(10),
   },
   paragraph: {
     fontSize: scaleh(14),
     color: '#333333',
     lineHeight: scalev(22),
-    marginBottom: scalev(20),
+    marginBottom: scalev(15),
     fontWeight: '400',
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: scalev(10),
+    paddingLeft: scaleh(5),
+  },
+  bulletPoint: {
+    fontSize: scaleh(16),
+    color: '#333333',
+    marginRight: scaleh(10),
+    lineHeight: scalev(20),
+  },
+  bulletText: {
+    fontSize: scaleh(14),
+    color: '#333333',
+    lineHeight: scalev(22),
+    flex: 1,
   },
 });
 
