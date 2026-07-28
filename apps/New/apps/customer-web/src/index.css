@@ -71,7 +71,6 @@ body {
 /* Icon-specific Hover Effects (No Background Pill) */
 .icon-hover-skin {
   transition: color 0.3s ease;
-  display: inline-block;
 }
 .icon-hover-skin:hover {
   color: #ff8f9f !important;
@@ -80,7 +79,6 @@ body {
 
 .icon-hover-glam {
   transition: color 0.3s ease;
-  display: inline-block;
 }
 .icon-hover-glam:hover {
   color: #7a1b26 !important;

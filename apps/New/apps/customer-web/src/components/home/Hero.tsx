@@ -11,7 +11,7 @@ const Hero: React.FC = () => {
   return (
     <section className={`relative overflow-hidden w-full flex flex-col transition-colors duration-700 ${
       isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'
-    }`} style={{ minHeight: 'calc(100vh - 120px)' }}>
+    }`}>
       
       {/* Background Glows for SKIN Mode */}
       {!isGlam && (
@@ -99,7 +99,7 @@ const Hero: React.FC = () => {
               </div>
 
               {!isGlam && (
-                <div className="flex items-center gap-6 mt-14 opacity-70">
+                <div className="flex items-center gap-6 mt-8 opacity-70">
                   <div className="flex items-center gap-2 text-[10px] lg:text-[11px] text-[#2a2022] font-medium">
                     <Leaf size={14} strokeWidth={1.5} />
                     <span>Clean · Vegan</span>
@@ -119,7 +119,7 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Right Side: Image Composition */}
-        <div className="w-full md:w-[45%] h-[550px] lg:h-[650px] xl:h-[750px] relative mt-12 md:mt-0 hidden md:block">
+        <div className="w-full md:w-[45%] h-[400px] lg:h-[480px] xl:h-[550px] relative mt-12 md:mt-0 hidden md:block">
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-images' : 'skin-images'}
@@ -136,23 +136,23 @@ const Hero: React.FC = () => {
                 </div>
               ) : (
                 <div className="relative w-full h-full">
+                  {/* Middle Left Image (Jar) */}
+                  <div className="absolute top-[25%] left-[0%] w-[45%] h-[50%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white">
+                    <img src="https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Jar" className="w-full h-full object-cover" />
+                  </div>
+                  
                   {/* Top Right Image */}
-                  <div className="absolute top-[0%] right-[0%] w-[48%] h-[58%] rounded-[32px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] z-10 bg-white">
+                  <div className="absolute top-[0%] right-[0%] w-[45%] h-[55%] rounded-[32px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] z-10 bg-white">
                     <img src="https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Dropper" className="w-full h-full object-cover object-center" />
                   </div>
 
                   {/* Bottom Right Image */}
-                  <div className="absolute bottom-[2%] right-[10%] w-[42%] h-[50%] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-30 bg-white">
+                  <div className="absolute bottom-[0%] right-[10%] w-[48%] h-[45%] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-30 bg-white">
                     <img src="https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Dropper 2" className="w-full h-full object-cover object-center" />
                   </div>
 
-                  {/* Middle Left Image (Jar) */}
-                  <div className="absolute top-[35%] left-[5%] w-[40%] h-[40%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white">
-                    <img src="https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Jar" className="w-full h-full object-cover" />
-                  </div>
-                  
                   {/* Price Badge */}
-                  <div className="absolute bottom-[10%] left-[20%] w-[90px] h-[90px] lg:w-[110px] lg:h-[110px] rounded-full bg-[#ff9aa8] text-white flex flex-col items-center justify-center shadow-[0_15px_30px_rgba(255,154,168,0.4)] z-40 transform -translate-x-1/2">
+                  <div className="absolute bottom-[5%] left-[50%] w-[90px] h-[90px] lg:w-[120px] lg:h-[120px] rounded-full bg-[#ff9aa8] text-white flex flex-col items-center justify-center shadow-[0_15px_30px_rgba(255,154,168,0.4)] z-40 transform -translate-x-1/2">
                     <span className="text-[10px] lg:text-[11px] font-extrabold uppercase tracking-widest leading-none mb-1">From</span>
                     <span className="text-[22px] lg:text-[28px] font-black leading-none tracking-tight">$26</span>
                   </div>
