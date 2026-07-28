@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
-import { Menu, Search, ShoppingBag, User, Heart, Droplets, Sparkles, X } from 'lucide-react';
+import { useCurrency } from '../../context/CurrencyContext';
+import { Menu, Search, ShoppingBag, User, Heart, Droplets, Sparkles, X, Globe, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
@@ -11,9 +12,11 @@ const Header: React.FC = () => {
   const { mode, toggleMode } = useTheme();
   const { setIsCartOpen, cartCount } = useCart();
   const { wishlistCount } = useWishlist();
+  const { currency, currencies, setCurrencyByCode } = useCurrency();
   const isGlam = mode === 'glam';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
 
   const navLinks = [
     { name: 'Shop', path: '/collections' },
@@ -40,17 +43,70 @@ const Header: React.FC = () => {
               Home
             </Link>
             {navLinks.map((item) => (
-              <Link 
-                key={item.name} 
-                to={item.path}
-                className={`whitespace-nowrap transition-all duration-300 ${
-                  isGlam 
-                    ? 'text-[#2a2a2a] icon-hover-glam' 
-                    : 'text-gray-800 icon-hover-skin'
-                }`}
-              >
-                {item.name}
-              </Link>
+              <React.Fragment key={item.name}>
+                <Link 
+                  to={item.path}
+                  className={`whitespace-nowrap transition-all duration-300 ${
+                    isGlam 
+                      ? 'text-[#2a2a2a] icon-hover-glam' 
+                      : 'text-gray-800 icon-hover-skin'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+                {item.name === 'Shop' && (
+                  <div className="relative flex items-center">
+                    <button 
+                      onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                      className={`flex flex-row items-center space-x-1 transition-colors duration-300 ${isGlam ? 'text-gray-800 hover:text-[#7a1b26]' : 'text-gray-800 hover:text-[#ff9aa8]'}`}
+                    >
+                      <Globe size={18} strokeWidth={1.5} />
+                      <span className="text-xs font-bold font-sans uppercase">{currency.code}</span>
+                      <ChevronDown size={14} strokeWidth={2} />
+                    </button>
+                    <AnimatePresence>
+                      {isCurrencyOpen && (
+                        <>
+                          <motion.div 
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-40" onClick={() => setIsCurrencyOpen(false)} 
+                          />
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                            className={`absolute top-full mt-4 left-0 w-48 rounded-2xl shadow-xl z-50 overflow-hidden border ${isGlam ? 'bg-[#faf9f6] border-[#e5b376]/20' : 'bg-white border-gray-100'}`}
+                          >
+                            <div className="py-2">
+                              {currencies.map(c => (
+                                <button
+                                  key={c.code}
+                                  onClick={() => {
+                                    setCurrencyByCode(c.code);
+                                    setIsCurrencyOpen(false);
+                                  }}
+                                  className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
+                                    currency.code === c.code 
+                                      ? (isGlam ? 'bg-[#f4efe8] text-[#7a1b26] font-bold' : 'bg-[#fff0f2] text-[#ff9aa8] font-bold')
+                                      : (isGlam ? 'text-gray-700 hover:bg-[#f4efe8]' : 'text-gray-700 hover:bg-gray-50')
+                                  }`}
+                                >
+                                  <div className="flex items-center">
+                                    <span className="w-6 text-center font-bold mr-2">{c.symbol}</span>
+                                    <span>{c.code}</span>
+                                  </div>
+                                  <span className="text-xs text-gray-400">{c.name}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+              </React.Fragment>
             ))}
           </div>
           

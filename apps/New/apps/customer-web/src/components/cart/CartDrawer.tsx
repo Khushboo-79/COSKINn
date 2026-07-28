@@ -130,6 +130,7 @@ const CartDrawer: React.FC = () => {
                   <span className="font-bold text-gray-500">Subtotal</span>
                   <span className={`text-2xl font-bold ${isGlam ? 'text-[#7a1b26]' : 'text-gray-900'}`}>
                     {formatPrice(cartTotal)}
+                  </span>
                 </div>
                 
                 <p className="text-xs text-center text-gray-500 mb-4">

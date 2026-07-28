@@ -21,6 +21,7 @@ import Contact from './pages/Contact';
 import Account from './pages/Account';
 import Quiz from './pages/Quiz';
 import RoutineResult from './pages/RoutineResult';
+import Journal from './pages/Journal';
 import CartDrawer from './components/cart/CartDrawer';
 
 // Layout with Header & Footer
@@ -82,6 +83,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/journal" element={<Journal />} />
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/quiz/result" element={<RoutineResult />} />
           </Route>
