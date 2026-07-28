@@ -2,6 +2,7 @@ import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight, Clock, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const InteractiveExperience: React.FC = () => {
   const { mode } = useTheme();
@@ -68,14 +69,14 @@ const InteractiveExperience: React.FC = () => {
                   : 'Answer 6 quick questions and we\'ll build a routine matched to you.'}
               </p>
               
-              <button className={`group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 w-full sm:w-auto ${
+              <Link to="/quiz" className={`group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 w-full sm:w-auto ${
                 isGlam 
                   ? 'bg-[#e5b376] text-[#2a2a2a] hover:bg-white' 
                   : 'bg-white text-[#2a2a2a] hover:bg-gray-50 shadow-xl shadow-[#ff9aa8]/20'
               }`}>
                 <span>{isGlam ? 'Start the Consultation' : 'Take the Quiz'}</span>
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
             </div>
 
           </div>

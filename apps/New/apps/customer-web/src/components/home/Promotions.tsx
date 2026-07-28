@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Promotions: React.FC = () => {
   const { mode } = useTheme();
@@ -55,12 +56,13 @@ const Promotions: React.FC = () => {
                   {promo.sub}
                 </p>
               </div>
-              <button 
+              <Link 
+                to="/collections"
                 className="text-xs font-bold underline whitespace-nowrap hover:opacity-70 transition-opacity"
                 style={{ color: promo.text }}
               >
                 {promo.cta}
-              </button>
+              </Link>
             </motion.div>
           ))}
         </div>

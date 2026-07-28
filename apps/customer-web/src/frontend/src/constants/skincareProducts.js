@@ -33,7 +33,7 @@ const getGallery = (mainImg) => [
 export const skincareProducts = [
   { 
     id: 101, 
-    name: "COSKINn Sunscreen SPF 50", 
+    name: "Peachy Glow Vitamin C Serum",
     originalPrice: 899,
     price: 789, 
     discountBadge: "12% OFF",
@@ -60,7 +60,7 @@ export const skincareProducts = [
   },
   { 
     id: 102, 
-    name: "COSKINn Body Sunscreen SPF 50", 
+    name: "Bioderma Hydrabio Crème",
     originalPrice: 1299,
     price: 1099, 
     discountBadge: "15% OFF",

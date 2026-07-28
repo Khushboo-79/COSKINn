@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Fredoka+One&display=swap');
 
 @layer base {
   :root {
@@ -16,7 +16,7 @@
     
     --font-sans: 'Inter', sans-serif;
     --font-serif: 'Playfair Display', serif;
-    --font-display: 'Inter', sans-serif;
+    --font-display: 'Fredoka One', cursive;
   }
 
   .theme-glam {
@@ -37,4 +37,64 @@
 
 body {
   @apply bg-background text-text font-sans transition-colors duration-500 ease-in-out;
+}
+
+/* Custom Navbar Hover Effects to bypass Tailwind JIT issues */
+@keyframes jelly {
+  0% { transform: scale3d(1, 1, 1); }
+  30% { transform: scale3d(1.08, 0.92, 1); }
+  45% { transform: scale3d(0.95, 1.05, 1); }
+  60% { transform: scale3d(1.02, 0.98, 1); }
+  75% { transform: scale3d(0.99, 1.01, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+.nav-link-hover-skin {
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.nav-link-hover-skin:hover {
+  background-color: #fff0f2 !important;
+  color: #ff8f9f !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.nav-link-hover-glam {
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.nav-link-hover-glam:hover {
+  background-color: #f9ece0 !important;
+  color: #7a1b26 !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Icon-specific Hover Effects (No Background Pill) */
+.icon-hover-skin {
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+.icon-hover-skin:hover {
+  color: #ff8f9f !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.icon-hover-glam {
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+.icon-hover-glam:hover {
+  color: #7a1b26 !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee {
+  animation: marquee 120s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   PolicyHero, 
   PolicyOverview, 
@@ -10,8 +10,28 @@ import {
 } from '../../components/common/PolicyComponents';
 import Footer from '../../components/common/Footer';
 import { ShieldCheck, ShoppingBag, UserCheck } from 'lucide-react';
+import apiClient from '../../utils/apiClient';
 
 export default function TermsConditionsPage() {
+  const [htmlContent, setHtmlContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPolicy = async () => {
+      try {
+        const res = await apiClient.get('/content/articles/terms-conditions');
+        if (res.data && res.data.contentHtml) {
+          setHtmlContent(res.data.contentHtml);
+        }
+      } catch (err) {
+        console.error("Failed to fetch Terms & Conditions:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPolicy();
+  }, []);
+
   const highlights = [
     {
       icon: <UserCheck size={24} strokeWidth={1.5} />,
@@ -53,7 +73,16 @@ export default function TermsConditionsPage() {
         lastUpdated="July 15, 2026" 
       />
       
-      <PolicyOverview>
+      {loading ? (
+         <div className="text-center py-20">
+           <div className="w-10 h-10 border-4 border-[#FF2D7A]/20 border-t-[#FF2D7A] rounded-full animate-spin mx-auto mb-4"></div>
+           <p className="text-gray-500 font-medium">Loading policy...</p>
+         </div>
+      ) : htmlContent ? (
+         <div className="max-w-[1000px] mx-auto px-6 py-16 prose prose-lg" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      ) : (
+        <>
+          <PolicyOverview>
         This website is operated by COSKINn. Throughout the site, the terms "we", "us" and "our" refer to COSKINn. We offer this website, including all information, tools, and services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies, and notices stated here.
       </PolicyOverview>
 
@@ -93,6 +122,8 @@ export default function TermsConditionsPage() {
       <PolicyFAQ faqs={faqs} />
 
       <PolicyCTA />
+      </>
+      )}
       
       <Footer />
     </div>
