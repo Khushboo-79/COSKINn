@@ -43,70 +43,17 @@ const Header: React.FC = () => {
               Home
             </Link>
             {navLinks.map((item) => (
-              <React.Fragment key={item.name}>
-                <Link 
-                  to={item.path}
-                  className={`whitespace-nowrap transition-all duration-300 ${
-                    isGlam 
-                      ? 'text-[#2a2a2a] icon-hover-glam' 
-                      : 'text-gray-800 icon-hover-skin'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-                {item.name === 'Shop' && (
-                  <div className="relative flex items-center">
-                    <button 
-                      onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
-                      className={`flex flex-row items-center space-x-1 transition-colors duration-300 ${isGlam ? 'text-gray-800 hover:text-[#7a1b26]' : 'text-gray-800 hover:text-[#ff9aa8]'}`}
-                    >
-                      <Globe size={18} strokeWidth={1.5} />
-                      <span className="text-xs font-bold font-sans uppercase">{currency.code}</span>
-                      <ChevronDown size={14} strokeWidth={2} />
-                    </button>
-                    <AnimatePresence>
-                      {isCurrencyOpen && (
-                        <>
-                          <motion.div 
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-40" onClick={() => setIsCurrencyOpen(false)} 
-                          />
-                          <motion.div
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            transition={{ duration: 0.2 }}
-                            className={`absolute top-full mt-4 left-0 w-48 rounded-2xl shadow-xl z-50 overflow-hidden border ${isGlam ? 'bg-[#faf9f6] border-[#e5b376]/20' : 'bg-white border-gray-100'}`}
-                          >
-                            <div className="py-2">
-                              {currencies.map(c => (
-                                <button
-                                  key={c.code}
-                                  onClick={() => {
-                                    setCurrencyByCode(c.code);
-                                    setIsCurrencyOpen(false);
-                                  }}
-                                  className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
-                                    currency.code === c.code 
-                                      ? (isGlam ? 'bg-[#f4efe8] text-[#7a1b26] font-bold' : 'bg-[#fff0f2] text-[#ff9aa8] font-bold')
-                                      : (isGlam ? 'text-gray-700 hover:bg-[#f4efe8]' : 'text-gray-700 hover:bg-gray-50')
-                                  }`}
-                                >
-                                  <div className="flex items-center">
-                                    <span className="w-6 text-center font-bold mr-2">{c.symbol}</span>
-                                    <span>{c.code}</span>
-                                  </div>
-                                  <span className="text-xs text-gray-400">{c.name}</span>
-                                </button>
-                              ))}
-                            </div>
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )}
-              </React.Fragment>
+              <Link 
+                key={item.name} 
+                to={item.path}
+                className={`whitespace-nowrap transition-all duration-300 ${
+                  isGlam 
+                    ? 'text-[#2a2a2a] icon-hover-glam' 
+                    : 'text-gray-800 icon-hover-skin'
+                }`}
+              >
+                {item.name}
+              </Link>
             ))}
           </div>
           
@@ -136,6 +83,7 @@ const Header: React.FC = () => {
           <div className="flex flex-1 justify-end items-center space-x-3 sm:space-x-5 lg:space-x-6">
             
             <div className="flex items-center space-x-4 sm:space-x-5 text-gray-800">
+
               <button 
                 onClick={() => setIsSearchOpen(true)}
                 className={`${isGlam ? 'icon-hover-glam' : 'icon-hover-skin'}`}
@@ -168,6 +116,62 @@ const Header: React.FC = () => {
                   </span>
                 )}
               </button>
+
+              {/* Currency Selector */}
+              <div className="relative hidden sm:flex items-center ml-2 border-l border-gray-200 pl-4">
+                <button 
+                  onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                  className={`flex items-center space-x-1 px-3 py-1.5 rounded-full transition-all duration-300 ${
+                    isGlam 
+                      ? 'hover:bg-[#f9ece0] icon-hover-glam' 
+                      : 'hover:bg-[#fff0f2] icon-hover-skin'
+                  }`}
+                >
+                  <Globe size={18} strokeWidth={1.5} />
+                  <span className="text-xs font-bold font-sans uppercase">{currency.code}</span>
+                  <ChevronDown size={14} strokeWidth={2} />
+                </button>
+                <AnimatePresence>
+                  {isCurrencyOpen && (
+                    <>
+                      <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-40" onClick={() => setIsCurrencyOpen(false)} 
+                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className={`absolute top-full mt-4 right-0 w-48 rounded-2xl shadow-xl z-50 overflow-hidden border ${isGlam ? 'bg-[#faf9f6] border-[#e5b376]/20' : 'bg-white border-gray-100'}`}
+                      >
+                        <div className="py-2">
+                          {currencies.map(c => (
+                            <button
+                              key={c.code}
+                              onClick={() => {
+                                setCurrencyByCode(c.code);
+                                setIsCurrencyOpen(false);
+                              }}
+                              className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors ${
+                                currency.code === c.code 
+                                  ? (isGlam ? 'bg-[#f4efe8] text-[#7a1b26] font-bold' : 'bg-[#fff0f2] text-[#ff9aa8] font-bold')
+                                  : (isGlam ? 'text-gray-700 hover:bg-[#f4efe8]' : 'text-gray-700 hover:bg-gray-50')
+                              }`}
+                            >
+                              <div className="flex items-center">
+                                <span className="w-6 text-center font-bold mr-2">{c.symbol}</span>
+                                <span>{c.code}</span>
+                              </div>
+                              <span className="text-xs text-gray-400">{c.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* The Segment Toggle */}
