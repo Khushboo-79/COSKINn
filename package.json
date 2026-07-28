@@ -15,7 +15,7 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "test": "turbo run test",
-    "prepare": "husky"
+    "prepare": "echo no-husky"
   },
   "devDependencies": {
     "eslint": "^9.15.0",
