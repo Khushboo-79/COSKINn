@@ -1,33 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { BookOpen, Shield, Droplets, Sun, CheckCircle2, XCircle, ChevronDown } from 'lucide-react';
 import Footer from '../../components/common/Footer';
 import heroImg from '../../assets/images/journal_education_hero.webp';
+import apiClient from '../../utils/apiClient';
 
 export default function SkinEducationPage() {
   const [activeFaq, setActiveFaq] = useState(null);
+  const [topics, setTopics] = useState([]);
+  const [myths, setMyths] = useState([]);
+  const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const topics = [
+  const mockTopics = [
     { title: "Skin Types", icon: BookOpen, desc: "Identify your skin type (Dry, Oily, Combination, Normal) to build the right routine." },
     { title: "Skin Barrier", icon: Shield, desc: "Learn how the stratum corneum protects you and how to prevent transepidermal water loss." },
     { title: "Hydration Science", icon: Droplets, desc: "Understand the difference between hydration (water) and moisturization (oil)." },
     { title: "SPF Education", icon: Sun, desc: "Why UVA/UVB protection is non-negotiable every single day, indoors and outdoors." }
   ];
 
-  const myths = [
+  const mockMyths = [
     { myth: "Oily skin doesn't need moisturizer.", fact: "Oily skin can be dehydrated. Skipping moisturizer causes the skin to overcompensate by producing even more oil." },
     { myth: "Pores can open and close.", fact: "Pores don't have muscles. You can't change their size, but keeping them clean makes them appear smaller." },
     { myth: "You only need SPF when it's sunny.", fact: "UVA rays penetrate clouds and glass, accelerating skin aging even on rainy days." },
     { myth: "Natural ingredients are always better.", fact: "Not always. Essential oils can be highly irritating, while lab-created synthetics (like Ceramides) are perfectly safe and effective." }
   ];
 
-  const faqs = [
+  const mockFaqs = [
     { q: "How long does it take for skincare to work?", a: "Most active ingredients take 4 to 6 weeks (one full skin cycle) to show visible results. Consistency is key." },
     { q: "In what order should I apply my products?", a: "A general rule is to apply from thinnest to thickest consistency: Cleanser -> Toner -> Serum -> Eye Cream -> Moisturizer -> Face Oil -> SPF (AM only)." },
     { q: "What causes acne breakouts?", a: "Breakouts occur when pores become clogged with excess sebum and dead skin cells, leading to bacterial growth and inflammation." },
     { q: "How often should I exfoliate?", a: "For most skin types, 1-3 times a week is sufficient. Over-exfoliating can damage your skin barrier and cause redness." }
   ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiClient.get('/content/articles?type=PAGE');
+        const data = response.data || [];
+        if (data.length > 0) {
+          const newTopics = [];
+          const newMyths = [];
+          const newFaqs = [];
+          
+          data.forEach(item => {
+            let parsed = {};
+            try { parsed = JSON.parse(item.contentJson || '{}'); } catch(e) {}
+            if (parsed.educationType === 'topic') {
+               newTopics.push({ title: item.title, icon: BookOpen, desc: item.seoDesc || parsed.desc });
+            } else if (parsed.educationType === 'myth') {
+               newMyths.push({ myth: item.title, fact: parsed.fact || item.seoDesc });
+            } else if (parsed.educationType === 'faq') {
+               newFaqs.push({ q: item.title, a: parsed.a || item.seoDesc });
+            }
+          });
+          
+          if (newTopics.length > 0 || newMyths.length > 0 || newFaqs.length > 0) {
+             setTopics(newTopics.length > 0 ? newTopics : mockTopics);
+             setMyths(newMyths.length > 0 ? newMyths : mockMyths);
+             setFaqs(newFaqs.length > 0 ? newFaqs : mockFaqs);
+          } else {
+             setTopics(mockTopics); setMyths(mockMyths); setFaqs(mockFaqs);
+          }
+        } else {
+          setTopics(mockTopics); setMyths(mockMyths); setFaqs(mockFaqs);
+        }
+      } catch (err) {
+        console.error("Failed to fetch skin education content:", err);
+        setTopics(mockTopics); setMyths(mockMyths); setFaqs(mockFaqs);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="bg-[#FFFDFD] min-h-screen font-sans selection:bg-[#FF2D7A]/20">
@@ -97,8 +144,13 @@ export default function SkinEducationPage() {
             <h2 className="text-3xl lg:text-4xl font-heading font-black text-[#1B1B1B]">Core Skin Science</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {topics.map((topic, idx) => (
+          {loading ? (
+             <div className="text-center py-10">
+               <div className="w-10 h-10 border-4 border-[#FF2D7A]/20 border-t-[#FF2D7A] rounded-full animate-spin mx-auto mb-4"></div>
+             </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {topics.map((topic, idx) => (
               <motion.div 
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -114,7 +166,8 @@ export default function SkinEducationPage() {
                 <p className="text-gray-500 font-medium leading-relaxed text-sm">{topic.desc}</p>
               </motion.div>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 

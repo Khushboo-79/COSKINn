@@ -44,12 +44,15 @@ export class OrderController {
   @Get('orders')
   async getCustomerOrders(@Request() req) {
     return this.orderService.getOrders(req.user.id);
+<<<<<<< Updated upstream
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('orders/:id/track')
   async trackOrder(@Request() req, @Param('id') id: string) {
     return this.orderService.trackOrder(id, req.user.id);
+=======
+>>>>>>> Stashed changes
   }
 
   @UseGuards(JwtAuthGuard)

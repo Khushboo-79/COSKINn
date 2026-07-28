@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   PolicyHero, 
   PolicyOverview, 
@@ -10,8 +10,28 @@ import {
 } from '../../components/common/PolicyComponents';
 import Footer from '../../components/common/Footer';
 import { ShieldCheck, Database, Share2 } from 'lucide-react';
+import apiClient from '../../utils/apiClient';
 
 export default function PrivacyPolicyPage() {
+  const [htmlContent, setHtmlContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPolicy = async () => {
+      try {
+        const res = await apiClient.get('/content/articles/privacy-policy');
+        if (res.data && res.data.contentHtml) {
+          setHtmlContent(res.data.contentHtml);
+        }
+      } catch (err) {
+        console.error("Failed to fetch Privacy Policy:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPolicy();
+  }, []);
+
   const highlights = [
     {
       icon: <Database size={24} strokeWidth={1.5} />,
@@ -53,7 +73,16 @@ export default function PrivacyPolicyPage() {
         lastUpdated="July 15, 2026" 
       />
       
-      <PolicyOverview>
+      {loading ? (
+         <div className="text-center py-20">
+           <div className="w-10 h-10 border-4 border-[#FF2D7A]/20 border-t-[#FF2D7A] rounded-full animate-spin mx-auto mb-4"></div>
+           <p className="text-gray-500 font-medium">Loading policy...</p>
+         </div>
+      ) : htmlContent ? (
+         <div className="max-w-[1000px] mx-auto px-6 py-16 prose prose-lg" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      ) : (
+        <>
+        <PolicyOverview>
         At COSKINn, we value your trust. This Privacy Policy describes how we collect, use, and disclose your Personal Information when you visit our site or make a purchase. We are committed to ensuring that your privacy is protected and respected at all times.
       </PolicyOverview>
 
@@ -85,6 +114,8 @@ export default function PrivacyPolicyPage() {
       <PolicyFAQ faqs={faqs} />
 
       <PolicyCTA />
+      </>
+      )}
       
       <Footer />
     </div>

@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Search, ChevronDown, CheckCircle2, XCircle, Beaker } from 'lucide-react';
 import Footer from '../../components/common/Footer';
 import heroImg from '../../assets/images/journal_ingredients_hero.webp';
+import apiClient from '../../utils/apiClient';
 
 export default function IngredientGuidesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [expandedId, setExpandedId] = useState(null);
+  const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const categories = ['All', 'Fruit Extracts', 'Acids & Actives', 'Hydrators', 'Antioxidants'];
 
-  const ingredients = [
+  const mockIngredients = [
     {
       id: 1, name: "Niacinamide", category: "Acids & Actives",
       benefits: "Reduces pore size, balances oil production, and strengthens the skin barrier.",
@@ -94,6 +97,41 @@ export default function IngredientGuidesPage() {
       products: ["COSKINn Orange Energy Face Wash"]
     }
   ];
+
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      try {
+        const response = await apiClient.get('/content/articles?type=TIP');
+        const data = response.data || [];
+        if (data.length > 0) {
+          const formatted = data.map((article, idx) => {
+            let parsed = {};
+            try { parsed = JSON.parse(article.contentJson || '{}'); } catch(e) {}
+            return {
+              id: article.id || idx,
+              name: article.title || parsed.name,
+              category: parsed.category || "Acids & Actives",
+              benefits: article.seoDesc || parsed.benefits || "",
+              skinType: parsed.skinType || "All skin types",
+              usage: parsed.usage || "",
+              pairWith: parsed.pairWith || [],
+              avoidMixing: parsed.avoidMixing || [],
+              products: parsed.products || []
+            };
+          });
+          setIngredients(formatted);
+        } else {
+          setIngredients(mockIngredients);
+        }
+      } catch (error) {
+        console.error("Failed to fetch ingredients:", error);
+        setIngredients(mockIngredients);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchIngredients();
+  }, []);
 
   const filteredIngredients = ingredients.filter(ing => 
     (activeCategory === 'All' || ing.category.includes(activeCategory) || (activeCategory === 'Botanical Extracts' && ing.category === 'Botanical Extracts')) &&
@@ -188,7 +226,12 @@ export default function IngredientGuidesPage() {
       {/* 3. INGREDIENT CARDS */}
       <section className="py-16 lg:py-24 bg-[#FFF5F8] min-h-[500px]">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          {filteredIngredients.length === 0 ? (
+          {loading ? (
+             <div className="text-center py-20">
+               <div className="w-12 h-12 border-4 border-[#FF2D7A]/20 border-t-[#FF2D7A] rounded-full animate-spin mx-auto mb-4"></div>
+               <p className="text-gray-500 font-medium">Loading ingredient library...</p>
+             </div>
+          ) : filteredIngredients.length === 0 ? (
             <div className="text-center py-20">
               <Beaker className="mx-auto text-gray-300 mb-4" size={48} />
               <h3 className="text-2xl font-heading font-bold text-[#1B1B1B] mb-2">No ingredients found.</h3>

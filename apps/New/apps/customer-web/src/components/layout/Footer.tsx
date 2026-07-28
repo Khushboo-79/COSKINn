@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   const isGlam = mode === 'glam';
 
   return (
-    <footer className={`pt-20 pb-10 border-t transition-colors duration-500 ${isGlam ? 'bg-primary text-secondary border-primary/20' : 'bg-background text-text border-text/10'}`}>
+    <footer className={`pt-20 pb-10 border-t transition-colors duration-500 ${isGlam ? 'bg-gradient-to-br from-[#2a2a2a] to-[#4a1218] text-[#e5b376] border-white/10' : 'bg-gradient-to-br from-[#fff0f3] to-[#e0f5ea] text-[#2a2022] border-[#2a2022]/10'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
@@ -22,12 +22,16 @@ const Footer: React.FC = () => {
               <input 
                 type="email" 
                 placeholder={isGlam ? 'Enter your monogram (email)' : 'Email address'}
-                className={`flex-1 px-4 py-3 outline-none ${
-                  isGlam ? 'bg-secondary/10 text-secondary placeholder-secondary/50 border border-secondary/30' : 'bg-white border-2 border-r-0 border-text/10 text-text'
+                className={`flex-1 px-4 py-3 outline-none rounded-l-xl ${
+                  isGlam 
+                    ? 'bg-white/5 text-[#e5b376] placeholder-[#e5b376]/50 border border-[#e5b376]/30 border-r-0' 
+                    : 'bg-white/60 backdrop-blur-sm border-2 border-[#ff9aa8]/20 border-r-0 text-[#2a2022] placeholder-gray-400'
                 }`}
               />
-              <button className={`px-6 py-3 font-semibold transition-colors ${
-                isGlam ? 'bg-secondary text-primary hover:bg-white' : 'bg-primary text-white hover:bg-accent'
+              <button className={`px-6 py-3 font-bold rounded-r-xl transition-all duration-300 ${
+                isGlam 
+                  ? 'bg-[#e5b376] text-[#2a2a2a] hover:bg-white' 
+                  : 'bg-[#ff9aa8] text-white hover:bg-[#ff8f9f] shadow-md shadow-[#ff9aa8]/20'
               }`}>
                 {isGlam ? 'Subscribe' : 'Sign me up'}
               </button>

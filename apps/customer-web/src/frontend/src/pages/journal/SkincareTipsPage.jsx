@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Sun, Moon, Calendar, CheckCircle2, XCircle, ArrowRight, Sparkles } from 'lucide-react';
 import Footer from '../../components/common/Footer';
 import heroImg from '../../assets/images/journal_tips_hero.webp';
+import apiClient from '../../utils/apiClient';
 
 export default function SkincareTipsPage() {
   const [activeTab, setActiveTab] = useState('Morning');
+  const [tipsData, setTipsData] = useState({ Morning: [], Night: [], Seasonal: [] });
+  const [dosAndDonts, setDosAndDonts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const tipsData = {
+  const mockTipsData = {
     Morning: [
       { title: "Cleanse Gently", desc: "Use a mild, non-stripping cleanser or just splash water if your skin is dry. You don't need a heavy cleanse in the AM." },
       { title: "Vitamin C is Key", desc: "Apply a Vitamin C serum to protect against environmental damage and brighten your complexion throughout the day." },
@@ -26,7 +30,7 @@ export default function SkincareTipsPage() {
     ]
   };
 
-  const dosAndDonts = [
+  const mockDosAndDonts = [
     { type: 'do', text: "Do patch test every new product before applying it to your entire face." },
     { type: 'dont', text: "Don't mix strong actives like Retinol and Vitamin C in the same routine." },
     { type: 'do', text: "Do apply hyaluronic acid on damp skin for maximum hydration." },
@@ -34,6 +38,58 @@ export default function SkincareTipsPage() {
     { type: 'do', text: "Do be patient. Skincare takes at least 4-6 weeks to show real results." },
     { type: 'dont', text: "Don't use physical scrubs with harsh shells that cause micro-tears." }
   ];
+
+  useEffect(() => {
+    const fetchTips = async () => {
+      try {
+        const response = await apiClient.get('/content/articles?type=TIP');
+        const data = response.data || [];
+        if (data.length > 0) {
+          // Parse backend data
+          const newTipsData = { Morning: [], Night: [], Seasonal: [] };
+          const newDosDonts = [];
+          
+          data.forEach(article => {
+            let parsed = {};
+            try { parsed = JSON.parse(article.contentJson || '{}'); } catch(e) {}
+            
+            if (parsed.tipCategory) {
+               if (newTipsData[parsed.tipCategory]) {
+                  newTipsData[parsed.tipCategory].push({
+                    title: article.title,
+                    desc: article.seoDesc || parsed.desc || ""
+                  });
+               }
+            } else if (parsed.type === 'do' || parsed.type === 'dont') {
+               newDosDonts.push({
+                 type: parsed.type,
+                 text: article.title || parsed.text || ""
+               });
+            }
+          });
+          
+          // If we actually parsed anything, use it, else fallback
+          if (newTipsData.Morning.length > 0 || newDosDonts.length > 0) {
+            setTipsData(newTipsData);
+            setDosAndDonts(newDosDonts);
+          } else {
+            setTipsData(mockTipsData);
+            setDosAndDonts(mockDosAndDonts);
+          }
+        } else {
+          setTipsData(mockTipsData);
+          setDosAndDonts(mockDosAndDonts);
+        }
+      } catch (error) {
+        console.error("Failed to fetch tips:", error);
+        setTipsData(mockTipsData);
+        setDosAndDonts(mockDosAndDonts);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTips();
+  }, []);
 
   return (
     <div className="bg-[#FFFDFD] min-h-screen font-sans selection:bg-[#FF2D7A]/20">
@@ -146,8 +202,13 @@ export default function SkincareTipsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatePresence mode="wait">
-              {tipsData[activeTab].map((tip, idx) => (
+            {loading ? (
+              <div className="col-span-3 text-center py-10">
+                <div className="w-10 h-10 border-4 border-[#FF2D7A]/20 border-t-[#FF2D7A] rounded-full animate-spin mx-auto mb-4"></div>
+              </div>
+            ) : (
+              <AnimatePresence mode="wait">
+                {tipsData[activeTab]?.map((tip, idx) => (
                 <motion.div
                   key={`${activeTab}-${idx}`}
                   initial={{ opacity: 0, y: 20 }}
@@ -164,6 +225,7 @@ export default function SkincareTipsPage() {
                 </motion.div>
               ))}
             </AnimatePresence>
+            )}
           </div>
         </div>
       </section>
