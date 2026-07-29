@@ -651,12 +651,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
           </AnimatePresence>
         </div>
-<<<<<<< Updated upstream
       </motion.div>
     </div>
-=======
-        </motion.div>
-      </div>
->>>>>>> Stashed changes
   );
 }
