@@ -7,25 +7,17 @@ import {
   ArrowRight, Send, Map, Navigation
 } from 'lucide-react';
 import Footer from '../components/common/Footer';
-<<<<<<< Updated upstream
 import heroImg from '../assets/images/contact_hero_desk.webp';
 import cosmeticsHeroImg from '../assets/images/fairy_events_campaign_bright.webp';
-=======
-const heroImg = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
->>>>>>> Stashed changes
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import apiClient from '../utils/apiClient';
 import SEO from '../components/common/SEO';
 
 export default function ContactPage() {
-<<<<<<< Updated upstream
   const { theme } = useTheme();
   const isCosmetics = theme === 'cosmetics';
-  const { user } = useAuth();
-=======
   const { user, openAuthModal } = useAuth();
->>>>>>> Stashed changes
   const [openFaq, setOpenFaq] = useState(0);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
