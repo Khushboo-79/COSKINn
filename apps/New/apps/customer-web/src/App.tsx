@@ -1,6 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { CurrencyProvider } from './context/CurrencyContext';
@@ -23,6 +24,10 @@ import Quiz from './pages/Quiz';
 import RoutineResult from './pages/RoutineResult';
 import Journal from './pages/Journal';
 import CartDrawer from './components/cart/CartDrawer';
+import GuestReminder from './components/layout/GuestReminder';
+import ScrollToTop from './components/layout/ScrollToTop';
+import NotFound from './pages/NotFound';
+import { Shipping, Returns, FAQ, TrackOrder } from './pages/SupportPages';
 
 // Layout with Header & Footer
 const MainLayout = () => {
@@ -46,6 +51,7 @@ const MainLayout = () => {
         </AnimatePresence>
       </main>
       <Footer />
+      <GuestReminder />
       <CartDrawer />
     </div>
   );
@@ -55,14 +61,23 @@ import Login from './pages/auth/Login';
 import OTPVerification from './pages/auth/OTPVerification';
 import ProfileSetup from './pages/auth/ProfileSetup';
 
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
 
 function App() {
   return (
     <ThemeProvider>
+      <AuthProvider>
       <CurrencyProvider>
         <CartProvider>
           <WishlistProvider>
           <Router>
+            <ScrollToTop />
           <Routes>
           {/* Full Screen Routes (No Header/Footer) */}
           <Route path="/splash" element={<Splash />} />
@@ -77,21 +92,27 @@ function App() {
             <Route path="/collections" element={<PLP />} />
             <Route path="/collections/:category" element={<PLP />} />
             <Route path="/product/:id" element={<PDP />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+            <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/account" element={<Account />} />
+            <Route path="/shipping" element={<Shipping />} />
+            <Route path="/returns" element={<Returns />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/track-order" element={<TrackOrder />} />
+            <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
             <Route path="/journal" element={<Journal />} />
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/quiz/result" element={<RoutineResult />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
           </Router>
         </WishlistProvider>
         </CartProvider>
       </CurrencyProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

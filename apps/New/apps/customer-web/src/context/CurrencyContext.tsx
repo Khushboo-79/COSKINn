@@ -10,10 +10,6 @@ export interface Currency {
 export const CURRENCIES: Currency[] = [
   { code: 'INR', symbol: '₹', name: 'Indian Rupee', rate: 1 },
   { code: 'USD', symbol: '$', name: 'US Dollar', rate: 0.012 },
-  { code: 'EUR', symbol: '€', name: 'Euro', rate: 0.011 },
-  { code: 'GBP', symbol: '£', name: 'British Pound', rate: 0.0094 },
-  { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham', rate: 0.044 },
-  { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', rate: 0.016 },
 ];
 
 interface CurrencyContextType {

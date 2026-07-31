@@ -9,9 +9,14 @@ type Tab = 'profile' | 'orders' | 'settings';
 
 const Account: React.FC = () => {
   const { mode } = useTheme();
-  const { formatPrice } = useCurrency();
+  const { currency, formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
   const [activeTab, setActiveTab] = useState<Tab>('orders');
+  const [phone, setPhone] = useState(currency.code === 'INR' ? '+91 98765 43210' : '+1 (555) 123-4567');
+
+  React.useEffect(() => {
+    setPhone(currency.code === 'INR' ? '+91 98765 43210' : '+1 (555) 123-4567');
+  }, [currency.code]);
 
   const mockOrders = [
     {
@@ -204,7 +209,7 @@ const Account: React.FC = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
-                        <input type="tel" defaultValue="+1 (555) 123-4567" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                       </div>
                       <button type="button" className={`py-4 px-8 rounded-xl font-bold transition-all ${
                         isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091]'
