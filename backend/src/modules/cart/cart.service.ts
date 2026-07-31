@@ -11,7 +11,7 @@ export class CartService {
     private offerService: OfferService,
     private walletService: WalletService,
     private rewardPointService: RewardPointService
-  ) {}
+  ) { }
 
   async getCart(userId: string) {
     let cart = await this.prisma.cart.findUnique({
@@ -40,7 +40,7 @@ export class CartService {
     // Calculate totals on the fly
     let totalMrp = 0;
     let totalDiscountPrice = 0;
-    
+
     for (const item of cart.items) {
       const price = Number(item.product.discountPrice || item.product.mrp);
       const mrp = Number(item.product.mrp);
@@ -50,7 +50,7 @@ export class CartService {
 
     const offerData = await this.offerService.evaluateBestOffer(cart.items, totalDiscountPrice);
     const tieredOffers = await this.offerService.getTieredOfferProgress(totalDiscountPrice);
-    
+
     // Auto-add Free Gifts based on achieved tiers
     const autoAddedGifts: any[] = [];
     for (const tier of tieredOffers) {
@@ -63,7 +63,7 @@ export class CartService {
         });
       }
     }
-    
+
     // Using getWallet returns { balance } object, we just want the balance number
     const wallet = await this.walletService.getWallet(userId);
     const rewardPoints = await this.rewardPointService.getBalance(userId);
@@ -92,6 +92,7 @@ export class CartService {
     if (!cart) {
       cart = await this.prisma.cart.create({ data: { userId } });
     }
+
 
     const product = await this.prisma.product.findUnique({ where: { id: productId } });
     if (!product || product.status !== 'LIVE') {
