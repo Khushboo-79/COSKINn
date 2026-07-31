@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import { useSelector } from 'react-redux';
 import { scaleh, scalev, AppTheme } from '../constants/AppTheme';
 import { Text } from 'react-native';
@@ -12,7 +13,7 @@ const SearchBarRow = () => {
   const isCosmetics = activeDomain === 'cosmetics';
   const searchBorderColor = isCosmetics ? '#FFC2D1' : '#E5E5E5'; // Light pink for makeup
   const searchBgColor = '#FFFFFF';
-  
+
   const cartItems = useSelector(state => state.cart.items);
   const cartCount = cartItems?.length || 0;
 
@@ -31,11 +32,11 @@ const SearchBarRow = () => {
         </View>
       </TouchableOpacity>
       <TouchableOpacity style={styles.headerIconBtn} onPress={() => navigation.navigate('Wishlist')}>
-        <Image source={require('../images/icons/Wishlist.webp')} style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} resizeMode="contain" />
+        <Fontisto name="heart-alt" size={scaleh(20)} color="#1a1a1a" style={{ width: scaleh(24), height: scaleh(24), textAlign: 'center', textAlignVertical: 'center' }} />
       </TouchableOpacity>
       <TouchableOpacity style={styles.headerIconBtn} onPress={() => navigation.navigate('Cart')}>
         <View>
-          <Image source={require('../images/icons/Cart.webp')} style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} resizeMode="contain" />
+          <Icon name="shopping-cart" size={scaleh(22)} color="#1a1a1a" style={{ width: scaleh(24), height: scaleh(24), textAlign: 'center', textAlignVertical: 'center' }} />
           {cartCount > 0 && (
             <View style={styles.badgeContainer}>
               <Text style={styles.badgeText}>{cartCount}</Text>

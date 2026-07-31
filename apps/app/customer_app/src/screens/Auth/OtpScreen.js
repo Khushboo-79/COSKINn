@@ -7,11 +7,12 @@ import { AppTheme, scaleh, scalev } from '../../constants/AppTheme';
 import api from '../../services/api';
 import { setCredentials } from '../../redux/slices/authSlice';
 import { fetchProfile } from '../../redux/slices/profileSlice';
+import LogoText from '../../components/LogoText';
 
 const OtpScreen = ({ navigation, route }) => {
   const phone = route.params?.phone || '';
   const dispatch = useDispatch();
-  
+
   // Twilio verify codes are typically 6 digits
   const OTP_LENGTH = 6;
   const [otpValues, setOtpValues] = useState(Array(OTP_LENGTH).fill(''));
@@ -69,7 +70,7 @@ const OtpScreen = ({ navigation, route }) => {
     try {
       const response = await api.post('/auth/verify-otp', { phone, otp: otpCode });
       const { access_token, refresh_token, user } = response.data;
-      
+
       // Save tokens securely
       await AsyncStorage.setItem('access_token', access_token);
       if (refresh_token) {
@@ -106,32 +107,15 @@ const OtpScreen = ({ navigation, route }) => {
             <View style={styles.logoRow}>
               <Image
                 source={require('../../images/Logo/logo.webp')}
-                style={styles.bigCLogo}
+                style={styles.logoImage}
                 resizeMode="contain"
               />
-              <Text style={styles.logoText}>OSKINn</Text>
-              {/* Small heart above the 'I' */}
-              <Image
-                source={require('../../images/Logo/coskinLogo.webp')}
-                style={styles.smallHeartLogoTop}
-                resizeMode="contain"
-              />
+              <LogoText style={styles.logoText} />
             </View>
             <Text style={styles.tagline}>Your skin needs pure</Text>
           </View>
 
           <View style={styles.cardContainer}>
-            {/* Floating elements behind card */}
-            <Image
-              source={require('../../images/Logo/logo.webp')}
-              style={styles.floatingTopLeft}
-              resizeMode="contain"
-            />
-            <Image
-              source={require('../../images/Logo/coskinLogo.webp')}
-              style={styles.floatingBottomRight}
-              resizeMode="contain"
-            />
 
             {/* Card Section */}
             <View style={styles.card}>
@@ -219,26 +203,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingLeft: scaleh(2),
   },
-  bigCLogo: {
-    width: scaleh(60),
-    height: scalev(60),
-    marginRight: -scaleh(5),
+  logoImage: {
+    width: scaleh(85),
+    height: scalev(85),
+    marginRight: scaleh(-35),
   },
   logoText: {
     fontFamily: AppTheme.fonts.logo,
-    fontSize: scaleh(42),
-    color: '#000000',
+    fontSize: scaleh(36),
+    color: '#C4877A',
     includeFontPadding: false,
-    letterSpacing: 0,
-  },
-  smallHeartLogoTop: {
-    position: 'absolute',
-    right: scaleh(23),
-    top: -scalev(6),
-    width: scaleh(16),
-    height: scalev(16),
   },
   tagline: {
     fontSize: scaleh(16),
