@@ -63,7 +63,7 @@ const Bestsellers: React.FC = () => {
 
   return (
     <section id="bestsellers" className={`py-16 ${isGlam ? 'bg-[#faf9f6]' : 'bg-white'}`}>
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+      <div className={`${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-6 lg:px-10`}>
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
@@ -96,7 +96,9 @@ const Bestsellers: React.FC = () => {
 
               <Link to={`/product/${product.id}`} className="block">
                 {/* Image Container */}
-                <div className="relative aspect-[4/5] rounded-[40px] overflow-hidden bg-gray-100 mb-4 shadow-[0_8px_0px_rgba(0,0,0,0.1)] group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300">
+                <div className={`relative aspect-[4/5] overflow-hidden bg-gray-100 mb-4 shadow-[0_8px_0px_rgba(0,0,0,0.1)] group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300 ${
+                  isGlam ? 'rounded-none' : 'rounded-[40px]'
+                }`}>
                   <img 
                     src={product.image} 
                     alt={product.name}
@@ -140,8 +142,8 @@ const Bestsellers: React.FC = () => {
                           quantity: 1
                         });
                       }}
-                      className={`w-full py-3 rounded-xl font-bold text-sm shadow-xl ${
-                        isGlam ? 'bg-[#7a1b26] text-white hover:bg-[#5a121b]' : 'bg-white text-gray-900 hover:bg-[#ff9aa8] hover:text-white'
+                      className={`w-full py-3 font-bold text-sm shadow-xl ${
+                        isGlam ? 'bg-[#7a1b26] text-white hover:bg-[#5a121b] rounded-none' : 'bg-white text-gray-900 hover:bg-[#ff9aa8] hover:text-white rounded-xl'
                       }`}
                     >
                       Quick Add

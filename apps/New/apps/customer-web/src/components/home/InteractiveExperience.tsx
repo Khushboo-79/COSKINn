@@ -17,16 +17,16 @@ const InteractiveExperience: React.FC = () => {
           </svg>
         </div>
       )}
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative z-20">
+      <div className={`${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-6 lg:px-10 relative z-20`}>
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className={`relative rounded-[32px] overflow-hidden ${
+          className={`relative overflow-hidden ${
             isGlam 
-              ? 'bg-[#2a2a2a] text-white' 
-              : 'bg-gradient-to-r from-[#ffe4e1] to-[#e0f5ea]'
+              ? 'bg-[#2a2a2a] text-white rounded-none md:rounded-sm' 
+              : 'bg-gradient-to-r from-[#ffe4e1] to-[#e0f5ea] rounded-[32px]'
           }`}
         >
           {/* Background Decorative Elements */}
@@ -48,7 +48,9 @@ const InteractiveExperience: React.FC = () => {
                     : "https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=1200"
                 }
                 alt="Experience" 
-                className="w-full h-full object-cover rounded-t-[32px] md:rounded-tr-none md:rounded-l-[32px]"
+                className={`w-full h-full object-cover ${
+                  isGlam ? 'rounded-none' : 'rounded-t-[32px] md:rounded-tr-none md:rounded-l-[32px]'
+                }`}
               />
             </div>
 
@@ -76,10 +78,10 @@ const InteractiveExperience: React.FC = () => {
                   : 'Answer 6 quick questions and we\'ll build a routine matched to you.'}
               </p>
               
-              <Link to="/quiz" className={`group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 w-full sm:w-auto ${
+              <Link to="/quiz" className={`group flex items-center justify-center px-8 py-4 text-sm font-bold transition-all duration-300 w-full sm:w-auto ${
                 isGlam 
-                  ? 'bg-[#e5b376] text-[#2a2a2a] hover:bg-white' 
-                  : 'bg-white text-[#2a2a2a] hover:bg-gray-50 shadow-xl shadow-[#ff9aa8]/20'
+                  ? 'bg-[#e5b376] text-[#2a2a2a] hover:bg-white rounded-none' 
+                  : 'bg-white text-[#2a2a2a] hover:bg-gray-50 shadow-xl shadow-[#ff9aa8]/20 rounded-2xl'
               }`}>
                 <span>{isGlam ? 'Start the Consultation' : 'Take the Quiz'}</span>
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />

@@ -179,25 +179,25 @@ const Hero: React.FC = () => {
       {/* Decorative Separator for Glam Mode */}
       {isGlam && (
         <div className="absolute top-0 left-0 w-full flex items-center justify-center pt-8 z-20">
-          <div className="w-full max-w-[800px] flex items-center px-4">
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-[#d2b27b] opacity-60"></div>
+          <div className="w-full max-w-[1150px] flex items-center px-4 sm:px-6 lg:px-8">
+            <div className="flex-1 h-[1px] bg-[#d2b27b] opacity-50"></div>
             <span 
               className="px-6 text-[12px] md:text-[14px] uppercase tracking-[0.25em] font-serif italic text-[#d2b27b] font-medium whitespace-nowrap"
               style={{ marginLeft: '0.25em' }}
             >
               MAISON COSKINN
             </span>
-            <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-[#d2b27b] opacity-60"></div>
+            <div className="flex-1 h-[1px] bg-[#d2b27b] opacity-50"></div>
             {/* The little dot on the right, seen in Image 2 */}
             <div className="w-[3px] h-[3px] rounded-full bg-[#d2b27b] ml-1 opacity-60 hidden md:block"></div>
           </div>
         </div>
       )}
 
-      <div className="relative z-10 w-full h-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between pt-16 md:pt-0">
+      <div className={`relative z-10 w-full h-full ${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between pt-16 md:pt-0`}>
         
         {/* Left Side: Content */}
-        <div className="w-full md:w-[60%] h-full pr-0 md:pr-12 flex flex-col justify-center items-start text-left z-20 pb-16 md:pb-24">
+        <div className={`w-full ${isGlam ? 'md:w-[50%]' : 'md:w-[60%]'} h-full pr-0 md:pr-12 flex flex-col justify-center items-start text-left z-20 pb-16 md:pb-24`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-content' : 'skin-content'}
@@ -311,7 +311,7 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Right Side: Image Composition */}
-        <div className="w-full md:w-[40%] h-[90%] relative hidden md:block self-center">
+        <div className={`w-full ${isGlam ? 'md:w-[50%]' : 'md:w-[40%]'} h-[90%] relative hidden md:block self-center`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-images' : 'skin-images'}
@@ -321,7 +321,9 @@ const Hero: React.FC = () => {
               className="absolute inset-0 w-full h-full"
             >
               {isGlam ? (
-                <div className="relative w-[85%] h-[90%] border border-[#e5b376] p-2 flex mx-auto mt-4">
+                <div className="relative w-full h-full border border-[#e5b376] p-2 flex mx-auto mt-4">
+                  {/* Top Left Corner Bracket */}
+                  <div className="absolute top-[-1px] left-[-1px] w-[15px] h-[15px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
                   <div className="w-full h-full relative overflow-hidden bg-white shadow-xl flex items-center justify-center">
                     <AnimatePresence mode="popLayout">
                       <motion.img 

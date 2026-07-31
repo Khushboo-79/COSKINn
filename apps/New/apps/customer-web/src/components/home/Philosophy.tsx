@@ -15,7 +15,7 @@ const Philosophy: React.FC = () => {
           </svg>
         </div>
       )}
-      <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+      <div className={`${isGlam ? 'max-w-[1150px]' : 'max-w-[1200px]'} mx-auto px-6 lg:px-10`}>
         <div className="grid md:grid-cols-2 gap-6 lg:gap-10 items-center">
           
           {/* Content Side */}
@@ -62,7 +62,7 @@ const Philosophy: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="relative"
           >
-            <div className={`relative aspect-video md:aspect-[16/10] rounded-[24px] overflow-hidden ${isGlam ? 'border-4 border-white shadow-xl' : ''}`}>
+            <div className={`relative aspect-video md:aspect-[16/10] overflow-hidden ${isGlam ? 'border-4 border-white shadow-xl rounded-none' : 'rounded-[24px]'}`}>
               <img 
                 src={
                   isGlam 
