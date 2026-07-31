@@ -24,6 +24,14 @@ const productWizardSchema = z.object({
   gstRate: z.coerce.number().min(0, "GST rate is required"),
   claims: z.string().optional(),
   warnings: z.string().optional(),
+  variants: z.array(z.object({
+    sku: z.string().min(1, "SKU is required"),
+    size: z.string().optional(),
+    mrp: z.coerce.number().min(0),
+    price: z.coerce.number().min(0),
+    shadeName: z.string().optional(),
+    shadeHex: z.string().optional(),
+  })).optional(),
 });
 
 type ProductFormValues = z.infer<typeof productWizardSchema>;
@@ -64,8 +72,13 @@ export const ProductWizardShell = () => {
         setCurrentStep(prev => prev + 1);
       } else {
         // If it's the last step, submit
-        handleSubmit(onSubmit)();
+        handleSubmit(onSubmit, (errors) => {
+          console.error("Validation errors:", errors);
+          toast.error("Please fill in all required fields correctly.");
+        })();
       }
+    } else {
+      toast.error("Please fix the validation errors before continuing.");
     }
   };
 
@@ -78,24 +91,29 @@ export const ProductWizardShell = () => {
   const createMutation = useMutation({
     mutationFn: productApi.createProduct,
     onSuccess: () => {
-      toast.success();
+      toast.success('Product created successfully!');
       navigate('/product');
     },
     onError: (error: any) => {
-      toast.error();
+      toast.error(error?.response?.data?.message || 'Failed to create product. Please try again.');
     }
   });
 
   const onSubmit = (data: any) => {
     console.log("Submitting Product:", data);
     
+    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const primaryVariant = data.variants?.[0];
+
     // Map form data to DTO expected by backend
     const dto = {
       name: data.name,
+      slug: slug,
+      sku: primaryVariant?.sku || `SKU-${Date.now()}`,
       categoryId: data.categoryId,
       description: data.description,
-      mrp: data.price || 0,
-      discountPrice: data.price || 0,
+      mrp: primaryVariant?.mrp || 0,
+      discountPrice: primaryVariant?.price || 0,
       gstRate: data.gstRate,
       status: 'LIVE',
       productLine: 'BOTH'
