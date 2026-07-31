@@ -2,8 +2,10 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import { AppTheme, scaleh, scalev } from '../constants/AppTheme';
 import { useSelector } from 'react-redux';
+import LogoText from './LogoText';
 
 const Header = ({ showHeart = false, rightComponent, onBackPress, transparent = false, showLogo = true, backgroundColor = '#FFFFFF' }) => {
   const navigation = useNavigation();
@@ -21,15 +23,10 @@ const Header = ({ showHeart = false, rightComponent, onBackPress, transparent = 
           <View style={styles.logoRow}>
             <Image
               source={require('../images/Logo/logo.webp')}
-              style={styles.bigCLogo}
+              style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={styles.logoText}>OSKINn</Text>
-            <Image
-              source={require('../images/Logo/coskinLogo.webp')}
-              style={styles.smallHeartLogoTop}
-              resizeMode="contain"
-            />
+            <LogoText style={styles.logoText} />
           </View>
         </View>
       ) : (
@@ -41,11 +38,11 @@ const Header = ({ showHeart = false, rightComponent, onBackPress, transparent = 
       ) : (
         <View style={styles.rightIcons}>
           <TouchableOpacity style={styles.iconButton}>
-            <Image 
-              source={showHeart ? require('../images/icons/Wishlist.webp') : require('../images/icons/Cart.webp')} 
-              style={{ width: scaleh(24), height: scaleh(24), tintColor: '#1a1a1a' }} 
-              resizeMode="contain" 
-            />
+            {showHeart ? (
+              <Fontisto name="heart-alt" size={scaleh(20)} color="#1a1a1a" style={{ width: scaleh(24), height: scaleh(24), textAlign: 'center', textAlignVertical: 'center' }} />
+            ) : (
+              <Icon name="shopping-cart" size={scaleh(22)} color="#1a1a1a" style={{ width: scaleh(24), height: scaleh(24), textAlign: 'center', textAlignVertical: 'center' }} />
+            )}
             {!showHeart && cartCount > 0 && (
               <View style={styles.badgeContainer}>
                 <Text style={styles.badgeText}>{cartCount}</Text>
@@ -67,8 +64,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scaleh(20),
-    paddingTop: scalev(10),
-    paddingBottom: scalev(15),
+    paddingTop: scalev(-5),
+    paddingBottom: scalev(-5),
     marginBottom: scalev(15),
     marginTop: scalev(35),
     // backgroundColor removed here to use dynamic style
@@ -86,25 +83,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  bigCLogo: {
-    width: scaleh(55),
-    height: scalev(55),
-    marginRight: scaleh(-10),
+  logoImage: {
+    width: scaleh(65),
+    height: scalev(65),
+    marginRight: scaleh(-25),
   },
   logoText: {
     fontFamily: AppTheme.fonts.logo,
-    fontSize: scaleh(32),
-    marginTop: scalev(4),
-    color: '#000000',
+    fontSize: scaleh(27),
+    color: '#C4877A',
     includeFontPadding: false,
-    letterSpacing: 0,
-  },
-  smallHeartLogoTop: {
-    position: 'absolute',
-    right: scaleh(40),
-    top: -scalev(4),
-    width: scaleh(14),
-    height: scalev(14),
   },
   rightIcons: {
     flexDirection: 'row',
