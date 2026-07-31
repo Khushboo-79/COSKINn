@@ -272,10 +272,10 @@ export default function BestSellersPage() {
               Discover our most-loved skincare products trusted by thousands of customers for healthy, glowing skin.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button onClick={() => window.scrollTo({ top: document.getElementById('best-sellers-grid').offsetTop - 100, behavior: 'smooth' })} className="w-full sm:w-auto px-10 py-4 bg-theme-primary text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-pink-700 transition-colors shadow-lg">
+              <button onClick={() => { const el = document.getElementById('best-sellers-grid'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-theme-primary text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-pink-700 transition-colors shadow-lg">
                 Shop Now
               </button>
-              <button className="w-full sm:w-auto px-10 py-4 bg-white text-black border border-black/10 rounded-full font-bold uppercase tracking-widest text-sm hover:border-black/30 transition-colors">
+              <button onClick={() => { const el = document.getElementById('best-sellers-grid'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-white text-black border border-black/10 rounded-full font-bold uppercase tracking-widest text-sm hover:border-black/30 transition-colors">
                 Explore Collection
               </button>
             </div>

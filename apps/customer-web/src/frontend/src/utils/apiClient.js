@@ -16,8 +16,8 @@ apiClient.interceptors.request.use(
         const session = JSON.parse(sessionStr);
         // Assuming the backend requires a token and it is stored in the session object. 
         // If the token is not there, it will at least pass the headers if we add them later.
-        if (session.token) {
-          config.headers.Authorization = `Bearer ${session.token}`;
+        if (session.token || session.access_token) {
+          config.headers.Authorization = `Bearer ${session.token || session.access_token}`;
         }
       } catch (error) {
         console.error("Failed to parse session", error);
@@ -30,9 +30,37 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
     if (error.response) {
-      if (error.response.status === 401) {
+      if (error.response.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+          const sessionStr = localStorage.getItem('coskinn_session');
+          if (sessionStr) {
+            const session = JSON.parse(sessionStr);
+            if (session.refreshToken) {
+              const res = await axios.post(`${apiClient.defaults.baseURL}/auth/refresh`, {
+                refreshToken: session.refreshToken
+              });
+              
+              if (res.data && res.data.access_token) {
+                // Update session
+                session.token = res.data.access_token;
+                session.refreshToken = res.data.refresh_token;
+                localStorage.setItem('coskinn_session', JSON.stringify(session));
+                
+                // Retry original request
+                originalRequest.headers.Authorization = `Bearer ${res.data.access_token}`;
+                return apiClient(originalRequest);
+              }
+            }
+          }
+        } catch (refreshError) {
+          console.error("Token refresh failed", refreshError);
+        }
+        
         // Trigger a global logout event that AuthContext can listen to
         window.dispatchEvent(new CustomEvent('auth:logout'));
       } else if (error.response.status >= 500) {

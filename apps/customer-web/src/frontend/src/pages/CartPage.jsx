@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { cosmeticsProducts } from '../constants/cosmeticsProducts';
 import { skincareProducts } from '../constants/skincareProducts';
@@ -23,7 +24,8 @@ const DiamondOrnament = () => (
 );
 
 export default function CartPage() {
-  const { cart, cartSubtotal, updateQuantity, removeFromCart, addToCart } = useCart();
+  const { cart, cartSubtotal, cartSummary, autoAddedGifts, fetchCart, updateQuantity, removeFromCart, addToCart } = useCart();
+  const { executeProtectedAction } = useAuth();
   const { theme } = useTheme();
   const isSkincare = theme === 'skincare';
   const navigate = useNavigate();
@@ -31,7 +33,8 @@ export default function CartPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    fetchCart();
+  }, [fetchCart]);
 
   // 4 Featured Skincare Products for Skincare Theme
   const featuredSkincare = [
@@ -275,7 +278,12 @@ export default function CartPage() {
                       <div>
                         <h4 className="font-heading font-black text-[#5E1930] text-lg leading-tight mb-1">{item.name}</h4>
                         <p className="text-xs text-[#C96E8A] font-semibold">COSKINn Brand Premium</p>
-                        <div className="text-sm font-bold text-[#FF0069] mt-1">₹{item.price}</div>
+                        <div className="text-sm font-bold text-[#FF0069] mt-1 flex items-center gap-2">
+                          {item.mrp && item.mrp > item.price && (
+                            <span className="text-xs line-through text-gray-400 font-normal">₹{item.mrp}</span>
+                          )}
+                          <span>₹{item.price}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -312,6 +320,32 @@ export default function CartPage() {
                     </div>
                   </motion.div>
                 ))}
+
+                {autoAddedGifts && autoAddedGifts.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-[#FFE5EC]">
+                    <div className="flex items-center gap-2 mb-3 text-xs font-bold text-[#FF0069] tracking-wider uppercase">
+                      <Sparkles className="w-4 h-4" />
+                      Free Gifts Included
+                    </div>
+                    {autoAddedGifts.map((gift, idx) => (
+                      <div key={idx} className="flex items-center justify-between bg-[#FFF5F7] border border-[#FFE0E9] p-4 rounded-2xl mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-lg shadow-sm">
+                            🎁
+                          </div>
+                          <div>
+                            <h5 className="font-heading font-bold text-[#5E1930] text-sm">{gift.name}</h5>
+                            <span className="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full uppercase">Free Gift</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-xs font-bold text-green-600">FREE</span>
+                          <div className="text-[11px] text-gray-400">Qty: {gift.quantity || 1}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -330,28 +364,56 @@ export default function CartPage() {
                 Summary
               </h3>
 
-              <div className="flex flex-col gap-4 text-sm font-medium mb-6">
+              <div className="flex flex-col gap-3.5 text-sm font-medium mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="opacity-70">Subtotal</span>
-                  <span>₹{cartSubtotal}</span>
+                  <span className="opacity-70">Total MRP</span>
+                  <span>₹{cartSummary?.totalMrp || cartSubtotal || 0}</span>
                 </div>
+                <div className="flex justify-between items-center">
+                  <span className="opacity-70">Discount Price</span>
+                  <span>₹{cartSummary?.totalDiscountPrice || cartSubtotal || 0}</span>
+                </div>
+                {(cartSummary?.totalSavings > 0) && (
+                  <div className="flex justify-between items-center text-green-600 font-semibold">
+                    <span>Total Savings</span>
+                    <span>-₹{cartSummary.totalSavings}</span>
+                  </div>
+                )}
+                {(cartSummary?.offerDiscount > 0 || cartSummary?.appliedOffer) && (
+                  <div className="flex justify-between items-center text-[#FF0069] font-semibold">
+                    <span>Applied Offer {cartSummary?.appliedOffer?.title ? `(${cartSummary.appliedOffer.title})` : ''}</span>
+                    <span>-₹{cartSummary?.offerDiscount || 0}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="opacity-70">Royal Shipping</span>
                   <span className="text-green-600 font-bold">FREE</span>
                 </div>
+                {(cartSummary?.walletBalance !== undefined && cartSummary?.walletBalance !== null) && (
+                  <div className="flex justify-between items-center text-xs text-[#75263F]/80 pt-1">
+                    <span>Wallet Balance Available</span>
+                    <span className="font-bold">₹{Number(cartSummary.walletBalance).toFixed(2)}</span>
+                  </div>
+                )}
+                {(cartSummary?.rewardPointsBalance !== undefined && cartSummary?.rewardPointsBalance !== null) && (
+                  <div className="flex justify-between items-center text-xs text-[#75263F]/80">
+                    <span>Reward Points Balance</span>
+                    <span className="font-bold">{cartSummary.rewardPointsBalance} Pts</span>
+                  </div>
+                )}
                 <div className="border-t border-[#FFE5EC] pt-4 flex justify-between items-center text-base font-bold text-[#5E1930]">
-                  <span>Total Selections</span>
-                  <span>₹{cartSubtotal}</span>
+                  <span>Final Total</span>
+                  <span>₹{cartSummary?.finalTotal ?? (cartSummary?.totalDiscountPrice || cartSubtotal || 0)}</span>
                 </div>
               </div>
 
               {cart.length > 0 ? (
-                <Link 
-                  to="/checkout" 
+                <button 
+                  onClick={() => executeProtectedAction(() => navigate('/checkout'))}
                   className="w-full py-4 bg-gradient-to-r from-[#D74D76] to-[#E56B91] text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3 border border-[#F4B4C8]/50 hover:shadow-lg transition-all rounded-full"
                 >
                   Proceed to Checkout
-                </Link>
+                </button>
               ) : (
                 <button 
                   disabled

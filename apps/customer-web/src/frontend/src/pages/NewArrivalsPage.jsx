@@ -23,6 +23,16 @@ export default function NewArrivalsPage() {
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [activeFilter, setActiveFilter] = useState('All');
   const scrollRef = useRef(null);
+  const productsRef = useRef(null);
+  const exploreNewRef = useRef(null);
+
+  const handleShopCollection = () => {
+    productsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleExploreNew = () => {
+    exploreNewRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
   
   const { scrollYProgress } = useScroll();
   const heroY = useTransform(scrollYProgress, [0, 0.2], ['0%', '30%']);
@@ -100,10 +110,10 @@ export default function NewArrivalsPage() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-6"
           >
-            <button className="px-10 py-4 btn-primary-skincare font-bold tracking-widest uppercase text-sm">
+            <button onClick={handleShopCollection} className="px-10 py-4 btn-primary-skincare font-bold tracking-widest uppercase text-sm">
               Shop Collection
             </button>
-            <button className="px-10 py-4 btn-secondary-skincare font-bold tracking-widest uppercase text-sm">
+            <button onClick={handleExploreNew} className="px-10 py-4 btn-secondary-skincare font-bold tracking-widest uppercase text-sm">
               Explore New
             </button>
           </motion.div>
@@ -111,7 +121,7 @@ export default function NewArrivalsPage() {
       </div>
 
       {/* 2. Premium Filter Bar */}
-      <div className="sticky top-[72px] z-40 w-full bg-theme-bg/80 backdrop-blur-xl border-b border-black/5 py-4 px-6 shadow-sm">
+      <div ref={productsRef} className="sticky top-[72px] z-40 w-full bg-theme-bg/80 backdrop-blur-xl border-b border-black/5 py-4 px-6 shadow-sm">
         <div className="max-w-7xl mx-auto overflow-x-auto hide-scrollbar flex items-center gap-3">
           {filters.map((filter) => (
             <button
@@ -208,7 +218,7 @@ export default function NewArrivalsPage() {
       </div>
 
       {/* 4. Just Dropped Collection (Horizontal Scroll) */}
-      <div className="w-full bg-gradient-to-b from-theme-secondary/10 to-transparent py-24 overflow-hidden relative">
+      <div ref={exploreNewRef} className="w-full bg-gradient-to-b from-theme-secondary/10 to-transparent py-24 overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-6 mb-12 flex justify-between items-end">
           <div>
             <h2 className="text-4xl font-heading font-bold mb-2">Just Dropped</h2>
