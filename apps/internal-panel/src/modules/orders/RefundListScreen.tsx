@@ -106,7 +106,7 @@ export const RefundListScreen = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-bold text-slate-900">₹{refund.amount.toFixed(2)}</div>
+                      <div className="text-sm font-bold text-slate-900">₹{(refund.amount || 0).toFixed(2)}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-slate-700">{refund.reason}</div>
