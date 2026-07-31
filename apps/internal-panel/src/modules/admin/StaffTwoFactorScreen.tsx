@@ -19,11 +19,11 @@ export const StaffTwoFactorScreen = () => {
   const resetMutation = useMutation({
     mutationFn: adminApi.resetStaff2FA,
     onSuccess: () => {
-      toast.success();
+      toast.success('Action successful');
       refetch();
     },
     onError: () => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

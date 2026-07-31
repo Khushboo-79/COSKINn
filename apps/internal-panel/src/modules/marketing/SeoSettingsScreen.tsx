@@ -28,7 +28,7 @@ export const SeoSettingsScreen = () => {
     mutationFn: () => marketingApi.updateGlobalSeo({ title, description, keywords }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['marketing', 'globalSeo'] });
-      toast.success();
+      toast.success('Action successful');
     }
   });
 

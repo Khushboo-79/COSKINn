@@ -33,11 +33,11 @@ export const OrderListScreen = () => {
       warehouseId: 'default-warehouse' 
     }),
     onSuccess: (data) => {
-      toast.success();
+      toast.success('Action successful');
       setSelectedOrderIds([]); // Clear selection
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 
@@ -61,7 +61,7 @@ export const OrderListScreen = () => {
     setIsBulkUpdating(false);
     queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
     setSelectedOrderIds([]);
-    toast.success();
+    toast.success('Action successful');
   };
 
   const toggleSelection = (id: string) => {

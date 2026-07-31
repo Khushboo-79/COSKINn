@@ -112,7 +112,7 @@ export const UserProfileScreen = () => {
               <h2 className="text-lg font-bold text-slate-900">Edit Profile</h2>
               <button onClick={() => setIsEditProfileOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); toast.success(); setIsEditProfileOpen(false); }} className="p-6 space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); toast.success('Action successful'); setIsEditProfileOpen(false); }} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
                 <input type="text" defaultValue={user?.name || 'Administrator'} className="w-full border-slate-200 rounded-lg px-3 py-2" required />
@@ -138,7 +138,7 @@ export const UserProfileScreen = () => {
               <h2 className="text-lg font-bold text-slate-900">Change Password</h2>
               <button onClick={() => setIsChangePasswordOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); toast.success(); setIsChangePasswordOpen(false); }} className="p-6 space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); toast.success('Action successful'); setIsChangePasswordOpen(false); }} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
                 <input type="password" placeholder="••••••••" className="w-full border-slate-200 rounded-lg px-3 py-2" required />

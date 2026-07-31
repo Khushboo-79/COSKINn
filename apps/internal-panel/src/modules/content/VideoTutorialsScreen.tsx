@@ -42,7 +42,7 @@ export const VideoTutorialsScreen = () => {
         setTimeout(() => setUploadProgress(0), 1000);
       } catch (err) {
         console.error("Video upload failed", err);
-        toast.error();
+        toast.error('An error occurred');
         setUploadProgress(0);
       } finally {
         setUploading(false);

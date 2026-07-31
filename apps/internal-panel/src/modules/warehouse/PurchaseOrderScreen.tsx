@@ -34,7 +34,7 @@ export const PurchaseOrderScreen = () => {
       setItems([{ sku: '', requestedQty: 1, unitPrice: 0 }]);
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

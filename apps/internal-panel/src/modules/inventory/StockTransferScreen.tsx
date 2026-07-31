@@ -38,12 +38,12 @@ export const StockTransferScreen = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
-      toast.success();
+      toast.success('Action successful');
       reset();
       navigate('/inventory');
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

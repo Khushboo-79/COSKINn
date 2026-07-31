@@ -39,7 +39,7 @@ export const UpdateStatusModal = ({ orderId, currentStatus, onClose }: UpdateSta
       onClose();
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

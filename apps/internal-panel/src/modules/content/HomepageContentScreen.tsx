@@ -53,7 +53,7 @@ export const HomepageContentScreen = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content', 'articles', 'PAGE'] });
-      toast.success();
+      toast.success('Action successful');
     }
   });
 

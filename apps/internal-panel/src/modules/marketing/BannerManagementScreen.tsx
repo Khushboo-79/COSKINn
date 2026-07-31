@@ -51,7 +51,7 @@ export const BannerManagementScreen = () => {
         setImageUrl(url);
       } catch (err) {
         console.error("Upload failed", err);
-        toast.error();
+        toast.error('An error occurred');
       } finally {
         setUploading(false);
       }
