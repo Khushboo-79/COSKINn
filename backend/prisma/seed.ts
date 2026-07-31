@@ -38,7 +38,7 @@ async function main() {
   console.log('Roles created or already exist.');
 
   // 2. Create Super Admin User
-  const adminEmail = 'admin@coskinn.com';
+  const adminEmail = 'admin@fairenne.com';
   const superAdminRole = await prisma.role.findUnique({ where: { name: 'SUPER_ADMIN' } });
 
   if (superAdminRole) {

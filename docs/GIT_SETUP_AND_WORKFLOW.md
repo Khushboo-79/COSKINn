@@ -4,13 +4,13 @@ This is the exact sequence to go from "nothing exists" to "team is pushing code 
 
 ## 1. Create the GitHub repository
 
-1. On GitHub: **New repository** → name `coskinn` → Private → do **not** initialise with a README (we'll push our own structure) → Create.
+1. On GitHub: **New repository** → name `fairenne` → Private → do **not** initialise with a README (we'll push our own structure) → Create.
 2. On your machine:
 ```bash
-mkdir coskinn && cd coskinn
+mkdir fairenne && cd fairenne
 git init
 git branch -M main
-git remote add origin https://github.com/<your-org>/coskinn.git
+git remote add origin https://github.com/<your-org>/fairenne.git
 ```
 3. Add a `.gitignore` (Node + React Native + NestJS):
 ```
@@ -129,8 +129,8 @@ Add a root `docker-compose.yml` bringing up Postgres + Redis + backend locally s
 ## 10. Day-1 team onboarding steps
 
 ```bash
-git clone https://github.com/<your-org>/coskinn.git
-cd coskinn
+git clone https://github.com/<your-org>/fairenne.git
+cd fairenne
 cp backend/.env.example backend/.env      # fill in local secrets
 docker compose up -d                      # postgres + redis
 npm install                               # installs all workspaces

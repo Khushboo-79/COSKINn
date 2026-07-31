@@ -57,7 +57,7 @@ export const SharedShell = () => {
         } fixed md:relative z-30 inset-y-0 left-0 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col shadow-xl`}
       >
         <div className="h-16 flex items-center justify-between px-4 bg-slate-950 border-b border-slate-800">
-          {!isSidebarOpen && <span className="font-bold text-white text-lg tracking-wide">COSKINn</span>}
+          {!isSidebarOpen && <img src="/logo.png" alt="Fairenne Logo" className="h-8 w-auto" />}
           {isSidebarOpen && <span className="font-bold text-white text-lg mx-auto">CO</span>}
           <button onClick={toggleSidebar} className="text-slate-400 hover:text-white md:hidden">
             <X className="h-5 w-5" />

@@ -1,4 +1,4 @@
-# COSKINn — Customer Website Build Plan (React + Tailwind)
+# Fairenne — Customer Website Build Plan (React + Tailwind)
 
 **Repo path:** `apps/customer-web`
 **Stack:** React (Vite) · Tailwind CSS + Headless UI · Redux Toolkit / React Query · React Router v6 · React Hook Form + Zod · Axios · SSG/SSR pre-render layer for SEO pages
