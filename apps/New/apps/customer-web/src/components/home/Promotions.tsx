@@ -45,24 +45,26 @@ const Promotions: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="p-6 flex items-center justify-between gap-4 rounded-[24px]"
+              className="p-6 rounded-[24px]"
               style={{ backgroundColor: promo.bg, color: promo.text }}
             >
-              <div>
-                <h4 className={`font-bold text-base mb-1 ${isGlam ? 'font-serif' : 'font-display'}`}>
-                  {promo.title}
-                </h4>
-                <p className="text-xs" style={{ color: promo.muted }}>
-                  {promo.sub}
-                </p>
+              <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3 relative z-10">
+                <div className="flex-1 min-w-[140px]">
+                  <h4 className={`font-bold text-lg mb-1 leading-tight ${isGlam ? 'font-serif' : 'font-display'}`}>
+                    {promo.title}
+                  </h4>
+                  <p className="text-sm" style={{ color: promo.muted }}>
+                    {promo.sub}
+                  </p>
+                </div>
+                <Link 
+                  to="/collections"
+                  className="text-sm font-bold underline whitespace-nowrap hover:opacity-70 transition-opacity shrink-0"
+                  style={{ color: promo.text }}
+                >
+                  {promo.cta}
+                </Link>
               </div>
-              <Link 
-                to="/collections"
-                className="text-xs font-bold underline whitespace-nowrap hover:opacity-70 transition-opacity"
-                style={{ color: promo.text }}
-              >
-                {promo.cta}
-              </Link>
             </motion.div>
           ))}
         </div>

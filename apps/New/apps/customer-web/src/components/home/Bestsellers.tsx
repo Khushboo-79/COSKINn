@@ -62,7 +62,7 @@ const Bestsellers: React.FC = () => {
   ];
 
   return (
-    <section className={`py-16 ${isGlam ? 'bg-[#faf9f6]' : 'bg-white'}`}>
+    <section id="bestsellers" className={`py-16 ${isGlam ? 'bg-[#faf9f6]' : 'bg-white'}`}>
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         
         {/* Header */}
@@ -75,7 +75,7 @@ const Bestsellers: React.FC = () => {
               Bestsellers
             </h2>
           </div>
-          <Link to="/collections" className={`mt-4 md:mt-0 flex items-center font-bold text-sm transition-colors ${
+          <Link to="/collections" state={{ from: 'bestsellers' }} className={`mt-4 md:mt-0 flex items-center font-bold text-sm transition-colors ${
             isGlam ? 'text-[#2a2a2a] hover:text-[#7a1b26]' : 'text-gray-500 hover:text-[#ff9aa8]'
           }`}>
             Shop all <ArrowRight size={16} className="ml-2" />
@@ -83,7 +83,7 @@ const Bestsellers: React.FC = () => {
         </div>
 
         {/* Grid / Carousel */}
-        <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-4 gap-4 md:gap-6 pb-8 md:pb-0 hide-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-10 pb-8 md:pb-0">
           {products.map((product, idx) => (
             <motion.div 
               key={product.id}
@@ -91,11 +91,12 @@ const Bestsellers: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="group cursor-pointer flex-shrink-0 w-[75%] sm:w-[45%] md:w-auto snap-start"
+              className="w-[45%] sm:w-[30%] md:w-[22%] lg:w-[20%] max-w-[240px] flex flex-col group cursor-pointer"
             >
+
               <Link to={`/product/${product.id}`} className="block">
                 {/* Image Container */}
-                <div className="relative aspect-[4/5] rounded-[24px] overflow-hidden bg-gray-100 mb-4">
+                <div className="relative aspect-[4/5] rounded-[40px] overflow-hidden bg-gray-100 mb-4 shadow-[0_8px_0px_rgba(0,0,0,0.1)] group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300">
                   <img 
                     src={product.image} 
                     alt={product.name}

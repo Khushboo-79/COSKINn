@@ -31,10 +31,10 @@ const Header: React.FC = () => {
       isGlam ? 'bg-[#faf9f6]/90 border-b border-[#e5b376]/20' : 'bg-white/90 border-b border-gray-100'
     }`}>
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="flex justify-between items-center h-[72px]">
+        <div className="flex justify-between items-center h-[72px] relative">
           
           {/* Left Navigation */}
-          <div className="hidden lg:flex space-x-6 xl:space-x-8 items-center justify-start flex-1 text-[15px] font-sans font-medium whitespace-nowrap">
+          <div className="hidden lg:flex space-x-5 xl:space-x-7 items-center justify-start flex-1 text-[15px] font-sans font-medium whitespace-nowrap">
             <Link to="/" className={`transition-all duration-300 ${
               isGlam 
                 ? 'text-gray-800 icon-hover-glam' 
@@ -68,13 +68,13 @@ const Header: React.FC = () => {
           </div>
 
           {/* Center Logo */}
-          <div className="flex-shrink-0 flex flex-col items-center justify-center flex-1">
-            <Link to="/" className="flex flex-col items-center">
-              <div className="text-3xl tracking-widest font-extrabold text-[#2a2a2a] flex items-center font-display">
-                COSKIN<span className={isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}>n</span>
+          <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center justify-center pointer-events-none">
+            <Link to="/" className="flex flex-col items-center pointer-events-auto">
+              <div className={`flex items-center ${isGlam ? 'text-[36px] font-serif font-medium text-[#141824] tracking-tight leading-none' : 'text-3xl font-display font-extrabold text-[#2a2a2a] tracking-widest'}`}>
+                COSKIN<span className={isGlam ? 'text-[#8b1527]' : 'text-[#ff9aa8]'}>n</span>
               </div>
-              <span className={`text-[9px] uppercase tracking-[0.3em] mt-1 font-bold ${isGlam ? 'text-[#cfa473] font-serif' : 'text-[#e5b376]'}`}>
-                Skin, Refresh, Repeat
+              <span className={`uppercase ${isGlam ? 'mt-1.5 text-[9.5px] text-[#8e95a1] font-serif tracking-[0.4em]' : 'mt-1 text-[9px] text-[#e5b376] tracking-[0.3em] font-bold'}`}>
+                {isGlam ? 'ATELIER DE BEAUTÉ' : 'Skin, Refresh, Repeat'}
               </span>
             </Link>
           </div>

@@ -3,8 +3,6 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./src/frontend/index.html",
-    "./src/frontend/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -18,9 +16,9 @@ export default {
         accent: "var(--color-accent)",
       },
       fontFamily: {
-        sans: "var(--font-sans)",
-        serif: "var(--font-serif)",
-        display: "var(--font-display)",
+        sans: ['Nunito', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+        display: ['Fredoka', 'sans-serif'],
       },
     },
   },
