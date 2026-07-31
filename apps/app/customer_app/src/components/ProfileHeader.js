@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
@@ -9,8 +10,8 @@ const ProfileHeader = ({ name, phone, onBackPress }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
 
-  const gradientColors = isCosmetics 
-    ? ['#FFC2D1', '#FFC2D1'] 
+  const gradientColors = isCosmetics
+    ? ['#FFC2D1', '#FFC2D1']
     : ['#FF0069', '#FFD498'];
 
   return (

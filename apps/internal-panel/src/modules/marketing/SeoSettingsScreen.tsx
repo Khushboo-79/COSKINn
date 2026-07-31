@@ -56,7 +56,7 @@ export const SeoSettingsScreen = () => {
                   {title || 'Site Title'}
                 </div>
                 <div className="text-xs text-[#006621] mt-0.5 truncate max-w-lg">
-                  https://www.coskinn.com
+                  https://www.fairenne.com
                 </div>
                 <div className="text-sm text-[#545454] mt-1 line-clamp-2 max-w-lg">
                   {description || 'Site description will appear here in search results.'}

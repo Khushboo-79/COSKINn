@@ -16,9 +16,9 @@ const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const isCosmetics = activeDomain === 'cosmetics';
   const navBorderColor = isCosmetics ? '#FFC2D1' : AppTheme.colors.primary;
-  
+
   // For Cosmetics, the active tab icon and text remain dark (#1a1a1a), only the spotlight appears.
-  const activeIconColor = isCosmetics ? '#1a1a1a' : AppTheme.colors.primary; 
+  const activeIconColor = isCosmetics ? '#1a1a1a' : AppTheme.colors.primary;
 
   return (
     <View style={[styles.container, { borderColor: navBorderColor }]}>
@@ -38,7 +38,7 @@ const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
                 <Svg height="100%" width="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <Defs>
                     <SvgLinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                      <Stop offset="0" stopColor={isCosmetics ? '#FFE4EB' : 'rgba(255, 0, 106, 0.10)'} />
+                      <Stop offset="0" stopColor={isCosmetics ? '#FFE4EB' : 'rgba(254, 190, 216, 0.1)'} />
                       <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
                     </SvgLinearGradient>
                   </Defs>
@@ -48,10 +48,10 @@ const BottomNavBar = ({ activeTab = 'home', onTabPress }) => {
             )}
 
             <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
-              <Image 
-                source={tab.iconSource} 
-                style={{ width: scaleh(24), height: scaleh(24), tintColor: isActive ? activeIconColor : '#1a1a1a' }} 
-                resizeMode="contain" 
+              <Image
+                source={tab.iconSource}
+                style={{ width: scaleh(24), height: scaleh(24), tintColor: isActive ? activeIconColor : '#1a1a1a' }}
+                resizeMode="contain"
               />
             </View>
             <Text style={[styles.label, isActive && { color: activeIconColor }]}>

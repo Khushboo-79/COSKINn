@@ -53,7 +53,7 @@ export class ContentService {
     if (!seo) {
       seo = await this.prisma.globalSeo.create({
         data: {
-          title: 'COSKINn',
+          title: 'Fairenne',
           description: 'Premium Skincare',
           keywords: 'skincare, beauty'
         }

@@ -34,16 +34,16 @@ async function main() {
     marketingRole = await p.role.create({ data: { name: 'MARKETING_MANAGER', description: 'Marketing panel access' } });
   }
 
-  const adminUser = await p.user.findUnique({ where: { email: 'admin@coskinn.com' } });
+  const adminUser = await p.user.findUnique({ where: { email: 'admin@fairenne.com' } });
   if (!adminUser) {
-    console.log('\nCreating admin@coskinn.com user...');
+    console.log('\nCreating admin@fairenne.com user...');
     const hash = await bcrypt.hash('admin123', 10);
     const newUser = await p.user.create({
       data: {
-        email: 'admin@coskinn.com',
+        email: 'admin@fairenne.com',
         passwordHash: hash,
         firstName: 'Admin',
-        lastName: 'COSKINn',
+        lastName: 'Fairenne',
         roles: {
           create: [
             { roleId: adminRole.id },
@@ -65,11 +65,11 @@ async function main() {
       await p.userRole.create({ data: { userId: adminUser.id, roleId: marketingRole.id } });
       console.log('Added MARKETING_MANAGER role to admin user');
     }
-    console.log(`\nadmin@coskinn.com already exists and has the correct roles.`);
+    console.log(`\nadmin@fairenne.com already exists and has the correct roles.`);
   }
 
   console.log('\n=== Login Credentials ===');
-  console.log('Email: admin@coskinn.com');
+  console.log('Email: admin@fairenne.com');
   console.log('Password: admin123');
 
   await p.$disconnect();

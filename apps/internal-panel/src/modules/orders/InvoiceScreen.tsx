@@ -73,7 +73,7 @@ export const InvoiceScreen = () => {
         {/* Header */}
         <div className="flex justify-between items-start border-b-2 border-slate-900 pb-8 mb-8">
           <div>
-            <h1 className="text-4xl font-black tracking-tighter uppercase">COSKINn</h1>
+            <h1 className="text-4xl font-black tracking-tighter uppercase">Fairenne</h1>
             <p className="text-slate-500 mt-2">Tax Invoice / Bill of Supply</p>
           </div>
           <div className="text-right">
@@ -179,7 +179,7 @@ export const InvoiceScreen = () => {
         {/* Footer */}
         <div className="text-center text-xs text-slate-500 border-t border-slate-200 pt-8">
           <p>This is a computer-generated invoice and does not require a physical signature.</p>
-          <p className="mt-1">Authorized Signatory, COSKINn India Pvt. Ltd.</p>
+          <p className="mt-1">Authorized Signatory, Fairenne India Pvt. Ltd.</p>
         </div>
       </div>
     </div>
