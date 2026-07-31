@@ -2,11 +2,12 @@ import axios from 'axios';
 
 // Create a custom axios instance
 export const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Adjust if backend runs on a different port/prefix
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
 
 // Request Interceptor: Attach the token to every request if it exists
 api.interceptors.request.use(
