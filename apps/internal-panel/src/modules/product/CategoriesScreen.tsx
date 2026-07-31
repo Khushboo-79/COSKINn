@@ -4,6 +4,7 @@ import { productApi } from '../../core/api/product';
 import { DataTable } from '../../components/ui/DataTable';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { Edit2, Tag, Plus, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export const CategoriesScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,7 +78,10 @@ export const CategoriesScreen = () => {
       key: 'actions',
       header: '',
       render: () => (
-        <button className="p-1.5 text-slate-400 hover:text-primary-600 rounded-lg hover:bg-primary-50 transition-colors">
+        <button 
+          onClick={() => toast.info('Category editing is coming soon!')}
+          className="p-1.5 text-slate-400 hover:text-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
+        >
           <Edit2 className="h-4 w-4" />
         </button>
       )

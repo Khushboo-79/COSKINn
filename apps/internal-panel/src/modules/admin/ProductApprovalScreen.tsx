@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { adminApi } from '../../core/api/admin';
 import { ApprovalGate } from '../../components/ui/ApprovalGate';
 import { CheckCircle, AlertTriangle } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export const ProductApprovalScreen = () => {
   const [rejectReason, setRejectReason] = useState('');

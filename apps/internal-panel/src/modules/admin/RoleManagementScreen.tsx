@@ -4,6 +4,7 @@ import { rbacApi } from '../../core/api/rbac';
 import { DataTable } from '../../components/ui/DataTable';
 import { ShieldCheck, Plus, Edit2 } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
+import toast from 'react-hot-toast';
 
 const PANELS = [
   'admin', 'product', 'inventory', 'orders', 'warehouse', 
@@ -75,7 +76,10 @@ export const RoleManagementScreen = () => {
           </h1>
           <p className="text-slate-500 mt-1">Manage system roles and their access to various panels.</p>
         </div>
-        <button className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl shadow-sm text-sm font-medium hover:bg-primary-700 transition-colors">
+        <button 
+          onClick={() => setSelectedRole({ name: 'New Role', panelAccess: [] })}
+          className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl shadow-sm text-sm font-medium hover:bg-primary-700 transition-colors"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Create Role
         </button>
