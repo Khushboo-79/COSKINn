@@ -31,6 +31,11 @@ export const productApi = {
     return response.data;
   },
 
+  updateCategory: async (id: string, data: any) => {
+    const response = await apiClient.put(`/categories/${id}`, data);
+    return response.data;
+  },
+
   createProduct: async (data: any) => {
     const response = await apiClient.post('/product', data);
     return response.data;

@@ -4,7 +4,7 @@ import { rbacApi } from '../../core/api/rbac';
 import { DataTable } from '../../components/ui/DataTable';
 import { ShieldCheck, Plus, Edit2 } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 const PANELS = [
   'admin', 'product', 'inventory', 'orders', 'warehouse', 
