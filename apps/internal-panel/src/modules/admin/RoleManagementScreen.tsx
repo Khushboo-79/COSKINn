@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { rbacApi } from '../../core/api/rbac';
 import { DataTable } from '../../components/ui/DataTable';
 import { ShieldCheck, Plus, Edit2 } from 'lucide-react';
@@ -13,16 +13,30 @@ const PANELS = [
 
 export const RoleManagementScreen = () => {
   const [selectedRole, setSelectedRole] = useState<any>(null);
+  const queryClient = useQueryClient();
 
-  // Use mock data until API is wired
-  const { data: roles = [
-    { id: '1', name: 'Super Admin', panel_access: PANELS, status: 'Active' },
-    { id: '2', name: 'Product Manager', panel_access: ['product'], status: 'Active' },
-    { id: '3', name: 'Customer Support', panel_access: ['support'], status: 'Active' },
-  ], refetch } = useQuery({
+  const { data: roles = [], refetch } = useQuery({
     queryKey: ['roles'],
     queryFn: rbacApi.getRoles,
-    retry: false, // fallback to mock on error
+    retry: false, 
+  });
+
+  const createMutation = useMutation({
+    mutationFn: rbacApi.createRole,
+    onSuccess: () => {
+      toast.success('Role created successfully!');
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
+      setSelectedRole(null);
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string, data: any }) => rbacApi.updateRole(id, data),
+    onSuccess: () => {
+      toast.success('Role updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
+      setSelectedRole(null);
+    }
   });
 
   const columns = [
@@ -107,7 +121,13 @@ export const RoleManagementScreen = () => {
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Role Name</label>
-                  <input type="text" defaultValue={selectedRole.name} disabled={selectedRole.name === 'Super Admin'} className="w-full border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500" />
+                  <input 
+                    type="text" 
+                    value={selectedRole.name} 
+                    onChange={(e) => setSelectedRole({...selectedRole, name: e.target.value})}
+                    disabled={selectedRole.name === 'Super Admin'} 
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500" 
+                  />
                 </div>
 
                 <div>
@@ -122,6 +142,12 @@ export const RoleManagementScreen = () => {
                           <input 
                             type="checkbox" 
                             checked={hasAccess} 
+                            onChange={(e) => {
+                              const newAccess = e.target.checked 
+                                ? [...accessKeys, panel] 
+                                : accessKeys.filter((k: string) => k !== panel);
+                              setSelectedRole({...selectedRole, panelAccess: newAccess});
+                            }}
                             disabled={isSuperAdmin}
                             className="mt-1 h-4 w-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500 disabled:opacity-50" 
                           />
@@ -139,7 +165,19 @@ export const RoleManagementScreen = () => {
 
             <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end space-x-3">
               <button onClick={() => setSelectedRole(null)} className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-slate-100">Cancel</button>
-              <button disabled={selectedRole.name === 'Super Admin'} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50">Save Changes</button>
+              <button 
+                onClick={() => {
+                  if (selectedRole.id) {
+                    updateMutation.mutate({ id: selectedRole.id, data: { name: selectedRole.name, panelAccess: selectedRole.panelAccess || selectedRole.panel_access }});
+                  } else {
+                    createMutation.mutate({ name: selectedRole.name, panelAccess: selectedRole.panelAccess || [] });
+                  }
+                }}
+                disabled={selectedRole.name === 'Super Admin' || createMutation.isPending || updateMutation.isPending} 
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
+              >
+                {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+              </button>
             </div>
           </div>
         </div>
