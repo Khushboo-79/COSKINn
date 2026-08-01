@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 
 // MOCK DATA for movement logs
 const MOCK_LOGS = [
-  { id: 'MOV-001', date: '2023-11-20T10:30:00Z', sku: 'CSK-NIA-30ML', type: 'STOCK_IN', reason: 'OPENING_STOCK', quantity: 500, warehouse: 'W1', user: 'admin@coskinn.com' },
-  { id: 'MOV-002', date: '2023-11-20T14:15:00Z', sku: 'CSK-NIA-30ML', type: 'TRANSFER', reason: 'WAREHOUSE_TRANSFER', quantity: -50, warehouse: 'W1', user: 'staff@coskinn.com' },
-  { id: 'MOV-003', date: '2023-11-20T14:15:00Z', sku: 'CSK-NIA-30ML', type: 'TRANSFER', reason: 'WAREHOUSE_TRANSFER', quantity: 50, warehouse: 'W2', user: 'staff@coskinn.com' },
-  { id: 'MOV-004', date: '2023-11-21T09:00:00Z', sku: 'CSK-GLO-50ML', type: 'STOCK_OUT', reason: 'DAMAGE_WRITE_OFF', quantity: -2, warehouse: 'W1', user: 'qc@coskinn.com' },
-  { id: 'MOV-005', date: '2023-11-22T11:45:00Z', sku: 'CSK-HYA-30ML', type: 'ADJUSTMENT', reason: 'MANUAL_CORRECTION', quantity: 5, warehouse: 'W2', user: 'admin@coskinn.com' },
+  { id: 'MOV-001', date: '2023-11-20T10:30:00Z', sku: 'CSK-NIA-30ML', type: 'STOCK_IN', reason: 'OPENING_STOCK', quantity: 500, warehouse: 'W1', user: 'admin@fairenne.com' },
+  { id: 'MOV-002', date: '2023-11-20T14:15:00Z', sku: 'CSK-NIA-30ML', type: 'TRANSFER', reason: 'WAREHOUSE_TRANSFER', quantity: -50, warehouse: 'W1', user: 'staff@fairenne.com' },
+  { id: 'MOV-003', date: '2023-11-20T14:15:00Z', sku: 'CSK-NIA-30ML', type: 'TRANSFER', reason: 'WAREHOUSE_TRANSFER', quantity: 50, warehouse: 'W2', user: 'staff@fairenne.com' },
+  { id: 'MOV-004', date: '2023-11-21T09:00:00Z', sku: 'CSK-GLO-50ML', type: 'STOCK_OUT', reason: 'DAMAGE_WRITE_OFF', quantity: -2, warehouse: 'W1', user: 'qc@fairenne.com' },
+  { id: 'MOV-005', date: '2023-11-22T11:45:00Z', sku: 'CSK-HYA-30ML', type: 'ADJUSTMENT', reason: 'MANUAL_CORRECTION', quantity: 5, warehouse: 'W2', user: 'admin@fairenne.com' },
 ];
 
 export const MovementLogsScreen = () => {

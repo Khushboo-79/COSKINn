@@ -58,8 +58,8 @@ async function main() {
     for (let i = 1; i <= numProducts; i++) {
       productCount++;
       const isSkincare = cat.productLine === 'SKINCARE';
-      const name = `COSKINn ${cat.name.slice(0, -1)} ${isSkincare ? 'Glow' : 'Glam'} ${i} - ${Math.random().toString(36).substring(7).toUpperCase()}`;
-      const slug = `coskinn-${cat.slug}-prod-${i}-${Date.now()}`;
+      const name = `Fairenne ${cat.name.slice(0, -1)} ${isSkincare ? 'Glow' : 'Glam'} ${i} - ${Math.random().toString(36).substring(7).toUpperCase()}`;
+      const slug = `fairenne-${cat.slug}-prod-${i}-${Date.now()}`;
       
       const basePrice = 500 + (Math.floor(Math.random() * 10) * 100);
       const discount = basePrice - 100;
@@ -75,7 +75,7 @@ async function main() {
           status: ProductStatus.LIVE,
           productLine: cat.productLine,
           isCrossSegment: cat.productLine === 'BOTH',
-          manufacturerName: 'COSKINn Labs India',
+          manufacturerName: 'Fairenne Labs India',
           manufacturerAddress: '123 Beauty Park, Mumbai, MH, India',
           countryOfOrigin: 'India',
           testReportRef: `TEST-REP-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,

@@ -3,6 +3,7 @@ import { rbacApi } from '../../core/api/rbac';
 import { DataTable } from '../../components/ui/DataTable';
 import { Users, Plus, Edit2, ShieldAlert } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
+import { toast } from 'sonner';
 
 export const UserManagementScreen = () => {
   // Use mock data until API is wired
@@ -47,7 +48,10 @@ export const UserManagementScreen = () => {
       key: 'actions',
       header: '',
       render: () => (
-        <button className="p-1.5 text-slate-400 hover:text-primary-600 rounded-lg hover:bg-primary-50 transition-colors">
+        <button 
+          onClick={() => toast.info('User editing is coming soon!')}
+          className="p-1.5 text-slate-400 hover:text-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
+        >
           <Edit2 className="h-4 w-4" />
         </button>
       )
@@ -64,7 +68,10 @@ export const UserManagementScreen = () => {
           </h1>
           <p className="text-slate-500 mt-1">Manage staff accounts and their role assignments.</p>
         </div>
-        <button className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl shadow-sm text-sm font-medium hover:bg-primary-700 transition-colors">
+        <button 
+          onClick={() => toast.info('User creation is coming soon!')}
+          className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl shadow-sm text-sm font-medium hover:bg-primary-700 transition-colors"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add User
         </button>

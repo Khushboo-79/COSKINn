@@ -40,13 +40,13 @@ export const GRNScreen = () => {
       }))
     }),
     onSuccess: () => {
-      toast.success();
+      toast.success('Action successful');
       queryClient.invalidateQueries({ queryKey: ['admin', 'warehouse', 'pos'] });
       setSelectedPO(null);
       setGrnItems([]);
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 
@@ -54,12 +54,12 @@ export const GRNScreen = () => {
     // Validate
     const hasError = grnItems.some(i => i.receivedQty !== (i.acceptedQty + i.rejectedQty));
     if (hasError) {
-      toast.error();
+      toast.error('An error occurred');
       return;
     }
     const hasRejectionsWithoutReason = grnItems.some(i => i.rejectedQty > 0 && !i.reason.trim());
     if (hasRejectionsWithoutReason) {
-      toast.error();
+      toast.error('An error occurred');
       return;
     }
 

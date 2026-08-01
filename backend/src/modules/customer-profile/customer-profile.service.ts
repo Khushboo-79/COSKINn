@@ -36,6 +36,7 @@ export class CustomerProfileService {
         phone: user.phone,
         skinProfile: null,
         makeupPreference: null,
+        avatar: null,
       };
     }
     
@@ -68,11 +69,13 @@ export class CustomerProfileService {
         update: {
           ...(dateOfBirth && { dateOfBirth }),
           ...(dto.gender && { gender: dto.gender }),
+          ...(dto.avatar !== undefined && { avatar: dto.avatar }),
         },
         create: {
           userId,
           ...(dateOfBirth && { dateOfBirth }),
           ...(dto.gender && { gender: dto.gender }),
+          ...(dto.avatar !== undefined && { avatar: dto.avatar }),
         },
       });
 
@@ -278,6 +281,28 @@ export class CustomerProfileService {
   async deleteAddress(userId: string, id: string) {
     return this.prisma.customerAddress.delete({
       where: { id, userId }
+    });
+  }
+
+  async deleteMyAccount(userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Soft delete the user
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          isDeleted: true,
+          deletedAt: new Date(),
+          isActive: false
+        }
+      });
+
+      // 2. Revoke all login sessions so they are logged out
+      await tx.loginSession.updateMany({
+        where: { userId },
+        data: { isRevoked: true }
+      });
+
+      return { success: true, message: 'Account deleted successfully' };
     });
   }
 }

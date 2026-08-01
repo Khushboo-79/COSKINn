@@ -30,11 +30,11 @@ export const OrderDetailScreen = () => {
       boxWeight: 0.5
     }),
     onSuccess: () => {
-      toast.success();
+      toast.success('Action successful');
       queryClient.invalidateQueries({ queryKey: ['admin', 'order', id] });
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

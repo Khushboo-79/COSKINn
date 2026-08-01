@@ -44,7 +44,7 @@ export const SystemSettingsScreen = () => {
     },
     onError: () => {
       setIsSaving(false);
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

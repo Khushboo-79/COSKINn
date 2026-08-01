@@ -33,4 +33,8 @@ export class UpdateCustomerProfileDto {
   @IsOptional()
   @IsString()
   makeupStyle?: string;
+
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 }
