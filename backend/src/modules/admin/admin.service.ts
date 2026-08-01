@@ -71,6 +71,14 @@ export class AdminService implements OnModuleInit {
     });
   }
 
+  async createRole(data: { name: string, description?: string, panelAccess: string[] }) {
+    return this.prisma.role.create({ data });
+  }
+
+  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[] }) {
+    return this.prisma.role.update({ where: { id }, data });
+  }
+
   async updateRolePanelAccess(roleId: string, panelAccess: string[]) {
     return this.prisma.role.update({
       where: { id: roleId },
@@ -93,6 +101,22 @@ export class AdminService implements OnModuleInit {
         }
       }
     });
+  }
+
+  async createUser(data: { firstName: string, lastName: string, email: string, roleId: string }) {
+    const user = await this.prisma.user.create({
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        roles: {
+          create: {
+            roleId: data.roleId
+          }
+        }
+      }
+    });
+    return user;
   }
 
   async assignRole(userIdentifier: string, roleName: string) {

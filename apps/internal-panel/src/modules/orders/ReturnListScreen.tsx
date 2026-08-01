@@ -23,7 +23,7 @@ export const ReturnListScreen = () => {
       setProcessingId(null);
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
       setProcessingId(null);
     }
   });

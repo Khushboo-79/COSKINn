@@ -60,6 +60,13 @@ export class ProductController {
     return this.productService.getReports(platform);
   }
 
+  @Get('stats/overview')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  getStats() {
+    return this.productService.getStats();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(id);

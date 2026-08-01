@@ -23,7 +23,7 @@ export const CancelOrderModal = ({ orderId, onClose }: CancelOrderModalProps) =>
       onClose();
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

@@ -32,7 +32,7 @@ export class SeoService {
     if (!category) throw new NotFoundException('Category not found');
     
     return {
-      title: `${category.name} | COSKINn`,
+      title: `${category.name} | Fairenne`,
       description: category.description || `Browse our collection of ${category.name}`,
       keywords: category.name.toLowerCase(),
       segment: category.productLine
@@ -43,9 +43,9 @@ export class SeoService {
     // Generate dynamic SEO for fruit ingredient landing pages
     const fruitName = name.charAt(0).toUpperCase() + name.slice(1);
     return {
-      title: `${fruitName} Infused Skincare | COSKINn`,
+      title: `${fruitName} Infused Skincare | Fairenne`,
       description: `Discover the benefits of ${fruitName} for your skin. Shop our exclusive ${fruitName} collection.`,
-      keywords: `${fruitName.toLowerCase()}, skincare, coskinn`
+      keywords: `${fruitName.toLowerCase()}, skincare, fairenne`
     };
   }
 
@@ -55,7 +55,7 @@ export class SeoService {
     if (!seo) {
       return this.prisma.globalSeo.create({
         data: {
-          title: 'COSKINn - Premium Skincare & Cosmetics',
+          title: 'Fairenne - Premium Skincare & Cosmetics',
           description: 'Discover our premium range of fruit-infused skincare and cosmetics.',
           keywords: 'skincare, cosmetics, fruit, natural'
         }

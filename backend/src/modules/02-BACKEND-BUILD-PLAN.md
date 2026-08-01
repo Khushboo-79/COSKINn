@@ -1,4 +1,4 @@
-# COSKINn — Backend Build Plan (Node.js / NestJS + PostgreSQL)
+# Fairenne — Backend Build Plan (Node.js / NestJS + PostgreSQL)
 
 **Repo path:** `backend/src/modules/*`
 **Stack:** Node.js · NestJS · PostgreSQL · Prisma ORM · Redis (cache + queues) · JWT auth · RBAC · AWS S3 + CloudFront (media) · Razorpay (payments) · ShadowFox (shipping) · Firebase Cloud Messaging (push) · AWS ECS Fargate + RDS (infra)

@@ -1,4 +1,4 @@
-# COSKINn — Customer Web: Backend Integration Build Plan
+# Fairenne — Customer Web: Backend Integration Build Plan
 
 **Scope:** the web developer has already built the Customer Website frontend (React + Tailwind). The backend (`02-BACKEND-BUILD-PLAN.md`, Days 1–63) is already built. **Nothing here builds or modifies frontend UI or backend code** — this is purely wiring the existing website's screens to the existing, already-live API. Same backend serves Customer Web and Customer App, so this plan's endpoint-by-endpoint sequence applies to both; only the client code differs.
 

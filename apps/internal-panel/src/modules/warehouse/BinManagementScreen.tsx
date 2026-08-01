@@ -27,7 +27,7 @@ export const BinManagementScreen = () => {
       setNewBin({ code: '', description: '' });
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 
