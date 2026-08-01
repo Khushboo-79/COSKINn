@@ -10,7 +10,7 @@ const awsS3Client = new S3Client({
 });
 
 export const uploadFileToS3 = async (file: File, folder: string = 'products'): Promise<string> => {
-  const bucketName = import.meta.env.VITE_AWS_S3_BUCKET || 'coskinn-media-storage';
+  const bucketName = import.meta.env.VITE_AWS_S3_BUCKET || 'fairenne-media-storage';
   const fileName = `${folder}/${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
 
   const command = new PutObjectCommand({

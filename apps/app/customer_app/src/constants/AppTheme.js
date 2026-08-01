@@ -38,7 +38,7 @@ export const AppTheme = {
     cosmeticsPrimary: '#FFC2D1',
   },
   fonts: {
-    logo: 'Expletus Sans', // Used for OSKINn
+    logo: 'Pacifico',
     regular: 'System',
     medium: 'System',
     bold: 'System',

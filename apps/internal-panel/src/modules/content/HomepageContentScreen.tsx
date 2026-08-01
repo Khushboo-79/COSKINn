@@ -53,7 +53,7 @@ export const HomepageContentScreen = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content', 'articles', 'PAGE'] });
-      toast.success();
+      toast.success('Action successful');
     }
   });
 
@@ -122,7 +122,7 @@ export const HomepageContentScreen = () => {
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">Footer Content</h3>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">"About COSKINn" Short Bio</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">"About Fairenne" Short Bio</label>
                 <textarea 
                   value={footerAbout}
                   onChange={e => setFooterAbout(e.target.value)}

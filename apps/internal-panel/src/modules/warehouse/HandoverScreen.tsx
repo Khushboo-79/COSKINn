@@ -40,7 +40,7 @@ export const HandoverScreen = () => {
     setIsShipping(false);
     queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
     setSelectedOrderIds([]);
-    toast.success();
+    toast.success('Action successful');
   };
 
   const toggleSelection = (id: string) => {

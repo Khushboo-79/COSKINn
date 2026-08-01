@@ -24,7 +24,7 @@ import puppeteer from 'puppeteer';
       localStorage.setItem('internal_panel_token', 'mock-token');
       localStorage.setItem('internal_panel_user', JSON.stringify({
         id: '123',
-        email: 'admin@coskinn.com',
+        email: 'admin@fairenne.com',
         roles: ['SUPER_ADMIN']
       }));
     });

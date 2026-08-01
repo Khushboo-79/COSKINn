@@ -1,4 +1,4 @@
-# COSKINn Skincare & Makeup Ecommerce Project Documentation
+# Fairenne Skincare & Makeup Ecommerce Project Documentation
 
 ## 1. Project Overview
 
@@ -20,7 +20,7 @@ recommended for this project, especially because cosmetics and skincare
 require quality control, batch tracking, expiry tracking, and customer
 trust.
 
-For COSKINn, the recommended launch model is:
+For Fairenne, the recommended launch model is:
 
 Inventory-led model\
 Private label model\
@@ -35,7 +35,7 @@ branding, inventory, and marketing easier.
 
 ## 2. Business Concept
 
-COSKINn will be a skincare and makeup brand/platform focused on
+Fairenne will be a skincare and makeup brand/platform focused on
 fruit-powered beauty care. Each product will be designed around skin
 concerns, fruit ingredients, soft luxury packaging, and a Gen-Z friendly
 shopping experience.
@@ -1608,7 +1608,7 @@ Finance/Tax Consultant
 
 # 35. Final Launch Recommendation
 
-For the first launch, COSKINn should work as a private-label,
+For the first launch, Fairenne should work as a private-label,
 inventory-led beauty brand instead of a marketplace.
 
 Recommended first launch:

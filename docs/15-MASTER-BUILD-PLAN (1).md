@@ -1,4 +1,4 @@
-# COSKINn — Master Build Plan
+# Fairenne — Master Build Plan
 
 **This document consolidates:** `00-PANEL-CONNECTIVITY-MAP.md`, `01`–`14` (Customer Web, Customer App, Backend, and all 11 internal panels), `GIT_SETUP_AND_WORKFLOW.md`, the PRD, the Complete Build Form, and the Project Documentation — into one master reference. It does three things the source docs don't do individually:
 
@@ -29,7 +29,7 @@ Nothing below replaces the 15 source documents; it sits on top of them. Where a 
 | 13 | Content Panel | `apps/internal-panel/src/modules/content` | React + Tailwind |
 | — | Backend | `backend/src/modules/*` | NestJS + PostgreSQL |
 
-One brand — **COSKINn** — one catalog, sold across two customer surfaces and administered through eleven internal panels sharing one backend. No panel ever calls another panel directly; every cross-panel arrow below is a backend API.
+One brand — **Fairenne** — one catalog, sold across two customer surfaces and administered through eleven internal panels sharing one backend. No panel ever calls another panel directly; every cross-panel arrow below is a backend API.
 
 ---
 
@@ -58,7 +58,7 @@ This was not specified anywhere in the PRD, Build Form, or Project Documentation
 
 - **One brand, one login, one cart, one order history, one wallet/points/membership balance.** The toggle is a **browse-mode filter**, not a second storefront, sub-brand, or separate account.
 - A persistent toggle/segmented-control sits at the **top of the header on Customer Web** and as a **persistent top segmented-control (below the status bar) on Customer App** — two options: **Skincare** and **Makeup**.
-- Switching the toggle re-renders: home dashboard (hero banner, category rail, fruit-concern rail), category/subcategory tree, PLP filters (skincare gets skin-type/concern/SPF filters; makeup gets shade/finish/look filters), search scoping (default-scoped to the active segment, with an explicit "search all COSKINn" escape hatch), and SEO landing pages (`/skincare/...` vs `/makeup/...` URL namespaces).
+- Switching the toggle re-renders: home dashboard (hero banner, category rail, fruit-concern rail), category/subcategory tree, PLP filters (skincare gets skin-type/concern/SPF filters; makeup gets shade/finish/look filters), search scoping (default-scoped to the active segment, with an explicit "search all Fairenne" escape hatch), and SEO landing pages (`/skincare/...` vs `/makeup/...` URL namespaces).
 - **Cart, wishlist, checkout, order history, wallet, reward points, membership tier, and account settings are segment-agnostic** — a customer can have a Skincare item and a Makeup item in the same cart; the toggle never partitions the account.
 - The **Cream Blush** SKU (and any future hybrid SKU) is tagged to **both** segments and appears under whichever toggle is active — this is a tagging rule, not a special case in code.
 
@@ -84,7 +84,7 @@ This was not specified anywhere in the PRD, Build Form, or Project Documentation
 |---|---|---|
 | **6, modified** | Home dashboard shell **+ segment toggle component** in the top header (persistent across all routes, not just Home); toggle state drives every downstream data fetch | Backend Day 16 (modified) |
 | **7, modified** | Category & subcategory pages, PLP **with segment-aware filter sets** (skin-type/concern/SPF for Skincare mode, shade/finish/look for Makeup mode) | Backend Day 16, 11 (modified) |
-| **9, modified** | Search page **scoped to active segment by default**, with "search all COSKINn" override; SEO landing pages move to `/skincare/*` and `/makeup/*` namespaces | Backend Day 12, 14 (modified) |
+| **9, modified** | Search page **scoped to active segment by default**, with "search all Fairenne" override; SEO landing pages move to `/skincare/*` and `/makeup/*` namespaces | Backend Day 12, 14 (modified) |
 | **New — 6B** | Segment-preference persistence (cookie/local storage keyed off logged-in user id, synced to `customer_profiles.preferred_segment` once authenticated) and cross-tab sync | Backend Day 4 (modified) |
 
 ### 3.4 Customer App additions (`03-CUSTOMER-APP-BUILD-PLAN.md`)

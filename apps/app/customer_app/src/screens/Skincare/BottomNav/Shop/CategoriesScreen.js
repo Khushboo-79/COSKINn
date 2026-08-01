@@ -3,11 +3,28 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Tex
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories, fetchSkinTypes, fetchSkinConcerns, fetchIngredients, fetchSkincareProducts, fetchSkincareGuides } from '../../../../redux/slices/catalogSlice';
 import { AppTheme, scaleh, scalev } from '../../../../constants/AppTheme';
 import BottomNavBar from '../../../../constants/BottomNavBar';
 import Header from '../../../../components/Header';
 
-const categoriesData = [
+// Helper for categories (still using local assets as per previous instruction for categories)
+const getCategoryImage = (name) => {
+  const mapping = {
+    'Sunscreen': require('../../../../images/bgImages/Bluberry.webp'),
+    'Toner': require('../../../../images/bgImages/GreenTea.webp'),
+    'Serum': require('../../../../images/bgImages/Pomegranate.webp'),
+    'Moisturizer': require('../../../../images/bgImages/Bluberry.webp'),
+    'Cleanser': require('../../../../images/bgImages/GreenTea.webp'),
+    'Combos & Kits': require('../../../../images/bgImages/Pomegranate.webp'),
+  };
+  return mapping[name] || require('../../../../images/bgImages/Bluberry.webp');
+};
+
+const { width } = Dimensions.get('window');
+
+const skinCategoriesData = [
   { id: 1, title: 'Sunscreen', image: require('../../../../images/bgImages/Bluberry.webp') },
   { id: 2, title: 'Toner', image: require('../../../../images/bgImages/GreenTea.webp') },
   { id: 3, title: 'Serum', image: require('../../../../images/bgImages/Pomegranate.webp') },
@@ -15,8 +32,6 @@ const categoriesData = [
   { id: 5, title: 'Cleanser', image: require('../../../../images/bgImages/GreenTea.webp') },
   { id: 6, title: 'Combos & Kits', image: require('../../../../images/bgImages/Pomegranate.webp') },
 ];
-
-const { width } = Dimensions.get('window');
 
 const skinTypesData = [
   { id: 1, title: 'Normal Skin', image: require('../../../../images/skinTypeImages/normalSkin.webp') },
@@ -49,9 +64,31 @@ const guideTabs = ['Sunscreen', 'Moisturizer', 'Skincare', 'Serum', 'Toner', 'Li
 
 const CategoriesScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [activeGuideTab, setActiveGuideTab] = useState('Sunscreen');
   const [activeGuideIndex, setActiveGuideIndex] = useState(0);
   const [activeShopByTab, setActiveShopByTab] = useState('Routines');
+  
+  const skincareCategories = useSelector((state) => state.catalog?.skincareCategories || []);
+  const skinTypes = useSelector((state) => state.catalog?.skinTypes || []);
+  const skinConcerns = useSelector((state) => state.catalog?.skinConcerns || []);
+  const ingredients = useSelector((state) => state.catalog?.ingredients || []);
+  const skincareProducts = useSelector((state) => state.catalog?.skincareProducts || []);
+  const skincareGuides = useSelector((state) => state.catalog?.skincareGuides || []);
+
+  React.useEffect(() => {
+    if (skincareCategories.length === 0) dispatch(fetchCategories('SKINCARE'));
+    if (skinTypes.length === 0) dispatch(fetchSkinTypes());
+    if (skinConcerns.length === 0) dispatch(fetchSkinConcerns());
+    if (ingredients.length === 0) dispatch(fetchIngredients());
+    if (skincareGuides.length === 0) dispatch(fetchSkincareGuides());
+  }, [dispatch, skincareCategories.length, skinTypes.length, skinConcerns.length, ingredients.length, skincareGuides.length]);
+
+  React.useEffect(() => {
+    // Fetch products based on activeShopByTab
+    const sort = activeShopByTab === 'Routines' ? 'best_selling' : 'new_arrivals';
+    dispatch(fetchSkincareProducts({ sort }));
+  }, [dispatch, activeShopByTab]);
   
   const handleGuideScroll = (event) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
@@ -132,14 +169,21 @@ const CategoriesScreen = () => {
             </View>
 
             <View style={styles.gridContainer}>
-              {categoriesData.map((cat) => (
-                <TouchableOpacity key={cat.id} style={styles.gridItem} activeOpacity={0.8}>
-                  <View style={styles.imageCircle}>
-                    <Image source={cat.image} style={styles.catImage} resizeMode="cover" />
-                  </View>
-                  <Text style={styles.catText}>{cat.title}</Text>
-                </TouchableOpacity>
-              ))}
+              {(skincareCategories.length > 0 ? skincareCategories : skinCategoriesData).map((cat, idx) => {
+                const isLive = skincareCategories.length > 0;
+                const title = isLive ? (cat.name || cat) : cat.title;
+                const fallbackImage = skinCategoriesData[idx % skinCategoriesData.length].image;
+                const imageSource = isLive ? (cat.imageUrl ? { uri: cat.imageUrl } : getCategoryImage(cat.name) || fallbackImage) : cat.image;
+
+                return (
+                  <TouchableOpacity key={isLive ? (cat.id || cat.slug) : cat.id} style={styles.gridItem} activeOpacity={0.8} onPress={() => navigation.navigate('ProductListScreen', { category: isLive ? (cat.slug || cat.name || cat) : cat.title })}>
+                    <View style={styles.imageCircle}>
+                      <Image source={imageSource} style={styles.catImage} resizeMode="cover" />
+                    </View>
+                    <Text style={styles.catText}>{title}</Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             <TouchableOpacity 
@@ -160,16 +204,23 @@ const CategoriesScreen = () => {
             </View>
 
             <View style={styles.gridContainer}>
-              {skinTypesData.map((cat, index) => (
-                <TouchableOpacity key={cat.id} style={styles.skinTypeCard} activeOpacity={0.8}>
-                  <View style={styles.skinTypeImageWrapper}>
-                    <Image source={cat.image} style={styles.skinTypeImage} resizeMode="cover" />
-                  </View>
-                  <View style={[styles.skinTypeTextWrapper, index === 0 ? styles.skinTypeTextWrapperActive : {}]}>
-                    <Text style={[styles.skinTypeText, index === 0 ? styles.skinTypeTextActive : {}]}>{cat.title}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+              {(skinTypes.length > 0 ? skinTypes : skinTypesData).map((cat, index) => {
+                const isLive = skinTypes.length > 0;
+                const title = isLive ? (cat.name || cat) : cat.title;
+                const fallbackImage = skinTypesData[index % skinTypesData.length].image;
+                const imageSource = isLive ? (cat.image ? { uri: cat.image } : fallbackImage) : cat.image;
+
+                return (
+                  <TouchableOpacity key={isLive ? index : cat.id} style={styles.skinTypeCard} activeOpacity={0.8}>
+                    <View style={styles.skinTypeImageWrapper}>
+                      <Image source={imageSource} style={styles.skinTypeImage} resizeMode="cover" />
+                    </View>
+                    <View style={[styles.skinTypeTextWrapper, index === 0 ? styles.skinTypeTextWrapperActive : {}]}>
+                      <Text style={[styles.skinTypeText, index === 0 ? styles.skinTypeTextActive : {}]}>{title}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             <TouchableOpacity style={styles.viewAllBtn} activeOpacity={0.8} onPress={() => navigation.navigate('ViewAllSkinTypes')}>
@@ -186,13 +237,23 @@ const CategoriesScreen = () => {
             </View>
 
             <View style={styles.gridContainer}>
-              {skinConcernsData.map((cat) => (
-                <TouchableOpacity key={cat.id} style={styles.concernCircleItem} activeOpacity={0.8}>
-                  <View style={[styles.concernCircle, { backgroundColor: cat.color }]}>
-                    <Text style={[styles.concernText, { color: cat.textColor }]}>{cat.title}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+              {(skinConcerns.length > 0 ? skinConcerns : skinConcernsData).map((cat, index) => {
+                const isLive = skinConcerns.length > 0;
+                const title = isLive ? (cat.name || cat) : cat.title;
+                const fallbackColor = skinConcernsData[index % skinConcernsData.length].color;
+                const fallbackTextColor = skinConcernsData[index % skinConcernsData.length].textColor;
+                
+                const color = isLive ? fallbackColor : cat.color;
+                const textColor = isLive ? fallbackTextColor : cat.textColor;
+                
+                return (
+                  <TouchableOpacity key={isLive ? index : cat.id} style={styles.concernCircleItem} activeOpacity={0.8}>
+                    <View style={[styles.concernCircle, { backgroundColor: color }]}>
+                      <Text style={[styles.concernText, { color: textColor }]}>{title}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             <TouchableOpacity style={styles.viewAllBtn} activeOpacity={0.8} onPress={() => navigation.navigate('ViewAllSkinConcerns')}>
@@ -208,14 +269,21 @@ const CategoriesScreen = () => {
             </View>
 
             <View style={styles.gridContainer}>
-              {ingredientsData.map((cat, idx) => (
-                <TouchableOpacity key={idx} style={styles.gridItem} activeOpacity={0.8}>
-                  <View style={styles.imageCircle}>
-                    <Image source={cat.image} style={styles.catImage} resizeMode="cover" />
-                  </View>
-                  <Text style={styles.catText}>{cat.title}</Text>
-                </TouchableOpacity>
-              ))}
+              {(ingredients.length > 0 ? ingredients : ingredientsData).map((cat, idx) => {
+                const isLive = ingredients.length > 0;
+                const title = isLive ? (cat.name || cat) : cat.title;
+                const fallbackImage = ingredientsData[idx % ingredientsData.length].image;
+                const imageSource = isLive ? (cat.image ? { uri: cat.image } : fallbackImage) : cat.image;
+
+                return (
+                  <TouchableOpacity key={idx} style={styles.gridItem} activeOpacity={0.8}>
+                    <View style={styles.imageCircle}>
+                      <Image source={imageSource} style={styles.catImage} resizeMode="cover" />
+                    </View>
+                    <Text style={styles.catText}>{title}</Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             <TouchableOpacity style={styles.viewAllBtn} activeOpacity={0.8} onPress={() => navigation.navigate('ViewAllIngredients')}>
@@ -250,26 +318,39 @@ const CategoriesScreen = () => {
 
             <View style={{ height: scalev(220), marginBottom: scalev(15) }}>
               <FlatList
-                data={[1, 2, 3]}
+                data={skincareGuides.length > 0 ? skincareGuides : [1, 2, 3]} // Fallback to empty cards if no data
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item, index) => item.id || index.toString()}
                 onScroll={handleGuideScroll}
                 scrollEventThrottle={16}
-                renderItem={() => (
-                  <View style={{ width: width }}>
-                    <LinearGradient
-                      colors={['#FFB6C1', '#FFE4E1']}
-                      style={styles.guideCard}
-                    />
-                  </View>
-                )}
+                renderItem={({ item, index }) => {
+                  const isLive = skincareGuides.length > 0;
+                  return (
+                    <View style={{ width: width }}>
+                      <LinearGradient
+                        colors={['#FFB6C1', '#FFE4E1']}
+                        style={styles.guideCard}
+                      >
+                        {isLive && item.heroImageUrl ? (
+                          <Image source={{ uri: item.heroImageUrl }} style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', borderRadius: scaleh(15) }]} resizeMode="cover" />
+                        ) : null}
+                        
+                        {isLive && item.title ? (
+                          <View style={{ position: 'absolute', bottom: scalev(15), left: scaleh(15), right: scaleh(15), backgroundColor: 'rgba(255,255,255,0.8)', padding: scaleh(10), borderRadius: scaleh(10) }}>
+                            <Text style={{ fontSize: scaleh(16), fontWeight: '700', color: '#333' }}>{item.title}</Text>
+                          </View>
+                        ) : null}
+                      </LinearGradient>
+                    </View>
+                  );
+                }}
               />
             </View>
 
             <View style={styles.guideDotsContainer}>
-              {[0, 1, 2].map((idx) => (
+              {(skincareGuides.length > 0 ? skincareGuides : [1, 2, 3]).map((_, idx) => (
                 <View key={idx} style={[styles.guideDot, activeGuideIndex === idx && styles.guideDotActive]} />
               ))}
             </View>
@@ -300,70 +381,145 @@ const CategoriesScreen = () => {
             </View>
 
             <View style={styles.gridContainer}>
-              {[1, 2].map((item) => (
-                <TouchableOpacity key={item} style={styles.shopByProductCard} activeOpacity={0.8} onPress={() => navigation.navigate('ProductDetailsScreen')}>
-                  {/* Top Image Section */}
-                  <LinearGradient 
-                    colors={['#FFD1DC', '#FFF5F5', '#FFFFFF']} 
-                    style={styles.shopByImageContainer}
-                  >
-                    {activeShopByTab === 'New Arrivals' && (
-                      <View style={styles.justArrivedBadge}>
-                        <Text style={styles.justArrivedText}>Just Arrived</Text>
+              {skincareProducts.length > 0 ? (
+                skincareProducts.map((item, index) => {
+                  const hasImage = item.images && item.images.length > 0;
+                  return (
+                    <TouchableOpacity key={item.id || index} style={styles.shopByProductCard} activeOpacity={0.8} onPress={() => navigation.navigate('ProductDetailsScreen', { slug: item.slug })}>
+                      {/* Top Image Section */}
+                      <LinearGradient 
+                        colors={['#FFD1DC', '#FFF5F5', '#FFFFFF']} 
+                        style={styles.shopByImageContainer}
+                      >
+                        {activeShopByTab === 'New Arrivals' && (
+                          <View style={styles.justArrivedBadge}>
+                            <Text style={styles.justArrivedText}>Just Arrived</Text>
+                          </View>
+                        )}
+                        {hasImage ? (
+                          <Image source={{uri: item.images[0].url}} style={styles.shopByImage} resizeMode="contain" />
+                        ) : (
+                          <Image source={require('../../../../images/bgImages/productImg.webp')} style={styles.shopByImage} resizeMode="contain" />
+                        )}
+                      </LinearGradient>
+
+                      {/* Card Details Section */}
+                      <View style={styles.shopByCardDetails}>
+                        <Text style={styles.shopByProductTitle} numberOfLines={3}>
+                          {item.name}
+                        </Text>
+
+                        <View style={styles.shopBySkinTypeRow}>
+                          <Icon name="check-circle" size={scaleh(12)} color="#FF0069" />
+                          <Text style={styles.shopBySkinTypeText}>All Skin Types</Text>
+                        </View>
+
+                        <View style={styles.shopByRatingRow}>
+                          <View style={styles.shopByRatingBadge}>
+                            <Icon name="star" size={scaleh(10)} color="#FFFFFF" />
+                            <Text style={styles.shopByRatingText}>4.81</Text>
+                          </View>
+                          <Text style={styles.shopByReviewsText}>(5698)</Text>
+                        </View>
+
+                        <View style={styles.shopBySizeBadge}>
+                          <Text style={styles.shopBySizeText}>80g</Text>
+                        </View>
+
+                        <View style={styles.shopByOffersContainer}>
+                          <View style={styles.shopByPinkOffer}>
+                            <Icon name="tag" size={scaleh(10)} color="#FF0069" />
+                            <Text style={styles.shopByPinkOfferText}>Upto 20% OFF + Free Gifts</Text>
+                          </View>
+                          <View style={styles.shopByOrangeOffer}>
+                            <Icon name="percent" size={scaleh(10)} color="#F4A460" />
+                            <Text style={styles.shopByOrangeOfferText}>Get 5% Cashback</Text>
+                          </View>
+                        </View>
+
+                        <Text style={styles.shopByPrice}>₹{item.discountPrice || item.mrp || 899}</Text>
                       </View>
-                    )}
-                    <Image source={require('../../../../images/bgImages/productImg.webp')} style={styles.shopByImage} resizeMode="contain" />
-                  </LinearGradient>
 
-                  {/* Card Details Section */}
-                  <View style={styles.shopByCardDetails}>
-                    <Text style={styles.shopByProductTitle} numberOfLines={3}>
-                      Vitamin C + E Sunscreen SPF 50 PA++++ with New-Age UV filters
-                    </Text>
-
-                    <View style={styles.shopBySkinTypeRow}>
-                      <Icon name="check-circle" size={scaleh(12)} color="#FF0069" />
-                      <Text style={styles.shopBySkinTypeText}>All Skin Types</Text>
-                    </View>
-
-                    <View style={styles.shopByRatingRow}>
-                      <View style={styles.shopByRatingBadge}>
-                        <Icon name="star" size={scaleh(10)} color="#FFFFFF" />
-                        <Text style={styles.shopByRatingText}>4.81</Text>
+                      {/* Add to Cart Footer */}
+                      <View style={styles.shopByAddToCartRow}>
+                        <TouchableOpacity style={styles.shopByHeartBtn}>
+                          <Icon name="heart" size={scaleh(16)} color="#FF0069" style={{ fill: '#FF0069' }} />
+                        </TouchableOpacity>
+                        <View style={styles.shopByVerticalDivider} />
+                        <TouchableOpacity style={styles.shopByAddToCartBtn}>
+                          <Text style={styles.shopByAddToCartText}>ADD TO CART</Text>
+                        </TouchableOpacity>
                       </View>
-                      <Text style={styles.shopByReviewsText}>(5698)</Text>
-                    </View>
-
-                    <View style={styles.shopBySizeBadge}>
-                      <Text style={styles.shopBySizeText}>80g</Text>
-                    </View>
-
-                    <View style={styles.shopByOffersContainer}>
-                      <View style={styles.shopByPinkOffer}>
-                        <Icon name="tag" size={scaleh(10)} color="#FF0069" />
-                        <Text style={styles.shopByPinkOfferText}>Upto 20% OFF + Free Gifts</Text>
-                      </View>
-                      <View style={styles.shopByOrangeOffer}>
-                        <Icon name="percent" size={scaleh(10)} color="#F4A460" />
-                        <Text style={styles.shopByOrangeOfferText}>Get 5% Cashback</Text>
-                      </View>
-                    </View>
-
-                    <Text style={styles.shopByPrice}>₹899</Text>
-                  </View>
-
-                  {/* Add to Cart Footer */}
-                  <View style={styles.shopByAddToCartRow}>
-                    <TouchableOpacity style={styles.shopByHeartBtn}>
-                      <Icon name="heart" size={scaleh(16)} color="#FF0069" style={{ fill: '#FF0069' }} />
                     </TouchableOpacity>
-                    <View style={styles.shopByVerticalDivider} />
-                    <TouchableOpacity style={styles.shopByAddToCartBtn}>
-                      <Text style={styles.shopByAddToCartText}>ADD TO CART</Text>
-                    </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                  );
+                })
+              ) : (
+                /* Fallback Mock Data */
+                [1, 2].map((item) => (
+                  <TouchableOpacity key={item} style={styles.shopByProductCard} activeOpacity={0.8} onPress={() => navigation.navigate('ProductDetailsScreen')}>
+                    {/* Top Image Section */}
+                    <LinearGradient 
+                      colors={['#FFD1DC', '#FFF5F5', '#FFFFFF']} 
+                      style={styles.shopByImageContainer}
+                    >
+                      {activeShopByTab === 'New Arrivals' && (
+                        <View style={styles.justArrivedBadge}>
+                          <Text style={styles.justArrivedText}>Just Arrived</Text>
+                        </View>
+                      )}
+                      <Image source={require('../../../../images/bgImages/productImg.webp')} style={styles.shopByImage} resizeMode="contain" />
+                    </LinearGradient>
+
+                    {/* Card Details Section */}
+                    <View style={styles.shopByCardDetails}>
+                      <Text style={styles.shopByProductTitle} numberOfLines={3}>
+                        Vitamin C + E Sunscreen SPF 50 PA++++ with New-Age UV filters
+                      </Text>
+
+                      <View style={styles.shopBySkinTypeRow}>
+                        <Icon name="check-circle" size={scaleh(12)} color="#FF0069" />
+                        <Text style={styles.shopBySkinTypeText}>All Skin Types</Text>
+                      </View>
+
+                      <View style={styles.shopByRatingRow}>
+                        <View style={styles.shopByRatingBadge}>
+                          <Icon name="star" size={scaleh(10)} color="#FFFFFF" />
+                          <Text style={styles.shopByRatingText}>4.81</Text>
+                        </View>
+                        <Text style={styles.shopByReviewsText}>(5698)</Text>
+                      </View>
+
+                      <View style={styles.shopBySizeBadge}>
+                        <Text style={styles.shopBySizeText}>80g</Text>
+                      </View>
+
+                      <View style={styles.shopByOffersContainer}>
+                        <View style={styles.shopByPinkOffer}>
+                          <Icon name="tag" size={scaleh(10)} color="#FF0069" />
+                          <Text style={styles.shopByPinkOfferText}>Upto 20% OFF + Free Gifts</Text>
+                        </View>
+                        <View style={styles.shopByOrangeOffer}>
+                          <Icon name="percent" size={scaleh(10)} color="#F4A460" />
+                          <Text style={styles.shopByOrangeOfferText}>Get 5% Cashback</Text>
+                        </View>
+                      </View>
+
+                      <Text style={styles.shopByPrice}>₹899</Text>
+                    </View>
+
+                    {/* Add to Cart Footer */}
+                    <View style={styles.shopByAddToCartRow}>
+                      <TouchableOpacity style={styles.shopByHeartBtn}>
+                        <Icon name="heart" size={scaleh(16)} color="#FF0069" style={{ fill: '#FF0069' }} />
+                      </TouchableOpacity>
+                      <View style={styles.shopByVerticalDivider} />
+                      <TouchableOpacity style={styles.shopByAddToCartBtn}>
+                        <Text style={styles.shopByAddToCartText}>ADD TO CART</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
+                ))
+              )}
             </View>
 
             <TouchableOpacity style={styles.viewAllBtn} activeOpacity={0.8} onPress={() => navigation.navigate(activeShopByTab === 'Routines' ? 'ViewAllRoutines' : 'ViewAllNewArrivals')}>

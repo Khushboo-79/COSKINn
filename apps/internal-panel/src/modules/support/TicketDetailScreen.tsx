@@ -129,11 +129,11 @@ export const TicketDetailScreen = () => {
   const assignMutation = useMutation({
     mutationFn: (adminId: string) => supportApi.assignTicket(id!, { adminId }),
     onSuccess: () => {
-      toast.success();
+      toast.success('Action successful');
       queryClient.invalidateQueries({ queryKey: ['admin', 'tickets'] });
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useForm as useRHForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { authApi } from '../../core/api/auth';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
@@ -15,14 +17,26 @@ export const ForgotPasswordScreen = () => {
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const { register, handleSubmit, formState: { errors } } = useRHForm<ForgotPasswordFormValues>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = (data: ForgotPasswordFormValues) => {
-    // API call for forgot password goes here
-    console.log('Reset password for', data.email);
-    setIsSubmitted(true);
+  const onSubmit = async (data: ForgotPasswordFormValues) => {
+    try {
+      setIsLoading(true);
+      await authApi.forgotPassword(data.email);
+      setIsSubmitted(true);
+      toast.success('Password reset instructions sent');
+      setTimeout(() => {
+        navigate(`/auth/reset-password?email=${encodeURIComponent(data.email)}`);
+      }, 1500);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to send reset email');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -56,7 +70,7 @@ export const ForgotPasswordScreen = () => {
                   type="email"
                   {...register('email')}
                   className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                  placeholder="you@coskinn.com"
+                  placeholder="you@fairenne.com"
                 />
               </div>
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
@@ -64,9 +78,10 @@ export const ForgotPasswordScreen = () => {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+              disabled={isLoading}
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50"
             >
-              Send Reset Link
+              {isLoading ? 'Sending...' : 'Send Reset Link'}
             </button>
           </form>
         ) : (
