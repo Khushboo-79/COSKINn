@@ -45,6 +45,11 @@ export const inventoryApi = {
     return data;
   },
 
+  getMovementLogs: async (sku?: string) => {
+    const { data } = await apiClient.get('/inventory/logs', { params: { sku } });
+    return data;
+  },
+
   getWarehouses: async (): Promise<any[]> => {
     const { data } = await apiClient.get('/inventory/warehouses');
     return data;
