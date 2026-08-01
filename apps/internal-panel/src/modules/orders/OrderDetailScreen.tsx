@@ -70,13 +70,13 @@ export const OrderDetailScreen = () => {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
-              Order #{order.id.slice(-8).toUpperCase()}
+              Order #{order.id?.slice(-8).toUpperCase() || 'UNKNOWN'}
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
-                {order.status}
+                {order.status || 'UNKNOWN'}
               </span>
             </h1>
             <p className="text-slate-500 text-sm mt-1">
-              Placed on {new Date(order.createdAt).toLocaleString()}
+              Placed on {order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A'}
             </p>
           </div>
         </div>
@@ -216,7 +216,7 @@ export const OrderDetailScreen = () => {
             <div className="p-6 space-y-4">
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Customer</p>
-                <p className="font-medium text-slate-900">{order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Guest'}</p>
+                <p className="font-medium text-slate-900">{order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() || 'Guest' : 'Guest'}</p>
                 <p className="text-sm text-slate-600 mt-1">{order.user?.email || order.shippingAddress?.email || 'N/A'}</p>
                 <p className="text-sm text-slate-600 mt-1">{order.user?.phone || order.shippingAddress?.mobile || 'N/A'}</p>
               </div>
