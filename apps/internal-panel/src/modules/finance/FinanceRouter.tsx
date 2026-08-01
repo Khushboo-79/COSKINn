@@ -60,8 +60,8 @@ export const FinanceRouter = () => {
         <Route path="*" element={
           <div className="p-12 text-center text-slate-500">
             <Activity className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-xl font-medium text-slate-900 mb-2">Finance Module Coming Soon</h2>
-            <p>This section is under construction.</p>
+            <h2 className="text-xl font-medium text-slate-900 mb-2">Page Not Found</h2>
+            <p>This section doesn't exist.</p>
           </div>
         } />
       </Routes>

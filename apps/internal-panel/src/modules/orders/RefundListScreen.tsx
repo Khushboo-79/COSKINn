@@ -98,11 +98,11 @@ export const RefundListScreen = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-slate-900">
                         <Link to={`/orders/${refund.orderId}`} className="hover:text-primary-600">
-                          Order #{refund.orderId.slice(-8).toUpperCase()}
+                          Order #{refund.orderId?.slice(-8).toUpperCase() || 'UNKNOWN'}
                         </Link>
                       </div>
                       <div className="text-xs text-slate-500 mt-1">
-                        {new Date(refund.createdAt).toLocaleDateString()}
+                        {refund.createdAt ? new Date(refund.createdAt).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

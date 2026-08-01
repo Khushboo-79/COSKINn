@@ -95,7 +95,7 @@ export const CategoriesScreen = () => {
       render: (cat: any) => (
         <StatusBadge 
           status={cat.isActive ? 'Active' : 'Inactive'} 
-          variant={cat.isActive ? 'success' : 'secondary'} 
+          variant={cat.isActive ? 'success' : 'default'} 
         />
       )
     },

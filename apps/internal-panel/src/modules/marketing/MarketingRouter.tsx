@@ -6,6 +6,7 @@ import { CampaignsScreen } from './CampaignsScreen';
 import { LoyaltyScreen } from './LoyaltyScreen';
 import { AbandonedCartScreen } from './AbandonedCartScreen';
 import { SeoSettingsScreen } from './SeoSettingsScreen';
+import { MarketingDashboardScreen } from './MarketingDashboardScreen';
 
 const MarketingNav = () => {
   const location = useLocation();
@@ -49,13 +50,7 @@ export const MarketingRouter = () => {
       <MarketingNav />
       <Routes>
         <Route path="/" element={<Navigate to="/marketing/dashboard" replace />} />
-        <Route path="/dashboard" element={
-          <div className="p-12 text-center text-slate-500">
-            <Megaphone className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-xl font-medium text-slate-900 mb-2">Marketing Dashboard Coming Soon</h2>
-            <p>Phase 2 will introduce campaign analytics and ROI metrics.</p>
-          </div>
-        } />
+        <Route path="/dashboard" element={<MarketingDashboardScreen />} />
         <Route path="/banners" element={<BannerManagementScreen />} />
         <Route path="/coupons" element={<CouponManagementScreen />} />
         <Route path="/campaigns" element={<CampaignsScreen />} />
