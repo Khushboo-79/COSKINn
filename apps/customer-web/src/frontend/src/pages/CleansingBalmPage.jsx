@@ -232,7 +232,7 @@ export default function CleansingBalmPage() {
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
               <button 
-                onClick={() => document.getElementById('collection').scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                onClick={() => { const el = document.getElementById('products-grid'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
                 className="group relative overflow-hidden w-full sm:w-auto px-10 py-4 btn-primary-skincare font-bold uppercase tracking-[0.15em] text-[11px]"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">

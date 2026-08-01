@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingBag, Star } from 'lucide-react';
+import { Heart, ShoppingBag, Star, Eye } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
-import { useTheme } from '../../context/ThemeContext';
 
 export default function ProductCard({ product, onQuickView }) {
   const { addToCart } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-  const { theme } = useTheme();
+  const { toggleWishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
   const inWishlist = isInWishlist(product.id);
 
   const handleWishlistToggle = (e) => {
     e.preventDefault();
-    if (inWishlist) {
+    e.stopPropagation();
+    if (toggleWishlist) {
+      toggleWishlist(product);
+    } else if (inWishlist && removeFromWishlist) {
       removeFromWishlist(product.id);
-    } else {
+    } else if (addToWishlist) {
       addToWishlist(product);
     }
   };
@@ -31,27 +32,36 @@ export default function ProductCard({ product, onQuickView }) {
   const productImg = product.image || product.img;
   const oldPrice = product.originalPrice || product.oldPrice;
 
-  const isGlam = theme === 'cosmetics';
+  // Split COSKINn from the product name for premium formatting
+  const formatProductName = (name) => {
+    if (!name) return { brand: '', main: '' };
+    if (name.toUpperCase().startsWith('COSKINN ')) {
+      return { brand: 'COSKINn', main: name.substring(8).trim() };
+    }
+    return { brand: '', main: name };
+  };
+
+  const { brand, main } = formatProductName(product.name);
 
   return (
     <motion.div 
-      className={`group relative rounded-[20px] overflow-hidden transition-all duration-500 flex flex-col h-full bg-surface shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-2xl border ${isGlam ? 'border-black/5' : 'border-gray-100'}`}
+      className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ y: -5 }}
     >
-      <div className={`relative aspect-[4/5] overflow-hidden p-6 flex items-center justify-center ${isGlam ? 'bg-background' : 'bg-[#FAFAFA]'}`}>
+      <div className="relative aspect-[4/5] overflow-hidden bg-[#F7F7F7] p-6 flex items-center justify-center">
         {badgeText && (
-          <div className="absolute top-4 left-4 z-20 bg-accent text-black text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase shadow-sm">
+          <div className="absolute top-4 left-4 z-20 bg-gradient-to-r from-[#FF2D7A] to-[#FF5E95] text-white text-[10px] font-bold px-3 py-1.5 rounded-full tracking-wider uppercase shadow-md">
             {badgeText}
           </div>
         )}
 
         <button 
           onClick={handleWishlistToggle}
-          className="absolute top-4 right-4 z-20 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform duration-300"
+          className="absolute top-4 right-4 z-20 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
         >
-          <Heart className={`w-[15px] h-[15px] ${inWishlist ? 'fill-primary text-primary' : 'text-black/60 hover:text-primary'}`} strokeWidth={2} />
+          <Heart className={`w-4 h-4 ${inWishlist ? 'fill-[#FF2D7A] text-[#FF2D7A]' : 'text-gray-400 hover:text-[#FF2D7A]'}`} />
         </button>
 
         <Link to={`/product/${product.slug || product.id}`} className="absolute inset-0 z-10 flex items-center justify-center">
@@ -60,31 +70,42 @@ export default function ProductCard({ product, onQuickView }) {
             alt={product.name} 
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover"
-            animate={{ scale: isHovered ? 1.06 : 1 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="w-3/4 h-3/4 object-contain drop-shadow-xl mix-blend-multiply"
+            animate={{ scale: isHovered ? 1.05 : 1 }}
+            transition={{ duration: 0.4 }}
           />
         </Link>
       </div>
 
-      <div className="p-5 flex flex-col flex-grow bg-surface">
+      <div className="p-6 flex flex-col flex-grow bg-white">
+        <div className="flex items-center gap-1 mb-2">
+          <div className="flex">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(product.rating || 5) ? 'text-[#FF2D7A] fill-[#FF2D7A]' : 'text-gray-200'}`} />
+            ))}
+          </div>
+          <span className="text-xs text-gray-500 font-medium">({product.reviews || 0})</span>
+        </div>
+
         <Link to={`/product/${product.slug || product.id}`} className="block">
-          <h3 className="font-display font-bold text-text text-lg mb-1 group-hover:text-primary transition-colors line-clamp-1">{product.name}</h3>
+          {brand && (
+            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
+              {brand}
+            </div>
+          )}
+          <h3 className="font-heading font-bold text-[#1B1B1B] text-lg mb-1 group-hover:text-[#FF2D7A] transition-colors line-clamp-1">{main}</h3>
         </Link>
         
-        <div className="flex items-center gap-2 mt-auto mb-4">
-          <span className="font-bold text-lg text-text">₹{(product.price || 0).toFixed(2)}</span>
+        <div className="flex items-center gap-2 mt-auto mb-5">
+          <span className="font-bold text-lg text-[#1B1B1B]">₹{(product.price || 0).toFixed(2)}</span>
           {oldPrice && (
-            <span className="text-sm font-medium text-text-muted line-through">₹{oldPrice.toFixed(2)}</span>
+            <span className="text-sm font-medium text-gray-400 line-through">₹{oldPrice.toFixed(2)}</span>
           )}
         </div>
 
         <button 
           onClick={handleAddToCart}
-          className={`w-full py-3 rounded-full font-bold uppercase tracking-widest text-[11px] transition-all duration-300 flex items-center justify-center gap-2 
-            ${isGlam 
-              ? 'bg-primary text-white hover:bg-black' 
-              : 'bg-primary text-white hover:opacity-80'}`}
+          className="w-full py-3.5 rounded-full font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center gap-2 border-2 border-transparent bg-gradient-to-r from-[#FF2D7A] to-[#FF5E95] text-white hover:shadow-[0_10px_20px_rgba(255,45,122,0.2)] hover:-translate-y-0.5 active:scale-95"
         >
           <ShoppingBag className="w-4 h-4" />
           Add to Cart

@@ -50,7 +50,8 @@ export const LoginScreen = () => {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">COSKINn Panel</h1>
+          <div className="flex justify-center mb-4"><img src="/logo.png" alt="Fairenne Logo" className="h-12 w-auto" /></div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Fairenne Panel</h1>
           <p className="text-slate-500">Sign in to your internal account</p>
         </div>
 
@@ -71,7 +72,7 @@ export const LoginScreen = () => {
                 type="text"
                 {...register('email')}
                 className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                placeholder="you@coskinn.com"
+                placeholder="you@fairenne.com"
               />
             </div>
             {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}

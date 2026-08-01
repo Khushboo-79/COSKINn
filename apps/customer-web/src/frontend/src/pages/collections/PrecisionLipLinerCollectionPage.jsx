@@ -232,7 +232,7 @@ export default function PrecisionLipLinerCollectionPage() {
                             // Route to PDP as per shopping flow rules, or execute Add to Cart logic
                             navigate(`/product/${shade.id}`);
                           }}
-                          className="w-full py-3.5 rounded-xl bg-[#FF8FB1]/10 text-[#FF8FB1] font-bold uppercase tracking-widest text-[11px] hover:bg-[#FF8FB1] hover:text-white hover:shadow-[0_8px_20px_rgba(255,143,177,0.3)] transition-all duration-300 flex items-center justify-center gap-2"
+                          className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#FF0069] to-[#FF4F9A] text-white font-bold uppercase tracking-widest text-[11px] shadow-md hover:shadow-[0_8px_20px_rgba(255,0,105,0.3)] hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2"
                         >
                           <ShoppingBag size={14} /> Add to Cart
                         </button>

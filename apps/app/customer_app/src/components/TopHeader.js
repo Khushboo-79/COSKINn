@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, InteractionManager } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { scaleh, scalev } from '../constants/AppTheme';
@@ -15,31 +15,27 @@ const TopHeader = () => {
   const isThemeDark = activeDomain === 'skincare';
 
   const [isLocationModalVisible, setLocationModalVisible] = React.useState(false);
-
-  // Local state for instant toggle animation
   const [localTheme, setLocalTheme] = React.useState(isThemeDark);
+  const [shouldAnimate, setShouldAnimate] = React.useState(false);
 
   React.useEffect(() => {
     dispatch(fetchAddresses());
   }, [dispatch]);
 
-  // Sync local state if Redux state changes externally
   React.useEffect(() => {
+    setShouldAnimate(false); // Only snap, never animate when syncing from Redux
     setLocalTheme(isThemeDark);
   }, [isThemeDark]);
 
   const handleToggle = () => {
-    const nextVal = !localTheme;
-    setLocalTheme(nextVal); // Update UI instantly to start toggle animation
-
-    // Defer heavy Redux update so the UI thread can finish the animation first
-    InteractionManager.runAfterInteractions(() => {
-      // Also wrap in a slight timeout as an extra precaution since Redux state changes cause massive re-renders
-      setTimeout(() => {
-        dispatch(toggleDomain());
-      }, 150);
-    });
+    setShouldAnimate(true); // Animate because user explicitly clicked it
+    setLocalTheme(!localTheme);
+    // Wait for the toggle animation to complete smoothly before the heavy screen switch
+    setTimeout(() => {
+      dispatch(toggleDomain());
+    }, 250);
   };
+
 
   return (
     <View style={styles.header}>
@@ -50,12 +46,13 @@ const TopHeader = () => {
         ) : (
           <Text style={styles.locationText} numberOfLines={1}>Select a delivery location</Text>
         )}
-        <Icon name="chevron-down" size={scaleh(16)} color="#1a1a1a" />
+        <Icon name="chevron-down" size={scaleh(16)} color="#1a1a1a" style={{ marginRight: scaleh(85) }} />
       </TouchableOpacity>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <CustomToggle
           value={localTheme}
           onValueChange={handleToggle}
+          animate={shouldAnimate}
           activeTrackImage={require('../images/bgImages/skincareToggle.webp')}
           inactiveTrackImage={require('../images/bgImages/makeupToggle.webp')}
           activeThumbImage={require('../images/bgImages/skincareToggle.webp')}

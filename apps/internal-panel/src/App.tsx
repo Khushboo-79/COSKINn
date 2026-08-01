@@ -7,6 +7,7 @@ import { RoleRouter, ForbiddenScreen } from './core/router';
 import { LoginScreen } from './modules/auth/LoginScreen';
 import { TwoFactorScreen } from './modules/auth/TwoFactorScreen';
 import { ForgotPasswordScreen } from './modules/auth/ForgotPasswordScreen';
+import { ResetPasswordScreen } from './modules/auth/ResetPasswordScreen';
 import { SharedShell } from './components/layout/SharedShell';
 import { RequirePanel } from './core/rbac/RequirePanel';
 import { AdminRouter } from './modules/admin/AdminRouter';
@@ -42,6 +43,7 @@ const App = () => {
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/auth/2fa" element={<TwoFactorScreen />} />
             <Route path="/auth/forgot-password" element={<ForgotPasswordScreen />} />
+            <Route path="/auth/reset-password" element={<ResetPasswordScreen />} />
             <Route path="/403" element={<ForbiddenScreen />} />
 
             {/* Role-based entry point */}

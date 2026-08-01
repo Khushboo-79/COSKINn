@@ -33,11 +33,11 @@ export const OrderListScreen = () => {
       warehouseId: 'default-warehouse' 
     }),
     onSuccess: (data) => {
-      toast.success();
+      toast.success('Action successful');
       setSelectedOrderIds([]); // Clear selection
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 
@@ -61,7 +61,7 @@ export const OrderListScreen = () => {
     setIsBulkUpdating(false);
     queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
     setSelectedOrderIds([]);
-    toast.success();
+    toast.success('Action successful');
   };
 
   const toggleSelection = (id: string) => {
@@ -254,24 +254,24 @@ export const OrderListScreen = () => {
                         <div className="flex items-center cursor-pointer">
                           <div>
                             <div className="text-sm font-bold text-slate-900 group-hover:text-primary-600 transition-colors">
-                              #{order.id.slice(-8).toUpperCase()}
+                              #{order.id?.slice(-8).toUpperCase() || 'UNKNOWN'}
                             </div>
                             <div className="text-xs text-slate-500 mt-1 flex items-center">
                               <Calendar className="h-3 w-3 mr-1" />
-                              {new Date(order.createdAt).toLocaleDateString()}
+                              {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
                         <div className="text-sm font-medium text-slate-900">
-                          {order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Guest'}
+                          {order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() || 'Guest' : 'Guest'}
                         </div>
-                        <div className="text-xs text-slate-500 mt-1">{order.user?.email || order.address?.email || 'N/A'}</div>
+                        <div className="text-xs text-slate-500 mt-1">{order.user?.email || order.shippingAddress?.email || order.address?.email || 'N/A'}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(order.status)}`}>
-                          {order.status.replace(/_/g, ' ')}
+                          {(order.status || 'PLACED').replace(/_/g, ' ')}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
@@ -281,7 +281,7 @@ export const OrderListScreen = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
-                        <div className="text-sm font-bold text-slate-900">₹{order.finalTotal.toFixed(2)}</div>
+                        <div className="text-sm font-bold text-slate-900">₹{(order.finalTotal || 0).toFixed(2)}</div>
                         <div className="text-xs text-slate-500 mt-1">{order.items?.length || 0} items</div>
                       </td>
                     </tr>

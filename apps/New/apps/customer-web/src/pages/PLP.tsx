@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { ArrowRight, Star, SlidersHorizontal, X, Heart } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Star, SlidersHorizontal, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FilterSidebar from '../components/shop/FilterSidebar';
 
@@ -14,8 +14,12 @@ const PLP: React.FC = () => {
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
+  const location = useLocation();
   const isGlam = mode === 'glam';
   
+  const fromSection = location.state?.from === 'bestsellers' ? 'bestsellers' : 'shop-by-category';
+  const backText = fromSection === 'bestsellers' ? 'Back to bestsellers' : 'Back to categories';
+
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Use the exact wording from the reference site
@@ -35,9 +39,16 @@ const PLP: React.FC = () => {
     <div className={`min-h-screen ${isGlam ? 'bg-[#faf9f6]' : 'bg-white'}`}>
       
       {/* Page Header */}
-      <div className={`py-12 md:py-20 border-b ${isGlam ? 'border-gray-200 bg-[#faf9f6]' : 'border-[#ffe4e8] bg-gradient-to-b from-[#ffe4e8]/30 to-white'}`}>
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
-          <div className="flex flex-col items-center text-center">
+      <div className={`py-12 md:py-20 border-b relative ${isGlam ? 'border-gray-200 bg-[#faf9f6]' : 'border-[#ffe4e8] bg-gradient-to-b from-[#ffe4e8]/30 to-white'}`}>
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative">
+          <Link 
+            to={`/#${fromSection}`} 
+            className={`absolute left-6 lg:left-10 top-0 md:-top-4 flex items-center text-sm font-bold transition-colors ${isGlam ? 'text-[#7a1b26] hover:text-[#2a2a2a]' : 'text-[#ff9aa8] hover:text-[#ff7b8c]'}`}
+          >
+            <ArrowLeft className="mr-1.5 w-4 h-4" />
+            {backText}
+          </Link>
+          <div className="flex flex-col items-center text-center mt-8 md:mt-0">
             <p className={`text-sm font-bold uppercase tracking-widest mb-4 ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
               {subtitle}
             </p>
@@ -152,7 +163,7 @@ const PLP: React.FC = () => {
             
             {/* Load More */}
             <div className="mt-16 flex justify-center">
-              <button className={`px-8 py-4 rounded-full font-bold text-sm border-2 transition-colors ${
+              <button className={`w-full md:w-auto px-8 py-4 rounded-full font-bold text-sm border-2 transition-colors ${
                 isGlam ? 'border-[#7a1b26] text-[#7a1b26] hover:bg-[#7a1b26] hover:text-white' : 'border-[#ff9aa8] text-[#ff9aa8] hover:bg-[#ff9aa8] hover:text-white'
               }`}>
                 Load More

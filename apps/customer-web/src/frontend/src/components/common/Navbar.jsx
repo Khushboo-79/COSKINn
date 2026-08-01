@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight, ArrowLeft, CreditCard, Gift, Share2, Award, Crown, Tag, Shield } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -9,15 +9,15 @@ import { skincareProducts } from '../../constants/skincareProducts';
 
 import { ShopMegaMenu, CategoriesMegaMenu, RoutineMenu, JournalMenu } from './MegaMenus';
 import MobileMenu from './MobileMenu';
-import AuthModal from './AuthModal';
-import ThemeToggle from './ThemeToggle';
 
 const CoskinnLogo = ({ isScrolled, forceWhite }) => (
   <svg role="img" aria-label="COSKINn Logo" className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor="var(--color-logoStart)" />
-        <stop offset="100%" stopColor="var(--color-logoEnd)" />
+        <stop offset="0%" stopColor="#FF0069" />  {/* Hot Pink */}
+        <stop offset="35%" stopColor="#FF6B6B" /> {/* Coral */}
+        <stop offset="70%" stopColor="#FFA07A" /> {/* Soft Orange */}
+        <stop offset="100%" stopColor="#FFD498" /> {/* Warm Peach */}
       </linearGradient>
     </defs>
 
@@ -194,7 +194,7 @@ const MobileProfileItem = ({ icon: Icon, label, onClick }) => (
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal } = useAuth();
+  const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal, executeProtectedAction } = useAuth();
   const { cartCount, openCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -250,8 +250,9 @@ export default function Navbar() {
     }
   });
 
+  const isNewArrivalsPage = location.pathname === '/new-arrivals';
   const isCosmeticsAboutPage = theme === 'cosmetics' && location.pathname === '/about';
-  const isWhiteNavPage = location.pathname.includes('/collections/precision-lip-liner') || isCosmeticsAboutPage;
+  const isWhiteNavPage = location.pathname.includes('/collections/precision-lip-liner') || isCosmeticsAboutPage || isNewArrivalsPage;
   const forceWhite = isWhiteNavPage && !isScrolled;
 
   // Handle Desktop Hover for User Profile
@@ -272,21 +273,19 @@ export default function Navbar() {
   };
 
   const handleToggleClick = () => {
-    if (!user) {
-      openAuthModal();
-    } else if (window.innerWidth < 1024) {
-      setIsMobileProfileOpen(true);
-    } else {
-      setIsDropdownOpen(!isDropdownOpen);
-    }
+    executeProtectedAction(() => {
+      if (window.innerWidth < 1024) {
+        setIsMobileProfileOpen(true);
+      } else {
+        setIsDropdownOpen(!isDropdownOpen);
+      }
+    });
   };
 
   const handleWishlistClick = () => {
-    if (!user) {
-      openAuthModal();
-    } else {
+    executeProtectedAction(() => {
       navigate('/account/wishlist');
-    }
+    });
   };
 
   useEffect(() => {
@@ -427,8 +426,6 @@ export default function Navbar() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
       </>
     );
   }
@@ -444,48 +441,71 @@ export default function Navbar() {
       className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-xl border-b border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)]' : 'bg-transparent'
         }`}
     >
-      {/* Announcement Bar */}
-      <div className="w-full bg-gradient-to-r from-[#FF92A5] via-[#FF859D] to-[#FF92A5] text-white py-2.5 overflow-hidden flex items-center justify-center">
-        <div className="flex items-center gap-6 md:gap-12 text-[9px] md:text-[11px] font-bold uppercase tracking-[0.15em] whitespace-nowrap px-4">
-          <span>FREE 3-PIECE JUICY SET OVER $60</span>
-          <span className="w-1 h-1 rounded-full bg-white/70"></span>
-          <span>EARN 2X LOYALTY THIS WEEKEND</span>
-          <span className="w-1 h-1 rounded-full bg-white/70"></span>
-          <span>FREE SHIPPING OVER $40</span>
-          <span className="w-1 h-1 rounded-full bg-white/70 hidden md:inline-block"></span>
-          <span className="hidden md:inline-block">FREE 3-PIECE JUICY SET OVER $60</span>
+      {/* Top Theme Switcher Bar */}
+      <div className={`w-full overflow-hidden transition-all duration-300 ${isScrolled ? 'h-0 opacity-0' : 'h-[60px] opacity-100 pt-4'}`}>
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-1 flex items-center justify-between font-body text-[13px] text-white">
+          <div className="flex items-center gap-2"></div>
+
+          {/* Pill Theme Switcher */}
+          <div className="flex bg-white/40 p-1 rounded-full text-xs font-semibold backdrop-blur-sm border border-white/60 shadow-sm">
+            <button
+              aria-label="Switch to Skincare Theme"
+              onClick={() => handleThemeSwitch('skincare')}
+              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'skincare' ? 'bg-[#FF8FB1] text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+            >
+              Skincare
+            </button>
+            <button
+              aria-label="Switch to Cosmetic Theme"
+              onClick={() => handleThemeSwitch('cosmetics')}
+              className={`px-5 py-1 rounded-full transition-all duration-300 ${theme === 'cosmetics' ? 'bg-[#FF8FB1] text-white shadow-sm' : 'text-black hover:bg-white/50'}`}
+            >
+              Cosmetic
+            </button>
+          </div>
+
         </div>
       </div>
 
-      <div className={`w-full max-w-[1400px] mx-auto px-4 lg:px-12 flex items-center justify-between relative transition-all duration-300 ${isScrolled ? 'py-3' : 'py-4'}`}>
+      <div className={`w-full max-w-[1400px] mx-auto px-4 lg:px-12 flex items-center justify-between relative transition-all duration-300 ${isScrolled ? 'py-3' : 'pb-4 mt-2'}`}>
 
-        {/* Left: Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center justify-start gap-10 text-[15px] font-sans flex-1">
+        {/* Logo */}
+        <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative">
+          <CoskinnLogo isScrolled={isScrolled} forceWhite={isNewArrivalsPage ? false : forceWhite} />
+        </Link>
+
+        {/* Desktop Navigation Links */}
+        <div className="hidden lg:flex items-center justify-center gap-10 text-[20px] font-body flex-1 ml-10">
           <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
 
           <NavItem title="Shop" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <ShopMegaMenu theme={theme} />
           </NavItem>
 
-          <NavItem title="Serums" to={`/categories/serums`} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
+          <NavItem title="Categories" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
+            <CategoriesMegaMenu theme={theme} />
+          </NavItem>
+          
+          {theme === 'skincare' && (
+            <NavItem title="Routine" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
+              <RoutineMenu theme={theme} />
+            </NavItem>
+          )}
 
-          <NavItem title="Masks" to={`/categories/masks`} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
+          <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
 
           <NavItem title="Journal" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <JournalMenu theme={theme} />
           </NavItem>
+
+          <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
         </div>
 
-        {/* Center: Logo */}
-        <div className="flex-1 flex justify-start lg:justify-center">
-          <Link to={`/${theme}`} className="flex flex-col items-center cursor-pointer group flex-shrink-0 relative">
-            <CoskinnLogo isScrolled={isScrolled} forceWhite={forceWhite} />
-          </Link>
-        </div>
+        {/* Spacer for Mobile layout balancing */}
+        <div className="flex-1 lg:hidden"></div>
 
-        {/* Right: Icons */}
-        <div className={`flex items-center justify-end gap-3 sm:gap-5 lg:gap-6 flex-1 transition-colors duration-300 ${forceWhite ? 'text-white' : 'text-text'}`}>
-          
+        {/* Icons */}
+        <div className={`flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 relative flex-shrink-0 transition-colors duration-300 ${forceWhite ? 'text-white' : 'text-black'}`}>
           {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -493,6 +513,15 @@ export default function Navbar() {
             className="hover:text-theme-primary transition flex items-center justify-center p-1"
           >
             <Search size={22} strokeWidth={1.5} />
+          </button>
+
+          {/* Wishlist Icon (Mobile only) */}
+          <button
+            onClick={handleWishlistClick}
+            aria-label="Open wishlist"
+            className="hover:text-theme-primary transition flex items-center justify-center p-1 lg:hidden"
+          >
+            <Heart size={22} strokeWidth={1.5} />
           </button>
 
           {/* User Profile */}
@@ -554,15 +583,6 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          {/* Wishlist Icon */}
-          <button
-            onClick={handleWishlistClick}
-            aria-label="Open wishlist"
-            className="hover:text-theme-primary transition flex items-center justify-center p-1"
-          >
-            <Heart size={22} strokeWidth={1.5} />
-          </button>
-
           {/* Cart Icon */}
           <button
             onClick={() => navigate('/cart')}
@@ -573,11 +593,6 @@ export default function Navbar() {
             <ShoppingBag size={22} strokeWidth={1.5} />
             <span className="absolute -top-1 -right-2 bg-[#FF8FB1] text-white text-[10px] w-[16px] h-[16px] rounded-full flex items-center justify-center font-bold">{cartCount}</span>
           </button>
-
-          {/* Theme Toggle */}
-          <div className="hidden sm:block ml-2">
-            <ThemeToggle theme={theme} onToggle={handleThemeSwitch} />
-          </div>
 
           {/* Hamburger Menu */}
           <AnimatedHamburger isOpen={isMobileMenuOpen} toggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
@@ -702,6 +717,54 @@ export default function Navbar() {
                     }}
                   />
                   <MobileProfileItem
+                    icon={CreditCard}
+                    label="Wallet & Ledger"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/wallet');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Gift}
+                    label="Bonuses"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/bonuses');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Share2}
+                    label="Referrals"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/referrals');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Award}
+                    label="Reward Points"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/rewards');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Crown}
+                    label="Membership"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/membership');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Tag}
+                    label="Offers & Deals"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/offers');
+                    }}
+                  />
+                  <MobileProfileItem
                     icon={MessageSquare}
                     label="My Reviews"
                     onClick={() => {
@@ -723,6 +786,14 @@ export default function Navbar() {
                     onClick={() => {
                       setIsMobileProfileOpen(false);
                       navigate('/account/settings');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Shield}
+                    label="Security"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/security');
                     }}
                   />
                   <MobileProfileItem
@@ -760,9 +831,6 @@ export default function Navbar() {
           </div>
         )}
       </AnimatePresence>
-
-      {/* Authentication Modal */}
-      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
 
     </motion.nav>
   );

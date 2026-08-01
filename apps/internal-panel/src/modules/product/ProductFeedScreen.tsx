@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import { Search, Filter, Download, Box, PlusCircle } from 'lucide-react';
 
-// Mock data for the product feed
-const MOCK_FEED = [
-  { id: 'PRD-001', name: 'Niacinamide Face Serum', sku: 'CSK-NIA-30ML', category: 'Serum', fruit: 'Watermelon', status: 'LIVE', stock: 150 },
-  { id: 'PRD-002', name: 'Vitamin C Glow Moisturizer', sku: 'CSK-VITC-50G', category: 'Moisturizer', fruit: 'Orange', status: 'LIVE', stock: 85 },
-  { id: 'PRD-003', name: 'Ruby Red Lip Tint', sku: 'CSK-LIP-RED', category: 'Makeup', fruit: 'Cherry', status: 'DRAFT', stock: 0 },
-];
+import { useQuery } from '@tanstack/react-query';
+import { productApi } from '../../core/api/product';
 
 export const ProductFeedScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: feed = [], isLoading } = useQuery({
+    queryKey: ['marketingFeed'],
+    queryFn: () => productApi.getMarketingFeed(),
+  });
+
+  const filteredFeed = feed.filter((product: any) => 
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    product.sku?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
   return (
     <div className="space-y-6">
@@ -62,30 +68,38 @@ export const ProductFeedScreen = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {MOCK_FEED.map((product) => (
+              {isLoading ? (
+                <tr><td colSpan={6} className="text-center py-4">Loading feed...</td></tr>
+              ) : filteredFeed.map((product: any) => (
                 <tr key={product.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
-                        <Box className="h-5 w-5" />
+                      <div className="flex-shrink-0 h-10 w-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 overflow-hidden">
+                        {product.primaryImage ? (
+                           <img src={product.primaryImage} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                           <Box className="h-5 w-5" />
+                        )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-slate-900">{product.name}</div>
-                        <div className="text-sm text-slate-500">{product.id}</div>
+                        <div className="text-sm font-medium text-slate-900 truncate max-w-[200px]" title={product.name}>{product.name}</div>
+                        <div className="text-sm text-slate-500 font-mono text-xs mt-0.5">{product.id.split('-')[0]}...</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{product.sku}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-mono">
+                    {product.variants?.[0]?.sku || 'N/A'}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{product.category}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{product.fruit}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{product.ingredients?.[0] || 'N/A'}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      product.status === 'LIVE' ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800'
-                    }`}>
-                      {product.status}
+                    <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      LIVE
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-slate-900">{product.stock}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-slate-900">
+                    {product.variants?.[0]?.availableQuantity || 0}
+                  </td>
                 </tr>
               ))}
             </tbody>

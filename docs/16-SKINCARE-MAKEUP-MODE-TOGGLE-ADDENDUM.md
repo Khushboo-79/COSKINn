@@ -1,4 +1,4 @@
-# COSKINn — Skincare ⇄ Makeup Mode Toggle (Feature Addendum)
+# Fairenne — Skincare ⇄ Makeup Mode Toggle (Feature Addendum)
 
 **Status:** New requirement, not in PRD v1.0 — this addendum extends `01-CUSTOMER-WEB-BUILD-PLAN.md`, `03-CUSTOMER-APP-BUILD-PLAN.md`, `02-BACKEND-BUILD-PLAN.md`, `04-PRODUCT-MANAGEMENT-PANEL-BUILD-PLAN.md`, and `12-MARKETING-CRM-PANEL-BUILD-PLAN.md`. Splice these tasks into those files at the day slots noted below rather than replacing them — renumber subsequent days by the count added.
 

@@ -8,9 +8,11 @@ import CancelOrderModal from '../components/orders/CancelOrderModal';
 import NeedHelpModal from '../components/orders/NeedHelpModal';
 import ReturnReplaceModal from '../components/orders/ReturnReplaceModal';
 import ReturnPolicyModal from '../components/orders/ReturnPolicyModal';
+import { normalizeOrder } from '../utils/orderUtils';
 import { useOrders } from '../context/OrderContext';
 import { downloadInvoice } from '../utils/downloadInvoice';
 import apiClient from '../utils/apiClient';
+import { resolveProductImage } from '../utils/imageResolver';
 
 export default function OrderTrackingPage() {
   const { orderId } = useParams();
@@ -27,6 +29,7 @@ export default function OrderTrackingPage() {
 
   const mapOrderToFrontend = (backendOrder) => {
     if (!backendOrder) return null;
+    backendOrder = normalizeOrder(backendOrder);
     
     // Map statusHistory to timeline
     // Timeline expects: status, date, time, desc, done
@@ -109,13 +112,13 @@ export default function OrderTrackingPage() {
   const primaryClass = "bg-[#FF0069] text-white hover:bg-pink-700";
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pt-32 pb-20 font-body">
+    <div className="min-h-screen bg-gray-50/50 pt-44 pb-20 font-body">
       <div className="max-w-[1000px] mx-auto px-6 lg:px-8">
         
         {/* Breadcrumb / Header */}
         <button 
           onClick={() => navigate('/account/orders')}
-          className="flex items-center gap-2 text-gray-500 hover:text-black mb-8 transition-colors group"
+          className="flex items-center gap-2 text-gray-500 hover:text-black mb-8 transition-colors group z-20 relative"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
           <span className="font-medium text-sm tracking-widest uppercase">Back to Orders</span>
@@ -131,7 +134,7 @@ export default function OrderTrackingPage() {
             </p>
           </div>
           
-          {!isCancelled && !['Delivered'].includes(order.status) && (
+          {!isCancelled && !['DELIVERED', 'Delivered'].includes(order.status) && (
             <button 
               onClick={() => setIsCancelModalOpen(true)}
               className="px-6 py-2.5 rounded-xl font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 transition-colors w-full md:w-auto text-sm"
@@ -139,7 +142,7 @@ export default function OrderTrackingPage() {
               Cancel Order
             </button>
           )}
-          {order.status === 'Delivered' && (
+          {['DELIVERED', 'Delivered'].includes(order.status) && (
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <button 
                 onClick={() => { setModalMode('return'); setIsReturnReplaceModalOpen(true); }}
@@ -244,10 +247,10 @@ export default function OrderTrackingPage() {
                 {order.items.map(item => (
                   <div key={item.id} className="flex items-center gap-4 p-4 border border-gray-100 rounded-2xl hover:border-gray-200 transition-colors">
                     <div className="w-20 h-20 bg-gray-50 rounded-xl overflow-hidden shrink-0">
-                      <img loading="lazy" src={item.product?.images?.[0] || 'https://via.placeholder.com/150'} alt={item.product?.name} className="w-full h-full object-cover mix-blend-multiply opacity-90" />
+                      <img loading="lazy" src={resolveProductImage(item)} alt={item.product?.name || item.name || 'Product'} className="w-full h-full object-cover mix-blend-multiply opacity-90" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-black text-sm truncate">{item.product?.name}</h4>
+                      <h4 className="font-bold text-black text-sm truncate">{item.product?.name || item.name}</h4>
                       <p className="text-xs text-gray-500 mt-1">Variant: Default</p>
                       <p className="text-xs font-medium text-gray-500 mt-1">Qty: {item.quantity}</p>
                     </div>

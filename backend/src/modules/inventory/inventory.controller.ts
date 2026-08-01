@@ -23,6 +23,13 @@ export class InventoryController {
     return this.inventoryService.createWarehouse(dto);
   }
 
+  @Get('logs')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF')
+  getMovementLogs(@Query('sku') sku?: string) {
+    return this.inventoryService.getMovementLogs(sku);
+  }
+
   @Get('dashboard-stats')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')

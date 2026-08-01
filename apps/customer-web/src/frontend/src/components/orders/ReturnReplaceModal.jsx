@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2, ChevronRight, Camera, RefreshCw, Undo2, MapPin, Calendar, Clock, CreditCard, Building } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { useOrders } from '../../context/OrderContext';
+import apiClient from '../../utils/apiClient';
 
 export default function ReturnReplaceModal({ isOpen, onClose, order, mode }) {
   const { showToast } = useToast();
@@ -48,11 +49,21 @@ export default function ReturnReplaceModal({ isOpen, onClose, order, mode }) {
 
   const primaryClass = "bg-[#FF0069] text-white hover:bg-pink-700";
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      
+    const refundType = order.paymentMethod === 'Cash On Delivery' ? 'WALLET' : 'ORIGINAL_SOURCE';
+    const payload = {
+      orderId: order.id,
+      reason: reason || "Quality Issue",
+      refundType: refundType
+    };
+
+    console.log('🔄 [RETURN/REFUND API] Submitting return/refund request to backend:', payload);
+
+    try {
+      const response = await apiClient.post('/returns/request', payload);
+      console.log('✅ [RETURN/REFUND API] Backend response received:', response.data);
+
       const newTimeline = isReturn ? [
         { status: 'Return Requested', date: 'Today', time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), desc: 'Your return request has been submitted.', done: true },
         { status: 'Pickup Scheduled', date: pickupDate, time: pickupTime.split(' ')[0], desc: 'Courier will arrive for pickup.', done: false },
@@ -80,7 +91,14 @@ export default function ReturnReplaceModal({ isOpen, onClose, order, mode }) {
       if (showToast) {
         showToast(isReturn ? 'Return Request Submitted' : 'Replacement Request Submitted', 'success');
       }
-    }, 1500);
+    } catch (err) {
+      console.error('❌ [RETURN/REFUND API] Error submitting return/refund request:', err);
+      if (showToast) {
+        showToast(err.response?.data?.message || 'Failed to submit return request', 'error');
+      }
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleClose = () => {

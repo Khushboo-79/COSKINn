@@ -219,7 +219,7 @@ const DashboardScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
       <SafeAreaView style={styles.safeArea}>
 
         {/* Shared Top Header and Search */}
