@@ -102,12 +102,12 @@ export class HrService {
     const employees = await this.prisma.employee.findMany();
     
     const summary = employees.reduce((acc, emp) => {
-      const dept = emp.department || 'Unassigned';
+      const dept = emp.department || 'Unknown';
       if (!acc[dept]) {
         acc[dept] = { department: dept, headcount: 0, totalCTC: 0 };
       }
       acc[dept].headcount += 1;
-      acc[dept].totalCTC += emp.salary; // Assuming salary is monthly
+      acc[dept].totalCTC += emp.salary || 0; // Assuming salary is monthly
       return acc;
     }, {} as Record<string, any>);
 
