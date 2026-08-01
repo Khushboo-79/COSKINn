@@ -74,7 +74,7 @@ export const BlogEditorScreen = () => {
         setHeroImageUrl(url);
       } catch (err) {
         console.error("Upload failed", err);
-        toast.error();
+        toast.error('An error occurred');
       } finally {
         setUploading(false);
       }

@@ -71,7 +71,7 @@ const OrderConfirmedScreen = ({ navigation }) => {
 
           {/* Luxe Benefits */}
           <View style={styles.luxeContainer}>
-            <Text style={styles.sectionTitle}>COSKINn - LUXE BENEFITS</Text>
+            <Text style={styles.sectionTitle}>FAIRENNE - LUXE BENEFITS</Text>
             <View style={[styles.luxeCard, isCosmetics && { elevation: 0, shadowOpacity: 0, borderColor: primaryColor, backgroundColor: 'rgba(255, 255, 255, 0.7)' }]}>
               <View style={[styles.luxeLeft, isCosmetics && { position: 'relative', width: scaleh(32), height: scalev(32), justifyContent: 'center', alignItems: 'center' }]}>
                 {isCosmetics ? (

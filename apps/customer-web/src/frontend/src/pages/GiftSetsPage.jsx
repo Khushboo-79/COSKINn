@@ -123,10 +123,10 @@ export default function GiftSetsPage() {
               Beautifully curated skincare collections designed to make every occasion special. Perfect for gifting your loved ones or treating yourself.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button onClick={() => window.scrollTo({ top: document.getElementById('gift-products').offsetTop - 100, behavior: 'smooth' })} className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30">
+              <button onClick={() => { const el = document.getElementById('gift-products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30">
                 Shop Gift Sets
               </button>
-              <button className="w-full sm:w-auto px-10 py-4 bg-white text-black border-2 border-black/10 backdrop-blur-md rounded-full font-bold uppercase tracking-widest text-sm hover:border-[#FF0069] transition-all shadow-sm">
+              <button onClick={() => { const el = document.getElementById('gift-products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-white text-black border-2 border-black/10 backdrop-blur-md rounded-full font-bold uppercase tracking-widest text-sm hover:border-[#FF0069] transition-all shadow-sm">
                 Explore Collection
               </button>
             </div>

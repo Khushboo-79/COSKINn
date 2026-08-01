@@ -13,7 +13,7 @@ const WishlistEmpty = () => {
   const renderContent = (isCosmeticsStyle) => (
     <View style={styles.content}>
       <Image
-        source={require('../../../images/Logo/coskinLogo.webp')}
+        source={require('../../../images/Logo/logo.webp')}
         style={styles.logoIcon}
         resizeMode="contain"
       />
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleh(30),
   },
   logoIcon: {
-    width: scaleh(65),
-    height: scalev(65),
+    width: scaleh(100),
+    height: scalev(100),
     marginBottom: scalev(30),
   },
   textContainer: {

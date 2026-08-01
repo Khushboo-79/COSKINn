@@ -35,5 +35,14 @@ export const cartService = {
     } catch (error) {
       throw error.response?.data || error.message;
     }
+  },
+
+  clearCart: async () => {
+    try {
+      const response = await api.delete('/cart');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   }
 };

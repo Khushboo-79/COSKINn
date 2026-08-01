@@ -57,4 +57,20 @@ export class AuthController {
   logout(@Body('refreshToken') refreshToken?: string) {
     return this.authService.logout(refreshToken);
   }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() body: { email: string }) {
+    return this.authService.requestPasswordReset(body.email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() body: { email: string; otp: string; newPassword: string }) {
+    return this.authService.resetPassword(body.email, body.otp, body.newPassword);
+  }
+
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  changePassword(@Request() req, @Body() body: { currentPassword: string; newPassword: string }) {
+    return this.authService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  }
 }

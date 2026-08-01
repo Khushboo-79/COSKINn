@@ -267,7 +267,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user || !user.email) throw new BadRequestException('User missing email');
     
-    const secretObj = speakeasy.generateSecret({ name: 'COSKINn Admin (' + user.email + ')' });
+    const secretObj = speakeasy.generateSecret({ name: 'Fairenne Admin (' + user.email + ')' });
     const secret = secretObj.base32;
     const otpauthUrl = secretObj.otpauth_url || '';
     const qrCodeUrl = await QRCode.toDataURL(otpauthUrl);
@@ -297,6 +297,90 @@ export class AuthService {
     });
 
     return { success: true, message: 'TOTP 2FA enabled successfully' };
+  }
+
+  async requestPasswordReset(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (!user) {
+      // Return success anyway to prevent email enumeration
+      return { message: 'If an account with that email exists, a password reset link has been sent.' };
+    }
+
+    // Developer Bypass: For local dev we log the OTP.
+    const otp = process.env.NODE_ENV !== 'production' ? '123456' : Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
+    await this.prisma.otpLog.create({
+      data: {
+        userId: user.id,
+        email: user.email,
+        otpHash: otp, // In a real prod this should be hashed
+        expiresAt,
+        isUsed: false
+      }
+    });
+
+    this.logger.debug(`[DEV MODE] Password Reset OTP for ${email}: ${otp}`);
+
+    return { message: 'If an account with that email exists, a password reset link has been sent.' };
+  }
+
+  async resetPassword(email: string, otp: string, newPassword: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+
+    const validOtp = await this.prisma.otpLog.findFirst({
+      where: {
+        userId: user.id,
+        email,
+        otpHash: otp,
+        isUsed: false,
+        expiresAt: { gt: new Date() }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    if (!validOtp) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { passwordHash }
+    });
+
+    await this.prisma.otpLog.update({
+      where: { id: validOtp.id },
+      data: { isUsed: true }
+    });
+
+    return { success: true, message: 'Password has been reset successfully' };
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid user');
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isValid) {
+      throw new BadRequestException('Incorrect current password');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash }
+    });
+
+    return { success: true, message: 'Password updated successfully' };
   }
 
   async refreshToken(refreshToken: string) {

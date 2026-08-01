@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -9,6 +9,7 @@ import { OrderProvider } from './context/OrderContext';
 import Navbar from './components/common/Navbar';
 import CartDrawer from './components/cart/CartDrawer';
 import ScrollToTop from './components/common/ScrollToTop';
+import AuthModal from './components/common/AuthModal';
 
 // Lazy load all pages for code splitting and faster initial load
 const SkincarePage = React.lazy(() => import('./pages/SkincarePage'));
@@ -124,11 +125,13 @@ const MainLayout = () => {
   const location = useLocation();
   const isCheckout = location.pathname === '/checkout';
   const isProductPage = location.pathname.startsWith('/product/');
+  const { isAuthModalOpen, closeAuthModal } = useAuth();
 
   return (
     <div className="relative min-h-screen flex flex-col">
       {!isCheckout && !isProductPage && <Navbar />}
       {!isCheckout && <CartDrawer />}
+      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
       <div className="flex-1">
         <Suspense fallback={<GlobalLoader />}>
           <Routes>
@@ -166,6 +169,7 @@ const MainLayout = () => {
             <Route path="/award-winners" element={<AwardWinnersPage />} />
             <Route path="/gift-sets" element={<GiftSetsPage />} />
             <Route path="/recommended" element={<RecommendedPage />} />
+            <Route path="/membership" element={<MembershipPurchasePage />} />
             <Route path="/membership/:type" element={<MembershipPurchasePage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/product/:slug" element={<ProductDetailsPage />} />

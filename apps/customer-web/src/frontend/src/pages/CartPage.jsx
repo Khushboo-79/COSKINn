@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { cosmeticsProducts } from '../constants/cosmeticsProducts';
+import { skincareProducts } from '../constants/skincareProducts';
 import Footer from '../components/common/Footer';
 import SEO from '../components/common/SEO';
 import { ArrowLeft, ShoppingBag, Plus, Minus, Trash2, Sparkles, Star, Award, Heart } from 'lucide-react';
@@ -21,13 +24,65 @@ const DiamondOrnament = () => (
 );
 
 export default function CartPage() {
-  const { cart, cartSubtotal, updateQuantity, removeFromCart, addToCart } = useCart();
+  const { cart, cartSubtotal, cartSummary, autoAddedGifts, fetchCart, updateQuantity, removeFromCart, addToCart } = useCart();
+  const { executeProtectedAction } = useAuth();
+  const { theme } = useTheme();
+  const isSkincare = theme === 'skincare';
   const navigate = useNavigate();
   const [successMsg, setSuccessMsg] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    fetchCart();
+  }, [fetchCart]);
+
+  // 4 Featured Skincare Products for Skincare Theme
+  const featuredSkincare = [
+    {
+      id: 101,
+      name: "COSKINn Sunscreen SPF 50",
+      price: 789,
+      originalPrice: 899,
+      image: skincareProducts.find(p => p.id === 101)?.image || '',
+      slug: "sunscreen-spf-50",
+      description: "Broad-spectrum SPF 50 protection with a lightweight, non-greasy finish that leaves no white cast and keeps skin glowing.",
+      rating: 4.8,
+      reviews: 356
+    },
+    {
+      id: 104,
+      name: "COSKINn Gentle Cleanser",
+      price: 499,
+      originalPrice: 599,
+      image: skincareProducts.find(p => p.id === 104)?.image || '',
+      slug: "gentle-cleanser",
+      description: "A hydrating, non-stripping daily cleanser formulated with soothing ceramides and botanical extracts for fresh, balanced skin.",
+      rating: 4.8,
+      reviews: 589
+    },
+    {
+      id: 110,
+      name: "COSKINn Overnight Mask",
+      price: 1099,
+      originalPrice: 1299,
+      image: skincareProducts.find(p => p.id === 110)?.image || '',
+      slug: "overnight-mask",
+      description: "Work with your skin's natural nightly repair process to intensely hydrate and visibly brighten your complexion by morning.",
+      rating: 4.9,
+      reviews: 512
+    },
+    {
+      id: 111,
+      name: "COSKINn Under Eye Patches",
+      price: 679,
+      originalPrice: 799,
+      image: skincareProducts.find(p => p.id === 111)?.image || '',
+      slug: "under-eye-patches",
+      description: "Cooling hydrogel patches infused with caffeine and collagen to visibly reduce dark circles, puffiness, and fine lines.",
+      rating: 4.7,
+      reviews: 388
+    }
+  ];
 
   // 4 Featured Fairytale Products exactly as requested
   const featuredEnchantments = [
@@ -77,6 +132,15 @@ export default function CartPage() {
     }
   ];
 
+  const relatedSkincareIds = [106, 107, 109, 112];
+  const relatedSkincare = skincareProducts
+    .filter(p => relatedSkincareIds.includes(p.id))
+    .slice(0, 4)
+    .map(p => ({
+      ...p,
+      image: p.image || p.images?.[0] || ''
+    }));
+
   // Related products below (take first 4 from cosmeticsProducts list excluding featured ones)
   const relatedProducts = cosmeticsProducts
     .filter(p => ![301, 311, 312, 315].includes(p.id))
@@ -85,6 +149,9 @@ export default function CartPage() {
       ...p,
       image: p.image || p.images?.[0] || ''
     }));
+
+  const displayFeatured = isSkincare ? featuredSkincare : featuredEnchantments;
+  const displayRelated = isSkincare ? relatedSkincare : relatedProducts;
 
   const handleAddFeatured = (product) => {
     // Add to cart context
@@ -100,8 +167,11 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#FFFDFD] text-[#75263F] font-body overflow-x-hidden selection:bg-[#FFC2D1] selection:text-white pt-24 pb-0">
-      <SEO title="Your Enchanted Cart | COSKINn" description="Review your fairytale cosmetics collection." />
+    <div className="min-h-screen w-full bg-[#FFFDFD] text-[#75263F] font-body overflow-x-hidden selection:bg-[#FFC2D1] selection:text-white pt-40 md:pt-44 lg:pt-48 pb-0">
+      <SEO 
+        title={isSkincare ? "Your Skincare Cart | COSKINn" : "Your Enchanted Cart | COSKINn"} 
+        description={isSkincare ? "Review your COSKINn skincare routine." : "Review your fairytale cosmetics collection."} 
+      />
 
       {/* Floating Sparkles & Dust in Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
@@ -142,10 +212,12 @@ export default function CartPage() {
           <div className="text-center">
             <h1 className="text-3xl lg:text-4xl font-heading font-black text-[#5E1930] flex items-center justify-center gap-3">
               <Sparkles className="w-5 h-5 text-[#FF8FB1]" />
-              Enchanted Cart
+              {isSkincare ? "Skincare Cart" : "Enchanted Cart"}
               <Sparkles className="w-5 h-5 text-[#FF8FB1]" />
             </h1>
-            <p className="text-xs font-semibold tracking-wider text-[#C96E8A] mt-1">Review Your Magical Selections</p>
+            <p className="text-xs font-semibold tracking-wider text-[#C96E8A] mt-1">
+              {isSkincare ? "Review Your Skincare Routine Selections" : "Review Your Magical Selections"}
+            </p>
           </div>
 
           {/* Spacer to center title */}
@@ -175,10 +247,19 @@ export default function CartPage() {
             {cart.length === 0 ? (
               <div className="bg-[#FFF8FA]/60 border border-[#FFE0E9] rounded-3xl p-12 text-center shadow-sm">
                 <ShoppingBag className="w-16 h-16 text-[#FF8FB1]/40 mx-auto mb-6" />
-                <h3 className="text-xl font-heading font-bold text-[#5E1930] mb-3">Your Vanity is Empty</h3>
-                <p className="text-sm opacity-70 mb-8 max-w-sm mx-auto">You haven't added any fairytale enchantments to your cart yet. Explore our selections and build your magical collection.</p>
-                <Link to="/cosmetics" className="inline-block bg-gradient-to-r from-[#D74D76] to-[#E56B91] text-white px-10 py-4 rounded-full text-xs font-bold tracking-widest uppercase shadow-md hover:shadow-lg hover:scale-[1.02] transition-all">
-                  Shop Cosmetics
+                <h3 className="text-xl font-heading font-bold text-[#5E1930] mb-3">
+                  {isSkincare ? "Your Skincare Routine is Empty" : "Your Vanity is Empty"}
+                </h3>
+                <p className="text-sm opacity-70 mb-8 max-w-sm mx-auto">
+                  {isSkincare 
+                    ? "You haven't added any skincare essentials to your cart yet. Explore our science-backed formulations and build your daily routine."
+                    : "You haven't added any fairytale enchantments to your cart yet. Explore our selections and build your magical collection."}
+                </p>
+                <Link 
+                  to={isSkincare ? "/skincare" : "/cosmetics"} 
+                  className="inline-block bg-gradient-to-r from-[#D74D76] to-[#E56B91] text-white px-10 py-4 rounded-full text-xs font-bold tracking-widest uppercase shadow-md hover:shadow-lg hover:scale-[1.02] transition-all"
+                >
+                  {isSkincare ? "Shop Skincare" : "Shop Cosmetics"}
                 </Link>
               </div>
             ) : (
@@ -197,7 +278,12 @@ export default function CartPage() {
                       <div>
                         <h4 className="font-heading font-black text-[#5E1930] text-lg leading-tight mb-1">{item.name}</h4>
                         <p className="text-xs text-[#C96E8A] font-semibold">COSKINn Brand Premium</p>
-                        <div className="text-sm font-bold text-[#FF0069] mt-1">₹{item.price}</div>
+                        <div className="text-sm font-bold text-[#FF0069] mt-1 flex items-center gap-2">
+                          {item.mrp && item.mrp > item.price && (
+                            <span className="text-xs line-through text-gray-400 font-normal">₹{item.mrp}</span>
+                          )}
+                          <span>₹{item.price}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -234,6 +320,32 @@ export default function CartPage() {
                     </div>
                   </motion.div>
                 ))}
+
+                {autoAddedGifts && autoAddedGifts.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-[#FFE5EC]">
+                    <div className="flex items-center gap-2 mb-3 text-xs font-bold text-[#FF0069] tracking-wider uppercase">
+                      <Sparkles className="w-4 h-4" />
+                      Free Gifts Included
+                    </div>
+                    {autoAddedGifts.map((gift, idx) => (
+                      <div key={idx} className="flex items-center justify-between bg-[#FFF5F7] border border-[#FFE0E9] p-4 rounded-2xl mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-lg shadow-sm">
+                            🎁
+                          </div>
+                          <div>
+                            <h5 className="font-heading font-bold text-[#5E1930] text-sm">{gift.name}</h5>
+                            <span className="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full uppercase">Free Gift</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-xs font-bold text-green-600">FREE</span>
+                          <div className="text-[11px] text-gray-400">Qty: {gift.quantity || 1}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -252,28 +364,56 @@ export default function CartPage() {
                 Summary
               </h3>
 
-              <div className="flex flex-col gap-4 text-sm font-medium mb-6">
+              <div className="flex flex-col gap-3.5 text-sm font-medium mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="opacity-70">Subtotal</span>
-                  <span>₹{cartSubtotal}</span>
+                  <span className="opacity-70">Total MRP</span>
+                  <span>₹{cartSummary?.totalMrp || cartSubtotal || 0}</span>
                 </div>
+                <div className="flex justify-between items-center">
+                  <span className="opacity-70">Discount Price</span>
+                  <span>₹{cartSummary?.totalDiscountPrice || cartSubtotal || 0}</span>
+                </div>
+                {(cartSummary?.totalSavings > 0) && (
+                  <div className="flex justify-between items-center text-green-600 font-semibold">
+                    <span>Total Savings</span>
+                    <span>-₹{cartSummary.totalSavings}</span>
+                  </div>
+                )}
+                {(cartSummary?.offerDiscount > 0 || cartSummary?.appliedOffer) && (
+                  <div className="flex justify-between items-center text-[#FF0069] font-semibold">
+                    <span>Applied Offer {cartSummary?.appliedOffer?.title ? `(${cartSummary.appliedOffer.title})` : ''}</span>
+                    <span>-₹{cartSummary?.offerDiscount || 0}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="opacity-70">Royal Shipping</span>
                   <span className="text-green-600 font-bold">FREE</span>
                 </div>
+                {(cartSummary?.walletBalance !== undefined && cartSummary?.walletBalance !== null) && (
+                  <div className="flex justify-between items-center text-xs text-[#75263F]/80 pt-1">
+                    <span>Wallet Balance Available</span>
+                    <span className="font-bold">₹{Number(cartSummary.walletBalance).toFixed(2)}</span>
+                  </div>
+                )}
+                {(cartSummary?.rewardPointsBalance !== undefined && cartSummary?.rewardPointsBalance !== null) && (
+                  <div className="flex justify-between items-center text-xs text-[#75263F]/80">
+                    <span>Reward Points Balance</span>
+                    <span className="font-bold">{cartSummary.rewardPointsBalance} Pts</span>
+                  </div>
+                )}
                 <div className="border-t border-[#FFE5EC] pt-4 flex justify-between items-center text-base font-bold text-[#5E1930]">
-                  <span>Total Selections</span>
-                  <span>₹{cartSubtotal}</span>
+                  <span>Final Total</span>
+                  <span>₹{cartSummary?.finalTotal ?? (cartSummary?.totalDiscountPrice || cartSubtotal || 0)}</span>
                 </div>
               </div>
 
               {cart.length > 0 ? (
-                <Link 
-                  to="/checkout" 
+                <button 
+                  onClick={() => executeProtectedAction(() => navigate('/checkout'))}
                   className="w-full py-4 bg-gradient-to-r from-[#D74D76] to-[#E56B91] text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3 border border-[#F4B4C8]/50 hover:shadow-lg transition-all rounded-full"
                 >
                   Proceed to Checkout
-                </Link>
+                </button>
               ) : (
                 <button 
                   disabled
@@ -295,12 +435,18 @@ export default function CartPage() {
               <Sparkles className="w-3.5 h-3.5 text-[#FF8FB1]" />
               <span className="text-[10px] font-bold tracking-[0.2em] text-[#C96E8A] uppercase">Highly Recommended</span>
             </div>
-            <h2 className="text-3xl font-heading font-black text-[#5E1930]">Enchanted Recommendations</h2>
-            <p className="text-sm text-[#C96E8A] font-semibold mt-1">Four Essential Fairytale Treasures to complete your vanity</p>
+            <h2 className="text-3xl font-heading font-black text-[#5E1930]">
+              {isSkincare ? "Skincare Recommendations" : "Enchanted Recommendations"}
+            </h2>
+            <p className="text-sm text-[#C96E8A] font-semibold mt-1">
+              {isSkincare 
+                ? "Four Essential Skincare Treasures to complete your daily routine"
+                : "Four Essential Fairytale Treasures to complete your vanity"}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {featuredEnchantments.map((product) => (
+            {displayFeatured.map((product) => (
               <div 
                 key={product.id}
                 className="bg-white border border-[#FFE0E9] p-6 rounded-3xl shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row gap-6 relative overflow-hidden"
@@ -339,7 +485,7 @@ export default function CartPage() {
 
                     <button 
                       onClick={() => handleAddFeatured(product)}
-                      className="w-full py-3 bg-[#5E1930] text-white hover:bg-[#FF0069] rounded-full text-xs font-bold tracking-widest uppercase transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-gradient-to-r from-[#FF0069] to-[#FF5E95] text-white hover:shadow-lg hover:scale-[1.02] rounded-full text-xs font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-2 shadow-md"
                     >
                       <Plus className="w-4 h-4" /> Add to Cart
                     </button>
@@ -358,19 +504,23 @@ export default function CartPage() {
             <div>
               <h2 className="text-2xl font-heading font-black text-[#5E1930] flex items-center gap-2">
                 <Award className="w-5 h-5 text-[#FF8FB1]" />
-                Related Enchantments
+                {isSkincare ? "Related Skincare Essentials" : "Related Enchantments"}
               </h2>
-              <p className="text-xs text-[#C96E8A] font-semibold mt-1">Discover other signature selections from the COSKINn catalog</p>
+              <p className="text-xs text-[#C96E8A] font-semibold mt-1">
+                {isSkincare 
+                  ? "Discover other signature selections from the COSKINn skincare catalog"
+                  : "Discover other signature selections from the COSKINn catalog"}
+              </p>
             </div>
             
-            <Link to="/cosmetics" className="text-xs font-bold tracking-widest text-[#FF0069] uppercase hover:underline flex items-center gap-1.5 mt-4 sm:mt-0">
+            <Link to={isSkincare ? "/skincare" : "/cosmetics"} className="text-xs font-bold tracking-widest text-[#FF0069] uppercase hover:underline flex items-center gap-1.5 mt-4 sm:mt-0">
               View All Products
               <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
             </Link>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {relatedProducts.map((product) => (
+            {displayRelated.map((product) => (
               <div 
                 key={product.id}
                 className="bg-white border border-[#FFE0E9] rounded-3xl p-4 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all flex flex-col justify-between relative group"
@@ -388,9 +538,9 @@ export default function CartPage() {
                   <div className="text-sm font-bold text-[#FF0069] mb-3">₹{product.price || product.discountPrice}</div>
                   <button 
                     onClick={() => handleAddFeatured(product)}
-                    className="w-full py-2 border border-[#FFE0E9] hover:bg-[#FFF5F7] text-[#75263F] rounded-full text-[10px] font-bold tracking-wider uppercase transition-colors"
+                    className="w-full py-2.5 bg-gradient-to-r from-[#FF0069] to-[#FF5E95] text-white hover:shadow-md hover:scale-[1.02] rounded-full text-[10px] font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 shadow-sm"
                   >
-                    Quick Add
+                    <Plus className="w-3.5 h-3.5" /> Add to Cart
                   </button>
                 </div>
               </div>

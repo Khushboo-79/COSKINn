@@ -102,12 +102,12 @@ export class HrService {
     const employees = await this.prisma.employee.findMany();
     
     const summary = employees.reduce((acc, emp) => {
-      const dept = emp.department || 'Unassigned';
+      const dept = emp.department || 'Unknown';
       if (!acc[dept]) {
         acc[dept] = { department: dept, headcount: 0, totalCTC: 0 };
       }
       acc[dept].headcount += 1;
-      acc[dept].totalCTC += emp.salary; // Assuming salary is monthly
+      acc[dept].totalCTC += emp.salary || 0; // Assuming salary is monthly
       return acc;
     }, {} as Record<string, any>);
 
@@ -134,10 +134,10 @@ export class HrService {
     if (count > 0) return { message: 'Already seeded' };
 
     const emps = [
-      { name: 'Priya Sharma', email: 'priya@coskinn.com', phone: '+91 98765 43210', role: 'Senior Developer', department: 'Engineering', salary: 120000, joinDate: new Date('2024-03-15') },
-      { name: 'Rahul Verma', email: 'rahul@coskinn.com', phone: '+91 98765 43211', role: 'Product Manager', department: 'Product', salary: 140000, joinDate: new Date('2024-01-10') },
-      { name: 'Anita Desai', email: 'anita@coskinn.com', phone: '+91 98765 43212', role: 'UI/UX Designer', department: 'Design', salary: 90000, joinDate: new Date('2024-06-01') },
-      { name: 'Vikram Patel', email: 'vikram@coskinn.com', phone: '+91 98765 43213', role: 'Marketing Lead', department: 'Marketing', salary: 95000, joinDate: new Date('2023-11-20') },
+      { name: 'Priya Sharma', email: 'priya@fairenne.com', phone: '+91 98765 43210', role: 'Senior Developer', department: 'Engineering', salary: 120000, joinDate: new Date('2024-03-15') },
+      { name: 'Rahul Verma', email: 'rahul@fairenne.com', phone: '+91 98765 43211', role: 'Product Manager', department: 'Product', salary: 140000, joinDate: new Date('2024-01-10') },
+      { name: 'Anita Desai', email: 'anita@fairenne.com', phone: '+91 98765 43212', role: 'UI/UX Designer', department: 'Design', salary: 90000, joinDate: new Date('2024-06-01') },
+      { name: 'Vikram Patel', email: 'vikram@fairenne.com', phone: '+91 98765 43213', role: 'Marketing Lead', department: 'Marketing', salary: 95000, joinDate: new Date('2023-11-20') },
     ];
 
     for (const e of emps) {

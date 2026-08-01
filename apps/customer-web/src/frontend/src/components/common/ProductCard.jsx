@@ -7,15 +7,18 @@ import { useWishlist } from '../../context/WishlistContext';
 
 export default function ProductCard({ product, onQuickView }) {
   const { addToCart } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { toggleWishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
   const inWishlist = isInWishlist(product.id);
 
   const handleWishlistToggle = (e) => {
     e.preventDefault();
-    if (inWishlist) {
+    e.stopPropagation();
+    if (toggleWishlist) {
+      toggleWishlist(product);
+    } else if (inWishlist && removeFromWishlist) {
       removeFromWishlist(product.id);
-    } else {
+    } else if (addToWishlist) {
       addToWishlist(product);
     }
   };

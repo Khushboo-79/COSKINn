@@ -1,9 +1,26 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "var(--color-primary)",
+        secondary: "var(--color-secondary)",
+        background: "var(--color-background)",
+        surface: "var(--color-surface)",
+        text: "var(--color-text)",
+        "text-muted": "var(--color-text-muted)",
+        accent: "var(--color-accent)",
+      },
+      fontFamily: {
+        sans: ['Nunito', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+        display: ['Fredoka', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }
-

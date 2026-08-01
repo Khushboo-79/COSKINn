@@ -27,10 +27,10 @@ const PrivacyScreen = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.mainHeading}>COSKINn Privacy Policy</Text>
+          <Text style={styles.mainHeading}>FAIRENNE Privacy Policy</Text>
           
           <Text style={styles.paragraph}>
-            When you use COSKINn, we may collect information such as your name, mobile 
+            When you use FAIRENNE, we may collect information such as your name, mobile 
             number, email address, delivery address, billing details, order details, 
             payment status, account login details, product preferences, skin concern 
             preferences, reviews, feedback, and customer support messages.
@@ -43,7 +43,7 @@ const PrivacyScreen = () => {
           </Text>
 
           <Text style={styles.paragraph}>
-            COSKINn may use your information to create and manage your account, 
+            FAIRENNE may use your information to create and manage your account, 
             process orders, confirm payments, deliver products, send order updates, 
             provide customer support, handle returns and refunds, improve our 
             website/app, personalize product recommendations, share offers and 

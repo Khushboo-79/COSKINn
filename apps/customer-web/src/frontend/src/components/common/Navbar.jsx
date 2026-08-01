@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight, ArrowLeft, CreditCard, Gift, Share2, Award, Crown, Tag, Shield } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -9,7 +9,6 @@ import { skincareProducts } from '../../constants/skincareProducts';
 
 import { ShopMegaMenu, CategoriesMegaMenu, RoutineMenu, JournalMenu } from './MegaMenus';
 import MobileMenu from './MobileMenu';
-import AuthModal from './AuthModal';
 
 const CoskinnLogo = ({ isScrolled, forceWhite }) => (
   <svg role="img" aria-label="COSKINn Logo" className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -195,7 +194,7 @@ const MobileProfileItem = ({ icon: Icon, label, onClick }) => (
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal } = useAuth();
+  const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal, executeProtectedAction } = useAuth();
   const { cartCount, openCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -251,8 +250,9 @@ export default function Navbar() {
     }
   });
 
+  const isNewArrivalsPage = location.pathname === '/new-arrivals';
   const isCosmeticsAboutPage = theme === 'cosmetics' && location.pathname === '/about';
-  const isWhiteNavPage = location.pathname.includes('/collections/precision-lip-liner') || isCosmeticsAboutPage;
+  const isWhiteNavPage = location.pathname.includes('/collections/precision-lip-liner') || isCosmeticsAboutPage || isNewArrivalsPage;
   const forceWhite = isWhiteNavPage && !isScrolled;
 
   // Handle Desktop Hover for User Profile
@@ -273,21 +273,19 @@ export default function Navbar() {
   };
 
   const handleToggleClick = () => {
-    if (!user) {
-      openAuthModal();
-    } else if (window.innerWidth < 1024) {
-      setIsMobileProfileOpen(true);
-    } else {
-      setIsDropdownOpen(!isDropdownOpen);
-    }
+    executeProtectedAction(() => {
+      if (window.innerWidth < 1024) {
+        setIsMobileProfileOpen(true);
+      } else {
+        setIsDropdownOpen(!isDropdownOpen);
+      }
+    });
   };
 
   const handleWishlistClick = () => {
-    if (!user) {
-      openAuthModal();
-    } else {
+    executeProtectedAction(() => {
       navigate('/account/wishlist');
-    }
+    });
   };
 
   useEffect(() => {
@@ -428,8 +426,6 @@ export default function Navbar() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
       </>
     );
   }
@@ -475,7 +471,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative">
-          <CoskinnLogo isScrolled={isScrolled} forceWhite={forceWhite} />
+          <CoskinnLogo isScrolled={isScrolled} forceWhite={isNewArrivalsPage ? false : forceWhite} />
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -721,6 +717,54 @@ export default function Navbar() {
                     }}
                   />
                   <MobileProfileItem
+                    icon={CreditCard}
+                    label="Wallet & Ledger"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/wallet');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Gift}
+                    label="Bonuses"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/bonuses');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Share2}
+                    label="Referrals"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/referrals');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Award}
+                    label="Reward Points"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/rewards');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Crown}
+                    label="Membership"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/membership');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Tag}
+                    label="Offers & Deals"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/offers');
+                    }}
+                  />
+                  <MobileProfileItem
                     icon={MessageSquare}
                     label="My Reviews"
                     onClick={() => {
@@ -742,6 +786,14 @@ export default function Navbar() {
                     onClick={() => {
                       setIsMobileProfileOpen(false);
                       navigate('/account/settings');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Shield}
+                    label="Security"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/security');
                     }}
                   />
                   <MobileProfileItem
@@ -779,9 +831,6 @@ export default function Navbar() {
           </div>
         )}
       </AnimatePresence>
-
-      {/* Authentication Modal */}
-      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
 
     </motion.nav>
   );

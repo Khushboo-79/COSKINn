@@ -34,14 +34,14 @@ export class AuditService {
 
     const logs = [
       // Admin Activity
-      { action: 'Modified RBAC', entity: 'Admin', entityId: '402', adminId: 'superadmin@coskinn.com', newData: JSON.stringify({ details: 'Added "Manager" role to user ID 402' }), createdAt: new Date(Date.now() - 1000000) },
-      { action: 'Changed Settings', entity: 'Admin', entityId: 'global', adminId: 'rolemanager@coskinn.com', newData: JSON.stringify({ details: 'Updated global return policy window from 15 to 30 days' }), createdAt: new Date(Date.now() - 2000000) },
-      { action: 'Deleted Role', entity: 'Admin', entityId: 'TempStaff', adminId: 'superadmin@coskinn.com', newData: JSON.stringify({ details: 'Removed deprecated "TempStaff" role' }), createdAt: new Date(Date.now() - 3000000) },
+      { action: 'Modified RBAC', entity: 'Admin', entityId: '402', adminId: 'superadmin@fairenne.com', newData: JSON.stringify({ details: 'Added "Manager" role to user ID 402' }), createdAt: new Date(Date.now() - 1000000) },
+      { action: 'Changed Settings', entity: 'Admin', entityId: 'global', adminId: 'rolemanager@fairenne.com', newData: JSON.stringify({ details: 'Updated global return policy window from 15 to 30 days' }), createdAt: new Date(Date.now() - 2000000) },
+      { action: 'Deleted Role', entity: 'Admin', entityId: 'TempStaff', adminId: 'superadmin@fairenne.com', newData: JSON.stringify({ details: 'Removed deprecated "TempStaff" role' }), createdAt: new Date(Date.now() - 3000000) },
 
       // Product Price Changes
-      { action: 'Updated Price', entity: 'ProductPrice', entityId: 'SKU-8801', adminId: 'productmgr@coskinn.com', oldData: JSON.stringify({ price: '₹45.00' }), newData: JSON.stringify({ productName: 'Vitamin C Face Serum', price: '₹40.00', reason: 'Summer Promo' }), createdAt: new Date(Date.now() - 4000000) },
-      { action: 'Updated Price', entity: 'ProductPrice', entityId: 'SKU-7722', adminId: 'admin@coskinn.com', oldData: JSON.stringify({ price: '₹25.00' }), newData: JSON.stringify({ productName: 'Niacinamide Cleanser', price: '₹28.00', reason: 'Supplier cost increase' }), createdAt: new Date(Date.now() - 5000000) },
-      { action: 'Updated Price', entity: 'ProductPrice', entityId: 'SKU-9918', adminId: 'productmgr@coskinn.com', oldData: JSON.stringify({ price: '₹55.00 (10% off)' }), newData: JSON.stringify({ productName: 'Retinol Night Cream', price: '₹55.00 (No discount)', reason: 'Promo ended' }), createdAt: new Date(Date.now() - 6000000) },
+      { action: 'Updated Price', entity: 'ProductPrice', entityId: 'SKU-8801', adminId: 'productmgr@fairenne.com', oldData: JSON.stringify({ price: '₹45.00' }), newData: JSON.stringify({ productName: 'Vitamin C Face Serum', price: '₹40.00', reason: 'Summer Promo' }), createdAt: new Date(Date.now() - 4000000) },
+      { action: 'Updated Price', entity: 'ProductPrice', entityId: 'SKU-7722', adminId: 'admin@fairenne.com', oldData: JSON.stringify({ price: '₹25.00' }), newData: JSON.stringify({ productName: 'Niacinamide Cleanser', price: '₹28.00', reason: 'Supplier cost increase' }), createdAt: new Date(Date.now() - 5000000) },
+      { action: 'Updated Price', entity: 'ProductPrice', entityId: 'SKU-9918', adminId: 'productmgr@fairenne.com', oldData: JSON.stringify({ price: '₹55.00 (10% off)' }), newData: JSON.stringify({ productName: 'Retinol Night Cream', price: '₹55.00 (No discount)', reason: 'Promo ended' }), createdAt: new Date(Date.now() - 6000000) },
 
       // Tax Reports
       { action: 'Tax Collected', entity: 'TaxReport', entityId: 'INV-2026-07-001', adminId: 'system', newData: JSON.stringify({ invoiceNumber: 'INV-2026-07-001', taxableAmount: '₹15,000.00', cgst: '₹1,350.00', sgst: '₹1,350.00', igst: '₹0.00', totalTax: '₹2,700.00', date: '2026-07-03' }), createdAt: new Date('2026-07-03') },
@@ -173,7 +173,7 @@ export class AuditService {
       id: t.id,
       date: t.createdAt.toISOString().replace('T', ' ').substring(0, 19),
       orderRef: 'ORD-' + t.id.substring(0, 6).toUpperCase(),
-      customer: 'customer@coskinn.com', // Would normally join
+      customer: 'customer@fairenne.com', // Would normally join
       amount: `₹${t.amount}`,
       gateway: 'Razorpay',
       status: t.status,

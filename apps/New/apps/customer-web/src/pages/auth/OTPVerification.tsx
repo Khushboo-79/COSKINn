@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -8,9 +8,13 @@ const OTPVerification: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const navigate = useNavigate();
+  const location = useLocation();
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [timer, setTimer] = useState(30);
+
+  // Check if they are a new user signing up, or existing user signing in
+  const isNewUser = location.state?.isNewUser ?? false;
 
   useEffect(() => {
     if (timer > 0) {
@@ -42,7 +46,12 @@ const OTPVerification: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.join('').length === 4) {
-      navigate('/profile-setup');
+      // Direct them to setup if they are a new user, else take them straight into the app!
+      if (isNewUser) {
+        navigate('/profile-setup');
+      } else {
+        navigate('/');
+      }
     }
   };
 
@@ -75,7 +84,7 @@ const OTPVerification: React.FC = () => {
               Verify it's you
             </h1>
             <p className={`text-sm ${isGlam ? 'text-gray-500 font-serif' : 'text-gray-500 font-sans'}`}>
-              We've sent a 4-digit code to <span className="font-bold text-gray-900">+1 (***) ***-**89</span>
+              We've sent a 4-digit code to your contact method
             </p>
           </div>
 
@@ -109,17 +118,17 @@ const OTPVerification: React.FC = () => {
                   : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091] shadow-xl shadow-[#ff9aa8]/30'
               }`}
             >
-              <span>Verify & Continue</span>
+              <span>{isNewUser ? 'Continue Setup' : 'Login Instantly'}</span>
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
 
-          <div className="mt-8 text-center text-sm font-sans font-semibold">
+          <div className="mt-8 text-center text-sm font-bold">
             {timer > 0 ? (
-              <span className="text-gray-400">Resend code in {timer}s</span>
+              <p className="text-gray-400">Resend code in 0:{timer.toString().padStart(2, '0')}</p>
             ) : (
               <button onClick={() => setTimer(30)} className={`hover:underline ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
-                Resend code now
+                Resend code
               </button>
             )}
           </div>
@@ -136,10 +145,10 @@ const OTPVerification: React.FC = () => {
         >
           {isGlam ? (
             <div className="w-full h-full relative">
-              <div className="absolute inset-0 bg-black/10 z-10"></div>
+              <div className="absolute inset-0 bg-black/30 z-10"></div>
               <img 
-                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80" 
-                alt="Glam Beauty Details" 
+                src="https://images.pexels.com/photos/11191060/pexels-photo-11191060.jpeg?auto=compress&cs=tinysrgb&w=1200" 
+                alt="Glamorous Aesthetics" 
                 className="w-full h-full object-cover"
               />
               <div className="absolute bottom-12 left-12 right-12 z-20">
@@ -147,7 +156,6 @@ const OTPVerification: React.FC = () => {
                   <h3 className="text-3xl font-serif text-white italic mb-2">"Unlock the velvet rope."</h3>
                   <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison COSKINn</p>
                 </div>
-              </div>
             </div>
           ) : (
             <div className="w-full h-full relative">

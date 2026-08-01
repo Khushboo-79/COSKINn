@@ -1,39 +1,40 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Image, FlatList, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '../../../redux/slices/catalogSlice';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { scaleh, scalev } from '../../../constants/AppTheme';
 import BottomNavBar from '../../../constants/BottomNavBar';
 import SearchBarRow from '../../../components/SearchBarRow';
 
-const SHOP_CATEGORIES = [
-  { id: '1', name: 'FACE' },
-  { id: '2', name: 'EYES' },
-  { id: '3', name: 'LIPS' },
-  { id: '4', name: 'NAILS' },
-  { id: '5', name: 'TOOLS & BRUSHES' },
-  { id: '6', name: 'PALETTES' },
-  { id: '7', name: 'FRAGRANCE' },
-  { id: '8', name: 'KITS & COMBOS' },
-  { id: '9', name: 'GIFTS & ACCESSORIES' },
-];
+// Mock categories removed in favor of API
 
 const ShopScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('CATEGORIES');
 
+  const cosmeticsCategories = useSelector((state) => state.catalog?.cosmeticsCategories || []);
+
+  React.useEffect(() => {
+    if (cosmeticsCategories.length === 0) {
+      dispatch(fetchCategories('COSMETICS'));
+    }
+  }, [dispatch, cosmeticsCategories.length]);
+
   const renderCategory = ({ item }) => (
-    <View style={styles.categoryContainer}>
-      <TouchableOpacity
-        style={styles.categoryTextRow}
-        activeOpacity={0.8}
-        onPress={() => navigation.navigate('CategoryDetail', { category: item.name })}
-      >
+    <TouchableOpacity
+      style={styles.categoryContainer}
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate('CategoryDetail', { category: item.name })}
+    >
+      <View style={styles.categoryTextRow}>
         <Text style={styles.categoryText}>{item.name}</Text>
-      </TouchableOpacity>
+      </View>
       <View style={styles.categoryImageArea} />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -65,11 +66,10 @@ const ShopScreen = () => {
             style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.2 }]}
             resizeMode="cover"
           />
-          {/* List */}
           {activeTab === 'CATEGORIES' && (
             <FlatList
-              data={SHOP_CATEGORIES}
-              keyExtractor={item => item.id}
+              data={cosmeticsCategories}
+              keyExtractor={item => item.id || item.slug}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: scalev(80), paddingTop: scalev(30) }}
               renderItem={renderCategory}

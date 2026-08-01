@@ -39,7 +39,7 @@ export const ReturnsQCScreen = () => {
       setSelectedReturn(null);
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

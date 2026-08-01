@@ -15,14 +15,14 @@ export const StockAdjustmentScreen = () => {
   const adjustMutation = useMutation({
     mutationFn: () => inventoryApi.adjustStock({ sku, warehouseId, type, quantity, reason }),
     onSuccess: () => {
-      toast.success();
+      toast.success('Action successful');
       queryClient.invalidateQueries({ queryKey: ['admin', 'inventory'] });
       setSku('');
       setQuantity(0);
       setReason('');
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

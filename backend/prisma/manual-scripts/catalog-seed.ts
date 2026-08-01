@@ -79,7 +79,7 @@ async function main() {
         discountPrice: p.price,
         status: 'LIVE',
         countryOfOrigin: p.countryOfOrigin || 'India',
-        manufacturerName: p.manufacturedBy || 'COSKINn Labs',
+        manufacturerName: p.manufacturedBy || 'Fairenne Labs',
         
         images: {
           create: (p.images || [p.image]).map((imgUrl: string, idx: number) => ({

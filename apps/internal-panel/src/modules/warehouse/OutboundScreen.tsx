@@ -34,20 +34,20 @@ export const OutboundScreen = () => {
       }
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 
   const updateStatusMutation = useMutation({
     mutationFn: () => orderApi.updateOrderStatus(packingOrder.id, 'PACKED', 'Packed verified via scanner'),
     onSuccess: () => {
-      toast.success();
+      toast.success('Action successful');
       queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
       setPackingOrder(null);
       setScannedItems({});
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

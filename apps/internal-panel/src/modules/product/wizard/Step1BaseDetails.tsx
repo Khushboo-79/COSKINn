@@ -44,7 +44,7 @@ export const Step1BaseDetails = () => {
             className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all bg-white"
           >
             <option value="">Select a brand</option>
-            <option value="coskinn">COSKINn</option>
+            <option value="fairenne">Fairenne</option>
             <option value="partner">Partner Brand</option>
           </select>
           {errors.brandId && <p className="mt-1 text-sm text-red-600">{errors.brandId.message as string}</p>}

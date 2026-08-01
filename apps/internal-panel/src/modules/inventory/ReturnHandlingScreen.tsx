@@ -27,11 +27,11 @@ export const ReturnHandlingScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'returns'] });
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
-      toast.success();
+      toast.success('Action successful');
       setProcessingId(null);
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
       setProcessingId(null);
     }
   });
@@ -48,11 +48,11 @@ export const ReturnHandlingScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'returns'] });
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
-      toast.success();
+      toast.success('Action successful');
       setProcessingId(null);
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
       setProcessingId(null);
     }
   });
