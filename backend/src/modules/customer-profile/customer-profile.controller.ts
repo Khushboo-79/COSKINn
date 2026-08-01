@@ -35,6 +35,12 @@ export class CustomerProfileController {
     return this.profileService.upsertProfile(req.user.id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  async deleteMyAccount(@Request() req) {
+    return this.profileService.deleteMyAccount(req.user.id);
+  }
+
   // --- Address Endpoints ---
 
   @UseGuards(JwtAuthGuard)
@@ -87,16 +93,37 @@ export class CustomerProfileController {
   async getAllCustomers(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-    @Query('search') search?: string
+    @Query('search') search?: string,
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE'
   ) {
-    return this.profileService.getAllCustomers(Number(page), Number(limit), search);
+    return this.profileService.getAllCustomers(Number(page), Number(limit), search, platform);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('admin/:id/360')
   @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
-  async getCustomer360(@Param('id') id: string) {
-    return this.profileService.getCustomer360(id);
+  async getCustomer360(@Param('id') id: string, @Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+    return this.profileService.getCustomer360(id, platform);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('admin/:id/block')
+  @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
+  async blockUser(@Param('id') id: string) {
+    return this.profileService.updateUserStatus(id, false);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('admin/:id/unblock')
+  @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
+  async unblockUser(@Param('id') id: string) {
+    return this.profileService.updateUserStatus(id, true);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('admin/:id/reset-password')
+  @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
+  async sendResetPasswordLink(@Param('id') id: string) {
+    return this.profileService.sendResetPasswordLink(id);
   }
 }
-

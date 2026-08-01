@@ -22,9 +22,32 @@ import { EngagementModule } from './modules/engagement/engagement.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { InvoiceModule } from './modules/invoice/invoice.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.module';
+import { WarehouseModule } from './modules/warehouse/warehouse.module';
+import { RefundModule } from './modules/refund/refund.module';
+import { WalletModule } from './modules/wallet/wallet.module';
+import { BonusModule } from './modules/bonus/bonus.module';
+import { ReferralModule } from './modules/referral/referral.module';
+import { RewardPointModule } from './modules/reward-point/reward-point.module';
+import { MembershipModule } from './modules/membership/membership.module';
+import { OfferModule } from './modules/offer/offer.module';
+import { TaxModule } from './modules/tax/tax.module';
+import { HrModule } from './modules/hr/hr.module';
+import { SupportModule } from './modules/support/support.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { FinanceReportModule } from './modules/finance-report/finance-report.module';
+import { ContentModule } from './modules/content/content.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { SupplierModule } from './modules/supplier/supplier.module';
+import { ServiceablePincodeModule } from './modules/serviceable-pincode/serviceable-pincode.module';
+import { ComplianceModule } from './modules/compliance/compliance.module';
+import { AppVersionModule } from './modules/app-version/app-version.module';
+import { LocationModule } from './modules/location/location.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     PrismaModule, 
     CustomerProfileModule, 
     CategoryModule,
@@ -45,7 +68,28 @@ import { InvoiceModule } from './modules/invoice/invoice.module';
     EngagementModule,
     CouponModule,
     NotificationModule,
-    InvoiceModule
+    InvoiceModule,
+    PurchaseOrderModule,
+    WarehouseModule,
+    RefundModule,
+    WalletModule,
+    BonusModule,
+    ReferralModule,
+    RewardPointModule,
+    MembershipModule,
+    OfferModule,
+    TaxModule,
+    HrModule,
+    SupportModule,
+    AuditModule,
+    FinanceReportModule,
+    ContentModule,
+    AdminModule,
+    SupplierModule,
+    ServiceablePincodeModule,
+    ComplianceModule,
+    AppVersionModule,
+    LocationModule
   ],
   controllers: [AppController],
   providers: [AppService],

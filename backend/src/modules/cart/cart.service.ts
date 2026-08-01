@@ -1,9 +1,17 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { OfferService } from '../offer/offer.service';
+import { WalletService } from '../wallet/wallet.service';
+import { RewardPointService } from '../reward-point/reward-point.service';
 
 @Injectable()
 export class CartService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private offerService: OfferService,
+    private walletService: WalletService,
+    private rewardPointService: RewardPointService
+  ) { }
 
   async getCart(userId: string) {
     let cart = await this.prisma.cart.findUnique({
@@ -32,7 +40,7 @@ export class CartService {
     // Calculate totals on the fly
     let totalMrp = 0;
     let totalDiscountPrice = 0;
-    
+
     for (const item of cart.items) {
       const price = Number(item.product.discountPrice || item.product.mrp);
       const mrp = Number(item.product.mrp);
@@ -40,13 +48,41 @@ export class CartService {
       totalDiscountPrice += price * item.quantity;
     }
 
+    const offerData = await this.offerService.evaluateBestOffer(cart.items, totalDiscountPrice);
+    const tieredOffers = await this.offerService.getTieredOfferProgress(totalDiscountPrice);
+
+    // Auto-add Free Gifts based on achieved tiers
+    const autoAddedGifts: any[] = [];
+    for (const tier of tieredOffers) {
+      if (tier.isAchieved && tier.reward === 'Free Gift') {
+        autoAddedGifts.push({
+          name: tier.offer?.title || 'Surprise Free Gift',
+          price: 0,
+          quantity: 1,
+          isAutoAdded: true
+        });
+      }
+    }
+
+    // Using getWallet returns { balance } object, we just want the balance number
+    const wallet = await this.walletService.getWallet(userId);
+    const rewardPoints = await this.rewardPointService.getBalance(userId);
+
+    const finalPayable = Math.max(0, totalDiscountPrice - offerData.discount);
+
     return {
       ...cart,
+      autoAddedGifts, // Injecting free gifts explicitly so frontend can show them in cart
       summary: {
         totalMrp,
         totalDiscountPrice,
         totalSavings: totalMrp - totalDiscountPrice,
-        finalTotal: totalDiscountPrice // We can add shipping logic later
+        offerDiscount: offerData.discount,
+        appliedOffer: offerData.offer,
+        tieredOffers,
+        finalTotal: finalPayable, // Excludes shipping for now
+        walletBalance: wallet.balance,
+        rewardPointsBalance: rewardPoints
       }
     };
   }
@@ -56,6 +92,7 @@ export class CartService {
     if (!cart) {
       cart = await this.prisma.cart.create({ data: { userId } });
     }
+
 
     const product = await this.prisma.product.findUnique({ where: { id: productId } });
     if (!product || product.status !== 'LIVE') {
@@ -124,6 +161,17 @@ export class CartService {
     } catch (e) {
       // Ignore if item not found
     }
+
+    return this.getCart(userId);
+  }
+
+  async clearCart(userId: string) {
+    const cart = await this.prisma.cart.findUnique({ where: { userId } });
+    if (!cart) return this.getCart(userId);
+
+    await this.prisma.cartItem.deleteMany({
+      where: { cartId: cart.id }
+    });
 
     return this.getCart(userId);
   }

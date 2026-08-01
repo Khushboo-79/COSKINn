@@ -1,16 +1,22 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { X, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartDrawer() {
   const { isCartDrawerOpen, closeCart, cart, updateQuantity, removeFromCart, cartSubtotal } = useCart();
+  const { executeProtectedAction } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   const handleCheckout = () => {
-    closeCart();
-    navigate('/checkout');
+    executeProtectedAction(() => {
+      closeCart();
+      navigate('/checkout');
+    });
   };
 
   const SHIPPING_COST = 0; // Free shipping for luxury
@@ -131,7 +137,11 @@ export default function CartDrawer() {
 
                 <button 
                   onClick={handleCheckout}
-                  className="w-full py-4 bg-black text-white font-bold tracking-widest uppercase text-sm rounded-full shadow-lg hover:bg-theme-primary transition-colors flex items-center justify-center gap-2 group"
+                  className={`w-full py-4 font-bold tracking-widest uppercase text-sm flex items-center justify-center gap-2 group ${
+                    theme === 'skincare'
+                      ? 'btn-primary-skincare'
+                      : 'bg-theme-primary text-white rounded-full shadow-lg hover:bg-pink-700 transition-colors'
+                  }`}
                 >
                   Proceed to Checkout
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />

@@ -12,4 +12,9 @@ export class AppController {
       timestamp: new Date(),
     };
   }
+
+  @Get('country-codes')
+  getCountryCodes(): string[] {
+    return ['+91', '+1', '+44', '+971', '+61'];
+  }
 }

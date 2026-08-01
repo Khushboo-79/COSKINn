@@ -1,16 +1,6 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsIn } from 'class-validator';
 
-export class UpdateReturnStatusDto {
-  @IsString()
-  @IsNotEmpty()
-  status: string;
-
-  @IsString()
-  @IsOptional()
-  notes?: string;
-}
-
-export class CreateMockReturnDto {
+export class RequestReturnDto {
   @IsString()
   @IsNotEmpty()
   orderId: string;
@@ -20,6 +10,22 @@ export class CreateMockReturnDto {
   reason: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsIn(['WALLET', 'ORIGINAL_SOURCE'])
   refundType: string;
+}
+
+export class ProcessReturnDto {
+  @IsString()
+  @IsIn(['APPROVED', 'REJECTED'])
+  action: string;
+
+  @IsString()
+  @IsOptional()
+  adminNotes?: string;
+}
+
+export class ReturnQcDto {
+  @IsString()
+  @IsIn(['PASS', 'FAIL'])
+  qcResult: string;
 }

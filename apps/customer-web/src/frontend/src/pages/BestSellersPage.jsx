@@ -26,7 +26,7 @@ const ALL_PRODUCTS = [
     rating: 4.9,
     reviews: 2450,
     category: 'Serums',
-    image: '/src/assets/images/niacinamide_serum.webp',
+    image: new URL('../assets/images/niacinamide_serum.webp', import.meta.url).href,
     badge: 'BEST SELLER',
     isNew: false,
     popularity: 100
@@ -41,7 +41,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 3120,
     category: 'Sunscreen',
-    image: '/src/assets/images/sunscreen_spf50.webp',
+    image: new URL('../assets/images/sunscreen_spf50.webp', import.meta.url).href,
     badge: 'TOP RATED',
     isNew: false,
     popularity: 98
@@ -56,7 +56,7 @@ const ALL_PRODUCTS = [
     rating: 4.7,
     reviews: 1840,
     category: 'Sunscreen',
-    image: '/src/assets/images/body_sunscreen.webp',
+    image: new URL('../assets/images/body_sunscreen.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 90
@@ -71,7 +71,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 1560,
     category: 'Sunscreen',
-    image: '/src/assets/images/tinted_sunscreen.webp',
+    image: new URL('../assets/images/tinted_sunscreen.webp', import.meta.url).href,
     badge: 'CUSTOMER FAVORITE',
     isNew: true,
     popularity: 88
@@ -86,7 +86,7 @@ const ALL_PRODUCTS = [
     rating: 4.9,
     reviews: 4200,
     category: 'Cleansers',
-    image: '/src/assets/images/gentle_cleanser.webp',
+    image: new URL('../assets/images/gentle_cleanser.webp', import.meta.url).href,
     badge: 'BEST SELLER',
     isNew: false,
     popularity: 99
@@ -101,7 +101,7 @@ const ALL_PRODUCTS = [
     rating: 4.7,
     reviews: 950,
     category: 'Cleansers',
-    image: '/src/assets/images/cleansing_balm.webp',
+    image: new URL('../assets/images/cleansing_balm.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 85
@@ -116,7 +116,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 2100,
     category: 'Moisturisers',
-    image: '/src/assets/images/daily_moisturiser.webp',
+    image: new URL('../assets/images/daily_moisturiser.webp', import.meta.url).href,
     badge: 'DERMATOLOGIST RECOMMENDED',
     isNew: false,
     popularity: 95
@@ -131,7 +131,7 @@ const ALL_PRODUCTS = [
     rating: 4.9,
     reviews: 1800,
     category: 'Masks',
-    image: '/src/assets/images/overnight_mask.webp',
+    image: new URL('../assets/images/overnight_mask.webp', import.meta.url).href,
     badge: 'TOP RATED',
     isNew: false,
     popularity: 92
@@ -146,7 +146,7 @@ const ALL_PRODUCTS = [
     rating: 4.6,
     reviews: 1120,
     category: 'Face Care',
-    image: '/src/assets/images/face_mist.webp',
+    image: new URL('../assets/images/face_mist.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 80
@@ -161,7 +161,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 3500,
     category: 'Lip Care',
-    image: '/src/assets/images/lip_balm.webp',
+    image: new URL('../assets/images/lip_balm.webp', import.meta.url).href,
     badge: 'BEST SELLER',
     isNew: false,
     popularity: 97
@@ -176,7 +176,7 @@ const ALL_PRODUCTS = [
     rating: 4.7,
     reviews: 890,
     category: 'Masks',
-    image: '/src/assets/images/under_eye_patches.webp',
+    image: new URL('../assets/images/under_eye_patches.webp', import.meta.url).href,
     badge: 'NEW',
     isNew: true,
     popularity: 82
@@ -191,7 +191,7 @@ const ALL_PRODUCTS = [
     rating: 4.8,
     reviews: 1450,
     category: 'Face Care', // Mapping to Face Care just for the "All" vs Others filtering simplicity if we don't have Body Care filter
-    image: '/src/assets/images/hand_cream.webp',
+    image: new URL('../assets/images/hand_cream.webp', import.meta.url).href,
     badge: null,
     isNew: false,
     popularity: 86
@@ -245,10 +245,10 @@ export default function BestSellersPage() {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text pt-[72px]">
+    <div className="w-full min-h-screen bg-theme-bg overflow-x-hidden font-sans text-theme-text">
       
       {/* Premium Hero Banner */}
-      <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-rose-50">
+      <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-rose-50 pt-[90px]">
         {/* WebP Background Image */}
         <div className="absolute inset-0 opacity-40 mix-blend-multiply">
           <img 
@@ -259,9 +259,9 @@ export default function BestSellersPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
         
-        <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
+        <div className="relative max-w-4xl mx-auto px-6 text-center z-10 mt-16 md:mt-0">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black text-white text-xs font-bold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-theme-primary text-white text-xs font-bold uppercase tracking-widest mb-6">
               <Star className="w-3 h-3 fill-current" />
               Customer Favorites
             </div>
@@ -272,10 +272,10 @@ export default function BestSellersPage() {
               Discover our most-loved skincare products trusted by thousands of customers for healthy, glowing skin.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button onClick={() => window.scrollTo({ top: document.getElementById('best-sellers-grid').offsetTop - 100, behavior: 'smooth' })} className="w-full sm:w-auto px-10 py-4 bg-black text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-theme-primary transition-colors shadow-lg">
+              <button onClick={() => { const el = document.getElementById('best-sellers-grid'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-theme-primary text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-pink-700 transition-colors shadow-lg">
                 Shop Now
               </button>
-              <button className="w-full sm:w-auto px-10 py-4 bg-white text-black border border-black/10 rounded-full font-bold uppercase tracking-widest text-sm hover:border-black/30 transition-colors">
+              <button onClick={() => { const el = document.getElementById('best-sellers-grid'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-white text-black border border-black/10 rounded-full font-bold uppercase tracking-widest text-sm hover:border-black/30 transition-colors">
                 Explore Collection
               </button>
             </div>
@@ -295,7 +295,7 @@ export default function BestSellersPage() {
               <button 
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeCategory === cat ? 'bg-black text-white shadow-md' : 'bg-white border border-black/10 text-black/70 hover:border-theme-primary hover:text-theme-primary'}`}
+                className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeCategory === cat ? 'bg-theme-primary text-white shadow-md' : 'bg-white border border-black/10 text-black/70 hover:border-theme-primary hover:text-theme-primary'}`}
               >
                 {cat}
               </button>
@@ -345,7 +345,8 @@ export default function BestSellersPage() {
               <motion.div 
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
                 key={product.id} 
@@ -357,6 +358,7 @@ export default function BestSellersPage() {
                   <Link to={`/product/${product.id}`} className="block w-full h-full">
                     <img 
                       loading="lazy"
+                      decoding="async"
                       src={product.image} 
                       alt={product.name} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -369,7 +371,7 @@ export default function BestSellersPage() {
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
                     {product.badge && (
-                      <span className="bg-black/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                      <span className="bg-theme-primary backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
                         {product.badge}
                       </span>
                     )}
@@ -384,7 +386,7 @@ export default function BestSellersPage() {
                   <div className="absolute bottom-4 left-4 right-4 flex gap-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                     <button 
                       onClick={() => addToCart(product)}
-                      className="flex-1 bg-white/90 backdrop-blur-md hover:bg-black text-black hover:text-white h-12 rounded-full font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-2 transition-colors shadow-lg"
+                      className="flex-1 btn-secondary-skincare h-12 flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-[11px]"
                     >
                       <ShoppingBag className="w-4 h-4" /> Add to Cart
                     </button>
@@ -432,7 +434,7 @@ export default function BestSellersPage() {
           <div className="w-full py-20 text-center">
             <h3 className="text-2xl font-bold mb-2">No products found</h3>
             <p className="text-black/50">Try selecting a different category.</p>
-            <button onClick={() => setActiveCategory("All")} className="mt-6 px-6 py-3 bg-black text-white rounded-full font-bold text-sm">
+            <button onClick={() => setActiveCategory("All")} className="mt-6 px-6 py-3 btn-primary-skincare font-bold text-sm">
               Clear Filters
             </button>
           </div>
@@ -480,7 +482,7 @@ export default function BestSellersPage() {
                   <div className="font-bold text-theme-primary text-xl mt-auto mb-4">₹{product.price}</div>
                   <button 
                     onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                    className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-theme-primary transition-colors"
+                    className="w-full py-3 bg-theme-primary text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-pink-700 transition-colors"
                   >
                     Add to Cart
                   </button>

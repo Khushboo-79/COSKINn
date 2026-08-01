@@ -13,18 +13,23 @@ const CustomToggle = ({
   trackWidth = scaleh(80),
   trackHeight = scalev(40),
   thumbSize = scalev(50),
+  animate = true,
 }) => {
   // We use Animated.Value to ensure 60fps native driven animations (no lag)
   const animatedValue = useRef(new Animated.Value(value ? 1 : 0)).current;
 
   useEffect(() => {
-    Animated.spring(animatedValue, {
-      toValue: value ? 1 : 0,
-      useNativeDriver: true, // This guarantees the animation runs on the native UI thread, meaning 0 lag!
-      bounciness: 8,
-      speed: 12,
-    }).start();
-  }, [value]);
+    if (animate) {
+      Animated.spring(animatedValue, {
+        toValue: value ? 1 : 0,
+        useNativeDriver: true, // This guarantees the animation runs on the native UI thread, meaning 0 lag!
+        bounciness: 8,
+        speed: 12,
+      }).start();
+    } else {
+      animatedValue.setValue(value ? 1 : 0);
+    }
+  }, [value, animate]);
 
   // Calculate how far the thumb needs to move
   const thumbTravelDistance = trackWidth - thumbSize;

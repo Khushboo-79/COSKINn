@@ -1,31 +1,38 @@
-import { Controller, Get, Patch, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ReturnService } from './return.service';
-import { UpdateReturnStatusDto, CreateMockReturnDto } from './dto/return.dto';
+import { RequestReturnDto, ProcessReturnDto, ReturnQcDto } from './dto/return.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 
 @Controller('returns')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ReturnController {
   constructor(private readonly returnService: ReturnService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Post('request')
+  requestReturn(@Body() dto: RequestReturnDto, @Request() req) {
+    return this.returnService.requestReturn(dto, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CUSTOMER_SUPPORT')
   @Get()
-  @Roles('SUPER_ADMIN', 'ORDER_MANAGER', 'CUSTOMER_SUPPORT')
   findAll(@Query('status') status?: string) {
     return this.returnService.findAll(status);
   }
 
-  @Patch(':id/status')
-  @Roles('SUPER_ADMIN', 'ORDER_MANAGER', 'CUSTOMER_SUPPORT')
-  updateStatus(@Param('id') id: string, @Body() dto: UpdateReturnStatusDto) {
-    return this.returnService.updateStatus(id, dto);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CUSTOMER_SUPPORT')
+  @Put(':id/process')
+  processReturn(@Param('id') id: string, @Body() dto: ProcessReturnDto) {
+    return this.returnService.processReturn(id, dto);
   }
 
-  // Helper for testing
-  @Post('test-mock')
-  @Roles('SUPER_ADMIN')
-  createMockReturn(@Body() dto: CreateMockReturnDto) {
-    return this.returnService.createMockReturn(dto);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'WAREHOUSE_STAFF')
+  @Post(':id/qc')
+  processQC(@Param('id') id: string, @Body() dto: ReturnQcDto) {
+    return this.returnService.processQC(id, dto);
   }
 }

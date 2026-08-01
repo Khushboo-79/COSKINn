@@ -69,7 +69,7 @@ export class CatalogService {
 
   async getProducts(filters: any) {
     const page = Number(filters.page) || 1;
-    const limit = 12;
+    const limit = Number(filters.limit) || 12;
     const skip = (page - 1) * limit;
 
     const where: any = { status: 'LIVE' };
@@ -81,7 +81,15 @@ export class CatalogService {
     }
 
     if (filters.category) {
-      where.category = { slug: filters.category };
+      if (filters.category === 'cosmetics') {
+        where.category = { slug: { in: ['cosmetics', 'lipsticks', 'blushes', 'eyeshadows', 'mascaras', 'concealers', 'highlighters', 'bronzers', 'hybrid-tints'] } };
+      } else if (filters.category === 'skincare') {
+        where.category = { slug: { in: ['skincare', 'sunscreens', 'cleansers', 'serums', 'moisturizers', 'toners'] } };
+      } else if (filters.category.includes(',')) {
+        where.category = { slug: { in: filters.category.split(',') } };
+      } else {
+        where.category = { slug: filters.category };
+      }
     }
 
     if (filters.skinType) {
@@ -90,11 +98,35 @@ export class CatalogService {
       };
     }
 
+    if (filters.skinConcern) {
+      where.concerns = {
+        some: { name: { equals: filters.skinConcern, mode: 'insensitive' } }
+      };
+    }
+
+    if (filters.ingredient) {
+      where.ingredients = {
+        some: { name: { equals: filters.ingredient, mode: 'insensitive' } }
+      };
+    }
+
+    let orderBy: any = undefined;
+    if (filters.sort) {
+      if (filters.sort === 'price_low_high') {
+        orderBy = { discountPrice: 'asc' };
+      } else if (filters.sort === 'price_high_low') {
+        orderBy = { discountPrice: 'desc' };
+      } else if (filters.sort === 'best_selling') {
+        orderBy = { createdAt: 'asc' }; // Best selling fallback mock
+      }
+    }
+
     const [items, total] = await Promise.all([
       this.prisma.product.findMany({
         where,
         skip,
         take: limit,
+        orderBy,
         include: {
           images: { where: { isPrimary: true }, take: 1 },
           category: true
@@ -137,6 +169,29 @@ export class CatalogService {
     return product;
   }
 
+  async getProductReviews(productId: string) {
+    return this.prisma.productReview.findMany({
+      where: { productId, isApproved: true },
+      include: {
+        user: { select: { firstName: true, lastName: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async submitProductReview(productId: string, userId: string, dto: { rating: number; title?: string; content?: string }) {
+    return this.prisma.productReview.create({
+      data: {
+        productId,
+        userId,
+        rating: dto.rating,
+        title: dto.title,
+        content: dto.content,
+        isApproved: true, // Auto-approve for demo purposes
+      }
+    });
+  }
+
   async getCategoryBySlug(slug: string) {
     const category = await this.prisma.category.findUnique({
       where: { slug },
@@ -159,5 +214,65 @@ export class CatalogService {
     });
 
     return { category, products };
+  }
+
+  async getSkinTypes() {
+    const skinTypes = await this.prisma.productSkinType.findMany({
+      distinct: ['name'],
+      select: { name: true }
+    });
+    return skinTypes.map(st => st.name).filter(name => name);
+  }
+
+  async getSkinConcerns() {
+    const items = await this.prisma.productConcern.findMany({
+      distinct: ['name'],
+      select: { name: true }
+    });
+    return items.map(i => i.name).filter(name => name);
+  }
+
+  async getIngredients() {
+    const items = await this.prisma.productIngredient.findMany({
+      distinct: ['name'],
+      select: { name: true }
+    });
+    return items.map(i => i.name).filter(name => name);
+  }
+
+  async getSimilarProducts(id: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      include: { category: true }
+    });
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    return this.prisma.product.findMany({
+      where: {
+        id: { not: id },
+        categoryId: product.categoryId,
+        status: 'LIVE'
+      },
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        category: true
+      },
+      take: 4
+    });
+  }
+
+  async getRecommendations(userId?: string) {
+    // Basic recommendation: just return best sellers for now,
+    // or personalized logic if userId is provided
+    return this.prisma.product.findMany({
+      where: { status: 'LIVE' },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: {
+        images: { where: { isPrimary: true }, take: 1 },
+        category: true
+      }
+    });
   }
 }

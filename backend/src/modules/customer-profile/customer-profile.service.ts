@@ -25,25 +25,57 @@ export class CustomerProfileService {
     });
 
     if (!profile) {
-      throw new NotFoundException('Customer profile not found');
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (!user) throw new NotFoundException('User not found');
+      return {
+        id: null,
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        skinProfile: null,
+        makeupPreference: null,
+        avatar: null,
+      };
     }
-    return profile;
+    
+    return {
+      ...profile,
+      firstName: profile.user.firstName,
+      lastName: profile.user.lastName,
+      email: profile.user.email,
+      phone: profile.user.phone,
+    };
   }
 
   async upsertProfile(userId: string, dto: UpdateCustomerProfileDto) {
     const dateOfBirth = dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined;
     
     return this.prisma.$transaction(async (tx) => {
+      if (dto.firstName || dto.lastName || dto.email) {
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            ...(dto.firstName && { firstName: dto.firstName }),
+            ...(dto.lastName && { lastName: dto.lastName }),
+            ...(dto.email && { email: dto.email }),
+          }
+        });
+      }
+
       const profile = await tx.customerProfile.upsert({
         where: { userId },
         update: {
           ...(dateOfBirth && { dateOfBirth }),
           ...(dto.gender && { gender: dto.gender }),
+          ...(dto.avatar !== undefined && { avatar: dto.avatar }),
         },
         create: {
           userId,
           ...(dateOfBirth && { dateOfBirth }),
           ...(dto.gender && { gender: dto.gender }),
+          ...(dto.avatar !== undefined && { avatar: dto.avatar }),
         },
       });
 
@@ -75,7 +107,7 @@ export class CustomerProfileService {
         });
       }
 
-      return await tx.customerProfile.findUnique({
+      const updatedProfile = await tx.customerProfile.findUnique({
         where: { userId },
         include: {
           skinProfile: true,
@@ -83,10 +115,20 @@ export class CustomerProfileService {
           user: { select: { email: true, phone: true, firstName: true, lastName: true } }
         }
       });
+      
+      if (!updatedProfile) return null;
+      
+      return {
+        ...updatedProfile,
+        firstName: updatedProfile.user.firstName,
+        lastName: updatedProfile.user.lastName,
+        email: updatedProfile.user.email,
+        phone: updatedProfile.user.phone,
+      };
     });
   }
 
-  async getAllCustomers(page: number, limit: number, search?: string) {
+  async getAllCustomers(page: number, limit: number, search?: string, platform?: 'COSMETICS' | 'SKINCARE') {
     const skip = (page - 1) * limit;
     const whereClause: Prisma.UserWhereInput = search ? {
       OR: [
@@ -96,6 +138,12 @@ export class CustomerProfileService {
         { lastName: { contains: search, mode: 'insensitive' } }
       ]
     } : {};
+
+    if (platform) {
+      whereClause.orders = {
+        some: { platform }
+      };
+    }
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
@@ -134,7 +182,7 @@ export class CustomerProfileService {
     };
   }
 
-  async getCustomer360(userId: string) {
+  async getCustomer360(userId: string, platform?: 'COSMETICS' | 'SKINCARE') {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -152,6 +200,7 @@ export class CustomerProfileService {
           }
         },
         orders: {
+          where: platform ? { platform } : undefined,
           orderBy: { createdAt: 'desc' },
           take: 10,
           include: {
@@ -163,6 +212,22 @@ export class CustomerProfileService {
 
     if (!user) throw new NotFoundException('Customer not found');
     return user;
+  }
+
+  async updateUserStatus(userId: string, isActive: boolean) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { isActive }
+    });
+    return { success: true, isActive: user.isActive };
+  }
+
+  async sendResetPasswordLink(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Customer not found');
+    // In a real implementation, you would generate a token and send an email
+    console.log(`[STUB] Sending password reset link to ${user.email || user.phone}`);
+    return { success: true, message: 'Password reset link sent' };
   }
 
   // --- Address Methods ---
@@ -216,6 +281,28 @@ export class CustomerProfileService {
   async deleteAddress(userId: string, id: string) {
     return this.prisma.customerAddress.delete({
       where: { id, userId }
+    });
+  }
+
+  async deleteMyAccount(userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Soft delete the user
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          isDeleted: true,
+          deletedAt: new Date(),
+          isActive: false
+        }
+      });
+
+      // 2. Revoke all login sessions so they are logged out
+      await tx.loginSession.updateMany({
+        where: { userId },
+        data: { isRevoked: true }
+      });
+
+      return { success: true, message: 'Account deleted successfully' };
     });
   }
 }

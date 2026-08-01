@@ -28,7 +28,7 @@ const AWARD_PRODUCTS = [
     discount: '25% OFF',
     rating: 4.9,
     reviews: 2450,
-    image: '/src/assets/images/niacinamide_serum.webp',
+    image: new URL('../assets/images/niacinamide_serum.webp', import.meta.url).href,
     badge: '🏆 Editor\'s Pick',
     highlight: 'Clinically proven to reduce blemishes by 82% in just 4 weeks.'
   },
@@ -41,7 +41,7 @@ const AWARD_PRODUCTS = [
     discount: '22% OFF',
     rating: 4.8,
     reviews: 3120,
-    image: '/src/assets/images/sunscreen_spf50.webp',
+    image: new URL('../assets/images/sunscreen_spf50.webp', import.meta.url).href,
     badge: '🏆 Best Sunscreen',
     highlight: 'Zero white cast, ultra-lightweight formula loved by dermatologists.'
   },
@@ -54,7 +54,7 @@ const AWARD_PRODUCTS = [
     discount: '23% OFF',
     rating: 4.8,
     reviews: 2100,
-    image: '/src/assets/images/daily_moisturiser.webp',
+    image: new URL('../assets/images/daily_moisturiser.webp', import.meta.url).href,
     badge: '👩⚕️ Dermatologist Choice',
     highlight: 'Provides 72-hour deep hydration without clogging pores.'
   },
@@ -67,7 +67,7 @@ const AWARD_PRODUCTS = [
     discount: '28% OFF',
     rating: 4.9,
     reviews: 4200,
-    image: '/src/assets/images/gentle_cleanser.webp',
+    image: new URL('../assets/images/gentle_cleanser.webp', import.meta.url).href,
     badge: '❤️ Customer Favorite',
     highlight: 'Voted #1 daily cleanser for sensitive and acne-prone skin.'
   },
@@ -80,7 +80,7 @@ const AWARD_PRODUCTS = [
     discount: '23% OFF',
     rating: 4.9,
     reviews: 1800,
-    image: '/src/assets/images/overnight_mask.webp',
+    image: new URL('../assets/images/overnight_mask.webp', import.meta.url).href,
     badge: '✨ Beauty Innovator',
     highlight: 'Wake up with a visibly glowing, plump complexion.'
   },
@@ -93,7 +93,7 @@ const AWARD_PRODUCTS = [
     discount: '22% OFF',
     rating: 4.7,
     reviews: 950,
-    image: '/src/assets/images/cleansing_balm.webp',
+    image: new URL('../assets/images/cleansing_balm.webp', import.meta.url).href,
     badge: '🌿 Clean Beauty',
     highlight: 'Melt away waterproof makeup instantly with clean ingredients.'
   },
@@ -106,7 +106,7 @@ const AWARD_PRODUCTS = [
     discount: '25% OFF',
     rating: 4.6,
     reviews: 1120,
-    image: '/src/assets/images/face_mist.webp',
+    image: new URL('../assets/images/face_mist.webp', import.meta.url).href,
     badge: '🏆 Refreshing Formula',
     highlight: 'Instant hydration boost, perfect for setting makeup.'
   },
@@ -119,7 +119,7 @@ const AWARD_PRODUCTS = [
     discount: '18% OFF',
     rating: 4.7,
     reviews: 890,
-    image: '/src/assets/images/under_eye_patches.webp',
+    image: new URL('../assets/images/under_eye_patches.webp', import.meta.url).href,
     badge: '🏆 Best Eye Treatment',
     highlight: 'Visibly reduces dark circles and puffiness in 15 minutes.'
   }
@@ -164,10 +164,10 @@ export default function AwardWinnersPage() {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text pt-[72px]">
+    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text">
       
       {/* Premium Hero Section */}
-      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50">
+      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50 pt-[90px]">
         {/* WebP Background Image */}
         <div className="absolute inset-0 opacity-40 mix-blend-multiply">
           <img 
@@ -178,7 +178,7 @@ export default function AwardWinnersPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
         
-        <div className="relative max-w-5xl mx-auto px-6 text-center z-10">
+        <div className="relative max-w-5xl mx-auto px-6 text-center z-10 mt-16 md:mt-0">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-black/10 bg-white/60 backdrop-blur-md text-black text-xs font-bold uppercase tracking-widest mb-8 shadow-sm">
               <Trophy className="w-4 h-4 text-[#FF0069]" />
@@ -192,10 +192,10 @@ export default function AwardWinnersPage() {
               Discover COSKINn's most celebrated skincare essentials, recognized globally for exceptional quality, innovation, and visible results.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button onClick={() => window.scrollTo({ top: document.getElementById('award-products').offsetTop - 100, behavior: 'smooth' })} className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30">
+              <button onClick={() => { const el = document.getElementById('award-products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30">
                 Shop Award Winners
               </button>
-              <button className="w-full sm:w-auto px-10 py-4 bg-white text-black border-2 border-black/10 backdrop-blur-md rounded-full font-bold uppercase tracking-widest text-sm hover:border-[#FF0069] transition-all shadow-sm">
+              <button onClick={() => { const el = document.getElementById('award-products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-white text-black border-2 border-black/10 backdrop-blur-md rounded-full font-bold uppercase tracking-widest text-sm hover:border-[#FF0069] transition-all shadow-sm">
                 Explore Collection
               </button>
             </div>
@@ -247,6 +247,7 @@ export default function AwardWinnersPage() {
                 <Link to={`/product/${product.id}`} className="block w-full h-full">
                   <img 
                     loading="lazy"
+                    decoding="async"
                     src={product.image} 
                     alt={product.name} 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -273,7 +274,7 @@ export default function AwardWinnersPage() {
                 <div className="absolute bottom-4 left-4 right-4 flex gap-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                   <button 
                     onClick={() => addToCart(product)}
-                    className="flex-1 bg-white/95 backdrop-blur-md hover:bg-black text-black hover:text-white h-12 rounded-full font-bold uppercase tracking-widest text-[11px] flex items-center justify-center gap-2 transition-colors shadow-lg"
+                    className="flex-1 btn-secondary-skincare h-12 flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-[11px]"
                   >
                     <ShoppingBag className="w-4 h-4" /> Add to Cart
                   </button>
@@ -412,7 +413,7 @@ export default function AwardWinnersPage() {
                   <div className="font-bold text-[#FF0069] text-xl mt-auto mb-4">₹{product.price}</div>
                   <button 
                     onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                    className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest text-xs rounded-full group-hover:bg-[#FF0069] transition-colors"
+                    className="w-full py-3 btn-primary-skincare font-bold uppercase tracking-widest text-xs"
                   >
                     Add to Cart
                   </button>

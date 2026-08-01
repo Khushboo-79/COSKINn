@@ -51,7 +51,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       email: user.email,
       phone: user.phone,
       roles,
-      permissions
+      permissions,
+      panel_access: Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])))
     };
   }
 }

@@ -1,0 +1,61 @@
+import api from './api';
+
+export const productService = {
+  /**
+   * Fetch a list of products with optional filters
+   * @param {Object} params - Query parameters like page, limit, category, skinType, etc.
+   */
+  getProducts: async (params = {}) => {
+    try {
+      const response = await api.get('/products', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
+   * Fetch a single product by ID
+   * @param {string} id - The product ID
+   */
+  getProductById: async (id) => {
+    try {
+      const response = await api.get(`/products/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
+   * Search products by query string and optional segment
+   * @param {string} query - The search string
+   * @param {string} [segment] - The segment to filter by (e.g. SKINCARE or COSMETICS)
+   */
+  searchProducts: async (query, segment) => {
+    try {
+      const response = await api.get('/products/search', { params: { q: query, segment } });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  getProductReviews: async (id) => {
+    try {
+      const response = await api.get(`/products/${id}/reviews`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  addProductReview: async (id, reviewData) => {
+    try {
+      const response = await api.post(`/products/${id}/reviews`, reviewData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+};

@@ -1,11 +1,34 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { InventoryService } from '../inventory/inventory.service';
+import { RewardPointService } from '../reward-point/reward-point.service';
+import { BonusService } from '../bonus/bonus.service';
+import { ReferralService } from '../referral/referral.service';
+import { OfferService } from '../offer/offer.service';
+import { CouponService } from '../coupon/coupon.service';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class OrderService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private inventoryService: InventoryService,
+    private rewardPointService: RewardPointService,
+    private bonusService: BonusService,
+    private referralService: ReferralService,
+    private offerService: OfferService,
+    private couponService: CouponService,
+    private walletService: WalletService
+  ) {}
 
-  async createOrderFromCart(userId: string, addressId: string, paymentMode: string) {
+  async createOrderFromCart(
+    userId: string, 
+    addressId: string, 
+    paymentMode: string, 
+    pointsToRedeem: number = 0,
+    couponCode?: string,
+    useWalletBalance: boolean = false
+  ) {
     // 1. Fetch the user's cart and address
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
@@ -42,20 +65,66 @@ export class OrderService {
       finalAmount += (discountPrice * item.quantity);
     });
 
+    const offerData = await this.offerService.evaluateBestOffer(cart.items, finalAmount);
+    
+    // Deduct offer discount
+    finalAmount -= offerData.discount;
+    if (finalAmount < 0) finalAmount = 0;
+
     const discountAmt = totalAmount - finalAmount;
 
+    // Validate points redemption
+    if (pointsToRedeem > 0) {
+      const balance = await this.rewardPointService.getBalance(userId);
+      if (balance < pointsToRedeem) {
+        throw new BadRequestException('Insufficient reward points');
+      }
+      // e.g. 1 point = 1 rupee discount
+      finalAmount -= pointsToRedeem;
+      if (finalAmount < 0) finalAmount = 0;
+    }
+
+    let appliedCouponId: string | null = null;
+    let walletDeduction = 0;
+
+    // Validate Coupon
+    if (couponCode) {
+      const couponResult = await this.couponService.applyCoupon(userId, couponCode);
+      finalAmount -= couponResult.discountAmount;
+      if (finalAmount < 0) finalAmount = 0;
+      
+      const coupon = await this.prisma.coupon.findUnique({ where: { code: couponCode } });
+      if (coupon) appliedCouponId = coupon.id;
+    }
+
+    // Validate Wallet
+    if (useWalletBalance && finalAmount > 0) {
+      const wallet = await this.walletService.getWallet(userId);
+      if (wallet.balance > 0) {
+        walletDeduction = Math.min(wallet.balance, finalAmount);
+        finalAmount -= walletDeduction;
+      }
+    }
+
+    // Zero-Dollar Checkout Check
+    let orderStatus = paymentMode === 'ONLINE' ? 'DRAFT' : 'PLACED';
+    if (finalAmount === 0) {
+      orderStatus = 'PLACED'; // Override if fully paid by points/wallet/coupon
+    }
+
     // 3. Create the order using a transaction
-    return this.prisma.$transaction(async (tx) => {
+    const orderData = await this.prisma.$transaction(async (tx) => {
       const order = await tx.order.create({
         data: {
           userId,
-          status: paymentMode === 'ONLINE' ? 'DRAFT' : 'PLACED',
+          status: orderStatus,
           totalAmount,
-          discountAmt,
+          discountAmt: totalAmount - finalAmount, // Update discount to include coupon/wallet if you want, or keep separate. Let's just track finalAmount.
           taxAmount,
           shippingFee,
           finalAmount,
-          paymentMode,
+          paymentMode: finalAmount === 0 ? 'WALLET' : paymentMode,
+          couponId: appliedCouponId,
           
           // Create the order address snapshot
           address: {
@@ -80,14 +149,16 @@ export class OrderService {
               let variantId = item.variantId;
               let sku = 'UNKNOWN_SKU';
               
-              if (!variantId) {
-                const firstVariant = await tx.productVariant.findFirst({
-                  where: { productId: item.productId }
-                });
-                if (firstVariant) {
-                  variantId = firstVariant.id;
-                  sku = firstVariant.sku;
-                }
+              let variant: any = null;
+              if (variantId) {
+                variant = await tx.productVariant.findUnique({ where: { id: variantId } });
+              } else {
+                variant = await tx.productVariant.findFirst({ where: { productId: item.productId } });
+              }
+
+              if (variant) {
+                variantId = variant.id;
+                sku = variant.sku;
               }
 
               return {
@@ -113,17 +184,91 @@ export class OrderService {
         where: { cartId: cart.id }
       });
 
+      // 5. Reserve stock for all items
+      for (const item of order.items) {
+        await this.inventoryService.reserveStock(item.sku, item.quantity, tx);
+      }
+
+      // 6. Consume Coupon
+      if (appliedCouponId) {
+        await tx.coupon.update({
+          where: { id: appliedCouponId },
+          data: { usedCount: { increment: 1 } }
+        });
+      }
+
       return order;
     });
+
+    if (pointsToRedeem > 0) {
+      await this.rewardPointService.redeemPoints(userId, pointsToRedeem, orderData.id);
+    }
+
+    if (walletDeduction > 0) {
+      await this.walletService.debitWallet(userId, walletDeduction, `Paid for Order ${orderData.id}`);
+    }
+
+    return orderData;
+  }
+
+  async getOrders(userId: string) {
+    return this.prisma.order.findMany({
+      where: { userId },
+      include: {
+        items: { include: { variant: { include: { product: true } } } },
+        address: true,
+        statusHistory: true,
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async trackOrder(orderId: string, userId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        statusHistory: { orderBy: { createdAt: 'desc' } },
+        shipments: { orderBy: { createdAt: 'desc' } }
+      }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.userId !== userId) throw new BadRequestException('Not authorized to track this order');
+
+    return {
+      status: order.status,
+      history: order.statusHistory,
+      shipment: order.shipments.length > 0 ? order.shipments[0] : null
+    };
+  }
+
+  async getOrderByIdForCustomer(userId: string, id: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: { include: { variant: { include: { product: true } } } },
+        address: true,
+        statusHistory: {
+          orderBy: { createdAt: 'asc' }
+        }
+      }
+    });
+
+    if (!order || order.userId !== userId) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return order;
   }
 
   // --- ADMIN METHODS ---
 
-  async getAdminOrders(filters: { status?: string, paymentMode?: string, email?: string, mobile?: string }) {
+  async getAdminOrders(filters: { status?: string; paymentMode?: string; email?: string; mobile?: string; platform?: 'COSMETICS' | 'SKINCARE' }) {
     const where: any = {};
-    
     if (filters.status) where.status = filters.status;
     if (filters.paymentMode) where.paymentMode = filters.paymentMode;
+    if (filters.platform) where.platform = filters.platform;
+
     if (filters.email || filters.mobile) {
       where.user = {};
       if (filters.email) where.user.email = { contains: filters.email, mode: 'insensitive' };
@@ -134,18 +279,39 @@ export class OrderService {
       where,
       include: {
         address: true,
-        user: { select: { id: true, email: true, phone: true } },
+        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
         items: { include: { variant: { include: { product: true } } } }
       },
       orderBy: { createdAt: 'desc' }
     });
   }
 
+  async getAdminOrderById(orderId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        address: true,
+        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
+        items: { include: { variant: { include: { product: true } } } },
+        payments: true,
+        shipments: true,
+        cancellations: true,
+        statusHistory: { orderBy: { createdAt: 'desc' } }
+      }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+    return order;
+  }
+
   async updateOrderStatus(orderId: string, status: string, adminId: string, notes?: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    const order = await this.prisma.order.findUnique({ 
+      where: { id: orderId },
+      include: { items: true }
+    });
     if (!order) throw new NotFoundException('Order not found');
 
-    return this.prisma.$transaction(async (tx) => {
+    const res = await this.prisma.$transaction(async (tx) => {
       const updatedOrder = await tx.order.update({
         where: { id: orderId },
         data: { status }
@@ -159,7 +325,171 @@ export class OrderService {
         }
       });
 
+      // If status changes to SHIPPED, deduct reserved stock
+      if (status === 'SHIPPED' && order.status !== 'SHIPPED' && order.status !== 'DELIVERED') {
+        for (const item of order.items) {
+          await this.inventoryService.deductReservedStock(item.sku, item.quantity, tx);
+        }
+      }
+
       return updatedOrder;
+    });
+
+    // Post-transaction triggers for DELIVERED
+    if (status === 'DELIVERED' && order.status !== 'DELIVERED') {
+      try {
+        await this.rewardPointService.earnPoints(order.userId, order.totalAmount, orderId);
+        await this.bonusService.awardFirstOrderBonus(order.userId);
+        
+        // Check if user was referred, and award bonus if this is their first order?
+        // For simplicity, we can trigger referral bonus on first delivered order
+        const referral = await this.prisma.referral.findUnique({
+          where: { refereeId: order.userId }
+        });
+        if (referral && !referral.bonusAwarded) {
+          await this.referralService.awardReferralBonus(referral.id);
+        }
+      } catch (error) {
+        // Log but don't fail the order status update
+        console.error('Error awarding bonuses on delivery:', error);
+      }
+    }
+
+    return res;
+  }
+
+  async adminCancelOrder(orderId: string, adminId: string, reason: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+
+    if (order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELLED') {
+      throw new BadRequestException(`Cannot cancel order in ${order.status} state`);
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Mark as cancelled
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status: 'CANCELLED' }
+      });
+
+      // 2. Add history and cancellation record
+      await tx.orderStatusHistory.create({
+        data: { orderId, status: 'CANCELLED', notes: `Cancelled by Admin ${adminId}: ${reason}` }
+      });
+
+      await tx.orderCancellation.create({
+        data: { orderId, reason }
+      });
+
+      // 3. Release reserved stock if it was PACKED or PLACED
+      if (order.status === 'PACKED' || order.status === 'PLACED') {
+        for (const item of order.items) {
+          await this.inventoryService.releaseReservedStock(item.sku, item.quantity, tx);
+        }
+      }
+
+      return updatedOrder;
+    });
+  }
+
+  async cancelOrder(orderId: string, userId: string, reason: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true }
+    });
+
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.userId !== userId) throw new BadRequestException('Not authorized to cancel this order');
+
+    if (order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELLED') {
+      throw new BadRequestException(`Cannot cancel order in ${order.status} state`);
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Mark as cancelled
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status: 'CANCELLED' }
+      });
+
+      // 2. Add history and cancellation record
+      await tx.orderStatusHistory.create({
+        data: { orderId, status: 'CANCELLED', notes: `Cancelled by user: ${reason}` }
+      });
+
+      await tx.orderCancellation.create({
+        data: { orderId, reason }
+      });
+
+      // 3. Release reserved stock
+      for (const item of order.items) {
+        await this.inventoryService.releaseReservedStock(item.sku, item.quantity, tx);
+      }
+
+      // 4. (Optional) Trigger refund if payment was online & successful
+      // In a real system, we'd hit PaymentService/RefundService here
+
+      return updatedOrder;
+    });
+  }
+
+  // --- SETTINGS METHODS ---
+
+  async getSettings() {
+    let settings = await this.prisma.orderSettings.findFirst();
+    if (!settings) {
+      settings = await this.prisma.orderSettings.create({
+        data: {
+          returnWindowDays: 7,
+          autoCancelHours: 24,
+          codEnabled: true,
+          maxCodAmount: 5000
+        }
+      });
+    }
+    return settings;
+  }
+
+  async getCancellations() {
+    const cancellations = await this.prisma.orderCancellation.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        order: {
+          select: {
+            id: true,
+            totalAmount: true,
+            status: true,
+            user: { select: { email: true } }
+          }
+        }
+      }
+    });
+
+    return cancellations.map(c => ({
+      id: c.id,
+      date: c.createdAt.toISOString().split('T')[0],
+      orderId: c.orderId.split('-')[0].toUpperCase(),
+      customer: c.order.user ? c.order.user.email : 'Guest',
+      reason: c.reason,
+      refundStatus: c.order.status === 'CANCELLED' ? 'PROCESSED' : 'PENDING'
+    }));
+  }
+
+  async updateSettings(data: {
+    returnWindowDays?: number;
+    autoCancelHours?: number;
+    codEnabled?: boolean;
+    maxCodAmount?: number;
+  }) {
+    const settings = await this.getSettings();
+    return this.prisma.orderSettings.update({
+      where: { id: settings.id },
+      data
     });
   }
 }

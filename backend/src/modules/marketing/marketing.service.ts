@@ -6,6 +6,23 @@ export class MarketingService {
   constructor(private prisma: PrismaService) {}
 
   // --- BANNERS ---
+  async getActiveBanners() {
+    const now = new Date();
+    return this.prisma.banner.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { startDate: null },
+          { startDate: { lte: now } }
+        ],
+        AND: [
+          { OR: [{ endDate: null }, { endDate: { gte: now } }] }
+        ]
+      },
+      orderBy: { sortOrder: 'asc' }
+    });
+  }
+
   async getBanners() {
     return this.prisma.banner.findMany({
       orderBy: { sortOrder: 'asc' }
@@ -65,5 +82,33 @@ export class MarketingService {
     return this.prisma.coupon.delete({
       where: { id }
     });
+  }
+
+  // --- CAMPAIGNS ---
+  async getCampaigns() {
+    return this.prisma.marketingCampaign.findMany();
+  }
+
+  async createCampaign(data: { name: string; type: string; audience?: string; scheduledAt?: Date }) {
+    return this.prisma.marketingCampaign.create({ data });
+  }
+
+  async scheduleCampaign(id: string, scheduledAt: Date) {
+    return this.prisma.marketingCampaign.update({
+      where: { id },
+      data: { scheduledAt, status: 'SCHEDULED' }
+    });
+  }
+
+  // --- ABANDONED CARTS ---
+  async logAbandonedCart(userId: string, cartId: string) {
+    return this.prisma.abandonedCartLog.create({
+      data: { userId, cartId }
+    });
+  }
+
+  async getAbandonedCarts(recovered?: boolean) {
+    const where = recovered !== undefined ? { recovered } : {};
+    return this.prisma.abandonedCartLog.findMany({ where, include: { user: true } });
   }
 }

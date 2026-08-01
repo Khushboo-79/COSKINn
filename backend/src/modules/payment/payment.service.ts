@@ -2,13 +2,21 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../../prisma/prisma.service';
 import { NotificationService } from '../notification/notification.service';
 import * as crypto from 'crypto';
+import Razorpay from 'razorpay';
 
 @Injectable()
 export class PaymentService {
+  private razorpay: any;
+
   constructor(
     private prisma: PrismaService,
     private notificationService: NotificationService
-  ) {}
+  ) {
+    this.razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID || 'mock',
+      key_secret: process.env.RAZORPAY_KEY_SECRET || 'mock'
+    });
+  }
 
   async createRazorpayOrder(userId: string, orderId: string) {
     const order = await this.prisma.order.findUnique({
@@ -19,14 +27,24 @@ export class PaymentService {
     if (order.status !== 'DRAFT') throw new BadRequestException('Order is already processed');
     if (order.paymentMode !== 'ONLINE') throw new BadRequestException('Order is not marked for ONLINE payment');
 
-    // MOCK RAZORPAY API CALL
-    // In production, we would call Razorpay SDK here
-    const mockRazorpayOrderId = 'order_mock_' + crypto.randomBytes(8).toString('hex');
+    let razorpayOrderId = '';
+    try {
+      const options = {
+        amount: Math.round(order.finalAmount * 100), // amount in smallest currency unit (paise)
+        currency: 'INR',
+        receipt: order.id
+      };
+      const rzpOrder = await this.razorpay.orders.create(options);
+      razorpayOrderId = rzpOrder.id;
+    } catch (error) {
+      console.error('Razorpay order creation failed:', error);
+      throw new BadRequestException('Failed to create payment gateway order');
+    }
 
     // Save Razorpay order in our DB
     await this.prisma.razorpayOrder.create({
       data: {
-        rzpId: mockRazorpayOrderId,
+        rzpId: razorpayOrderId,
         amount: order.finalAmount,
         receipt: order.id,
         status: 'created'
@@ -34,19 +52,48 @@ export class PaymentService {
     });
 
     return {
-      id: mockRazorpayOrderId,
+      id: razorpayOrderId,
       amount: order.finalAmount * 100, // Amount in paise
       currency: 'INR',
       receipt: order.id
     };
   }
 
+  async triggerRefund(razorpayOrderId: string, amount: number) {
+    try {
+      // Fetch all payments for this order
+      const payments = await this.razorpay.orders.fetchPayments(razorpayOrderId);
+      
+      // Find the first successful captured payment to refund against
+      const payment = payments.items.find((p: any) => p.status === 'captured');
+      
+      if (!payment) {
+        throw new BadRequestException('No captured payment found for this order to refund');
+      }
+
+      // Trigger Refund
+      const refund = await this.razorpay.payments.refund(payment.id, {
+        amount: Math.round(amount * 100) // Convert to paise
+      });
+
+      return {
+        success: true,
+        refundId: refund.id,
+        paymentId: payment.id,
+        amount: refund.amount / 100
+      };
+    } catch (error) {
+      console.error('Razorpay refund failed:', error);
+      throw new BadRequestException('Failed to process payment gateway refund');
+    }
+  }
+
   async handleWebhook(payload: any, signature?: string) {
     // Razorpay Signature Verification
-    const secret = process.env.RAZORPAY_WEBHOOK_SECRET || 'mock_secret';
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET || 'mockedwebhooksecret';
     
-    // If we're using a mock signature or no signature is provided in dev mode, we can bypass
-    if (signature && signature !== 'mock_signature') {
+    // Strict verification using crypto HMAC
+    if (signature) {
       const generatedSignature = crypto
         .createHmac('sha256', secret)
         .update(JSON.stringify(payload))
@@ -55,6 +102,8 @@ export class PaymentService {
       if (generatedSignature !== signature) {
         throw new BadRequestException('Invalid webhook signature');
       }
+    } else {
+      throw new BadRequestException('Webhook signature missing');
     }
 
     const event = payload.event;

@@ -96,10 +96,10 @@ export default function GiftSetsPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text pt-[72px]">
+    <div className="w-full min-h-screen bg-[#fafafa] overflow-x-hidden font-sans text-theme-text">
       
       {/* Premium Hero Section */}
-      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50">
+      <section className="relative w-full h-[70vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-rose-50 pt-[90px]">
         <div className="absolute inset-0 opacity-50 mix-blend-multiply">
           <img 
             src={heroImg} 
@@ -109,7 +109,7 @@ export default function GiftSetsPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
         
-        <div className="relative max-w-5xl mx-auto px-6 text-center z-10">
+        <div className="relative max-w-5xl mx-auto px-6 text-center z-10 mt-16 md:mt-0">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-black/10 bg-white/60 backdrop-blur-md text-black text-xs font-bold uppercase tracking-widest mb-8 shadow-sm">
               <Gift className="w-4 h-4 text-[#FF0069]" />
@@ -123,10 +123,10 @@ export default function GiftSetsPage() {
               Beautifully curated skincare collections designed to make every occasion special. Perfect for gifting your loved ones or treating yourself.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button onClick={() => window.scrollTo({ top: document.getElementById('gift-products').offsetTop - 100, behavior: 'smooth' })} className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30">
+              <button onClick={() => { const el = document.getElementById('gift-products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30">
                 Shop Gift Sets
               </button>
-              <button className="w-full sm:w-auto px-10 py-4 bg-white text-black border-2 border-black/10 backdrop-blur-md rounded-full font-bold uppercase tracking-widest text-sm hover:border-[#FF0069] transition-all shadow-sm">
+              <button onClick={() => { const el = document.getElementById('gift-products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-white text-black border-2 border-black/10 backdrop-blur-md rounded-full font-bold uppercase tracking-widest text-sm hover:border-[#FF0069] transition-all shadow-sm">
                 Explore Collection
               </button>
             </div>
@@ -229,13 +229,13 @@ export default function GiftSetsPage() {
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-xs font-bold text-black/40 line-through">₹{product.originalPrice}</span>
-                              <span className="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">{product.discountBadge}</span>
+                              <span className="px-3 py-1 bg-white border border-[#FFD1E5] text-[#FF0069] text-[10px] font-bold tracking-widest uppercase rounded-full shadow-[0_4px_10px_rgba(255,0,105,0.15)] text-center w-max">{product.discountBadge}</span>
                             </div>
                             <div className="text-2xl font-bold text-black">₹{product.price}</div>
                           </div>
                           <button 
                             onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                            className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center hover:bg-[#FF0069] transition-colors shadow-lg"
+                            className="w-10 h-10 bg-theme-primary text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors shadow-lg"
                           >
                             <ShoppingBag className="w-4 h-4" />
                           </button>
@@ -270,7 +270,7 @@ export default function GiftSetsPage() {
                 
                 {/* Image */}
                 <div className="w-full md:w-2/5 aspect-square rounded-2xl bg-theme-secondary/20 overflow-hidden relative shrink-0">
-                  <img loading="lazy" src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img loading="lazy" decoding="async" src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
                     {product.badge && (
                       <span className="px-3 py-1.5 bg-[#FF0069] text-white text-[10px] font-bold tracking-widest uppercase rounded-full shadow-lg backdrop-blur-md">
@@ -300,7 +300,7 @@ export default function GiftSetsPage() {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-bold text-black/40 line-through">₹{product.originalPrice}</span>
-                        <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">{product.discountBadge}</span>
+                        <span className="px-3 py-1 bg-white border border-[#FFD1E5] text-[#FF0069] text-[10px] font-bold tracking-widest uppercase rounded-full shadow-[0_4px_10px_rgba(255,0,105,0.15)] text-center w-max">{product.discountBadge}</span>
                       </div>
                       <div className="text-3xl font-bold text-black">₹{product.price}</div>
                     </div>
@@ -314,7 +314,7 @@ export default function GiftSetsPage() {
                       </button>
                       <button 
                         onClick={(e) => { e.preventDefault(); addToCart(product); }}
-                        className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-[#FF0069] transition-colors shadow-lg"
+                        className="w-12 h-12 bg-theme-primary text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors shadow-lg"
                       >
                         <ShoppingBag className="w-5 h-5" />
                       </button>

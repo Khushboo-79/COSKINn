@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import {
   CreateCategoryDto,
@@ -12,8 +12,8 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  async findAllCategories() {
-    return this.categoryService.findAllCategories();
+  async findAllCategories(@Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+    return this.categoryService.findAllCategories(platform);
   }
 
   @Get(':id')
