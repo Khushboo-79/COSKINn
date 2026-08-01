@@ -3,11 +3,36 @@ import React, { useState } from 'react';
 import { useAuth } from '../../core/rbac/AuthContext';
 import { User, Mail, Shield, KeyRound, Building, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { authApi } from '../../core/api/auth';
 
 export const UserProfileScreen = () => {
   const { user } = useAuth();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("Passwords don't match");
+      return;
+    }
+    try {
+      setIsChangingPassword(true);
+      await authApi.changePassword({ 
+        currentPassword: passwordData.currentPassword, 
+        newPassword: passwordData.newPassword 
+      });
+      toast.success('Password updated successfully');
+      setIsChangePasswordOpen(false);
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to update password');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -138,22 +163,51 @@ export const UserProfileScreen = () => {
               <h2 className="text-lg font-bold text-slate-900">Change Password</h2>
               <button onClick={() => setIsChangePasswordOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); toast.success('Action successful'); setIsChangePasswordOpen(false); }} className="p-6 space-y-4">
+            <form onSubmit={handleChangePassword} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
-                <input type="password" placeholder="••••••••" className="w-full border-slate-200 rounded-lg px-3 py-2" required />
+                <input 
+                  type="password" 
+                  value={passwordData.currentPassword}
+                  onChange={e => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                  placeholder="••••••••" 
+                  className="w-full border-slate-200 rounded-lg px-3 py-2" 
+                  required 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">New Password</label>
-                <input type="password" placeholder="••••••••" className="w-full border-slate-200 rounded-lg px-3 py-2" required />
+                <input 
+                  type="password" 
+                  value={passwordData.newPassword}
+                  onChange={e => setPasswordData({...passwordData, newPassword: e.target.value})}
+                  placeholder="••••••••" 
+                  className="w-full border-slate-200 rounded-lg px-3 py-2" 
+                  minLength={8}
+                  required 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
-                <input type="password" placeholder="••••••••" className="w-full border-slate-200 rounded-lg px-3 py-2" required />
+                <input 
+                  type="password" 
+                  value={passwordData.confirmPassword}
+                  onChange={e => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                  placeholder="••••••••" 
+                  className="w-full border-slate-200 rounded-lg px-3 py-2" 
+                  minLength={8}
+                  required 
+                />
               </div>
               <div className="pt-4 flex justify-end gap-3">
                 <button type="button" onClick={() => setIsChangePasswordOpen(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg font-medium">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 shadow-sm">Update Password</button>
+                <button 
+                  type="submit" 
+                  disabled={isChangingPassword}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 shadow-sm disabled:opacity-50"
+                >
+                  {isChangingPassword ? 'Updating...' : 'Update Password'}
+                </button>
               </div>
             </form>
           </div>
