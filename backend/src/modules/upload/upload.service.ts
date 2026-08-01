@@ -5,7 +5,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 @Injectable()
 export class UploadService {
   private s3Client: S3Client;
-  private readonly bucketName = process.env.AWS_S3_BUCKET || 'coskinn-media-storage';
+  private readonly bucketName = process.env.AWS_S3_BUCKET || 'fairenne-media-storage';
 
   constructor() {
     this.s3Client = new S3Client({

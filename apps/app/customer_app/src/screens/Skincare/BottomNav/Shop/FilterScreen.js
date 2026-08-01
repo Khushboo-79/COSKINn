@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, TextInput, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import { scaleh, scalev } from '../../../../constants/AppTheme';
 
 const FilterScreen = () => {
@@ -11,16 +12,14 @@ const FilterScreen = () => {
   // Which filter category is currently selected on the left
   const [activeCategory, setActiveCategory] = useState(route.params?.activeCategory || 'Product Type');
   
-  const categories = [
-    'Product Type',
-    'Skin Type',
-    'Skin Concern',
-    'Ingredients',
-    'Guides'
-  ];
+  const { categories: apiCategories } = useSelector(state => state.catalog);
+  const categories = ['Category', 'Brand', 'Price', 'Rating']; // Fixed sidebar categories
 
-  // Dummy data for the checkboxes on the right
-  const filterOptions = Array(8).fill('Skin Type');
+  // Use real categories for the "Category" tab, otherwise use dummy options for now
+  const filterOptions = activeCategory === 'Category' && apiCategories?.length > 0
+    ? apiCategories.map(c => c.name)
+    : ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
+
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   const toggleOption = (index) => {

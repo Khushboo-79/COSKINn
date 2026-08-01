@@ -29,6 +29,17 @@ export class InventoryService {
     });
   }
 
+  async getMovementLogs(sku?: string) {
+    const where = sku ? { sku: { contains: sku, mode: 'insensitive' as any } } : {};
+    return this.prisma.stockMovement.findMany({
+      where,
+      include: {
+        warehouse: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
   async getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE') {
     let skuList: string[] | undefined = undefined;
 

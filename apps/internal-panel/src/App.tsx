@@ -2,10 +2,12 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './core/rbac/AuthContext';
+import { Toaster } from 'sonner';
 import { RoleRouter, ForbiddenScreen } from './core/router';
 import { LoginScreen } from './modules/auth/LoginScreen';
 import { TwoFactorScreen } from './modules/auth/TwoFactorScreen';
 import { ForgotPasswordScreen } from './modules/auth/ForgotPasswordScreen';
+import { ResetPasswordScreen } from './modules/auth/ResetPasswordScreen';
 import { SharedShell } from './components/layout/SharedShell';
 import { RequirePanel } from './core/rbac/RequirePanel';
 import { AdminRouter } from './modules/admin/AdminRouter';
@@ -33,6 +35,7 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster position="bottom-right" richColors />
       <AuthProvider>
         <BrowserRouter>
           <Routes>
@@ -40,6 +43,7 @@ const App = () => {
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/auth/2fa" element={<TwoFactorScreen />} />
             <Route path="/auth/forgot-password" element={<ForgotPasswordScreen />} />
+            <Route path="/auth/reset-password" element={<ResetPasswordScreen />} />
             <Route path="/403" element={<ForbiddenScreen />} />
 
             {/* Role-based entry point */}

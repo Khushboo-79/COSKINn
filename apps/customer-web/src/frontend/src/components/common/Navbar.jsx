@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, User, Search, Settings, Heart, Package, LogOut, Menu, MapPin, MessageSquare, Bell, HelpCircle, ShieldAlert, X, ChevronRight, ArrowLeft, CreditCard, Gift, Share2, Award, Crown, Tag, Shield } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -9,10 +9,9 @@ import { skincareProducts } from '../../constants/skincareProducts';
 
 import { ShopMegaMenu, CategoriesMegaMenu, RoutineMenu, JournalMenu } from './MegaMenus';
 import MobileMenu from './MobileMenu';
-import AuthModal from './AuthModal';
 
-const CoskinnLogo = ({ isScrolled }) => (
-  <svg className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+const CoskinnLogo = ({ isScrolled, forceWhite }) => (
+  <svg role="img" aria-label="COSKINn Logo" className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#FF0069" />  {/* Hot Pink */}
@@ -60,7 +59,8 @@ const CoskinnLogo = ({ isScrolled }) => (
       x="105"
       y="95"
       fontFamily="var(--font-heading)"
-      fill="black"
+      fill={forceWhite ? "white" : "black"}
+      style={{ transition: 'fill 0.3s ease' }}
     >
       <tspan fontSize="85" fontWeight="600" letterSpacing="2">OSKIN</tspan>
       <tspan fontSize="65" fontWeight="600">n</tspan>
@@ -84,31 +84,32 @@ const CoskinnLogo = ({ isScrolled }) => (
 const prefetchPage = (pagePath) => {
   const cleanPath = pagePath.replace('/', '');
   if (cleanPath === 'skincare') {
-    import('../../pages/SkincarePage').catch(() => {});
+    import('../../pages/SkincarePage').catch(() => { });
   } else if (cleanPath === 'cosmetics') {
-    import('../../pages/CosmeticsPage').catch(() => {});
+    import('../../pages/CosmeticsPage').catch(() => { });
   } else if (cleanPath === 'about') {
-    import('../../pages/AboutPage').catch(() => {});
+    import('../../pages/AboutPage').catch(() => { });
   } else if (cleanPath === 'contact') {
-    import('../../pages/ContactPage').catch(() => {});
+    import('../../pages/ContactPage').catch(() => { });
   } else if (cleanPath.startsWith('account')) {
-    import('../../pages/AccountPage').catch(() => {});
+    import('../../pages/AccountPage').catch(() => { });
   } else if (cleanPath === 'checkout') {
-    import('../../pages/CheckoutPage').catch(() => {});
+    import('../../pages/CheckoutPage').catch(() => { });
   } else if (cleanPath === 'skincare/cleansing-balms') {
-    import('../../pages/CleansingBalmPage').catch(() => {});
+    import('../../pages/CleansingBalmPage').catch(() => { });
   } else if (cleanPath === 'skincare/sunscreens') {
-    import('../../pages/SunscreenPage').catch(() => {});
+    import('../../pages/SunscreenPage').catch(() => { });
   } else if (cleanPath === 'skincare/face-mist') {
-    import('../../pages/FaceMistPage').catch(() => {});
+    import('../../pages/FaceMistPage').catch(() => { });
   }
 };
 
 // Desktop Navigation Item Wrapper
-const NavItem = ({ title, to, children, isActive }) => {
+const NavItem = ({ title, to, children, isActive, isScrolled, theme, forceWhite }) => {
   const [isOpen, setIsOpen] = useState(false);
   let timeoutRef = useRef(null);
   const location = useLocation();
+  const isCosmeticsHome = theme === 'cosmetics' && (location.pathname === '/cosmetics' || location.pathname === '/');
 
   // Close dropdown immediately when route changes
   useEffect(() => {
@@ -136,12 +137,12 @@ const NavItem = ({ title, to, children, isActive }) => {
       {to ? (
         <Link
           to={to}
-          className={`flex items-center gap-1 hover:text-theme-primary transition-colors focus:outline-none ${isActive ? "text-black font-semibold" : ""}`}
+          className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 focus:outline-none ${isActive ? (forceWhite ? "text-white font-bold drop-shadow-md" : "text-black font-semibold") : (forceWhite ? "text-white/90 font-medium drop-shadow-sm hover:text-white" : "text-black font-medium")}`}
         >
           {title}
         </Link>
       ) : (
-        <button className="flex items-center gap-1 hover:text-theme-primary transition-colors cursor-pointer font-medium focus:outline-none">
+        <button className={`flex items-center gap-1 hover:text-theme-primary transition-all duration-300 cursor-pointer focus:outline-none ${forceWhite ? "text-white/90 font-medium drop-shadow-sm hover:text-white" : "text-black font-medium"}`}>
           {title}
         </button>
       )}
@@ -165,15 +166,15 @@ const AnimatedHamburger = ({ isOpen, toggle }) => (
   >
     <motion.span
       animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -6 }}
-      className="absolute w-6 h-[2px] bg-black block rounded-full"
+      className="absolute w-6 h-[2px] bg-current block rounded-full"
     />
     <motion.span
       animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-      className="absolute w-6 h-[2px] bg-black block rounded-full"
+      className="absolute w-6 h-[2px] bg-current block rounded-full"
     />
     <motion.span
       animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 6 }}
-      className="absolute w-6 h-[2px] bg-black block rounded-full"
+      className="absolute w-6 h-[2px] bg-current block rounded-full"
     />
   </button>
 );
@@ -193,10 +194,11 @@ const MobileProfileItem = ({ icon: Icon, label, onClick }) => (
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal } = useAuth();
+  const { user, logout, isAuthModalOpen, setIsAuthModalOpen, openAuthModal, closeAuthModal, executeProtectedAction } = useAuth();
   const { cartCount, openCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+  const isCosmeticsHome = theme === 'cosmetics' && (location.pathname === '/cosmetics' || location.pathname === '/');
 
   useEffect(() => {
     const currentPath = location.pathname.split('/')[1];
@@ -248,6 +250,11 @@ export default function Navbar() {
     }
   });
 
+  const isNewArrivalsPage = location.pathname === '/new-arrivals';
+  const isCosmeticsAboutPage = theme === 'cosmetics' && location.pathname === '/about';
+  const isWhiteNavPage = location.pathname.includes('/collections/precision-lip-liner') || isCosmeticsAboutPage || isNewArrivalsPage;
+  const forceWhite = isWhiteNavPage && !isScrolled;
+
   // Handle Desktop Hover for User Profile
   const handleMouseEnter = () => {
     if (window.innerWidth >= 1024 && user) {
@@ -266,21 +273,19 @@ export default function Navbar() {
   };
 
   const handleToggleClick = () => {
-    if (!user) {
-      openAuthModal();
-    } else if (window.innerWidth < 1024) {
-      setIsMobileProfileOpen(true);
-    } else {
-      setIsDropdownOpen(!isDropdownOpen);
-    }
+    executeProtectedAction(() => {
+      if (window.innerWidth < 1024) {
+        setIsMobileProfileOpen(true);
+      } else {
+        setIsDropdownOpen(!isDropdownOpen);
+      }
+    });
   };
 
   const handleWishlistClick = () => {
-    if (!user) {
-      openAuthModal();
-    } else {
+    executeProtectedAction(() => {
       navigate('/account/wishlist');
-    }
+    });
   };
 
   useEffect(() => {
@@ -336,11 +341,11 @@ export default function Navbar() {
           className="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-black/5 shadow-sm h-[60px] flex flex-col justify-center"
         >
           <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between">
-            
+
             {/* Left: Back Button & Breadcrumbs */}
             <div className="flex items-center gap-4">
-              <button 
-                onClick={() => navigate(-1)} 
+              <button
+                onClick={() => navigate(-1)}
                 aria-label="Go back"
                 className="flex items-center gap-1 font-bold text-sm text-black hover:text-[#FF0069] transition-colors"
               >
@@ -376,8 +381,8 @@ export default function Navbar() {
               >
                 <Heart size={22} strokeWidth={1.5} />
               </button>
-              <button 
-                onClick={openCart} 
+              <button
+                onClick={() => navigate('/cart')}
                 aria-label="Open cart"
                 className="relative hover:text-[#FF0069] transition flex items-center"
               >
@@ -421,8 +426,6 @@ export default function Navbar() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
       </>
     );
   }
@@ -468,39 +471,41 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative">
-          <CoskinnLogo isScrolled={isScrolled} />
+          <CoskinnLogo isScrolled={isScrolled} forceWhite={isNewArrivalsPage ? false : forceWhite} />
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center justify-center gap-10 text-[20px] font-body text-black/90 flex-1 ml-10">
-          <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} />
+        <div className="hidden lg:flex items-center justify-center gap-10 text-[20px] font-body flex-1 ml-10">
+          <NavItem title="Home" to={`/${theme}`} isActive={location.pathname === `/${theme}`} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
 
-          <NavItem title="Shop">
+          <NavItem title="Shop" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <ShopMegaMenu theme={theme} />
           </NavItem>
 
-          <NavItem title="Categories">
+          <NavItem title="Categories" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <CategoriesMegaMenu theme={theme} />
           </NavItem>
+          
+          {theme === 'skincare' && (
+            <NavItem title="Routine" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
+              <RoutineMenu theme={theme} />
+            </NavItem>
+          )}
 
-          <NavItem title="Routine">
-            <RoutineMenu theme={theme} />
-          </NavItem>
+          <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
 
-          <NavItem title="About Us" to="/about" isActive={location.pathname === '/about'} />
-
-          <NavItem title="Journal">
+          <NavItem title="Journal" isScrolled={isScrolled} theme={theme} forceWhite={forceWhite}>
             <JournalMenu theme={theme} />
           </NavItem>
 
-          <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} />
+          <NavItem title="Contact" to="/contact" isActive={location.pathname === '/contact'} isScrolled={isScrolled} theme={theme} forceWhite={forceWhite} />
         </div>
 
         {/* Spacer for Mobile layout balancing */}
         <div className="flex-1 lg:hidden"></div>
 
         {/* Icons */}
-        <div className="flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 text-black/80 relative flex-shrink-0">
+        <div className={`flex items-center justify-end gap-2 sm:gap-4 lg:gap-6 relative flex-shrink-0 transition-colors duration-300 ${forceWhite ? 'text-white' : 'text-black'}`}>
           {/* Search Icon */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -534,13 +539,13 @@ export default function Navbar() {
               {user ? (
                 <>
                   {user.avatarUrl ? (
-                    <img loading="lazy" src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover shadow-sm border border-white" />
+                    <img loading="lazy" src={user.avatarUrl} alt="Avatar" className={`w-8 h-8 rounded-full object-cover shadow-sm border ${forceWhite ? 'border-white/50' : 'border-white'}`} />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-theme-primary text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
-                  <span className="text-[14px] font-bold text-black hidden sm:block">{user.name ? user.name.split(' ')[0] : 'User'}</span>
+                  <span className={`text-[14px] font-bold hidden sm:block transition-colors duration-300 ${forceWhite ? 'text-white' : 'text-black'}`}>{user.name ? user.name.split(' ')[0] : 'User'}</span>
                 </>
               ) : (
                 <User size={24} strokeWidth={1.5} />
@@ -579,8 +584,8 @@ export default function Navbar() {
           </div>
 
           {/* Cart Icon */}
-          <button 
-            onClick={openCart} 
+          <button
+            onClick={() => navigate('/cart')}
             onMouseEnter={() => prefetchPage('checkout')}
             aria-label="Open cart"
             className="relative hover:text-theme-primary transition flex items-center"
@@ -643,7 +648,7 @@ export default function Navbar() {
               onClick={() => setIsMobileProfileOpen(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-[4px]"
             />
-            
+
             {/* Sheet */}
             <motion.div
               initial={{ y: "100%" }}
@@ -712,6 +717,54 @@ export default function Navbar() {
                     }}
                   />
                   <MobileProfileItem
+                    icon={CreditCard}
+                    label="Wallet & Ledger"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/wallet');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Gift}
+                    label="Bonuses"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/bonuses');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Share2}
+                    label="Referrals"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/referrals');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Award}
+                    label="Reward Points"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/rewards');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Crown}
+                    label="Membership"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/membership');
+                    }}
+                  />
+                  <MobileProfileItem
+                    icon={Tag}
+                    label="Offers & Deals"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/offers');
+                    }}
+                  />
+                  <MobileProfileItem
                     icon={MessageSquare}
                     label="My Reviews"
                     onClick={() => {
@@ -736,6 +789,14 @@ export default function Navbar() {
                     }}
                   />
                   <MobileProfileItem
+                    icon={Shield}
+                    label="Security"
+                    onClick={() => {
+                      setIsMobileProfileOpen(false);
+                      navigate('/account/security');
+                    }}
+                  />
+                  <MobileProfileItem
                     icon={HelpCircle}
                     label="Help & Support"
                     onClick={() => {
@@ -751,7 +812,7 @@ export default function Navbar() {
                       navigate('/contact');
                     }}
                   />
-                  
+
                   <div className="pt-4 mt-2 border-t border-black/5">
                     <button
                       onClick={() => {
@@ -770,9 +831,6 @@ export default function Navbar() {
           </div>
         )}
       </AnimatePresence>
-
-      {/* Authentication Modal */}
-      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
 
     </motion.nav>
   );

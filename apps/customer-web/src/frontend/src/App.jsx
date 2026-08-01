@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -9,6 +9,7 @@ import { OrderProvider } from './context/OrderContext';
 import Navbar from './components/common/Navbar';
 import CartDrawer from './components/cart/CartDrawer';
 import ScrollToTop from './components/common/ScrollToTop';
+import AuthModal from './components/common/AuthModal';
 
 // Lazy load all pages for code splitting and faster initial load
 const SkincarePage = React.lazy(() => import('./pages/SkincarePage'));
@@ -48,6 +49,10 @@ const PrecisionLipLinerCollectionPage = React.lazy(() => import('./pages/collect
 const LipBlurCollectionPage = React.lazy(() => import('./pages/collections/LipBlurCollectionPage'));
 const MascaraCollectionPage = React.lazy(() => import('./pages/collections/MascaraCollectionPage'));
 const EyeshadowCollectionPage = React.lazy(() => import('./pages/collections/EyeshadowCollectionPage'));
+const VelvetBlushCollectionPage = React.lazy(() => import('./pages/collections/VelvetBlushCollectionPage'));
+const MakeupBrushSetCollectionPage = React.lazy(() => import('./pages/collections/MakeupBrushSetCollectionPage'));
+const BrushHolderCollectionPage = React.lazy(() => import('./pages/collections/BrushHolderCollectionPage'));
+const PocketPerfumeCollectionPage = React.lazy(() => import('./pages/collections/PocketPerfumeCollectionPage'));
 const SaleCollectionPage = React.lazy(() => import('./pages/collections/SaleCollectionPage'));
 
 // Category Pages
@@ -96,6 +101,12 @@ const OurPromisePage = React.lazy(() => import('./pages/about/OurPromisePage'));
 const SustainabilityPage = React.lazy(() => import('./pages/about/SustainabilityPage'));
 const IngredientPhilosophyPage = React.lazy(() => import('./pages/about/IngredientPhilosophyPage'));
 const CareersPage = React.lazy(() => import('./pages/about/CareersPage'));
+
+// Cosmetics Added Pages
+const ShopAllCosmeticsPage = React.lazy(() => import('./pages/ShopAllCosmeticsPage'));
+const CosmeticsCategoryPage = React.lazy(() => import('./pages/categories/CosmeticsCategoryPage'));
+const CosmeticsJournalPage = React.lazy(() => import('./pages/journal/CosmeticsJournalPage'));
+const CartPage = React.lazy(() => import('./pages/CartPage'));
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
     <div className="w-12 h-12 rounded-full border-4 border-black/10 border-t-theme-primary animate-spin mb-4"></div>
@@ -114,17 +125,20 @@ const MainLayout = () => {
   const location = useLocation();
   const isCheckout = location.pathname === '/checkout';
   const isProductPage = location.pathname.startsWith('/product/');
+  const { isAuthModalOpen, closeAuthModal } = useAuth();
 
   return (
     <div className="relative min-h-screen flex flex-col">
       {!isCheckout && !isProductPage && <Navbar />}
       {!isCheckout && <CartDrawer />}
+      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
       <div className="flex-1">
         <Suspense fallback={<GlobalLoader />}>
           <Routes>
             <Route path="/" element={<Navigate to="/skincare" replace />} />
             <Route path="/skincare" element={<SkincarePage />} />
             <Route path="/cosmetics" element={<CosmeticsPage />} />
+            <Route path="/cart" element={<CartPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/routine" element={<RoutinePage />} />
@@ -134,7 +148,7 @@ const MainLayout = () => {
             <Route path="/journal/ingredient-guides" element={<IngredientGuidesPage />} />
             <Route path="/journal/skin-education" element={<SkinEducationPage />} />
             <Route path="/account/*" element={<AccountPage />} />
-            
+
             {/* Footer Pages */}
             <Route path="/help-center" element={<HelpCenterPage />} />
             <Route path="/faqs" element={<FAQsPage />} />
@@ -155,6 +169,7 @@ const MainLayout = () => {
             <Route path="/award-winners" element={<AwardWinnersPage />} />
             <Route path="/gift-sets" element={<GiftSetsPage />} />
             <Route path="/recommended" element={<RecommendedPage />} />
+            <Route path="/membership" element={<MembershipPurchasePage />} />
             <Route path="/membership/:type" element={<MembershipPurchasePage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/product/:slug" element={<ProductDetailsPage />} />
@@ -177,6 +192,10 @@ const MainLayout = () => {
             <Route path="/collections/lip-blur" element={<LipBlurCollectionPage />} />
             <Route path="/collections/lift-curl-mascara" element={<MascaraCollectionPage />} />
             <Route path="/collections/eyeshadow-palette" element={<EyeshadowCollectionPage />} />
+            <Route path="/collections/velvet-blush" element={<VelvetBlushCollectionPage />} />
+            <Route path="/collections/professional-makeup-brush-set" element={<MakeupBrushSetCollectionPage />} />
+            <Route path="/collections/brush-holder" element={<BrushHolderCollectionPage />} />
+            <Route path="/collections/pocket-perfume" element={<PocketPerfumeCollectionPage />} />
             <Route path="/collections/sale" element={<SaleCollectionPage />} />
             <Route path="/categories/acne-blemishes" element={<AcneBlemishesPage />} />
             <Route path="/shop/collections/weekend-collection" element={<WeekendCollectionPage />} />
@@ -188,6 +207,20 @@ const MainLayout = () => {
             <Route path="/categories/sensitive-skin" element={<SensitiveSkinPage />} />
             <Route path="/categories/dry-skin" element={<DrySkinPage />} />
             <Route path="/categories/oily-skin" element={<OilySkinPage />} />
+
+            {/* Cosmetics Added Routes */}
+            <Route path="/shop" element={<ShopAllCosmeticsPage />} />
+            <Route path="/categories/face" element={<CosmeticsCategoryPage />} />
+            <Route path="/categories/eyes" element={<CosmeticsCategoryPage />} />
+            <Route path="/categories/lips" element={<CosmeticsCategoryPage />} />
+            <Route path="/categories/accessories" element={<CosmeticsCategoryPage />} />
+            <Route path="/categories/fragrance" element={<CosmeticsCategoryPage />} />
+
+            <Route path="/journal/guides" element={<CosmeticsJournalPage />} />
+            <Route path="/journal/tutorials" element={<CosmeticsJournalPage />} />
+            <Route path="/journal/tips" element={<CosmeticsJournalPage />} />
+            <Route path="/journal/collections" element={<CosmeticsJournalPage />} />
+            <Route path="/journal/trends" element={<CosmeticsJournalPage />} />
 
             {/* Routine Pages */}
             <Route path="/routine/morning" element={<MorningRoutinePage />} />

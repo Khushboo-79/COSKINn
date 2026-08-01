@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, MessageCircle, Mail } from 'lucide-react';
 import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/common/Footer';
+import { Link } from 'react-router-dom';
 import apiClient from '../../utils/apiClient';
 
 export default function FAQsPage() {
@@ -151,23 +152,40 @@ export default function FAQsPage() {
                 ))}
               </div>
 
-              {/* Still Need Help Card */}
-              <div className="mt-16 bg-[#FFF5F8] rounded-[2rem] p-8 lg:p-10 border border-[#FF2D7A]/10 text-center">
-                <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center text-[#FF2D7A] shadow-sm mb-6">
-                  <Mail size={24} />
-                </div>
-                <h3 className="text-2xl font-heading font-black text-[#1B1B1B] mb-3">Still have questions?</h3>
-                <p className="text-gray-500 font-medium mb-8">We're here to help you get the glow you deserve.</p>
-                <a 
-                  href="mailto:support@coskinn.com"
-                  className="inline-block px-10 py-4 bg-white border-2 border-[#FF2D7A] text-[#FF2D7A] rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#FF2D7A] hover:text-white transition-all duration-300"
-                >
-                  Contact Support
-                </a>
-              </div>
-
             </div>
           </div>
+
+          {/* Premium Still Need Help Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-[5px] w-full relative overflow-hidden rounded-[2.5rem] bg-[#111111] text-white p-10 lg:p-14 text-center shadow-2xl"
+          >
+            {/* Decorative background elements */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+              <div className="absolute -top-1/2 -left-1/4 w-[150%] h-[150%] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#FF0069]/20 via-transparent to-transparent blur-3xl rounded-full opacity-60" />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#FF0069] to-[#FF6B6B] rounded-full flex items-center justify-center text-white shadow-lg shadow-[#FF0069]/30 mb-8 border-4 border-white/5">
+                <Mail size={32} />
+              </div>
+              <h3 className="text-3xl md:text-4xl font-heading font-black mb-4 tracking-tight">Can't find what you're looking for?</h3>
+              <p className="text-gray-300 font-medium mb-10 text-lg max-w-xl mx-auto">
+                Our beauty experts are here to help you get the glow you deserve. Reach out to our dedicated support team.
+              </p>
+              <Link 
+                to="/help-center"
+                className="inline-flex items-center gap-3 px-10 py-4 bg-white text-black rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#FF0069] hover:text-white transition-all duration-300 group"
+              >
+                Contact Support
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+            </div>
+          </motion.div>
         </section>
       </main>
 

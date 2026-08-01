@@ -18,24 +18,7 @@ const popularChoices = [
   { id: 4, title: 'Combos' },
 ];
 
-const recommendedProducts = [
-  {
-    id: 1,
-    brand: 'Milk Makeup',
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with\nNew-Age UV Filters',
-    price: '₹899',
-    image: require('../../images/makeup/ProductImgs/Blush.webp'),
-    bgImage: require('../../images/bgImages/orange.webp'),
-  },
-  {
-    id: 2,
-    brand: 'Milk Makeup',
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with\nNew-Age UV Filters',
-    price: '₹899',
-    image: require('../../images/makeup/ProductImgs/Blush.webp'),
-    bgImage: require('../../images/bgImages/orange.webp'),
-  },
-];
+// Using live catalog data for recommended products instead of dummy data
 
 const SearchScreen = () => {
   const navigation = useNavigation();
@@ -52,6 +35,8 @@ const SearchScreen = () => {
   const searchResults = useSelector(state => state.search.results);
   const isSearching = useSelector(state => state.search.loading);
   const recentSearches = useSelector(state => state.search.recentSearches);
+  const homeData = useSelector(state => state.catalog?.homeData);
+  const recommendedProducts = homeData?.bestsellers?.slice(0, 4) || [];
   
   const [localQuery, setLocalQuery] = useState('');
 
@@ -93,7 +78,7 @@ const SearchScreen = () => {
           </TouchableOpacity>
           <Image source={isDummy ? item.image : (item?.images?.[0]?.url ? { uri: item.images[0].url } : require('../../images/makeup/ProductImgs/Blush.webp'))} style={styles.cosmeticProductImage} resizeMode="contain" />
           <View style={styles.cosmeticProductInfo}>
-            <Text style={styles.cosmeticProductBrand}>{item.brand || 'COSKINn'}</Text>
+            <Text style={styles.cosmeticProductBrand}>{item.brand || 'FAIRENNE'}</Text>
             <Text style={styles.cosmeticProductTitle} numberOfLines={3}>{item.title || item.name}</Text>
             <View style={styles.cosmeticProductBottom}>
               <Text style={styles.cosmeticProductPrice}>{isDummy ? item.price : `₹${item.discountPrice || item.price}`}</Text>
@@ -247,7 +232,7 @@ const SearchScreen = () => {
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>RECOMMENDED FOR YOU</Text>
                 <View style={styles.recommendedContainer}>
-                  {recommendedProducts.map((product) => renderProductCard(product, true))}
+                  {recommendedProducts.map((product) => renderProductCard(product, false))}
                 </View>
               </View>
             </>

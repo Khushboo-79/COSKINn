@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
@@ -36,7 +37,7 @@ export const AuditScreen = () => {
 
   const handleReconcile = async () => {
     if (!selectedWarehouseId) {
-      alert('Please select a warehouse first.');
+      toast('Please select a warehouse first.');
       return;
     }
 
@@ -46,7 +47,7 @@ export const AuditScreen = () => {
     });
 
     if (!discrepancies || discrepancies.length === 0) {
-      alert('No discrepancies found to reconcile.');
+      toast('No discrepancies found to reconcile.');
       return;
     }
 
@@ -77,7 +78,7 @@ export const AuditScreen = () => {
       }
     }
 
-    alert('Reconciliation complete.');
+    toast('Reconciliation complete.');
     setPhysicalCounts({});
   };
 

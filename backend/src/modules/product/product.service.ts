@@ -34,6 +34,20 @@ export class ProductService {
     });
   }
 
+  async getStats() {
+    const totalProducts = await this.prisma.product.count({ where: { isDeleted: false } });
+    const activeVariants = await this.prisma.productVariant.count({ where: { product: { isDeleted: false } } });
+    const totalCategories = await this.prisma.category.count({ where: { isDeleted: false } });
+    const lowStockSkus = await this.prisma.inventoryStock.count({ where: { quantity: { lte: 10 } } });
+
+    return {
+      totalProducts,
+      activeVariants,
+      lowStockSkus,
+      totalCategories
+    };
+  }
+
   // --- Public Catalog Methods ---
 
   async findAllPublic(

@@ -35,6 +35,12 @@ export class CustomerProfileController {
     return this.profileService.upsertProfile(req.user.id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  async deleteMyAccount(@Request() req) {
+    return this.profileService.deleteMyAccount(req.user.id);
+  }
+
   // --- Address Endpoints ---
 
   @UseGuards(JwtAuthGuard)

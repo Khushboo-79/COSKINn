@@ -11,18 +11,23 @@ import BottomNavBar from '../../../../constants/BottomNavBar';
 import ProfileHeader from '../../../../components/ProfileHeader';
 import { logout } from '../../../../redux/slices/authSlice';
 import api from '../../../../services/api';
-import { fetchProfile } from '../../../../redux/slices/profileSlice';
+import { fetchProfile, fetchMembershipTier } from '../../../../redux/slices/profileSlice';
 import { Image } from 'react-native';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
-  const { data: profileData, loading } = useSelector(state => state.profile);
+  const { data: profileData, loading, membershipTier } = useSelector(state => state.profile);
   const isCosmetics = activeDomain === 'cosmetics';
 
   React.useEffect(() => {
+    console.log('AccountScreen mounted/updated. profileData:', profileData);
+  }, [profileData]);
+
+  React.useEffect(() => {
     dispatch(fetchProfile());
+    dispatch(fetchMembershipTier());
   }, [dispatch]);
 
   const handleTabPress = (tabId) => {
@@ -67,7 +72,7 @@ const AccountScreen = () => {
       console.error('Logout API error:', error);
       // We still proceed with local logout even if API fails
     }
-    
+
     // Clear local storage and reset auth state
     await AsyncStorage.removeItem('access_token');
     await AsyncStorage.removeItem('refresh_token');
@@ -77,17 +82,17 @@ const AccountScreen = () => {
   return (
     <View style={[styles.container, isCosmetics && { backgroundColor: '#FFC2D1' }]}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
-      
+
       {/* Reusable Profile Header */}
-      <ProfileHeader 
-        name={profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}` : 'Loading...'}
+      <ProfileHeader
+        name={loading && !profileData ? 'Loading...' : (profileData?.firstName ? `${profileData.firstName} ${profileData.lastName || ''}`.trim() : 'User')}
         phone={profileData?.phone || ''}
       />
 
       {/* Main Content Area overlapping the header slightly */}
       <View style={[styles.contentWrapper, { backgroundColor: '#FFFFFF' }]}>
-        <ScrollView 
-          style={styles.scrollView} 
+        <ScrollView
+          style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -103,14 +108,14 @@ const AccountScreen = () => {
           <Text style={styles.moreTitle}>More</Text>
           <View style={styles.moreLinksSection}>
             <MoreMenuItem title="Terms & Conditions" iconName="shield" onPress={() => navigation.navigate('TermsAndConditionsScreen')} />
-            <MoreMenuItem title="Contact Us" iconName="phone" onPress={() => {}} />
+            <MoreMenuItem title="Contact Us" iconName="phone" onPress={() => navigation.navigate('ContactUsScreen')} />
             <MoreMenuItem title="Return Policy" iconName="refresh-ccw" onPress={() => navigation.navigate('ReturnPolicyScreen')} />
             <MoreMenuItem title="FAQ" iconName="help-circle" onPress={() => navigation.navigate('FAQScreen')} />
             <MoreMenuItem title="Privacy" iconName="lock" onPress={() => navigation.navigate('PrivacyScreen')} />
           </View>
 
           {/* Membership Card with Gradient Background */}
-          <LinearGradient 
+          <LinearGradient
             colors={isCosmetics ? ['#FFDCE6', '#FFFFFF'] : ['#FFE5ED', '#FFFFFF']}
             style={{
               marginHorizontal: -scaleh(20),
@@ -120,8 +125,10 @@ const AccountScreen = () => {
             }}
           >
             <TouchableOpacity style={styles.memberCardContainer} activeOpacity={0.9} onPress={() => navigation.navigate('MembershipScreen')}>
-              <Text style={styles.memberCardTitle}>Florie LUXE Member</Text>
-              <Text style={styles.memberCardDate}>Member till 13-7-2026</Text>
+              <Text style={styles.memberCardTitle}>Florie {membershipTier?.tier?.name || 'LUXE'} Member</Text>
+              <Text style={styles.memberCardDate}>
+                Member since {profileData?.createdAt ? new Date(profileData.createdAt).toLocaleDateString() : 'Today'}
+              </Text>
               <View style={styles.memberCardDivider} />
               <View style={styles.memberCardFooter}>
                 <Text style={styles.memberCardFooterText}>
@@ -133,8 +140,8 @@ const AccountScreen = () => {
           </LinearGradient>
 
           {/* Sign Out Button */}
-          <TouchableOpacity 
-            style={[styles.signOutButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]} 
+          <TouchableOpacity
+            style={[styles.signOutButton, isCosmetics && { backgroundColor: '#FFD1E3', shadowColor: '#FF0069' }]}
             activeOpacity={0.8}
             onPress={handleLogout}
           >
@@ -145,9 +152,9 @@ const AccountScreen = () => {
         </ScrollView>
       </View>
 
-      <BottomNavBar 
-        activeTab="account" 
-        onTabPress={handleTabPress} 
+      <BottomNavBar
+        activeTab="account"
+        onTabPress={handleTabPress}
       />
     </View>
   );

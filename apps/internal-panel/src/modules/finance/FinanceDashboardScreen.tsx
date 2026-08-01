@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { financeApi } from '../../core/api/finance';
 import { IndianRupee, TrendingUp, CreditCard, Clock, Activity, BarChart3 } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 
 export const FinanceDashboardScreen = () => {
   const { data: overview, isLoading: loadingOverview } = useQuery({
@@ -42,10 +43,10 @@ export const FinanceDashboardScreen = () => {
               <IndianRupee className="h-6 w-6" />
             </div>
             <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full flex items-center gap-1">
-              <TrendingUp className="h-3 w-3" /> +12%
+              <TrendingUp className="h-3 w-3" /> {overview?.revenueTrend || '+12%'}
             </span>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(overview?.totalRevenue || 0)}</div>
+          <div className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(overview?.revenue || 0)}</div>
           <div className="text-sm font-medium text-slate-500">Gross Revenue (YTD)</div>
         </div>
         
@@ -54,9 +55,12 @@ export const FinanceDashboardScreen = () => {
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
               <CreditCard className="h-6 w-6" />
             </div>
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full flex items-center gap-1">
+              <TrendingUp className="h-3 w-3" /> {overview?.profitTrend || '+18%'}
+            </span>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-1">{overview?.totalTransactions || 0}</div>
-          <div className="text-sm font-medium text-slate-500">Total Transactions</div>
+          <div className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(overview?.profit || 0)}</div>
+          <div className="text-sm font-medium text-slate-500">Net Profit</div>
         </div>
 
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
@@ -65,8 +69,8 @@ export const FinanceDashboardScreen = () => {
               <Activity className="h-6 w-6" />
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(overview?.pendingSettlements || 0)}</div>
-          <div className="text-sm font-medium text-slate-500">Pending Settlements</div>
+          <div className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(overview?.pendingPayments || 0)}</div>
+          <div className="text-sm font-medium text-slate-500">Pending Payments</div>
         </div>
 
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
@@ -75,8 +79,62 @@ export const FinanceDashboardScreen = () => {
               <BarChart3 className="h-6 w-6" />
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(overview?.taxCollected || 0)}</div>
+          <div className="text-3xl font-bold text-slate-900 mb-1">{formatCurrency(overview?.taxes || 0)}</div>
           <div className="text-sm font-medium text-slate-500">Total Tax Collected</div>
+        </div>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h2 className="text-lg font-bold text-slate-900 mb-6">Revenue vs Net (Monthly)</h2>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={monthlyBreakdown || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorNet" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} tickFormatter={(value) => `₹${value / 1000}k`} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <Tooltip 
+                  formatter={(value: number) => formatCurrency(value)}
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                <Area type="monotone" dataKey="revenue" name="Gross Revenue" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+                <Area type="monotone" dataKey="net" name="Net Profit" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorNet)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h2 className="text-lg font-bold text-slate-900 mb-6">Tax & Refunds (Monthly)</h2>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyBreakdown || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} tickFormatter={(value) => `₹${value / 1000}k`} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <Tooltip 
+                  formatter={(value: number) => formatCurrency(value)}
+                  cursor={{ fill: '#f8fafc' }}
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                <Bar dataKey="tax" name="Tax Collected" fill="#f59e0b" radius={[4, 4, 0, 0]} barSize={20} />
+                <Bar dataKey="refunds" name="Refunds Issued" fill="#e11d48" radius={[4, 4, 0, 0]} barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

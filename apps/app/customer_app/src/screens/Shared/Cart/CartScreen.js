@@ -1,57 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCart, updateCartItem, removeFromCart } from '../../../redux/slices/cartSlice';
+import { fetchCart, fetchOffers, updateCartItem, removeFromCart, clearCartAsync } from '../../../redux/slices/cartSlice';
+import { fetchRewardPoints } from '../../../redux/slices/profileSlice';
 import Header from '../../../components/Header';
 import CartEmpty from './CartEmpty';
 import CheckoutModal from './CheckoutModal';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
-
-const cartData = [
-  {
-    id: 1,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with Ne..',
-    size: '80g',
-    delivery: 'Delivery by Thu,9 Jul',
-    price: 699,
-    originalPrice: 899,
-    quantity: 1,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  }
-];
-
-const lastMinuteData = [
-  {
-    id: 1,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with New...',
-    sizes: '3 Sizes',
-    price: 899,
-    originalPrice: 899,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  },
-  {
-    id: 2,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with New...',
-    sizes: '3 Sizes',
-    price: 899,
-    originalPrice: 899,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  },
-  {
-    id: 3,
-    title: 'Vitamin C + E Sunscreen\nSPF 50 PA++++ with New...',
-    sizes: '3 Sizes',
-    price: 899,
-    originalPrice: 899,
-    image: require('../../../images/bgImages/productImg.webp'),
-    bgImage: require('../../../images/bgImages/orange.webp'),
-  }
-];
 
 const CartScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -59,16 +16,21 @@ const CartScreen = ({ navigation }) => {
   const isCosmetics = activeDomain === 'cosmetics';
 
   const cartItems = useSelector(state => state.cart.items) || [];
+  const { cart } = useSelector(state => state.cart);
+  const rewardPointsBalance = useSelector(state => state.profile?.rewardPoints || 0);
+  const { selectedAddress } = useSelector(state => state.address);
   
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchCart());
+    dispatch(fetchOffers());
+    dispatch(fetchRewardPoints());
   }, [dispatch]);
 
-  const cartTotal = cartItems.reduce((acc, item) => acc + (item.product?.discountPrice || item.product?.mrp || 0) * item.quantity, 0);
-  const cartMRP = cartItems.reduce((acc, item) => acc + (item.product?.mrp || 0) * item.quantity, 0);
-  const discount = cartMRP - cartTotal;
-  const shipping = cartTotal > 0 ? 5 : 0;
-  const finalTotal = cartTotal + shipping;
+  const cartTotal = cart?.subtotal || cartItems.reduce((acc, item) => acc + (item.product?.discountPrice || item.product?.mrp || 0) * item.quantity, 0);
+  const cartMRP = cart?.totalMrp || cartItems.reduce((acc, item) => acc + (item.product?.mrp || 0) * item.quantity, 0);
+  const discount = cart?.discount || (cartMRP - cartTotal);
+  const shipping = cartTotal > 0 ? (cart?.shippingFee || 5) : 0;
+  const finalTotal = cart?.total || (cartTotal + shipping);
   const selectedCount = cartItems.length;
 
   const [rewardPoints, setRewardPoints] = useState(false);
@@ -77,48 +39,60 @@ const CartScreen = ({ navigation }) => {
 
   const primaryColor = isCosmetics ? '#FF0069' : AppTheme.colors.primary;
 
-  const renderProgressGifts = () => (
-    <LinearGradient
-      colors={isCosmetics ? ['rgba(255, 235, 240, 0.9)', 'rgba(255, 235, 240, 0.9)'] : [AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd]}
-      style={styles.progressContainer}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
-    >
-      <Text style={styles.progressTitle}>15% OFF Availed!</Text>
-      <Text style={styles.progressSubtitle}>Shop for <Text style={styles.boldText}>Rs 304</Text> to get a free gift</Text>
+  const { offers } = useSelector(state => state.cart);
 
-      <View style={styles.progressBarWrapper}>
-        <View style={[styles.progressLine, isCosmetics && { backgroundColor: '#FFD4E0' }]} />
-        <View style={[styles.progressLineFill, { width: '33%' }, isCosmetics && { backgroundColor: primaryColor }]} />
+  const renderProgressGifts = () => {
+    const tieredOffers = cart?.summary?.tieredOffers || offers || [];
+    if (tieredOffers.length === 0) return null;
 
-        <View style={styles.stepsRow}>
-          <View style={styles.stepItem}>
-            <View style={[styles.iconCircle, styles.iconCircleActive, isCosmetics && { borderColor: AppTheme.colors.cosmeticsPrimary }]}>
-              <Icon name="gift" size={scaleh(16)} color={primaryColor} />
-              <View style={[styles.checkBadge, isCosmetics && { backgroundColor: '#4CAF50', borderWidth: 1, borderColor: '#FFF' }]}>
-                <Icon name="check" size={scaleh(8)} color={AppTheme.colors.white} />
+    const achievedOffers = tieredOffers.filter(t => t.isAchieved);
+    const highestAchieved = achievedOffers.length > 0 ? achievedOffers[achievedOffers.length - 1] : null;
+    const nextOffer = tieredOffers.find(t => !t.isAchieved);
+    const currentAmount = cartTotal || 0;
+    const maxAmount = tieredOffers[tieredOffers.length - 1].targetAmount;
+    const progressPct = Math.min((currentAmount / maxAmount) * 100, 100);
+
+    return (
+      <LinearGradient
+        colors={isCosmetics ? ['rgba(255, 235, 240, 0.9)', 'rgba(255, 235, 240, 0.9)'] : [AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd]}
+        style={styles.progressContainer}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+      >
+        <Text style={styles.progressTitle}>
+          {highestAchieved ? `${highestAchieved.reward} Availed!` : 'Unlock Exciting Rewards!'}
+        </Text>
+        <Text style={styles.progressSubtitle}>
+          {nextOffer ? (
+            <>Shop for <Text style={styles.boldText}>Rs {Math.ceil(nextOffer.targetAmount - currentAmount)}</Text> to get {nextOffer.reward.toLowerCase().includes('free') ? 'a free gift' : nextOffer.reward}</>
+          ) : (
+            'You have unlocked all rewards!'
+          )}
+        </Text>
+
+        <View style={styles.progressBarWrapper}>
+          <View style={[styles.progressLine, isCosmetics && { backgroundColor: '#FFD4E0' }]} />
+          <View style={[styles.progressLineFill, { width: `${progressPct}%` }, isCosmetics && { backgroundColor: primaryColor }]} />
+
+          <View style={styles.stepsRow}>
+            {tieredOffers.map((tier, index) => (
+              <View key={index} style={styles.stepItem}>
+                <View style={[styles.iconCircle, tier.isAchieved && styles.iconCircleActive, tier.isAchieved && isCosmetics && { borderColor: AppTheme.colors.cosmeticsPrimary }]}>
+                  <Icon name="gift" size={scaleh(16)} color={primaryColor} />
+                  {tier.isAchieved && (
+                    <View style={[styles.checkBadge, isCosmetics && { backgroundColor: '#4CAF50', borderWidth: 1, borderColor: '#FFF' }]}>
+                      <Icon name="check" size={scaleh(8)} color={AppTheme.colors.white} />
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.stepText}>{tier.reward}</Text>
               </View>
-            </View>
-            <Text style={styles.stepText}>FLAT 15% OFF</Text>
-          </View>
-
-          <View style={styles.stepItem}>
-            <View style={styles.iconCircle}>
-              <Icon name="gift" size={scaleh(16)} color={primaryColor} />
-            </View>
-            <Text style={styles.stepText}>Free Gifts</Text>
-          </View>
-
-          <View style={styles.stepItem}>
-            <View style={styles.iconCircle}>
-              <Icon name="gift" size={scaleh(16)} color={primaryColor} />
-            </View>
-            <Text style={styles.stepText}>Flat 20% OFF +{'\n'}2 gifts</Text>
+            ))}
           </View>
         </View>
-      </View>
-    </LinearGradient>
-  );
+      </LinearGradient>
+    );
+  };
 
   const renderFilled = () => (
     <View style={styles.filledContainer}>
@@ -129,11 +103,17 @@ const CartScreen = ({ navigation }) => {
         <View style={styles.locationHeader}>
           <Icon name="map-pin" size={scaleh(16)} color="#000" />
           <View style={styles.locationTextWrapper}>
-            <Text style={styles.deliverToText}>Deliver to 451420</Text>
-            <Text style={styles.locationDescText} numberOfLines={1}>Ayushi Sinha - Ibus stop, Indore...</Text>
+            <Text style={styles.deliverToText}>
+              Deliver to {selectedAddress?.pincode || 'Location'}
+            </Text>
+            <Text style={styles.locationDescText} numberOfLines={1}>
+              {selectedAddress 
+                ? `${selectedAddress.fullName} - ${selectedAddress.addressLine1}, ${selectedAddress.city}`
+                : 'Select delivery address'}
+            </Text>
           </View>
           <Icon name="chevron-down" size={scaleh(16)} color="#000" />
-          <TouchableOpacity style={styles.changeBtn}>
+          <TouchableOpacity style={styles.changeBtn} onPress={() => navigation.navigate('AddressScreen')}>
             <Text style={styles.changeBtnText}>Change</Text>
           </TouchableOpacity>
         </View>
@@ -152,7 +132,7 @@ const CartScreen = ({ navigation }) => {
 
         <View style={styles.bagItemsHeaderRow}>
           <Text style={styles.bagItemsText}>Bag Items <Text style={styles.bagItemsSub}>({selectedCount}/{selectedCount} selected)</Text></Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => dispatch(clearCartAsync())}>
             <Icon name="trash-2" size={scaleh(20)} color={primaryColor} />
           </TouchableOpacity>
         </View>
@@ -225,7 +205,7 @@ const CartScreen = ({ navigation }) => {
             <Text style={styles.boxTitle}>Use reward points</Text>
           </View>
           <View style={styles.boxRight}>
-            <Text style={styles.pointsText}>3412</Text>
+            <Text style={styles.pointsText}>{rewardPointsBalance}</Text>
             <Switch
               trackColor={{ false: "#d3d3d3", true: primaryColor }}
               thumbColor={AppTheme.colors.white}
@@ -267,7 +247,7 @@ const CartScreen = ({ navigation }) => {
               </View>
               <View style={styles.priceRowItem}>
                 <Text style={styles.priceRowLabel}>Bag Discount</Text>
-                <Text style={[styles.priceRowValue, { color: AppTheme.colors.success }]}>₹{discount}</Text>
+                <Text style={[styles.priceRowValue, { color: AppTheme.colors.success }]}>-₹{discount}</Text>
               </View>
               <View style={styles.priceRowItem}>
                 <Text style={styles.priceRowLabel}>Shipping & Platform Fee</Text>
@@ -293,37 +273,7 @@ const CartScreen = ({ navigation }) => {
           </LinearGradient>
         </View>
 
-        {/* Last minute additions */}
-        <View style={styles.lastMinuteSection}>
-          <Text style={styles.lastMinuteTitle}>Last minute additions</Text>
-
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.lastMinuteScroll}>
-            {lastMinuteData.map((item, index) => (
-              <View key={item.id} style={[styles.lastMinuteCard, index === 0 && { marginLeft: scaleh(20) }]}>
-                <View style={styles.lmImageWrapper}>
-                  {!isCosmetics && <Image source={item.bgImage} style={[StyleSheet.absoluteFill, styles.bgImgOverride]} resizeMode="cover" />}
-                  <Image source={isCosmetics ? require('../../../images/makeup/ProductImgs/Blush.webp') : item.image} style={isCosmetics ? [styles.lmProdImg, { width: '90%', height: '90%' }] : styles.lmProdImg} resizeMode="contain" />
-                </View>
-                <View style={styles.lmDetails}>
-                  <Text style={styles.lmBrand}>COSKINn</Text>
-                  <Text style={styles.lmTitle} numberOfLines={2}>{item.title}</Text>
-                  <Text style={styles.lmSizes}>{item.sizes}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.lmOriginalPrice}>₹{item.originalPrice}</Text>
-                  </View>
-                  <View style={styles.lmActionRow}>
-                    <TouchableOpacity style={styles.lmHeartBtn}>
-                      <Icon name="heart" size={scaleh(14)} color={primaryColor} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.lmSelectBtn, isCosmetics && { backgroundColor: '#FFC2D1' }]}>
-                      <Text style={[styles.lmSelectText, isCosmetics && { color: '#000000' }]}>Select Size</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
+        {/* Removed Last minute additions (no dummy data allowed) */}
 
       </ScrollView>
 
@@ -368,7 +318,7 @@ const CartScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <CheckoutModal visible={isCheckoutVisible} onClose={() => setIsCheckoutVisible(false)} />
+      <CheckoutModal visible={isCheckoutVisible} onClose={() => setIsCheckoutVisible(false)} finalTotal={finalTotal} />
 
     </View>
   );

@@ -6,9 +6,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../../components/Header';
 import WishlistEmpty from './WishlistEmpty';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleWishlist } from '../../../redux/slices/wishlistSlice';
+import { toggleWishlist, fetchWishlist } from '../../../redux/slices/wishlistSlice';
 import { addToCart, updateCartItem, removeFromCart } from '../../../redux/slices/cartSlice';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
+
+import { useNavigation } from '@react-navigation/native';
 
 const filledData = [
   {
@@ -39,11 +41,16 @@ const filledData = [
   },
 ];
 const WishlistScreen = () => {
+  const navigation = useNavigation();
   const wishlistItems = useSelector(state => state.wishlist.items);
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
   const cartItems = useSelector(state => state.cart.items) || [];
   const dispatch = useDispatch();
   const isCosmetics = activeDomain === 'cosmetics';
+
+  React.useEffect(() => {
+    dispatch(fetchWishlist());
+  }, [dispatch]);
 
   const renderFilled = () => (
     <View style={styles.filledContainer}>
@@ -61,7 +68,11 @@ const WishlistScreen = () => {
           const cartItem = cartItems?.find(c => c.productId === product.id);
           if (isCosmetics) {
             return (
-              <View style={styles.tallCard}>
+              <TouchableOpacity 
+                style={styles.tallCard}
+                activeOpacity={0.9}
+                onPress={() => navigation.navigate('ProductDetailsScreen', { product })}
+              >
                 <TouchableOpacity 
                   style={styles.heartIconContainer}
                   onPress={() => dispatch(toggleWishlist(product.id))}
@@ -139,13 +150,17 @@ const WishlistScreen = () => {
                     )}
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           }
 
           // Original Skincare Layout
           return (
-            <View style={styles.card}>
+            <TouchableOpacity 
+              style={styles.card}
+              activeOpacity={0.9}
+              onPress={() => navigation.navigate('ProductDetailsScreen', { product })}
+            >
               <View style={styles.imageSection}>
                 <LinearGradient
                   colors={[AppTheme.colors.wishlistGradientStart, AppTheme.colors.wishlistGradientEnd]}
@@ -227,7 +242,7 @@ const WishlistScreen = () => {
                   )}
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           );
         }}
       />

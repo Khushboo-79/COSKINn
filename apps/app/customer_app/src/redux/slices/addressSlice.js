@@ -34,6 +34,48 @@ export const fetchAddresses = createAsyncThunk(
   }
 );
 
+// Async thunk to add address
+export const addAddress = createAsyncThunk(
+  'address/addAddress',
+  async (addressData, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await addressService.addAddress(addressData);
+      dispatch(fetchAddresses()); // Refresh list
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// Async thunk to update address
+export const updateAddress = createAsyncThunk(
+  'address/updateAddress',
+  async ({ id, data }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await addressService.updateAddress(id, data);
+      dispatch(fetchAddresses());
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// Async thunk to delete address
+export const deleteAddress = createAsyncThunk(
+  'address/deleteAddress',
+  async (id, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await addressService.deleteAddress(id);
+      dispatch(fetchAddresses());
+      return response;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const initialState = {
   items: [],
   selectedAddress: null, // Stores the currently selected delivery address object

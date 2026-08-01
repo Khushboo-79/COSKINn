@@ -43,7 +43,7 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   @Get('orders')
   async getCustomerOrders(@Request() req) {
-    return this.orderService.getCustomerOrders(req.user.id);
+    return this.orderService.getOrders(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

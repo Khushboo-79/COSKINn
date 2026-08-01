@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-# Private areas that bots shouldn't index
-Disallow: /account/
-Disallow: /checkout/
-Disallow: /order/

@@ -1,18 +1,22 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { X, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartDrawer() {
   const { isCartDrawerOpen, closeCart, cart, updateQuantity, removeFromCart, cartSubtotal } = useCart();
+  const { executeProtectedAction } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
 
   const handleCheckout = () => {
-    closeCart();
-    navigate('/checkout');
+    executeProtectedAction(() => {
+      closeCart();
+      navigate('/checkout');
+    });
   };
 
   const SHIPPING_COST = 0; // Free shipping for luxury

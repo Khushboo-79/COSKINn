@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
@@ -21,7 +22,7 @@ export const RefundListScreen = () => {
       setProcessingId(null);
     },
     onError: (err: any) => {
-      alert(`Error processing wallet refund: ${err.response?.data?.message || err.message}`);
+      toast.error('An error occurred');
       setProcessingId(null);
     }
   });
@@ -34,7 +35,7 @@ export const RefundListScreen = () => {
       setProcessingId(null);
     },
     onError: (err: any) => {
-      alert(`Error processing gateway refund: ${err.response?.data?.message || err.message}`);
+      toast.error('An error occurred');
       setProcessingId(null);
     }
   });
@@ -97,15 +98,15 @@ export const RefundListScreen = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-slate-900">
                         <Link to={`/orders/${refund.orderId}`} className="hover:text-primary-600">
-                          Order #{refund.orderId.slice(-8).toUpperCase()}
+                          Order #{refund.orderId?.slice(-8).toUpperCase() || 'UNKNOWN'}
                         </Link>
                       </div>
                       <div className="text-xs text-slate-500 mt-1">
-                        {new Date(refund.createdAt).toLocaleDateString()}
+                        {refund.createdAt ? new Date(refund.createdAt).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-bold text-slate-900">₹{refund.amount.toFixed(2)}</div>
+                      <div className="text-sm font-bold text-slate-900">₹{(refund.amount || 0).toFixed(2)}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-slate-700">{refund.reason}</div>

@@ -1,30 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, ScrollView, FlatList, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, ScrollView, FlatList, Image, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAvailableCoupons, applyCoupon } from '../../../redux/slices/cartSlice';
 import { AppTheme, scaleh, scalev } from '../../../constants/AppTheme';
 
-const couponsData = [
-  { id: 1, title: 'Extra 15% off', desc: 'On all Charlotte Tilbury Orders', code: 'CT2345A53', action: 'Shop for 1 more item >' },
-  { id: 2, title: 'Extra 15% off', desc: 'On all Charlotte Tilbury Orders', code: 'CT2345A53', action: 'Shop for 1 more item >' },
-  { id: 3, title: 'Extra 15% off', desc: 'On all Charlotte Tilbury Orders', code: 'CT2345A53', action: 'Shop for 1 more item >' },
-  { id: 4, title: 'Extra 15% off', desc: 'On all Charlotte Tilbury Orders', code: 'CT2345A53', action: 'Shop for 1 more item >' },
-];
-
 const CouponsScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const activeDomain = useSelector(state => state.app?.activeDomain || 'skincare');
+  const { availableCoupons, loading, error, cart } = useSelector(state => state.cart);
   const isCosmetics = activeDomain === 'cosmetics';
   const themePrimaryColor = isCosmetics ? AppTheme.colors.cosmeticsPrimary : AppTheme.colors.primary;
 
   const [activeFilter, setActiveFilter] = useState('All');
+  const [couponCode, setCouponCode] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchAvailableCoupons());
+  }, [dispatch]);
 
   const filters = ['All', 'Coupons', 'Payment Offers'];
 
+  const handleApplyCoupon = (code) => {
+    if (code) {
+      dispatch(applyCoupon(code)).then((res) => {
+        if (!res.error) {
+          navigation.goBack();
+        }
+      });
+    }
+  };
+
   const renderCouponCard = ({ item }) => (
     <View style={styles.couponCard}>
-
       {/* Top Section */}
       <View style={styles.couponTop}>
         <View style={styles.couponIconWrapper}>
@@ -32,24 +42,20 @@ const CouponsScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.couponTextWrapper}>
-          <Text style={styles.couponTitle}>{item.title}</Text>
-          <Text style={styles.couponDesc}>{item.desc}</Text>
-        </View>
-
-        <View style={styles.lockIconWrapper}>
-          <MaterialCommunityIcons name="lock" size={scaleh(20)} color="#666" />
+          <Text style={styles.couponTitle}>{item.name || item.title || item.code}</Text>
+          <Text style={styles.couponDesc}>{item.description || item.desc}</Text>
         </View>
       </View>
 
       {/* Bottom Section */}
       <View style={styles.couponBottom}>
         <Text style={styles.couponCode}>{item.code}</Text>
-        <TouchableOpacity>
-          <Text style={[styles.shopMoreText, { color: themePrimaryColor }]}>{item.action}</Text>
+        <TouchableOpacity onPress={() => handleApplyCoupon(item.code)}>
+          <Text style={[styles.shopMoreText, { color: themePrimaryColor }]}>Apply</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Side Cutouts (To give it a ticket shape) - Only for Skincare */}
+      {/* Side Cutouts */}
       {!isCosmetics && (
         <>
           <View style={[styles.cutout, styles.cutoutLeft]} />
@@ -89,9 +95,16 @@ const CouponsScreen = ({ navigation }) => {
               style={styles.input}
               placeholder="Enter Coupon Code"
               placeholderTextColor="#999"
+              value={couponCode}
+              onChangeText={setCouponCode}
+              autoCapitalize="characters"
             />
-            <TouchableOpacity style={styles.applyBtn}>
-              <Text style={styles.applyText}>Apply</Text>
+            <TouchableOpacity style={styles.applyBtn} onPress={() => handleApplyCoupon(couponCode)}>
+              {loading ? (
+                <ActivityIndicator size="small" color={themePrimaryColor} />
+              ) : (
+                <Text style={styles.applyText}>Apply</Text>
+              )}
             </TouchableOpacity>
           </View>
 
@@ -119,19 +132,27 @@ const CouponsScreen = ({ navigation }) => {
           </View>
 
           {/* List */}
-          <FlatList
-            data={couponsData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderCouponCard}
-            scrollEnabled={false} // since it is inside a scrollview
-          />
+          {loading && availableCoupons.length === 0 ? (
+            <ActivityIndicator size="large" color={themePrimaryColor} style={{ marginTop: scalev(20) }} />
+          ) : availableCoupons.length === 0 ? (
+             <View style={{ alignItems: 'center', marginTop: scalev(20) }}>
+               <Text style={{ color: '#666' }}>No coupons available right now.</Text>
+             </View>
+          ) : (
+            <FlatList
+              data={availableCoupons}
+              keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+              renderItem={renderCouponCard}
+              scrollEnabled={false} // since it is inside a scrollview
+            />
+          )}
 
         </ScrollView>
 
         {/* Sticky Bottom Bar */}
         <View style={styles.bottomBar}>
           <View style={styles.savedSection}>
-            <Text style={styles.savedAmount}>₹0</Text>
+            <Text style={styles.savedAmount}>₹{cart?.discount || 0}</Text>
             <Text style={styles.savedText}>Saved so far</Text>
           </View>
 

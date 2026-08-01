@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import apiClient from '../utils/apiClient';
 import { useAuth } from './AuthContext';
+import { normalizeOrder } from '../utils/orderUtils';
 
 const OrderContext = createContext();
 
@@ -17,7 +18,8 @@ export function OrderProvider({ children }) {
     setLoading(true);
     try {
       const res = await apiClient.get('/orders');
-      setOrders(res.data);
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setOrders(list.map(order => normalizeOrder(order)));
     } catch (err) {
       console.error("Failed to fetch orders:", err);
     } finally {
@@ -30,8 +32,14 @@ export function OrderProvider({ children }) {
   }, [user]);
 
   const placeOrder = (orderData) => {
-    // With backend integration, placeOrder just needs to refresh the orders list
-    // because checkout form directly posts to /orders
+    console.log('🎉 [ORDER PLACED SUCCESSFULLY] Order Details:', {
+      orderId: orderData?.id,
+      shortOrderId: orderData?.orderId,
+      status: orderData?.status,
+      paymentMethod: orderData?.paymentMethod,
+      totalAmount: orderData?.totalAmount || orderData?.finalAmount,
+      fullOrder: orderData
+    });
     fetchOrders();
   };
 

@@ -20,6 +20,16 @@ export class AdminController {
     return this.adminService.getRoles();
   }
 
+  @Post('roles')
+  createRole(@Body() body: any) {
+    return this.adminService.createRole(body);
+  }
+
+  @Put('roles/:id')
+  updateRole(@Param('id') id: string, @Body() body: any) {
+    return this.adminService.updateRole(id, body);
+  }
+
   @Put('roles/:id/panels')
   updateRolePanelAccess(@Param('id') id: string, @Body() body: { panelAccess: string[] }) {
     return this.adminService.updateRolePanelAccess(id, body.panelAccess);
@@ -28,6 +38,11 @@ export class AdminController {
   @Get('users')
   getUsers() {
     return this.adminService.getUsers();
+  }
+
+  @Post('users')
+  createUser(@Body() body: any) {
+    return this.adminService.createUser(body);
   }
 
   @Post('users/assign-role')

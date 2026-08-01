@@ -1,4 +1,4 @@
-# COSKINn — Panel Connectivity Map
+# Fairenne — Panel Connectivity Map
 
 This is the master map of how every surface in the system talks to every other surface. Every individual panel build plan (`0X-<PANEL>-BUILD-PLAN.md`) links back to this file instead of repeating it, so it stays in sync as scope changes.
 

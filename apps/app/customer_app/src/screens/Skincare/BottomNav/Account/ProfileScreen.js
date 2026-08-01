@@ -24,19 +24,28 @@ const ProfileScreen = () => {
   );
   const [email, setEmail] = useState(profileData?.email || '');
   const [mobile, setMobile] = useState(profileData?.phone || '');
-  const [dob, setDob] = useState(profileData?.dob || '');
+  const [dob, setDob] = useState(profileData?.dateOfBirth || '');
 
-  const handleUpdateProfile = () => {
+  React.useEffect(() => {
+    console.log('ProfileScreen mounted/updated. profileData:', profileData);
+  }, [profileData]);
+
+  const handleUpdateProfile = async () => {
     const [firstName, ...lastNameArr] = name.split(' ');
     const lastName = lastNameArr.join(' ');
-    dispatch(updateProfile({
-      title,
-      firstName,
-      lastName,
-      email,
-      phone: mobile,
-      dob
-    }));
+    try {
+      await dispatch(updateProfile({
+        title,
+        firstName,
+        lastName,
+        email,
+        phone: mobile,
+        dateOfBirth: dob
+      })).unwrap();
+      navigation.goBack();
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
   };
 
   const renderRadioButton = (label) => {
@@ -122,7 +131,9 @@ const ProfileScreen = () => {
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-              <Text style={styles.verifiedText}>Verified</Text>
+              {profileData?.email && email === profileData.email && (
+                <Text style={styles.verifiedText}>Verified</Text>
+              )}
             </View>
             <View style={styles.inputBorder} />
           </View>
@@ -136,7 +147,9 @@ const ProfileScreen = () => {
                 onChangeText={setMobile}
                 keyboardType="phone-pad"
               />
-              <Text style={styles.verifiedText}>Verified</Text>
+              {profileData?.phone && mobile === profileData.phone && (
+                <Text style={styles.verifiedText}>Verified</Text>
+              )}
             </View>
             <View style={styles.inputBorder} />
           </View>
