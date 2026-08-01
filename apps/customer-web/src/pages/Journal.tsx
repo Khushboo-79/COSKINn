@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock, ChevronRight, Mail } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const categories = ['All', 'Skincare Guides', 'Ingredient Spotlight', 'Wellness', 'Tutorials'];
 
@@ -12,7 +13,7 @@ const featuredArticle = {
   readTime: '6 min read',
   date: 'October 24, 2023',
   excerpt: 'Achieving that coveted luminous, poreless complexion is easier than you think. Discover the essential steps, from double cleansing to locking in hydration.',
-  imageGlam: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80',
+  imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678',
   imageSkin: 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800',
 };
 
@@ -22,7 +23,7 @@ const articles = [
     title: 'Why Vitamin C is a Must-Have in Your Morning Routine',
     category: 'Ingredient Spotlight',
     readTime: '4 min read',
-    imageGlam: 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80',
+    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588',
     imageSkin: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
   },
   {
@@ -30,7 +31,7 @@ const articles = [
     title: '5 Steps to a Perfect Nighttime Recovery Routine',
     category: 'Tutorials',
     readTime: '5 min read',
-    imageGlam: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&q=80',
+    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299',
     imageSkin: 'https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=800'
   },
   {
@@ -38,7 +39,7 @@ const articles = [
     title: 'Mindful Beauty: Connecting Wellness and Skincare',
     category: 'Wellness',
     readTime: '7 min read',
-    imageGlam: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80',
+    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951',
     imageSkin: 'https://images.unsplash.com/photo-1550828520-4cb496926fc9?auto=format&fit=crop&w=800&q=80'
   },
   {
@@ -46,7 +47,7 @@ const articles = [
     title: 'The Truth About Hyaluronic Acid: Are You Using It Right?',
     category: 'Ingredient Spotlight',
     readTime: '3 min read',
-    imageGlam: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80',
+    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260420-103644.jpg?v=1776653923',
     imageSkin: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
   },
   {
@@ -54,7 +55,7 @@ const articles = [
     title: 'Dermatologist Secrets for Transitioning to Fall Skincare',
     category: 'Skincare Guides',
     readTime: '6 min read',
-    imageGlam: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80',
+    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/61605ff4361e206d245c64bb08d66c4b_41cd63f3-7c74-4c4d-853d-ef8949a10017.jpg?v=1784689317',
     imageSkin: 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800'
   },
   {
@@ -62,7 +63,7 @@ const articles = [
     title: 'Gua Sha 101: Benefits and Step-by-Step Tutorial',
     category: 'Tutorials',
     readTime: '5 min read',
-    imageGlam: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80',
+    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-142134.jpg?v=1784704087',
     imageSkin: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
   }
 ];
@@ -71,13 +72,14 @@ const Journal: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const [activeCategory, setActiveCategory] = useState('All');
+  const pageRef = useScrollReveal<HTMLDivElement>();
 
   const filteredArticles = activeCategory === 'All' 
     ? articles 
     : articles.filter(a => a.category === activeCategory);
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 pb-20 ${
+    <div ref={pageRef} className={`min-h-screen transition-colors duration-500 pb-20 ${
       isGlam ? 'bg-[#fdf9f1]' : 'bg-[#fafafa]'
     }`}>
       
@@ -92,7 +94,7 @@ const Journal: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
         </div>
         
-        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col md:flex-row items-end justify-between gap-8">
+        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col md:flex-row items-end justify-between gap-8 scroll-reveal scroll-reveal-up">
           <div className="max-w-2xl text-white">
             <span className={`inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full mb-4 ${
               isGlam ? 'bg-[#7a1b26] text-white' : 'bg-[#ff9aa8] text-white'
@@ -123,7 +125,7 @@ const Journal: React.FC = () => {
       </section>
 
       {/* Categories */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 mt-12 mb-8">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 mt-12 mb-8 scroll-reveal scroll-reveal-up">
         <div className="flex overflow-x-auto hide-scrollbar space-x-3 pb-4">
           {categories.map(cat => (
             <button
@@ -218,9 +220,9 @@ const Journal: React.FC = () => {
           </>
         )}
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <div className={`p-10 md:p-16 text-center flex flex-col items-center justify-center relative overflow-hidden ${
-            isGlam ? 'text-white' : 'text-gray-900'
-          }`}>
+          <div className={`p-10 md:p-16 text-center flex flex-col items-center justify-center relative overflow-hidden scroll-reveal scroll-reveal-up ${
+          isGlam ? 'text-white' : 'text-gray-900'
+        }`}>
             {/* Decorative Elements */}
             <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 -mr-20 -mt-20 ${
               isGlam ? 'bg-[#e5b376]' : 'bg-[#ff9aa8]'

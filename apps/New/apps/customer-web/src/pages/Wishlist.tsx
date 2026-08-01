@@ -58,8 +58,8 @@ const Wishlist: React.FC = () => {
                   <Heart size={16} fill="currentColor" className="text-red-500" />
                 </button>
 
-                <Link to={`/product/${product.id}`} className="block">
-                  <div className="relative aspect-[4/5] rounded-[24px] overflow-hidden bg-gray-100 mb-4">
+                <Link to={`/product/${product.id}`} className="block h-full relative group cursor-pointer">
+                  <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[24px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
                     <img 
                       src={product.image} 
                       alt={product.name}
@@ -76,7 +76,7 @@ const Wishlist: React.FC = () => {
                           addToCart({
                             id: product.id.toString(),
                             name: product.name,
-                            price: product.price,
+                            price: typeof product.price === 'string' ? parseInt(product.price.replace(/[^\d]/g, ''), 10) : product.price,
                             image: product.image,
                             quantity: 1
                           });
@@ -90,15 +90,33 @@ const Wishlist: React.FC = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <span className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1 block">
-                      {product.category || 'Product'}
-                    </span>
-                    <h3 className={`font-bold text-lg leading-tight mb-1 text-[#2a2a2a] group-hover:underline ${isGlam ? 'font-serif' : 'font-sans'}`}>
-                      {product.name}
-                    </h3>
-                    <p className="font-bold text-gray-900">{product.price}</p>
-                  </div>
+                  {!isGlam && (
+                    <div>
+                      <span className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1 block">
+                        {product.category || 'Product'}
+                      </span>
+                      <h3 className="font-sans font-bold text-lg leading-tight mb-1 text-[#2a2a2a] group-hover:underline">
+                        {product.name}
+                      </h3>
+                      <p className="font-sans font-bold text-gray-900">{product.price}</p>
+                    </div>
+                  )}
+
+                  {isGlam && (
+                    <div className="absolute bottom-[10px] left-[-10px] bg-[#faf9f6] border border-[#d2b27b] p-3 shadow-md z-20 w-[130px] h-[95px] flex flex-col justify-between group-hover:translate-y-[-5px] transition-transform duration-300">
+                      <div>
+                        <div className="text-[8px] uppercase tracking-[0.2em] font-bold text-[#8e95a1] mb-1 truncate">
+                          Featured
+                        </div>
+                        <div className="font-serif text-[13px] text-[#2c3338] leading-tight line-clamp-2">
+                          {product.name}
+                        </div>
+                      </div>
+                      <div className="text-[#8b1527] font-bold text-[12px]">
+                        {product.price}
+                      </div>
+                    </div>
+                  )}
                 </Link>
               </motion.div>
             ))}

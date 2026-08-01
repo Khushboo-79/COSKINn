@@ -4,11 +4,12 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCurrency } from '../../context/CurrencyContext';
 import { Menu, Search, ShoppingBag, User, Heart, Droplets, Sparkles, X, Globe, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   const { mode, toggleMode } = useTheme();
   const { setIsCartOpen, cartCount } = useCart();
   const { wishlistCount } = useWishlist();
@@ -17,6 +18,12 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
+
+  const handleToggle = () => {
+    toggleMode();
+    navigate('/');
+    window.scrollTo(0, 0);
+  };
 
   const navLinks = [
     { name: 'Shop', path: '/collections' },
@@ -93,16 +100,16 @@ const Header: React.FC = () => {
               <Link to="/account" className={`hidden sm:block ${isGlam ? 'icon-hover-glam' : 'icon-hover-skin'}`}>
                 <User size={22} strokeWidth={1.5} />
               </Link>
-              <Link to="/wishlist" className={`hidden sm:block relative ${isGlam ? 'icon-hover-glam' : 'icon-hover-skin'}`}>
-                <Heart size={22} strokeWidth={1.5} />
-                {wishlistCount > 0 && (
-                  <span className={`absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full text-white ${
-                    isGlam ? 'bg-[#7a1b26]' : 'bg-[#ff9aa8]'
-                  }`}>
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
+              {!isGlam && (
+                <Link to="/wishlist" className={`hidden sm:block relative icon-hover-skin`}>
+                  <Heart size={22} strokeWidth={1.5} />
+                  {wishlistCount > 0 && (
+                    <span className={`absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full text-white bg-[#ff9aa8]`}>
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+              )}
               <button 
                 className={`relative ${isGlam ? 'icon-hover-glam' : 'icon-hover-skin'}`}
                 onClick={() => setIsCartOpen(true)}
@@ -179,7 +186,7 @@ const Header: React.FC = () => {
               className={`hidden sm:flex relative items-center h-[38px] rounded-full cursor-pointer px-[16px] ml-2 transition-colors duration-500 border ${
                 !isGlam ? 'bg-[#f8f6f6] border-[#f0d6df]' : 'bg-[#f4efe8] border-[#e2d5c3]'
               }`}
-              onClick={toggleMode}
+              onClick={handleToggle}
             >
               <span className={`text-[10px] font-bold tracking-[0.15em] transition-colors duration-500 ${!isGlam ? 'text-[#f38ba5]' : 'text-[#8a8a8a]'}`}>
                 SKIN
@@ -249,10 +256,10 @@ const Header: React.FC = () => {
               <div className="pt-4 mt-2 border-t border-gray-100 flex items-center justify-between px-4">
                 <span className="text-[13px] font-bold text-gray-500 uppercase tracking-wider">Theme</span>
                 <div 
-                  className={`flex relative items-center h-[38px] rounded-full cursor-pointer px-[16px] transition-colors duration-500 border ${
+                  className={`relative flex items-center h-[42px] rounded-full cursor-pointer px-[18px] transition-colors duration-500 border w-fit ${
                     !isGlam ? 'bg-[#f8f6f6] border-[#f0d6df]' : 'bg-[#f4efe8] border-[#e2d5c3]'
                   }`}
-                  onClick={() => { toggleMode(); setIsMenuOpen(false); }}
+                  onClick={() => { navigate('/'); window.scrollTo(0, 0); handleToggle(); setIsMenuOpen(false); }}
                 >
                   <span className={`text-[10px] font-bold tracking-[0.15em] transition-colors duration-500 ${!isGlam ? 'text-[#f38ba5]' : 'text-[#8a8a8a]'}`}>
                     SKIN

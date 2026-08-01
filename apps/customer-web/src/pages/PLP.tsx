@@ -10,6 +10,8 @@ import FilterSidebar from '../components/shop/FilterSidebar';
 import { getProductsByTheme } from '../data/dummyData';
 import type { Product } from '../data/dummyData';
 
+import { getAllProducts } from '../data/products';
+
 const PLP: React.FC = () => {
   const { category } = useParams<{ category: string }>();
   const { mode } = useTheme();
@@ -20,11 +22,14 @@ const PLP: React.FC = () => {
   const isGlam = mode === 'glam';
   
   const fromSection = location.state?.from === 'bestsellers' ? 'bestsellers' : 'shop-by-category';
-  const backText = fromSection === 'bestsellers' ? 'Back to bestsellers' : 'Back to categories';
+  const backText = fromSection === 'bestsellers' ? 'Back to bestsellers' : 'Back to collection';
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const pageTitle = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Shop all';
+  const subtitle = isGlam ? "Discover the collection" : "Pick your flavour";
   
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   // Filtering state
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
 
@@ -46,7 +51,7 @@ const PLP: React.FC = () => {
   const handleQuickAdd = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart({ id: product.id.toString(), name: product.name, price: product.price, image: product.images[0], quantity: 1 });
+    addToCart({ id: product.id.toString(), name: product.name, price: product.price, image: product.image, quantity: 1 });
     
     // Show toast
     setToastMessage(`Added ${product.name} to cart`);
@@ -55,11 +60,10 @@ const PLP: React.FC = () => {
     }, 3000);
   };
 
-  // Use the exact wording from the reference site
-  const pageTitle = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Shop all';
-  const subtitle = isGlam ? "Discover the collection" : "Pick your flavour";
-
-  const allProducts = getProductsByTheme(mode);
+  let allProducts = getAllProducts(isGlam);
+  if (category) {
+    allProducts = allProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  }
 
   // Apply filters
   const filteredProducts = allProducts.filter(product => {
@@ -77,18 +81,6 @@ const PLP: React.FC = () => {
         return false;
       });
       if (!priceMatches) return false;
-    }
-
-    // Check Skin Type
-    if (selectedFilters['Skin Type'] && selectedFilters['Skin Type'].length > 0) {
-      const hasSkinType = product.skinTypes.some(type => selectedFilters['Skin Type'].includes(type));
-      if (!hasSkinType && !product.skinTypes.includes('All')) return false;
-    }
-
-    // Check Concern
-    if (selectedFilters['Concern'] && selectedFilters['Concern'].length > 0) {
-      const hasConcern = product.concerns.some(concern => selectedFilters['Concern'].includes(concern));
-      if (!hasConcern) return false;
     }
 
     return true;
@@ -166,36 +158,15 @@ const PLP: React.FC = () => {
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                   className="group cursor-pointer"
                 >
-                  <Link to={`/product/${product.id}`} className="block">
-                    <div className="relative aspect-[4/5] rounded-[24px] overflow-hidden bg-gray-100 mb-4">
+                  <Link to={`/product/${product.id}`} className="block h-full relative group cursor-pointer">
+                    {/* Image Container */}
+                    <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[24px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
                       <img 
-                      src={product.images[0]} 
+                      src={product.image} 
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                    
-                    {/* Wishlist Button */}
-                    <motion.button
-                      whileTap={{ scale: 0.7 }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (isInWishlist(product.id.toString())) {
-                          removeFromWishlist(product.id.toString());
-                        } else {
-                            addToWishlist({ id: product.id.toString(), name: product.name, price: formatPrice(product.price), image: product.images[0], category: product.category });
-                        }
-                      }}
-                      className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:bg-white text-gray-500 hover:text-red-500 transition-colors"
-                    >
-                      <motion.div
-                        animate={{ scale: isInWishlist(product.id.toString()) ? [1, 1.4, 1] : 1 }}
-                        transition={{ duration: 0.4, type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <Heart size={16} fill={isInWishlist(product.id.toString()) ? "currentColor" : "none"} className={isInWishlist(product.id.toString()) ? "text-red-500" : ""} />
-                      </motion.div>
-                    </motion.button>
 
                     {/* Offers / Badges Tag */}
                     {product.badges && product.badges.length > 0 && (
@@ -219,20 +190,60 @@ const PLP: React.FC = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">{product.category}</span>
-                      <div className="flex items-center text-xs font-bold text-gray-700">
-                        <Star size={12} className={isGlam ? 'text-[#7a1b26] mr-1' : 'text-yellow-400 mr-1'} fill="currentColor" />
-                        {product.rating} <span className="text-gray-400 font-normal ml-1">({product.reviews})</span>
+                  {!isGlam && (
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">{product.category}</span>
+                        <div className="flex items-center text-xs font-bold text-gray-700">
+                          <Star size={12} className="text-yellow-400 mr-1" fill="currentColor" />
+                          {product.rating} <span className="text-gray-400 font-normal ml-1">({product.reviews})</span>
+                        </div>
+                      </div>
+                      <h3 className="font-sans font-bold text-lg leading-tight mb-1 text-[#2a2a2a] group-hover:underline">
+                        {product.name}
+                      </h3>
+                      <p className="font-sans font-bold text-gray-900">{formatPrice(product.price)}</p>
+                    </div>
+                  )}
+
+                  {isGlam && (
+                    <div className="absolute bottom-[10px] left-[-10px] bg-[#faf9f6] border border-[#d2b27b] p-3 shadow-md z-20 w-[130px] h-[95px] flex flex-col justify-between group-hover:translate-y-[-5px] transition-transform duration-300">
+                      <div>
+                        <div className="text-[8px] uppercase tracking-[0.2em] font-bold text-[#8e95a1] mb-1 truncate">
+                          {product.badges && product.badges.length > 0 ? product.badges[0] : 'Featured'}
+                        </div>
+                        <div className="font-serif text-[13px] text-[#2c3338] leading-tight line-clamp-2">
+                          {product.name}
+                        </div>
+                      </div>
+                      <div className="text-[#8b1527] font-bold text-[12px]">
+                        {formatPrice(product.price)}
                       </div>
                     </div>
-                    <h3 className={`font-bold text-lg leading-tight mb-1 text-[#2a2a2a] group-hover:underline ${isGlam ? 'font-serif' : 'font-sans'}`}>
-                      {product.name}
-                    </h3>
-                    <p className="font-bold text-gray-900">{formatPrice(product.price)}</p>
-                  </div>
+                  )}
                   </Link>
+
+                  {/* Wishlist Button */}
+                  <motion.button
+                    whileTap={{ scale: 0.7 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (isInWishlist(product.id.toString())) {
+                        removeFromWishlist(product.id.toString());
+                      } else {
+                        addToWishlist({ id: product.id.toString(), name: product.name, price: formatPrice(product.price), image: product.image, category: product.category });
+                      }
+                    }}
+                    className="absolute top-3 right-3 z-30 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:bg-white text-gray-500 hover:text-red-500 transition-colors"
+                  >
+                    <motion.div
+                      animate={{ scale: isInWishlist(product.id.toString()) ? [1, 1.4, 1] : 1 }}
+                      transition={{ duration: 0.4, type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <Heart size={16} fill={isInWishlist(product.id.toString()) ? "currentColor" : "none"} className={isInWishlist(product.id.toString()) ? "text-red-500" : ""} />
+                    </motion.div>
+                  </motion.button>
                 </motion.div>
               ))}
             </div>
