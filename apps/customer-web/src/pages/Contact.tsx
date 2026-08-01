@@ -2,10 +2,12 @@ import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Mail, Phone, MapPin, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Contact: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
+  const pageRef = useScrollReveal<HTMLDivElement>();
 
   const faqs = [
     {
@@ -23,20 +25,36 @@ const Contact: React.FC = () => {
   ];
 
   return (
-    <div className={`min-h-screen pt-12 pb-24 transition-colors duration-500 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
+    <div ref={pageRef} className={`min-h-screen pt-12 pb-24 transition-colors duration-500 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-24">
-          <p className={`text-sm font-bold uppercase tracking-widest mb-4 ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
-            We're here to help
-          </p>
-          <h1 className={`text-4xl md:text-6xl font-extrabold mb-6 text-[#2a2a2a] ${isGlam ? 'font-serif' : 'font-display'}`}>
-            Contact Us
-          </h1>
-          <p className="text-gray-500 font-medium text-lg">
-            Have a question about a product, your order, or just want to say hi? Drop us a line below.
-          </p>
+        <div className="flex flex-col md:flex-row items-center gap-12 mb-16 md:mb-24">
+          <div className="text-center md:text-left md:w-1/2 max-w-2xl mx-auto scroll-reveal scroll-reveal-up">
+            <p className={`text-sm font-bold uppercase tracking-widest mb-4 ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
+              We're here to help
+            </p>
+            <h1 className={`text-4xl md:text-6xl font-extrabold mb-6 text-[#2a2a2a] ${isGlam ? 'font-serif' : 'font-display'}`}>
+              Contact Us
+            </h1>
+            <p className="text-gray-500 font-medium text-lg max-w-lg md:mx-0 mx-auto">
+              Have a question about a product, your order, or just want to say hi? Drop us a line below.
+            </p>
+          </div>
+          <div className="w-full md:w-1/2 scroll-reveal scroll-reveal-right">
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="relative aspect-[16/9] md:aspect-[4/3] rounded-[32px] overflow-hidden shadow-xl"
+            >
+              <img 
+                src={isGlam ? 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951' : 'https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=800'}
+                alt="Contact Us"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
 
@@ -59,7 +77,7 @@ const Contact: React.FC = () => {
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
             
             {/* Left: Form */}
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-1/2 scroll-reveal scroll-reveal-left">
             <div className={`p-8 md:p-12 rounded-[32px] border ${isGlam ? 'bg-white border-[#e5b376]/20 shadow-xl shadow-[#e5b376]/5' : 'bg-white border-[#ffe4e8] shadow-xl shadow-[#ff9aa8]/5'}`}>
               <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -101,7 +119,7 @@ const Contact: React.FC = () => {
             
             {/* Contact Info */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div>
+              <div className="scroll-reveal scroll-reveal-up">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${isGlam ? 'bg-[#7a1b26]/10 text-[#7a1b26]' : 'bg-[#ff9aa8]/10 text-[#ff9aa8]'}`}>
                   <Mail size={24} />
                 </div>

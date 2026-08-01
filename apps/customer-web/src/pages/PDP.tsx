@@ -7,7 +7,9 @@ import { useCurrency } from '../context/CurrencyContext';
 import { ArrowLeft, Star, Heart, Check, ChevronDown, ChevronUp, Play, ShoppingBag, ShieldCheck, Truck, RotateCcw, Droplet, Sparkles, MessageCircle, Leaf } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProductById, getProductsByTheme } from '../data/dummyData';
-import type { Product } from '../data/dummyData';
+import type { Product as DummyProduct } from '../data/dummyData';
+import { getAllProducts } from '../data/products';
+import type { Product } from '../data/products';
 
 const PDP: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +19,7 @@ const PDP: React.FC = () => {
   const { formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
 
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<DummyProduct | null>(null);
   const [activeMedia, setActiveMedia] = useState<{ type: 'image' | 'video', url: string } | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState<string | null>('ingredients');
@@ -28,19 +30,49 @@ const PDP: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      const p = getProductById(parseInt(id));
+      // Find in our new products.ts
+      const allProducts = getAllProducts(isGlam);
+      const foundProduct = allProducts.find(p => p.id.toString() === id);
+      const p = foundProduct || allProducts[0];
+      
+      // Map to DummyProduct structure for the rich UI
       if (p) {
-        setProduct(p);
-        setActiveMedia({ type: 'image', url: p.images[0] });
+        const mappedProduct: DummyProduct = {
+          id: p.id,
+          name: p.name,
+          subtitle: isGlam ? 'Luxurious Collection' : 'Fresh Glow',
+          category: p.category,
+          price: p.price,
+          rating: p.rating,
+          reviews: p.reviews,
+          theme: isGlam ? 'glam' : 'skin',
+          badges: p.badge ? [p.badge] : [],
+          images: [p.image, p.image2 || p.image],
+          shortDescription: p.description || (isGlam ? 'A decadent, velvet-finish product infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow.' : 'A juicy, fruit-forward product packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.'),
+          ingredients: [
+            { name: isGlam ? 'Gold Leaf' : 'Peach Extract', description: 'Nourishes and revitalizes.', icon: '✨' },
+            { name: 'Hyaluronic Acid', description: 'Deeply hydrates and plumps.', icon: '💧' }
+          ],
+          usage: p.howToUse ? [p.howToUse] : ['Apply 2-3 drops to clean, dry skin.', 'Massage gently until absorbed.'],
+          skinTypes: ['All', 'Dry', 'Combination'],
+          concerns: ['Dullness', 'Uneven Texture'],
+          benefits: ['Instantly plumps and hydrates', 'Leaves a non-sticky, dewy finish'],
+          textureImage: p.image2 || p.image,
+          fullIngredientsList: p.ingredients || 'Water/Aqua/Eau, Glycerin, Niacinamide, Hyaluronic Acid, Squalane, Panthenol, Fragrance (Parfum).',
+          faqs: [],
+          customerReviews: []
+        };
+        setProduct(mappedProduct);
+        setActiveMedia({ type: 'image', url: mappedProduct.images[0] });
       }
     }
-  }, [id]);
+  }, [id, isGlam]);
 
   if (!product) {
     return <div className="min-h-screen flex items-center justify-center">Product not found.</div>;
   }
 
-  const crossSellProducts = getProductsByTheme(mode).filter(p => p.id !== product.id).slice(0, 4);
+  const crossSellProducts = getAllProducts(isGlam).filter(p => p.id !== product.id).slice(0, 4);
 
   const handleAddToCart = () => {
     addToCart({
@@ -512,7 +544,7 @@ const PDP: React.FC = () => {
                 <Link to={`/product/${p.id}`} key={p.id} className="group cursor-pointer">
                   <div className="relative aspect-[4/5] rounded-[24px] overflow-hidden bg-gray-100 mb-4">
                     <img 
-                      src={p.images[0]} 
+                      src={p.image} 
                       alt={p.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

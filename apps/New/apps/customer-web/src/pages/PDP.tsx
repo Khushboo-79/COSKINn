@@ -6,6 +6,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { ArrowLeft, Star, Heart, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getAllProducts } from '../data/products';
 
 const PDP: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,25 +20,22 @@ const PDP: React.FC = () => {
   const [activeAccordion, setActiveAccordion] = useState<string | null>('description');
   const [added, setAdded] = useState(false);
 
-  // Mock product data based on theme
+  const allProducts = getAllProducts(isGlam);
+  const foundProduct = allProducts.find(p => p.id.toString() === id);
+  const fallbackProduct = allProducts[0];
+  const productData = foundProduct || fallbackProduct;
+
   const product = {
-    name: isGlam ? 'Midnight Elixir Serum' : 'Peachy Glow Vitamin C Serum',
-    price: 3499,
-    rating: 4.8,
-    reviews: 1284,
-    description: isGlam 
-      ? 'A decadent, velvet-finish serum infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow while you sleep.' 
-      : 'A juicy, fruit-forward serum packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.',
-    ingredients: isGlam 
+    ...productData,
+    id: productData.id.toString(),
+    description: productData.description || (isGlam 
+      ? 'A decadent, velvet-finish product infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow.' 
+      : 'A juicy, fruit-forward product packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.'),
+    ingredients: productData.ingredients || (isGlam 
       ? 'Aqua, Rosa Damascena Flower Water, Gold leaf, Niacinamide, Squalane, Peptides, Parfum.' 
-      : 'Water, Peach Extract, Ascorbic Acid (Vitamin C), Hyaluronic Acid, Glycerin, Orange Peel Oil.',
-    howToUse: 'Apply 2-3 drops to clean, dry skin. Massage gently until absorbed. Follow with moisturizer.',
-    image1: isGlam 
-      ? 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80'
-      : 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800',
-    image2: isGlam 
-      ? 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&q=80'
-      : 'https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=800'
+      : 'Water, Peach Extract, Ascorbic Acid (Vitamin C), Hyaluronic Acid, Glycerin, Orange Peel Oil.'),
+    howToUse: productData.howToUse || 'Apply 2-3 drops to clean, dry skin. Massage gently until absorbed. Follow with moisturizer.',
+    image2: productData.image2 || productData.image
   };
 
   const handleAddToCart = () => {
@@ -45,7 +43,7 @@ const PDP: React.FC = () => {
       id: id || '1',
       name: product.name,
       price: product.price,
-      image: product.image1,
+      image: product.image,
       quantity: quantity
     });
     setAdded(true);
@@ -73,11 +71,12 @@ const PDP: React.FC = () => {
           <div className="w-full md:w-1/2 flex flex-col gap-4">
             <div className={`w-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-[24px] lg:rounded-[32px] overflow-hidden bg-gray-100 ${isGlam ? 'shadow-md border border-[#e5b376]/20' : ''}`}>
               <motion.img 
-                key={product.image1}
+                key={product.image}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                src={product.image1} 
+                src={product.image} 
                 alt={product.name} 
                 className="w-full h-full object-cover" 
               />
@@ -87,7 +86,7 @@ const PDP: React.FC = () => {
                 <img src={product.image2} alt="Detail" className="w-full h-full object-cover" />
               </div>
               <div className="w-full aspect-square rounded-[16px] lg:rounded-[24px] overflow-hidden bg-gray-100">
-                <img src={product.image1} alt="Texture" className="w-full h-full object-cover" />
+                <img src={product.image} alt="Texture" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>

@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 
 export interface CartItem {
   id: string;
@@ -23,20 +25,26 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const addToCart = (newItem: CartItem) => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
     setCartItems(prev => {
       const existing = prev.find(item => item.id === newItem.id);
       if (existing) {
-        return prev.map(item =>
-          item.id === newItem.id ? { ...item, quantity: item.quantity + newItem.quantity } : item
+        return prev.map(item => 
+          item.id === newItem.id 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
       }
-      return [...prev, newItem];
+      return [...prev, { ...newItem, quantity: 1 }];
     });
-    setIsCartOpen(true);
   };
 
   const removeFromCart = (id: string) => {
