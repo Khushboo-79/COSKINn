@@ -1227,19 +1227,24 @@ function SettingsTab() {
   const [faqOpen, setFaqOpen] = useState(null);
 
   // Save Account Profile
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
     if (!profileName.trim()) {
       alert('Name cannot be empty.');
       return;
     }
-    updateUserProfile({
-      name: profileName,
-      mobile: profileMobile,
-      email: profileEmail,
-      avatarUrl: previewPhoto
-    });
-    alert('✓ Profile settings saved successfully.');
+    try {
+      await updateUserProfile({
+        name: profileName,
+        mobile: profileMobile,
+        email: profileEmail,
+        avatarUrl: previewPhoto
+      });
+      alert('✓ Profile settings saved successfully.');
+    } catch (error) {
+      console.error(error);
+      alert('Failed to save profile settings.');
+    }
   };
 
   const handlePhotoUpload = (e) => {
@@ -1250,6 +1255,19 @@ function SettingsTab() {
         setPreviewPhoto(reader.result);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  // Privacy Settings Handler
+  const handlePrivacyToggle = async (key, value) => {
+    try {
+      await apiClient.post('/compliance/consent', { [key]: value });
+      if (key === 'recommendationsEnabled') setRecommendationsEnabled(value);
+      if (key === 'dataSharingEnabled') setDataSharingEnabled(value);
+      if (key === 'cookiesAccepted') setCookiesAccepted(value);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update privacy settings. Please try again.');
     }
   };
 
@@ -1344,20 +1362,31 @@ function SettingsTab() {
     setNewBank({ name: '', accNo: '' });
   };
 
-  const handleSupportSubmit = (e) => {
+  const handleSupportSubmit = async (e) => {
     e.preventDefault();
     if (!supportMsg.subject.trim() || !supportMsg.message.trim()) {
       alert('Please fill in both subject and message.');
       return;
     }
-    alert('✓ Your support request has been received. Our team will contact you shortly.');
-    setSupportMsg({ subject: '', message: '' });
+    try {
+      await apiClient.post('/support/contact', {
+        subject: supportMsg.subject,
+        message: supportMsg.message
+      });
+      alert('✓ Your support request has been received. Our team will contact you shortly.');
+      setSupportMsg({ subject: '', message: '' });
+    } catch (err) {
+      console.error(err);
+      alert('Failed to send support request. Please try again later.');
+    }
   };
 
   const subSectionsList = [
     { id: 'account', label: 'Account Settings', icon: User },
+    { id: 'security', label: 'Security', icon: Shield },
     { id: 'notifications', label: 'Notification Preferences', icon: Bell },
-    { id: 'privacy', label: 'Privacy & Data', icon: Key }
+    { id: 'privacy', label: 'Privacy Policy', icon: Key },
+    { id: 'help', label: 'Help & Support', icon: HelpCircle }
   ];
 
   return (
@@ -1446,6 +1475,45 @@ function SettingsTab() {
         )}
 
 
+        {/* SECURITY VIEW */}
+        {subSection === 'security' && (
+          <div className="flex flex-col gap-6 font-sans">
+            <h3 className="text-xl font-heading font-medium text-black border-b border-gray-50 pb-2">Security</h3>
+            
+            <div className="flex items-center justify-between p-4 border border-pink-100/30 rounded-2xl bg-pink-50/5">
+              <div>
+                <p className="text-sm font-bold text-black">Two-Factor Authentication (OTP)</p>
+                <p className="text-xs text-gray-500 mt-0.5">Require OTP verification when logging in from new devices.</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked={otpVerifyEnabled} onChange={(e) => setOtpVerifyEnabled(e.target.checked)} className="sr-only peer" />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF0069]"></div>
+              </label>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-bold text-black mb-3">Active Devices</h4>
+              <div className="flex flex-col gap-3">
+                {devices.map(device => (
+                  <div key={device.id} className="flex justify-between items-center p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <Laptop size={18} className="text-gray-400" />
+                      <div>
+                        <p className="text-sm font-semibold text-black">{device.name}</p>
+                        <p className="text-xs text-gray-500">{device.status}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => handleRevokeDevice(device.id)} className="text-xs font-bold text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors">
+                      Revoke
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+
         {/* NOTIFICATIONS PREFERENCES VIEW */}
         {subSection === 'notifications' && (
           <div className="flex flex-col gap-6 font-sans">
@@ -1484,7 +1552,28 @@ function SettingsTab() {
         {/* PRIVACY & DATA VIEW */}
         {subSection === 'privacy' && (
           <div className="flex flex-col gap-6 font-sans">
-            <h3 className="text-xl font-heading font-medium text-black border-b border-gray-50 pb-2">Privacy & Data Control</h3>
+            <h3 className="text-xl font-heading font-medium text-black border-b border-gray-50 pb-2">Privacy Policy & Data Control</h3>
+
+            <div className="p-5 border border-pink-100 bg-pink-50/30 rounded-2xl">
+              <h4 className="text-sm font-bold text-black mb-3">COSKINn Privacy Policy</h4>
+              <div className="h-48 overflow-y-auto pr-2 text-xs text-gray-600 leading-relaxed custom-scrollbar space-y-3">
+                <p>
+                  <strong>1. Data Collection:</strong> We collect information such as your name, email, phone number, and shipping address when you create an account or place an order. We also collect browsing behavior to offer tailored skincare and cosmetics recommendations.
+                </p>
+                <p>
+                  <strong>2. Use of Information:</strong> The collected data is used exclusively to process your orders, deliver products securely, provide customer support, and enhance your shopping experience on our platform.
+                </p>
+                <p>
+                  <strong>3. Data Protection:</strong> We employ industry-standard encryption protocols to protect your personal data. Payment transactions are processed securely through certified partners, and we do not store your credit card details on our servers.
+                </p>
+                <p>
+                  <strong>4. Third-Party Sharing:</strong> COSKINn strictly respects your privacy. We do not sell, rent, or share your personal data with third-party advertisers. Data is only shared with trusted logistic partners (like ShadowFox) strictly for order fulfillment.
+                </p>
+                <p>
+                  <strong>5. Your Rights:</strong> You retain full control over your data. You can download a copy of your personal data or request permanent deletion of your account at any time from this privacy panel.
+                </p>
+              </div>
+            </div>
 
             <div className="flex items-center justify-between p-4 border border-pink-100/30 rounded-2xl bg-pink-50/5">
               <div>
@@ -1492,7 +1581,7 @@ function SettingsTab() {
                 <p className="text-xs text-gray-500 mt-0.5">Allow tracking of skincare preferences to show tailored matches.</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" checked={recommendationsEnabled} onChange={(e) => setRecommendationsEnabled(e.target.checked)} className="sr-only peer" />
+                <input type="checkbox" checked={recommendationsEnabled} onChange={(e) => handlePrivacyToggle('recommendationsEnabled', e.target.checked)} className="sr-only peer" />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF0069]"></div>
               </label>
             </div>
@@ -1503,7 +1592,7 @@ function SettingsTab() {
                 <p className="text-xs text-gray-500 mt-0.5">Share usage insights with partners to improve cosmetics formulations.</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" checked={dataSharingEnabled} onChange={(e) => setDataSharingEnabled(e.target.checked)} className="sr-only peer" />
+                <input type="checkbox" checked={dataSharingEnabled} onChange={(e) => handlePrivacyToggle('dataSharingEnabled', e.target.checked)} className="sr-only peer" />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF0069]"></div>
               </label>
             </div>
@@ -1514,23 +1603,9 @@ function SettingsTab() {
                 <p className="text-xs text-gray-500 mt-0.5">Toggle tracking scripts and browser pixel storage.</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" checked={cookiesAccepted} onChange={(e) => setCookiesAccepted(e.target.checked)} className="sr-only peer" />
+                <input type="checkbox" checked={cookiesAccepted} onChange={(e) => handlePrivacyToggle('cookiesAccepted', e.target.checked)} className="sr-only peer" />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF0069]"></div>
               </label>
-            </div>
-
-            <div className="border border-pink-100 bg-pink-50/20 rounded-2xl p-5 mt-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <p className="text-sm font-bold text-black">Download My Data Package</p>
-                <p className="text-xs text-gray-500 mt-0.5">Download a detailed copy of all settings, profiles, and saved details in JSON format.</p>
-              </div>
-              <button
-                type="button"
-                onClick={handleDownloadData}
-                className="px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#FF0069] to-[#FF6B6B] hover:opacity-95 rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0"
-              >
-                <Download size={14} /> Download Data
-              </button>
             </div>
 
             <div className="border border-red-100 bg-red-50/20 rounded-2xl p-5 mt-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -1539,15 +1614,68 @@ function SettingsTab() {
                 <p className="text-xs text-gray-500 mt-0.5">Request account deletion. This action is permanent and cannot be undone.</p>
               </div>
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (window.confirm("Are you sure you want to request permanent account deletion? This action cannot be undone.")) {
-                    alert("✓ Account deletion request submitted. Our team will verify and process it within 72 hours.");
+                    try {
+                      await apiClient.post('/compliance/data-request', { requestType: 'DELETE' });
+                      alert("✓ Account deletion request submitted. Our team will verify and process it within 72 hours.");
+                    } catch (err) {
+                      console.error(err);
+                      alert("Failed to submit account deletion request. Please try again.");
+                    }
                   }
                 }}
                 className="px-5 py-2.5 text-xs font-bold text-red-500 border border-red-500 hover:bg-red-50 rounded-xl transition-all flex items-center gap-1.5 shrink-0"
               >
                 Request Deletion
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* HELP & SUPPORT VIEW */}
+        {subSection === 'help' && (
+          <div className="flex flex-col gap-6 font-sans">
+            <h3 className="text-xl font-heading font-medium text-black border-b border-gray-50 pb-2">Help & Support</h3>
+            
+            <div className="grid grid-cols-1 gap-4 mb-2">
+              <div className="p-4 border border-gray-100 rounded-2xl bg-gray-50 flex items-start gap-3">
+                <Mail size={20} className="text-[#FF0069]" />
+                <div>
+                  <h4 className="text-sm font-bold text-black">Email Support</h4>
+                  <p className="text-xs text-gray-500 mt-1">We usually reply within 24 hours</p>
+                  <a href="mailto:support@coskinn.com" className="mt-2 text-xs font-bold text-[#FF0069] hover:underline block">support@coskinn.com</a>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-bold text-black mb-3">Send a Message</h4>
+              <form onSubmit={handleSupportSubmit} className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  placeholder="Subject"
+                  value={supportMsg.subject}
+                  onChange={(e) => setSupportMsg({...supportMsg, subject: e.target.value})}
+                  className="w-full py-2.5 px-4 border border-gray-300 rounded-xl outline-none focus:border-[#FF0069] text-sm"
+                />
+                <textarea
+                  placeholder="How can we help you?"
+                  rows="4"
+                  value={supportMsg.message}
+                  onChange={(e) => setSupportMsg({...supportMsg, message: e.target.value})}
+                  className="w-full py-2.5 px-4 border border-gray-300 rounded-xl outline-none focus:border-[#FF0069] text-sm resize-none"
+                ></textarea>
+                <button type="submit" className="w-full sm:w-auto self-start px-6 py-2.5 rounded-xl font-bold bg-[#FF0069] text-white hover:opacity-95 transition-all text-sm">
+                  Send Message
+                </button>
+              </form>
+            </div>
+            
+            <div className="mt-2">
+               <button onClick={() => navigate('/faqs')} className="text-sm font-bold text-[#FF0069] flex items-center gap-1 hover:underline">
+                 View all FAQs <ArrowUpRight size={16} />
+               </button>
             </div>
           </div>
         )}
