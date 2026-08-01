@@ -17,8 +17,38 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductReviews = createAsyncThunk(
+  'product/fetchProductReviews',
+  async (productId, { rejectWithValue }) => {
+    try {
+      console.log(`Fetching reviews for product ${productId}...`);
+      const response = await productService.getProductReviews(productId);
+      return response;
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchProductById = createAsyncThunk(
+  'product/fetchProductById',
+  async (productId, { rejectWithValue }) => {
+    try {
+      console.log(`Fetching product ${productId}...`);
+      const response = await productService.getProductById(productId);
+      return response;
+    } catch (error) {
+      console.error('Error fetching product by ID:', error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const initialState = {
   items: [], // Will hold the array of products
+  currentProduct: null, // Holds the currently viewed product
+  reviews: [], // Hold reviews for the current product
   loading: false,
   error: null,
 };
@@ -30,6 +60,10 @@ const productSlice = createSlice({
     clearProducts: (state) => {
       state.items = [];
       state.error = null;
+    },
+    clearCurrentProduct: (state) => {
+      state.currentProduct = null;
+      state.reviews = [];
     }
   },
   extraReducers: (builder) => {
@@ -52,6 +86,29 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Failed to fetch products';
         state.items = [];
+      })
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentProduct = action.payload?.data || action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch product details';
+      })
+      .addCase(fetchProductReviews.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProductReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reviews = action.payload?.data || action.payload || [];
+      })
+      .addCase(fetchProductReviews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch reviews';
       });
   },
 });

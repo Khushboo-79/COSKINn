@@ -1,7 +1,7 @@
 [
   {
     "id": 101,
-    "name": "COSKINn Sunscreen SPF 50",
+    "name": "Fairenne Sunscreen SPF 50",
     "originalPrice": 899,
     "price": 789,
     "discountBadge": "12% OFF",
@@ -36,13 +36,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "50ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 124
   },
   {
     "id": 102,
-    "name": "COSKINn Body Sunscreen SPF 50",
+    "name": "Fairenne Body Sunscreen SPF 50",
     "originalPrice": 1299,
     "price": 1099,
     "discountBadge": "15% OFF",
@@ -77,13 +77,13 @@
     "fragrance": "Subtle Coconut",
     "netQuantity": "150ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 85
   },
   {
     "id": 103,
-    "name": "COSKINn Tinted Sunscreen SPF 50",
+    "name": "Fairenne Tinted Sunscreen SPF 50",
     "originalPrice": 999,
     "price": 899,
     "discountBadge": "10% OFF",
@@ -118,13 +118,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "50ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 210
   },
   {
     "id": 1031,
-    "name": "COSKINn Matte Sunscreen SPF 50",
+    "name": "Fairenne Matte Sunscreen SPF 50",
     "originalPrice": 899,
     "price": 749,
     "discountBadge": "16% OFF",
@@ -159,13 +159,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "50ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 150
   },
   {
     "id": 1032,
-    "name": "COSKINn Dewy Sunscreen SPF 50",
+    "name": "Fairenne Dewy Sunscreen SPF 50",
     "originalPrice": 949,
     "price": 849,
     "discountBadge": "10% OFF",
@@ -200,13 +200,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "50ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 200
   },
   {
     "id": 1033,
-    "name": "COSKINn Mineral Sunscreen SPF 30",
+    "name": "Fairenne Mineral Sunscreen SPF 30",
     "originalPrice": 799,
     "price": 699,
     "discountBadge": "12% OFF",
@@ -241,13 +241,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "50ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 80
   },
   {
     "id": 1034,
-    "name": "COSKINn Water Resistant Sunscreen SPF 50",
+    "name": "Fairenne Water Resistant Sunscreen SPF 50",
     "originalPrice": 999,
     "price": 899,
     "discountBadge": "10% OFF",
@@ -282,13 +282,13 @@
     "fragrance": "Subtle Coconut",
     "netQuantity": "80ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 110
   },
   {
     "id": 1035,
-    "name": "COSKINn Invisible Sunscreen Primer SPF 50",
+    "name": "Fairenne Invisible Sunscreen Primer SPF 50",
     "originalPrice": 1099,
     "price": 949,
     "discountBadge": "13% OFF",
@@ -323,13 +323,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "40ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 250
   },
   {
     "id": 1036,
-    "name": "COSKINn Sunscreen Stick SPF 50",
+    "name": "Fairenne Sunscreen Stick SPF 50",
     "originalPrice": 899,
     "price": 799,
     "discountBadge": "11% OFF",
@@ -364,13 +364,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "20g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 180
   },
   {
     "id": 104,
-    "name": "COSKINn Gentle Cleanser",
+    "name": "Fairenne Gentle Cleanser",
     "originalPrice": 599,
     "price": 499,
     "discountBadge": "16% OFF",
@@ -405,13 +405,13 @@
     "fragrance": "Mild Floral",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 340
   },
   {
     "id": 105,
-    "name": "COSKINn Cleansing Balm",
+    "name": "Fairenne Cleansing Balm",
     "originalPrice": 899,
     "price": 719,
     "discountBadge": "20% OFF",
@@ -446,13 +446,13 @@
     "fragrance": "Subtle Citrus",
     "netQuantity": "80g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 150
   },
   {
     "id": 1051,
-    "name": "COSKINn Cleansing Balm Mini",
+    "name": "Fairenne Cleansing Balm Mini",
     "originalPrice": 399,
     "price": 299,
     "discountBadge": "25% OFF",
@@ -487,13 +487,13 @@
     "fragrance": "Subtle Citrus",
     "netQuantity": "25g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 120
   },
   {
     "id": 1052,
-    "name": "COSKINn Cleansing Balm Jumbo Pack",
+    "name": "Fairenne Cleansing Balm Jumbo Pack",
     "originalPrice": 1499,
     "price": 1199,
     "discountBadge": "20% OFF",
@@ -528,13 +528,13 @@
     "fragrance": "Subtle Citrus",
     "netQuantity": "150g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 80
   },
   {
     "id": 1053,
-    "name": "COSKINn Rose Infused Cleansing Balm",
+    "name": "Fairenne Rose Infused Cleansing Balm",
     "originalPrice": 999,
     "price": 799,
     "discountBadge": "20% OFF",
@@ -569,13 +569,13 @@
     "fragrance": "Natural Damask Rose",
     "netQuantity": "80g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 65
   },
   {
     "id": 1054,
-    "name": "COSKINn Charcoal Pore Cleansing Balm",
+    "name": "Fairenne Charcoal Pore Cleansing Balm",
     "originalPrice": 949,
     "price": 749,
     "discountBadge": "21% OFF",
@@ -610,13 +610,13 @@
     "fragrance": "Eucalyptus & Tea Tree",
     "netQuantity": "80g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 45
   },
   {
     "id": 1055,
-    "name": "COSKINn Matcha Soothing Cleansing Balm",
+    "name": "Fairenne Matcha Soothing Cleansing Balm",
     "originalPrice": 969,
     "price": 769,
     "discountBadge": "20% OFF",
@@ -651,13 +651,13 @@
     "fragrance": "Calming Green Tea",
     "netQuantity": "80g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 50
   },
   {
     "id": 1056,
-    "name": "COSKINn Cleansing Balm Double Duo",
+    "name": "Fairenne Cleansing Balm Double Duo",
     "originalPrice": 1798,
     "price": 1299,
     "discountBadge": "27% OFF",
@@ -692,13 +692,13 @@
     "fragrance": "Subtle Citrus",
     "netQuantity": "2 x 80g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 110
   },
   {
     "id": 1057,
-    "name": "COSKINn Cleansing Balm & Mist Set",
+    "name": "Fairenne Cleansing Balm & Mist Set",
     "originalPrice": 1398,
     "price": 1049,
     "discountBadge": "25% OFF",
@@ -734,13 +734,13 @@
     "fragrance": "Citrus & Strawberry",
     "netQuantity": "80g + 100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 75
   },
   {
     "id": 106,
-    "name": "COSKINn Lip Balm SPF",
+    "name": "Fairenne Lip Balm SPF",
     "originalPrice": 349,
     "price": 299,
     "discountBadge": "14% OFF",
@@ -775,13 +775,13 @@
     "fragrance": "Strawberry",
     "netQuantity": "4g",
     "shelfLife": "18 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 500
   },
   {
     "id": 107,
-    "name": "COSKINn Nourishing Hand Cream",
+    "name": "Fairenne Nourishing Hand Cream",
     "originalPrice": 499,
     "price": 439,
     "discountBadge": "12% OFF",
@@ -816,13 +816,13 @@
     "fragrance": "Rose & Vanilla",
     "netQuantity": "50g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 220
   },
   {
     "id": 108,
-    "name": "COSKINn Pocket Perfume",
+    "name": "Fairenne Pocket Perfume",
     "originalPrice": 399,
     "price": 349,
     "discountBadge": "12% OFF",
@@ -856,13 +856,13 @@
     "fragrance": "Floral Musk",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 180
   },
   {
     "id": 109,
-    "name": "COSKINn Face Mist",
+    "name": "Fairenne Face Mist",
     "originalPrice": 599,
     "price": 499,
     "discountBadge": "16% OFF",
@@ -897,13 +897,13 @@
     "fragrance": "Fresh Rose",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 290
   },
   {
     "id": 1091,
-    "name": "COSKINn Rose Glow Face Mist",
+    "name": "Fairenne Rose Glow Face Mist",
     "originalPrice": 699,
     "price": 549,
     "discountBadge": "21% OFF",
@@ -938,13 +938,13 @@
     "fragrance": "Fresh Rose",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 320
   },
   {
     "id": 1092,
-    "name": "COSKINn Aloe Vera Hydra Mist",
+    "name": "Fairenne Aloe Vera Hydra Mist",
     "originalPrice": 599,
     "price": 479,
     "discountBadge": "20% OFF",
@@ -979,13 +979,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 280
   },
   {
     "id": 1093,
-    "name": "COSKINn Vitamin C Brightening Mist",
+    "name": "Fairenne Vitamin C Brightening Mist",
     "originalPrice": 749,
     "price": 599,
     "discountBadge": "20% OFF",
@@ -1020,13 +1020,13 @@
     "fragrance": "Mild Citrus",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 190
   },
   {
     "id": 1094,
-    "name": "COSKINn Watermelon Glow Mist",
+    "name": "Fairenne Watermelon Glow Mist",
     "originalPrice": 649,
     "price": 499,
     "discountBadge": "23% OFF",
@@ -1061,13 +1061,13 @@
     "fragrance": "Fresh Watermelon",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 145
   },
   {
     "id": 1095,
-    "name": "COSKINn Green Tea Antioxidant Mist",
+    "name": "Fairenne Green Tea Antioxidant Mist",
     "originalPrice": 649,
     "price": 519,
     "discountBadge": "20% OFF",
@@ -1102,13 +1102,13 @@
     "fragrance": "Matcha Green Tea",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 210
   },
   {
     "id": 1096,
-    "name": "COSKINn Lavender Sleep Mist",
+    "name": "Fairenne Lavender Sleep Mist",
     "originalPrice": 699,
     "price": 549,
     "discountBadge": "21% OFF",
@@ -1143,13 +1143,13 @@
     "fragrance": "Organic Lavender",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 175
   },
   {
     "id": 1097,
-    "name": "COSKINn Travel Face Mist Mini",
+    "name": "Fairenne Travel Face Mist Mini",
     "originalPrice": 399,
     "price": 299,
     "discountBadge": "25% OFF",
@@ -1184,13 +1184,13 @@
     "fragrance": "Fresh Rose",
     "netQuantity": "30ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 420
   },
   {
     "id": 110,
-    "name": "COSKINn Overnight Mask",
+    "name": "Fairenne Overnight Mask",
     "originalPrice": 1299,
     "price": 1099,
     "discountBadge": "15% OFF",
@@ -1225,13 +1225,13 @@
     "fragrance": "Lavender Dream",
     "netQuantity": "50g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 115
   },
   {
     "id": 111,
-    "name": "COSKINn Under Eye Patches",
+    "name": "Fairenne Under Eye Patches",
     "originalPrice": 799,
     "price": 679,
     "discountBadge": "15% OFF",
@@ -1266,13 +1266,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "30 Pairs",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 160
   },
   {
     "id": 112,
-    "name": "COSKINn Daily Moisturiser",
+    "name": "Fairenne Daily Moisturiser",
     "originalPrice": 899,
     "price": 799,
     "discountBadge": "11% OFF",
@@ -1307,13 +1307,13 @@
     "fragrance": "Mild Fresh",
     "netQuantity": "50ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 450
   },
   {
     "id": 113,
-    "name": "COSKINn Hydrating Setting Spray",
+    "name": "Fairenne Hydrating Setting Spray",
     "originalPrice": 699,
     "price": 579,
     "discountBadge": "17% OFF",
@@ -1348,13 +1348,13 @@
     "fragrance": "Fresh Aloe",
     "netQuantity": "100ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 280
   },
   {
     "id": 114,
-    "name": "COSKINn Niacinamide Serum",
+    "name": "Fairenne Niacinamide Serum",
     "originalPrice": 1099,
     "price": 879,
     "discountBadge": "20% OFF",
@@ -1389,13 +1389,13 @@
     "fragrance": "Fragrance-Free",
     "netQuantity": "30ml",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 195
   },
   {
     "id": 201,
-    "name": "COSKINn Glow Essentials Gift Set",
+    "name": "Fairenne Glow Essentials Gift Set",
     "originalPrice": 2597,
     "price": 1999,
     "discountBadge": "23% OFF",
@@ -1411,7 +1411,7 @@
     ],
     "badge": "PERFECT GIFT",
     "shortDescription": "A curated trio featuring Niacinamide Serum, Gentle Cleanser, and Daily Moisturiser.",
-    "longDescription": "Give the gift of radiant skin. This beautifully packaged Glow Essentials Gift Set includes everything needed for a complete, brightening daily routine. Housed in a premium COSKINn luxury box with a beautiful ribbon finish.",
+    "longDescription": "Give the gift of radiant skin. This beautifully packaged Glow Essentials Gift Set includes everything needed for a complete, brightening daily routine. Housed in a premium Fairenne luxury box with a beautiful ribbon finish.",
     "benefits": [
       "Complete daily routine",
       "Brightens complexion",
@@ -1430,13 +1430,13 @@
     "fragrance": "Signature Fresh",
     "netQuantity": "3 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 150
   },
   {
     "id": 202,
-    "name": "COSKINn Hydration Ritual Gift Set",
+    "name": "Fairenne Hydration Ritual Gift Set",
     "originalPrice": 2597,
     "price": 1899,
     "discountBadge": "26% OFF",
@@ -1471,13 +1471,13 @@
     "fragrance": "Rose & Lavender",
     "netQuantity": "3 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 85
   },
   {
     "id": 203,
-    "name": "COSKINn Sun Protection Kit",
+    "name": "Fairenne Sun Protection Kit",
     "originalPrice": 2547,
     "price": 1799,
     "discountBadge": "29% OFF",
@@ -1512,13 +1512,13 @@
     "fragrance": "Subtle Coconut",
     "netQuantity": "3 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 200
   },
   {
     "id": 204,
-    "name": "COSKINn Everyday Essentials Kit",
+    "name": "Fairenne Everyday Essentials Kit",
     "originalPrice": 1997,
     "price": 1499,
     "discountBadge": "25% OFF",
@@ -1553,13 +1553,13 @@
     "fragrance": "Mild Floral",
     "netQuantity": "3 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 310
   },
   {
     "id": 205,
-    "name": "COSKINn Luxury Self-Care Box",
+    "name": "Fairenne Luxury Self-Care Box",
     "originalPrice": 3596,
     "price": 2699,
     "discountBadge": "25% OFF",
@@ -1594,13 +1594,13 @@
     "fragrance": "Calming Spa",
     "netQuantity": "4 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 50
   },
   {
     "id": 206,
-    "name": "COSKINn Travel Skincare Kit",
+    "name": "Fairenne Travel Skincare Kit",
     "originalPrice": 1899,
     "price": 1399,
     "discountBadge": "26% OFF",
@@ -1635,13 +1635,13 @@
     "fragrance": "Signature Fresh",
     "netQuantity": "4 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 180
   },
   {
     "id": 207,
-    "name": "COSKINn Glow & Repair Kit",
+    "name": "Fairenne Glow & Repair Kit",
     "originalPrice": 2997,
     "price": 2199,
     "discountBadge": "26% OFF",
@@ -1676,13 +1676,13 @@
     "fragrance": "Fresh Lavender",
     "netQuantity": "3 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 95
   },
   {
     "id": 208,
-    "name": "COSKINn Premium Beauty Box",
+    "name": "Fairenne Premium Beauty Box",
     "originalPrice": 4795,
     "price": 3499,
     "discountBadge": "27% OFF",
@@ -1710,20 +1710,20 @@
       "10% Niacinamide",
       "Hyaluronic Acid"
     ],
-    "howToUse": "Follow the enclosed COSKINn routine guide for optimal results.",
+    "howToUse": "Follow the enclosed Fairenne routine guide for optimal results.",
     "suitableSkinType": "All Skin Types",
     "skinConcerns": "Comprehensive Care",
     "texture": "Various",
     "fragrance": "Signature Fresh",
     "netQuantity": "5 Items",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 25
   },
   {
     "id": 301,
-    "name": "COSKINn Hydrating Cleanser",
+    "name": "Fairenne Hydrating Cleanser",
     "originalPrice": 899,
     "price": 699,
     "discountBadge": "22% OFF",
@@ -1771,7 +1771,7 @@
       },
       {
         "step": "Step 2",
-        "title": "Apply COSKINn Cleanser",
+        "title": "Apply Fairenne Cleanser",
         "desc": "Pump a coin-sized amount onto fingertips."
       },
       {
@@ -1839,34 +1839,34 @@
     "routine": [
       {
         "step": "Cleanser",
-        "product": "COSKINn Hydrating Cleanser"
+        "product": "Fairenne Hydrating Cleanser"
       },
       {
         "step": "Toner",
-        "product": "COSKINn Face Mist"
+        "product": "Fairenne Face Mist"
       },
       {
         "step": "Serum",
-        "product": "COSKINn Niacinamide Serum"
+        "product": "Fairenne Niacinamide Serum"
       },
       {
         "step": "Moisturiser",
-        "product": "COSKINn Daily Moisturiser"
+        "product": "Fairenne Daily Moisturiser"
       },
       {
         "step": "Sunscreen",
-        "product": "COSKINn Sunscreen SPF 50"
+        "product": "Fairenne Sunscreen SPF 50"
       }
     ],
     "texture": "Creamy Lotion",
     "netQuantity": "150 ml",
     "shelfLife": "24 Months",
     "countryOfOrigin": "India",
-    "manufacturedBy": "COSKINn Labs"
+    "manufacturedBy": "Fairenne Labs"
   },
   {
     "id": 302,
-    "name": "COSKINn Foaming Cleanser",
+    "name": "Fairenne Foaming Cleanser",
     "originalPrice": 799,
     "price": 649,
     "discountBadge": "18% OFF",
@@ -1914,7 +1914,7 @@
       },
       {
         "step": "Step 2",
-        "title": "Apply COSKINn Cleanser",
+        "title": "Apply Fairenne Cleanser",
         "desc": "Pump a coin-sized amount onto fingertips."
       },
       {
@@ -1966,34 +1966,34 @@
     "routine": [
       {
         "step": "Cleanser",
-        "product": "COSKINn Foaming Cleanser"
+        "product": "Fairenne Foaming Cleanser"
       },
       {
         "step": "Toner",
-        "product": "COSKINn Face Mist"
+        "product": "Fairenne Face Mist"
       },
       {
         "step": "Serum",
-        "product": "COSKINn Niacinamide Serum"
+        "product": "Fairenne Niacinamide Serum"
       },
       {
         "step": "Moisturiser",
-        "product": "COSKINn Daily Moisturiser"
+        "product": "Fairenne Daily Moisturiser"
       },
       {
         "step": "Sunscreen",
-        "product": "COSKINn Sunscreen SPF 50"
+        "product": "Fairenne Sunscreen SPF 50"
       }
     ],
     "texture": "Gel to Foam",
     "netQuantity": "150 ml",
     "shelfLife": "24 Months",
     "countryOfOrigin": "India",
-    "manufacturedBy": "COSKINn Labs"
+    "manufacturedBy": "Fairenne Labs"
   },
   {
     "id": 303,
-    "name": "COSKINn Gel Cleanser",
+    "name": "Fairenne Gel Cleanser",
     "originalPrice": 849,
     "price": 699,
     "discountBadge": "17% OFF",
@@ -2038,7 +2038,7 @@
       },
       {
         "step": "Step 2",
-        "title": "Apply COSKINn Cleanser",
+        "title": "Apply Fairenne Cleanser",
         "desc": "Pump a coin-sized amount onto fingertips."
       },
       {
@@ -2086,34 +2086,34 @@
     "routine": [
       {
         "step": "Cleanser",
-        "product": "COSKINn Gel Cleanser"
+        "product": "Fairenne Gel Cleanser"
       },
       {
         "step": "Toner",
-        "product": "COSKINn Face Mist"
+        "product": "Fairenne Face Mist"
       },
       {
         "step": "Serum",
-        "product": "COSKINn Niacinamide Serum"
+        "product": "Fairenne Niacinamide Serum"
       },
       {
         "step": "Moisturiser",
-        "product": "COSKINn Daily Moisturiser"
+        "product": "Fairenne Daily Moisturiser"
       },
       {
         "step": "Sunscreen",
-        "product": "COSKINn Sunscreen SPF 50"
+        "product": "Fairenne Sunscreen SPF 50"
       }
     ],
     "texture": "Clear Gel",
     "netQuantity": "150 ml",
     "shelfLife": "24 Months",
     "countryOfOrigin": "India",
-    "manufacturedBy": "COSKINn Labs"
+    "manufacturedBy": "Fairenne Labs"
   },
   {
     "id": 304,
-    "name": "COSKINn Brightening Cleanser",
+    "name": "Fairenne Brightening Cleanser",
     "originalPrice": 999,
     "price": 849,
     "discountBadge": "15% OFF",
@@ -2159,7 +2159,7 @@
       },
       {
         "step": "Step 2",
-        "title": "Apply COSKINn Cleanser",
+        "title": "Apply Fairenne Cleanser",
         "desc": "Pump a coin-sized amount onto fingertips."
       },
       {
@@ -2207,34 +2207,34 @@
     "routine": [
       {
         "step": "Cleanser",
-        "product": "COSKINn Brightening Cleanser"
+        "product": "Fairenne Brightening Cleanser"
       },
       {
         "step": "Toner",
-        "product": "COSKINn Face Mist"
+        "product": "Fairenne Face Mist"
       },
       {
         "step": "Serum",
-        "product": "COSKINn Niacinamide Serum"
+        "product": "Fairenne Niacinamide Serum"
       },
       {
         "step": "Moisturiser",
-        "product": "COSKINn Daily Moisturiser"
+        "product": "Fairenne Daily Moisturiser"
       },
       {
         "step": "Sunscreen",
-        "product": "COSKINn Sunscreen SPF 50"
+        "product": "Fairenne Sunscreen SPF 50"
       }
     ],
     "texture": "Creamy Gel",
     "netQuantity": "150 ml",
     "shelfLife": "24 Months",
     "countryOfOrigin": "India",
-    "manufacturedBy": "COSKINn Labs"
+    "manufacturedBy": "Fairenne Labs"
   },
   {
     "id": 305,
-    "name": "COSKINn Sensitive Cleanser",
+    "name": "Fairenne Sensitive Cleanser",
     "originalPrice": 899,
     "price": 749,
     "discountBadge": "16% OFF",
@@ -2280,7 +2280,7 @@
       },
       {
         "step": "Step 2",
-        "title": "Apply COSKINn Cleanser",
+        "title": "Apply Fairenne Cleanser",
         "desc": "Pump a coin-sized amount onto fingertips."
       },
       {
@@ -2332,34 +2332,34 @@
     "routine": [
       {
         "step": "Cleanser",
-        "product": "COSKINn Sensitive Cleanser"
+        "product": "Fairenne Sensitive Cleanser"
       },
       {
         "step": "Toner",
-        "product": "COSKINn Face Mist"
+        "product": "Fairenne Face Mist"
       },
       {
         "step": "Serum",
-        "product": "COSKINn Niacinamide Serum"
+        "product": "Fairenne Niacinamide Serum"
       },
       {
         "step": "Moisturiser",
-        "product": "COSKINn Daily Moisturiser"
+        "product": "Fairenne Daily Moisturiser"
       },
       {
         "step": "Sunscreen",
-        "product": "COSKINn Sunscreen SPF 50"
+        "product": "Fairenne Sunscreen SPF 50"
       }
     ],
     "texture": "Milky Lotion",
     "netQuantity": "150 ml",
     "shelfLife": "24 Months",
     "countryOfOrigin": "India",
-    "manufacturedBy": "COSKINn Labs"
+    "manufacturedBy": "Fairenne Labs"
   },
   {
     "id": 306,
-    "name": "COSKINn Acne Control Cleanser",
+    "name": "Fairenne Acne Control Cleanser",
     "originalPrice": 949,
     "price": 799,
     "discountBadge": "15% OFF",
@@ -2405,7 +2405,7 @@
       },
       {
         "step": "Step 2",
-        "title": "Apply COSKINn Cleanser",
+        "title": "Apply Fairenne Cleanser",
         "desc": "Pump a coin-sized amount onto fingertips."
       },
       {
@@ -2457,34 +2457,34 @@
     "routine": [
       {
         "step": "Cleanser",
-        "product": "COSKINn Acne Control Cleanser"
+        "product": "Fairenne Acne Control Cleanser"
       },
       {
         "step": "Toner",
-        "product": "COSKINn Face Mist"
+        "product": "Fairenne Face Mist"
       },
       {
         "step": "Serum",
-        "product": "COSKINn Niacinamide Serum"
+        "product": "Fairenne Niacinamide Serum"
       },
       {
         "step": "Moisturiser",
-        "product": "COSKINn Daily Moisturiser"
+        "product": "Fairenne Daily Moisturiser"
       },
       {
         "step": "Sunscreen",
-        "product": "COSKINn Sunscreen SPF 50"
+        "product": "Fairenne Sunscreen SPF 50"
       }
     ],
     "texture": "Gel",
     "netQuantity": "150 ml",
     "shelfLife": "24 Months",
     "countryOfOrigin": "India",
-    "manufacturedBy": "COSKINn Labs"
+    "manufacturedBy": "Fairenne Labs"
   },
   {
     "id": 1101,
-    "name": "COSKINn Strawberry Pocket Perfume",
+    "name": "Fairenne Strawberry Pocket Perfume",
     "originalPrice": 2140,
     "price": 1499,
     "discountBadge": "30% OFF",
@@ -2565,13 +2565,13 @@
     "fragrance": "Sweet Strawberry",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 120
   },
   {
     "id": 1102,
-    "name": "COSKINn Orange Pocket Perfume",
+    "name": "Fairenne Orange Pocket Perfume",
     "originalPrice": 2130,
     "price": 1599,
     "discountBadge": "25% OFF",
@@ -2647,13 +2647,13 @@
     "fragrance": "Fresh Orange",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 85
   },
   {
     "id": 1103,
-    "name": "COSKINn Mango Pocket Perfume",
+    "name": "Fairenne Mango Pocket Perfume",
     "originalPrice": 2165,
     "price": 1299,
     "discountBadge": "40% OFF",
@@ -2722,13 +2722,13 @@
     "fragrance": "Warm Mango",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 200
   },
   {
     "id": 1104,
-    "name": "COSKINn Blueberry Pocket Perfume",
+    "name": "Fairenne Blueberry Pocket Perfume",
     "originalPrice": 2530,
     "price": 1899,
     "discountBadge": "25% OFF",
@@ -2797,13 +2797,13 @@
     "fragrance": "Deep Blueberry",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 50
   },
   {
     "id": 1105,
-    "name": "COSKINn Pomegranate Pocket Perfume",
+    "name": "Fairenne Pomegranate Pocket Perfume",
     "originalPrice": 1999,
     "price": 1499,
     "discountBadge": "25% OFF",
@@ -2872,13 +2872,13 @@
     "fragrance": "Rich Pomegranate",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 150
   },
   {
     "id": 1106,
-    "name": "COSKINn Green Tea Pocket Perfume",
+    "name": "Fairenne Green Tea Pocket Perfume",
     "originalPrice": 1899,
     "price": 1399,
     "discountBadge": "26% OFF",
@@ -2947,13 +2947,13 @@
     "fragrance": "Fresh Green Tea",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 90
   },
   {
     "id": 1107,
-    "name": "COSKINn Berry Fusion Pocket Perfume",
+    "name": "Fairenne Berry Fusion Pocket Perfume",
     "originalPrice": 2299,
     "price": 1699,
     "discountBadge": "26% OFF",
@@ -3022,13 +3022,13 @@
     "fragrance": "Mixed Berries",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 110
   },
   {
     "id": 1108,
-    "name": "COSKINn Tropical Bloom Pocket Perfume",
+    "name": "Fairenne Tropical Bloom Pocket Perfume",
     "originalPrice": 2499,
     "price": 1799,
     "discountBadge": "28% OFF",
@@ -3103,13 +3103,13 @@
     "fragrance": "Tropical Fruit Blend",
     "netQuantity": "20ml",
     "shelfLife": "36 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 140
   },
   {
     "id": 8001,
-    "name": "COSKINn Glow Kit",
+    "name": "Fairenne Glow Kit",
     "category": "Bundles",
     "subcategory": "Kit",
     "price": 2449,
@@ -3125,7 +3125,7 @@
       "/assets/gift_glow_essentials_lifestyle.webp"
     ],
     "shortDescription": "Everything your skin needs for a healthy, radiant glow. A complete day-to-night routine.",
-    "longDescription": "The COSKINn Glow Kit is a curated collection of our best-selling essentials designed to hydrate, protect, and repair your skin around the clock.",
+    "longDescription": "The Fairenne Glow Kit is a curated collection of our best-selling essentials designed to hydrate, protect, and repair your skin around the clock.",
     "howToUse": [
       {
         "step": "Step 1",
@@ -3194,13 +3194,13 @@
     "fragrance": "Signature Fruit Blend",
     "netQuantity": "4 Full Size Products",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 50
   },
   {
     "id": "s-99",
-    "name": "COSKINn Spot Care Gel",
+    "name": "Fairenne Spot Care Gel",
     "category": "Skincare",
     "subcategory": "Treatments",
     "price": 499,
@@ -3266,13 +3266,13 @@
     "fragrance": "Unscented",
     "netQuantity": "15g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 100
   },
   {
     "id": "s-100",
-    "name": "COSKINn Barrier Repair Cream",
+    "name": "Fairenne Barrier Repair Cream",
     "category": "Skincare",
     "subcategory": "Moisturiser",
     "price": 899,
@@ -3338,7 +3338,7 @@
     "fragrance": "Subtle Blueberry",
     "netQuantity": "50g",
     "shelfLife": "24 Months",
-    "manufacturedBy": "COSKINn Labs",
+    "manufacturedBy": "Fairenne Labs",
     "countryOfOrigin": "India",
     "stock": 80
   }

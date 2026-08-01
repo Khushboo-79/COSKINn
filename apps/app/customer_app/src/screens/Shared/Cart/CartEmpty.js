@@ -73,7 +73,7 @@ const CartEmpty = () => {
             resizeMode="contain"
           />
           <Image
-            source={require('../../../images/Logo/coskinLogo.webp')}
+            source={require('../../../images/Logo/logo.webp')}
             style={styles.smallHeartLogoTop}
             resizeMode="contain"
           />
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: scalev(30),
     position: 'relative',
-    height: scalev(80),
-    width: scaleh(80),
+    height: scalev(120),
+    width: scaleh(120),
   },
   bigCLogo: {
     width: '100%',

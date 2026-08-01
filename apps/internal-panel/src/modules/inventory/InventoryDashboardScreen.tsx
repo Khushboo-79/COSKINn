@@ -4,15 +4,31 @@ import { Package, AlertTriangle, ArrowDownToLine, RefreshCcw, Loader2 } from 'lu
 import { Link } from 'react-router-dom';
 
 export const InventoryDashboardScreen = () => {
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: rawStats, isLoading: statsLoading } = useQuery({
     queryKey: ['inventory', 'stats'],
     queryFn: inventoryApi.getDashboardStats,
   });
 
-  const { data: stockList, isLoading: stockLoading } = useQuery({
+  const stats = rawStats ? {
+    totalSkus: rawStats.kpis?.totalSkus?.value || 0,
+    lowStockCount: rawStats.kpis?.lowStock?.value || 0,
+    nearExpiryCount: 0, // Backend doesn't return nearExpiry count yet
+    pendingGrn: rawStats.kpis?.pendingPos?.value || 0,
+  } : null;
+
+  const { data: rawStockList, isLoading: stockLoading } = useQuery({
     queryKey: ['inventory', 'stock'],
     queryFn: () => inventoryApi.getGlobalStock(),
   });
+
+  const stockList = rawStockList?.map((item: any) => ({
+    sku: item.sku,
+    name: 'Product Name', // Backend currently doesn't return the name in getGlobalStock
+    available: item.totalQuantity || 0,
+    reserved: item.totalReservedQty || 0,
+    damaged: item.damaged || 0, // Backend might not have this yet
+    expired: item.expired || 0  // Backend might not have this yet
+  }));
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">

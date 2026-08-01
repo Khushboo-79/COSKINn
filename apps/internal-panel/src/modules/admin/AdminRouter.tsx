@@ -7,6 +7,7 @@ import { StaffTwoFactorScreen } from './StaffTwoFactorScreen';
 import { ProductApprovalScreen } from './ProductApprovalScreen';
 import { GlobalSearchScreen } from './GlobalSearchScreen';
 import { SystemSettingsScreen } from './SystemSettingsScreen';
+import { UserProfileScreen } from './UserProfileScreen';
 
 const AdminNav = () => {
   const location = useLocation();
@@ -58,6 +59,7 @@ export const AdminRouter = () => {
         <Route path="/approvals" element={<ProductApprovalScreen />} />
         <Route path="/2fa" element={<StaffTwoFactorScreen />} />
         <Route path="/settings" element={<SystemSettingsScreen />} />
+        <Route path="/profile" element={<UserProfileScreen />} />
         <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </div>

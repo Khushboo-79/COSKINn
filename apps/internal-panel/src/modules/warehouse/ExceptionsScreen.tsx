@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
@@ -22,14 +23,14 @@ export const ExceptionsScreen = () => {
       }
     },
     onSuccess: () => {
-      alert(`Successfully reported ${quantity} unit(s) of ${sku} as ${activeTab}.`);
+      toast.success(`${quantity} unit(s) of ${sku} reported as ${activeTab}.`);
       queryClient.invalidateQueries({ queryKey: ['admin', 'inventory'] });
       setSku('');
       setQuantity(1);
       setReason('');
     },
     onError: (err: any) => {
-      alert(`Error reporting exception: ${err.response?.data?.message || err.message}`);
+      toast.error(`Error reporting exception: ${err.response?.data?.message || err.message}`);
     }
   });
 

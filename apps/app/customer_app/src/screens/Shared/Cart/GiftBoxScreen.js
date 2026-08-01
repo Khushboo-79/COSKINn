@@ -53,7 +53,7 @@ const GiftBoxScreen = ({ navigation }) => {
                 resizeMode="contain"
               />
               <Image
-                source={require('../../../images/Logo/coskinLogo.webp')}
+                source={require('../../../images/Logo/logo.webp')}
                 style={styles.smallHeartLogoTop}
                 resizeMode="contain"
               />
@@ -213,8 +213,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    height: scalev(80),
-    width: scaleh(80),
+    height: scalev(120),
+    width: scaleh(120),
   },
   bigCLogo: {
     width: '100%',

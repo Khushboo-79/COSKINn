@@ -37,6 +37,7 @@ const CosmeticsDashboardScreen = () => {
   const { items: products, loading } = useSelector(state => state.product);
   const { items: wishlistItems } = useSelector(state => state.wishlist);
   const cartItems = useSelector(state => state.cart.items) || [];
+  const { homeData } = useSelector(state => state.catalog || {});
   const isThemeDark = activeDomain === 'skincare';
 
   useEffect(() => {
@@ -50,6 +51,30 @@ const CosmeticsDashboardScreen = () => {
     if (url.startsWith('http')) return url;
     return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
   };
+
+  const [activeMainBannerIndex, setActiveMainBannerIndex] = React.useState(0);
+  const mainBannerData = homeData?.heroBanners?.length > 0 ? homeData.heroBanners : [1, 2, 3, 4, 5, 6];
+
+  const handleMainScroll = React.useCallback((event) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const index = Math.round(scrollPosition / width);
+    if (index !== activeMainBannerIndex) setActiveMainBannerIndex(index);
+  }, [activeMainBannerIndex]);
+
+  const renderMainBannerItem = React.useCallback(({ item }) => (
+    <View style={{ width: width, paddingHorizontal: scaleh(20) }}>
+      {item && item.imageUrl ? (
+        <Image source={{ uri: item.imageUrl }} style={[styles.mainBanner, { resizeMode: 'cover' }]} />
+      ) : (
+        <LinearGradient
+          colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.mainBanner}
+        />
+      )}
+    </View>
+  ), []);
 
   const [activeComboBannerIndex, setActiveComboBannerIndex] = React.useState(0);
   const comboBannerData = [
@@ -161,7 +186,7 @@ const CosmeticsDashboardScreen = () => {
           style={styles.origHeartIconContainer}
           onPress={() => dispatch(toggleWishlist(item.id))}
         >
-          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? "#FF0069" : "#666"} />
+          <Ionicons name={isWishlisted ? "heart" : "heart-outline"} size={scaleh(16)} color={isWishlisted ? AppTheme.colors.cosmeticsPrimary : "#666"} />
         </TouchableOpacity>
         <Image source={item?.images?.[0]?.url ? { uri: getImageUrl(item.images[0].url) } : require('../../images/makeup/ProductImgs/Blush.webp')} style={styles.origCardProductImage} resizeMode="contain" />
         <View style={styles.origCardDetails}>
@@ -281,8 +306,31 @@ const CosmeticsDashboardScreen = () => {
             </ScrollView>
           </View>
 
-          {/* Big Pink Block */}
-          <View style={{ width: '100%', height: scalev(300), backgroundColor: '#FFDCE6', marginTop: scalev(5), marginBottom: scalev(45), opacity: 0.6 }} />
+          {/* Main Empty Banner Carousel */}
+          <View style={{ height: scalev(220), marginBottom: scalev(20), marginTop: scalev(5) }}>
+            <FlatList
+              data={mainBannerData}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={handleMainScroll}
+              scrollEventThrottle={16}
+              keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+              renderItem={renderMainBannerItem}
+              initialNumToRender={2}
+              maxToRenderPerBatch={3}
+              windowSize={5}
+              removeClippedSubviews={true}
+            />
+            <View style={[styles.paginationDots, { marginTop: scalev(15) }]}>
+              {mainBannerData.map((_, index) => (
+                <View
+                  key={index}
+                  style={[styles.dot, activeMainBannerIndex === index && styles.dotActive]}
+                />
+              ))}
+            </View>
+          </View>
 
           {/* Top Tall Cards Row */}
           <View style={styles.tallCardsRow}>
@@ -644,7 +692,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
   },
   milkAddToCartWrapper: {
-    minHeight: scalev(35),
+    height: scalev(35),
     justifyContent: 'center',
     marginTop: scalev(5),
     marginBottom: scalev(10),
@@ -661,7 +709,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: scaleh(15),
-    borderWidth: 1,
+    //borderWidth: 1,
     borderColor: '#FF0069',
     height: '100%',
   },
@@ -800,6 +848,11 @@ const styles = StyleSheet.create({
     marginTop: scalev(10),
     marginBottom: scalev(5),
     gap: scaleh(15),
+  },
+  mainBanner: {
+    width: '100%',
+    height: '100%',
+    borderRadius: scaleh(15),
   },
   dot: {
     width: scaleh(10),
@@ -1001,6 +1054,11 @@ const styles = StyleSheet.create({
     width: 1.5,
     height: '100%',
     backgroundColor: '#FFC2D1',
+  },
+  origAddToCartWrapper: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
   },
   origFooterCartBtn: {
     flex: 1,

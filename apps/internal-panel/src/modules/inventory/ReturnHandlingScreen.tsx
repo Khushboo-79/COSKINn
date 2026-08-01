@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
 import { ArrowLeft, RotateCcw, PackageCheck, AlertOctagon, Loader2 } from 'lucide-react';
@@ -26,11 +27,11 @@ export const ReturnHandlingScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'returns'] });
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
-      alert('Return successfully restocked to available inventory.');
+      toast.success('Action successful');
       setProcessingId(null);
     },
     onError: (err: any) => {
-      alert(`Error restocking: ${err.response?.data?.message || err.message}`);
+      toast.error('An error occurred');
       setProcessingId(null);
     }
   });
@@ -47,11 +48,11 @@ export const ReturnHandlingScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'returns'] });
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
-      alert('Return successfully quarantined as damaged stock.');
+      toast.success('Action successful');
       setProcessingId(null);
     },
     onError: (err: any) => {
-      alert(`Error quarantining: ${err.response?.data?.message || err.message}`);
+      toast.error('An error occurred');
       setProcessingId(null);
     }
   });

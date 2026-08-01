@@ -51,7 +51,7 @@ export class LocationService {
       const { data } = await firstValueFrom(
         this.httpService.get<any>(url, {
           headers: {
-            'User-Agent': 'COSKINn-App/1.0',
+            'User-Agent': 'Fairenne-App/1.0',
             'Accept-Language': 'en-US,en;q=0.9',
           }
         })

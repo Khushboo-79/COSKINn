@@ -2,7 +2,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: coskinn-db
+    container_name: fairenne-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -15,7 +15,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: coskinn-redis
+    container_name: fairenne-redis
     ports:
       - '6379:6379'
     restart: always

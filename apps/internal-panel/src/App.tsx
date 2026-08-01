@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './core/rbac/AuthContext';
+import { Toaster } from 'sonner';
 import { RoleRouter, ForbiddenScreen } from './core/router';
 import { LoginScreen } from './modules/auth/LoginScreen';
 import { TwoFactorScreen } from './modules/auth/TwoFactorScreen';
@@ -33,6 +34,7 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster position="bottom-right" richColors />
       <AuthProvider>
         <BrowserRouter>
           <Routes>

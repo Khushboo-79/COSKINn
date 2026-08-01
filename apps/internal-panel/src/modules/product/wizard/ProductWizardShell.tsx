@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +11,8 @@ import { Step5SeoContent } from './Step5SeoContent';
 import { Step6ReviewSubmit } from './Step6ReviewSubmit';
 import { Check, ChevronRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { productApi } from '../../../core/api/product';
 
 // Comprehensive schema for all wizard steps
 const productWizardSchema = z.object({
@@ -21,6 +24,14 @@ const productWizardSchema = z.object({
   gstRate: z.coerce.number().min(0, "GST rate is required"),
   claims: z.string().optional(),
   warnings: z.string().optional(),
+  variants: z.array(z.object({
+    sku: z.string().min(1, "SKU is required"),
+    size: z.string().optional(),
+    mrp: z.coerce.number().min(0),
+    price: z.coerce.number().min(0),
+    shadeName: z.string().optional(),
+    shadeHex: z.string().optional(),
+  })).optional(),
 });
 
 type ProductFormValues = z.infer<typeof productWizardSchema>;
@@ -61,8 +72,13 @@ export const ProductWizardShell = () => {
         setCurrentStep(prev => prev + 1);
       } else {
         // If it's the last step, submit
-        handleSubmit(onSubmit)();
+        handleSubmit(onSubmit, (errors) => {
+          console.error("Validation errors:", errors);
+          toast.error("Please fill in all required fields correctly.");
+        })();
       }
+    } else {
+      toast.error("Please fix the validation errors before continuing.");
     }
   };
 
@@ -72,11 +88,38 @@ export const ProductWizardShell = () => {
     }
   };
 
+  const createMutation = useMutation({
+    mutationFn: productApi.createProduct,
+    onSuccess: () => {
+      toast.success('Product created successfully!');
+      navigate('/product');
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Failed to create product. Please try again.');
+    }
+  });
+
   const onSubmit = (data: any) => {
     console.log("Submitting Product:", data);
-    // TODO: Call API
-    alert('Product Created Successfully! (Mock)');
-    navigate('/product');
+    
+    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const primaryVariant = data.variants?.[0];
+
+    // Map form data to DTO expected by backend
+    const dto = {
+      name: data.name,
+      slug: slug,
+      sku: primaryVariant?.sku || `SKU-${Date.now()}`,
+      categoryId: data.categoryId,
+      description: data.description,
+      mrp: primaryVariant?.mrp || 0,
+      discountPrice: primaryVariant?.price || 0,
+      gstRate: data.gstRate,
+      status: 'LIVE',
+      productLine: 'BOTH'
+    };
+
+    createMutation.mutate(dto);
   };
 
   return (

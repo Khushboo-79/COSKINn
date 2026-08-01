@@ -267,7 +267,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user || !user.email) throw new BadRequestException('User missing email');
     
-    const secretObj = speakeasy.generateSecret({ name: 'COSKINn Admin (' + user.email + ')' });
+    const secretObj = speakeasy.generateSecret({ name: 'Fairenne Admin (' + user.email + ')' });
     const secret = secretObj.base32;
     const otpauthUrl = secretObj.otpauth_url || '';
     const qrCodeUrl = await QRCode.toDataURL(otpauthUrl);

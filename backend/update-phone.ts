@@ -9,7 +9,7 @@ async function main() {
 
   try {
     console.log('Updating admin phone number...');
-    const result = await pool.query(`UPDATE "users" SET phone = '+1234567890' WHERE email = 'admin@coskinn.com'`);
+    const result = await pool.query(`UPDATE "users" SET phone = '+1234567890' WHERE email = 'admin@fairenne.com'`);
     console.log(`Updated ${result.rowCount} user(s).`);
   } catch (error) {
     console.error(error);

@@ -31,7 +31,7 @@ export const FaqManagementScreen = () => {
   };
 
   const addMutation = useMutation({
-    mutationFn: () => contentApi.createFaq({ question, answer, category, displayOrder, published }),
+    mutationFn: () => contentApi.createFaq({ question, answer, category, orderIndex: displayOrder }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content', 'faqs'] });
       resetForm();
@@ -39,7 +39,7 @@ export const FaqManagementScreen = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: () => contentApi.updateFaq(editingId!, { question, answer, category, displayOrder, published }),
+    mutationFn: () => contentApi.updateFaq(editingId!, { question, answer, category, orderIndex: displayOrder }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content', 'faqs'] });
       resetForm();

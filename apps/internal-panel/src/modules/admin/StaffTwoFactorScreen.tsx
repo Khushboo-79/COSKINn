@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { adminApi } from '../../core/api/admin';
@@ -7,8 +8,8 @@ import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const StaffTwoFactorScreen = () => {
   const { data: staff2fa = [
-    { id: '1', name: 'John Doe', email: 'john@coskinn.com', is2FAEnabled: true, lastLogin: '2026-07-18 10:30 AM' },
-    { id: '2', name: 'Jane Smith', email: 'jane@coskinn.com', is2FAEnabled: false, lastLogin: '2026-07-17 04:15 PM' },
+    { id: '1', name: 'John Doe', email: 'john@fairenne.com', is2FAEnabled: true, lastLogin: '2026-07-18 10:30 AM' },
+    { id: '2', name: 'Jane Smith', email: 'jane@fairenne.com', is2FAEnabled: false, lastLogin: '2026-07-17 04:15 PM' },
   ], refetch } = useQuery({
     queryKey: ['staff2fa'],
     queryFn: adminApi.getStaff2FAStatus,
@@ -18,11 +19,11 @@ export const StaffTwoFactorScreen = () => {
   const resetMutation = useMutation({
     mutationFn: adminApi.resetStaff2FA,
     onSuccess: () => {
-      alert('2FA has been successfully reset for this user.');
+      toast.success('Action successful');
       refetch();
     },
     onError: () => {
-      alert('Failed to reset 2FA.');
+      toast.error('An error occurred');
     }
   });
 

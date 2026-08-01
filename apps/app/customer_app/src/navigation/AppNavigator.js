@@ -7,8 +7,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { setCredentials } from '../redux/slices/authSlice';
+import { fetchProfile } from '../redux/slices/profileSlice';
 import AuthScreen from '../screens/Auth/AuthScreen';
 import OtpScreen from '../screens/Auth/OtpScreen';
+import SplashScreen from '../screens/Shared/SplashScreen';
 import DashboardScreen from '../screens/Skincare/DashboardScreen';
 import SearchScreen from '../screens/Shared/SearchScreen';
 import WishlistScreen from '../screens/Shared/Wishlist/WishlistScreen';
@@ -16,6 +18,7 @@ import TermsAndConditionsScreen from '../screens/Skincare/BottomNav/Account/Term
 import ReturnPolicyScreen from '../screens/Skincare/BottomNav/Account/ReturnPolicyScreen';
 import FAQScreen from '../screens/Skincare/BottomNav/Account/FAQScreen';
 import PrivacyScreen from '../screens/Skincare/BottomNav/Account/PrivacyScreen';
+import ContactUsScreen from '../screens/Skincare/BottomNav/Account/ContactUsScreen';
 import ProductDetailsScreen from '../screens/Skincare/ProductDetails/ProductDetailsScreen';
 import AllReviewsScreen from '../screens/Skincare/ProductDetails/AllReviewsScreen';
 import CartScreen from '../screens/Shared/Cart/CartScreen';
@@ -38,9 +41,12 @@ import NewScreen from '../screens/Shared/New/NewScreen';
 import RewardsScreen from '../screens/Skincare/BottomNav/Rewards/RewardsScreen';
 import FilterScreen from '../screens/Skincare/BottomNav/Shop/FilterScreen';
 import AccountScreen from '../screens/Skincare/BottomNav/Account/AccountScreen';
+import MembershipScreen from '../screens/Skincare/BottomNav/Account/MembershipScreen';
+import MembershipFAQScreen from '../screens/Skincare/BottomNav/Account/MembershipFAQScreen';
 import ProfileScreen from '../screens/Skincare/BottomNav/Account/ProfileScreen';
 import AddressScreen from '../screens/Skincare/BottomNav/Account/AddressScreen';
 import OrdersListScreen from '../screens/Skincare/BottomNav/Account/OrdersListScreen';
+import OrderDetailsScreen from '../screens/Skincare/BottomNav/Account/OrderDetailsScreen';
 
 import CosmeticsDashboardScreen from '../screens/Cosmetics/CosmeticsDashboardScreen';
 import CosmeticsShopScreen from '../screens/Cosmetics/Shop/ShopScreen';
@@ -74,10 +80,12 @@ const CosmeticsNavigator = () => {
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
+      <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
       <Stack.Screen name="TermsAndConditionsScreen" component={TermsAndConditionsScreen} />
       <Stack.Screen name="ReturnPolicyScreen" component={ReturnPolicyScreen} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="PrivacyScreen" component={PrivacyScreen} />
+      <Stack.Screen name="ContactUsScreen" component={ContactUsScreen} />
     </Stack.Navigator>
   );
 };
@@ -107,13 +115,17 @@ const SkincareNavigator = () => {
       <Stack.Screen name="NewScreen" component={NewScreen} />
       <Stack.Screen name="RewardsScreen" component={RewardsScreen} />
       <Stack.Screen name="AccountScreen" component={AccountScreen} />
+      <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
+      <Stack.Screen name="MembershipFAQScreen" component={MembershipFAQScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="OrdersListScreen" component={OrdersListScreen} />
+      <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
       <Stack.Screen name="TermsAndConditionsScreen" component={TermsAndConditionsScreen} />
       <Stack.Screen name="ReturnPolicyScreen" component={ReturnPolicyScreen} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="PrivacyScreen" component={PrivacyScreen} />
+      <Stack.Screen name="ContactUsScreen" component={ContactUsScreen} />
       <Stack.Screen name="ProductDetailsScreen" component={ProductDetailsScreen} />
       <Stack.Screen name="AllReviewsScreen" component={AllReviewsScreen} />
       <Stack.Screen name="FilterScreen" component={FilterScreen} />
@@ -153,29 +165,29 @@ const MainDomainNavigator = () => {
 const AppNavigator = () => {
   const { isAuthenticated } = useSelector(state => state.auth || {});
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const bootstrapAsync = async () => {
+    const loadApp = async () => {
+      // Simulate splash screen delay for smooth animation viewing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       try {
         const token = await AsyncStorage.getItem('access_token');
         if (token) {
           dispatch(setCredentials({ access_token: token }));
+          dispatch(fetchProfile());
         }
       } catch (e) {
         console.error(e);
       }
-      setLoading(false);
+      setIsReady(true);
     };
-    bootstrapAsync();
+    loadApp();
   }, [dispatch]);
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
-        <ActivityIndicator size="large" color="#FF0069" />
-      </View>
-    );
+  if (!isReady) {
+    return <SplashScreen />;
   }
 
   return (
