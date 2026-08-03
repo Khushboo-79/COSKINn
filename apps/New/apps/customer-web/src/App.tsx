@@ -34,7 +34,7 @@ const MainLayout = () => {
   const { mode } = useTheme();
 
   return (
-    <div className={`flex flex-col min-h-screen relative ${mode === 'glam' ? 'glam-typography' : ''}`}>
+    <div className={`flex flex-col min-h-screen relative ${mode === 'glam' ? 'glam-typography bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
       <TopBar />
       <Header />
       <main className="flex-grow">

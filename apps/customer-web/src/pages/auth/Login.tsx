@@ -143,7 +143,7 @@ const Login: React.FC = () => {
             <div className="w-full h-full relative">
               <div className="absolute inset-0 bg-black/10 z-10"></div>
               <img 
-                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80" 
+                src="https://www.dotandkey.com/cdn/shop/files/1-175.jpg" 
                 alt="Glam Beauty Details" 
                 className="w-full h-full object-cover"
               />
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
             <div className="w-full h-full relative">
               <div className="absolute inset-0 bg-gradient-to-t from-[#ff9aa8]/40 to-transparent z-10"></div>
               <img 
-                src="https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=1200" 
+                src="https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg" 
                 alt="Skin Fresh" 
                 className="w-full h-full object-cover"
               />

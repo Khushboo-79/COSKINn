@@ -149,7 +149,7 @@ const OTPVerification: React.FC = () => {
             <div className="w-full h-full relative">
               <div className="absolute inset-0 bg-black/10 z-10"></div>
               <img 
-                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80" 
+                src="https://www.dotandkey.com/cdn/shop/files/1-175.jpg" 
                 alt="Glam Beauty Details" 
                 className="w-full h-full object-cover"
               />
@@ -164,7 +164,7 @@ const OTPVerification: React.FC = () => {
             <div className="w-full h-full relative">
               <div className="absolute inset-0 bg-[#ff9aa8]/10 z-10"></div>
               <img 
-                src="https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=1200" 
+                src="https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg" 
                 alt="Fresh Beauty Verification" 
                 className="w-full h-full object-cover"
               />

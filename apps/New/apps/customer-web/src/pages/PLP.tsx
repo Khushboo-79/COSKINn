@@ -19,8 +19,20 @@ const PLP: React.FC = () => {
   const location = useLocation();
   const isGlam = mode === 'glam';
   
-  const fromSection = location.state?.from === 'bestsellers' ? 'bestsellers' : 'shop-by-category';
-  const backText = fromSection === 'bestsellers' ? 'Back to bestsellers' : 'Back to collection';
+  const fromState = location.state?.from;
+  let backText = 'Back to collection';
+  let backLink = '/#shop-by-category';
+
+  if (fromState === 'bestsellers') {
+    backText = 'Back to bestsellers';
+    backLink = '/#bestsellers';
+  } else if (fromState === 'shop-by-category') {
+    backText = 'Back to category';
+    backLink = '/#shop-by-category';
+  } else {
+    backText = 'Back to Home';
+    backLink = '/';
+  }
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -40,7 +52,7 @@ const PLP: React.FC = () => {
       <div className={`py-12 md:py-20 border-b relative ${isGlam ? 'border-gray-200 bg-[#faf9f6]' : 'border-[#ffe4e8] bg-gradient-to-b from-[#ffe4e8]/30 to-white'}`}>
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative">
           <Link 
-            to={`/#${fromSection}`} 
+            to={backLink} 
             className={`absolute left-6 lg:left-10 top-0 md:-top-4 flex items-center text-sm font-bold transition-colors ${isGlam ? 'text-[#7a1b26] hover:text-[#2a2a2a]' : 'text-[#ff9aa8] hover:text-[#ff7b8c]'}`}
           >
             <ArrowLeft className="mr-1.5 w-4 h-4" />
