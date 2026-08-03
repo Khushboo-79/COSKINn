@@ -59,6 +59,7 @@ export const RoleManagementScreen = () => {
         );
       }
     },
+    {
       key: 'status',
       header: 'Status',
       render: (role: any) => (
