@@ -115,7 +115,7 @@ export class AdminService implements OnModuleInit {
     });
   }
 
-  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[] }) {
+  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[], isActive?: boolean }) {
     return this.prisma.role.update({
       where: { id },
       data

@@ -59,11 +59,13 @@ export const RoleManagementScreen = () => {
         );
       }
     },
-    {
       key: 'status',
       header: 'Status',
       render: (role: any) => (
-        <StatusBadge status={role.status} variant={role.status === 'Active' ? 'success' : 'default'} />
+        <StatusBadge 
+          status={role.isActive !== false ? '● ACTIVE' : '● INACTIVE'} 
+          variant={role.isActive !== false ? 'success' : 'default'} 
+        />
       )
     },
     {
@@ -91,7 +93,7 @@ export const RoleManagementScreen = () => {
           <p className="text-slate-500 mt-1">Manage system roles and their access to various panels.</p>
         </div>
         <button 
-          onClick={() => setSelectedRole({ name: 'New Role', panelAccess: [] })}
+          onClick={() => setSelectedRole({ name: 'New Role', panelAccess: [], isActive: true })}
           className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl shadow-sm text-sm font-medium hover:bg-primary-700 transition-colors"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -119,15 +121,29 @@ export const RoleManagementScreen = () => {
             
             <div className="p-6 overflow-y-auto flex-1">
               <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Role Name</label>
-                  <input 
-                    type="text" 
-                    value={selectedRole.name} 
-                    onChange={(e) => setSelectedRole({...selectedRole, name: e.target.value})}
-                    disabled={selectedRole.name === 'Super Admin'} 
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500" 
-                  />
+                <div className="flex space-x-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Role Name</label>
+                    <input 
+                      type="text" 
+                      value={selectedRole.name} 
+                      onChange={(e) => setSelectedRole({...selectedRole, name: e.target.value})}
+                      disabled={selectedRole.name === 'Super Admin'} 
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500" 
+                    />
+                  </div>
+                  <div className="w-32">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                    <select
+                      value={selectedRole.isActive !== false ? 'true' : 'false'}
+                      onChange={(e) => setSelectedRole({...selectedRole, isActive: e.target.value === 'true'})}
+                      disabled={selectedRole.name === 'Super Admin'}
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="true">Active</option>
+                      <option value="false">Inactive</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -167,10 +183,15 @@ export const RoleManagementScreen = () => {
               <button onClick={() => setSelectedRole(null)} className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-slate-100">Cancel</button>
               <button 
                 onClick={() => {
+                  const payload = {
+                    name: selectedRole.name,
+                    panelAccess: selectedRole.panelAccess || selectedRole.panel_access || [],
+                    isActive: selectedRole.isActive !== false
+                  };
                   if (selectedRole.id) {
-                    updateMutation.mutate({ id: selectedRole.id, data: { name: selectedRole.name, panelAccess: selectedRole.panelAccess || selectedRole.panel_access }});
+                    updateMutation.mutate({ id: selectedRole.id, data: payload });
                   } else {
-                    createMutation.mutate({ name: selectedRole.name, panelAccess: selectedRole.panelAccess || [] });
+                    createMutation.mutate(payload);
                   }
                 }}
                 disabled={selectedRole.name === 'Super Admin' || createMutation.isPending || updateMutation.isPending} 
