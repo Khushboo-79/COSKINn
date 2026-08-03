@@ -53,12 +53,12 @@ export const SharedShell = () => {
       {/* Sidebar */}
       <aside
         className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-          } fixed md:relative z-30 inset-y-0 left-0 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col shadow-xl`}
+          } fixed md:relative z-30 inset-y-0 left-0 bg-white border-r border-slate-200 text-slate-600 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
       >
-        <div className="h-16 flex items-center justify-between px-4 bg-slate-950 border-b border-slate-800">
+        <div className="h-16 flex items-center justify-between px-4 bg-white border-b border-slate-200">
           {!isSidebarOpen && <img src="/logo.png" alt="Fairenne Logo" className="h-8 w-auto" />}
-          {isSidebarOpen && <span className="font-bold text-white text-lg mx-auto">FA</span>}
-          <button onClick={toggleSidebar} className="text-slate-400 hover:text-white md:hidden">
+          {isSidebarOpen && <span className="font-bold text-primary-600 text-lg mx-auto">FA</span>}
+          <button onClick={toggleSidebar} className="text-slate-400 hover:text-slate-600 md:hidden">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -73,8 +73,8 @@ export const SharedShell = () => {
                 key={route.id}
                 to={route.path}
                 className={`flex items-center px-4 py-3 mx-2 rounded-lg transition-colors ${isActive
-                    ? 'bg-primary-600 text-white'
-                    : 'hover:bg-slate-800 hover:text-white'
+                    ? 'bg-primary-50 text-primary-600 font-semibold'
+                    : 'hover:bg-slate-50 hover:text-primary-500'
                   } ${isSidebarOpen ? 'justify-center' : ''}`}
                 title={isSidebarOpen ? route.label : ''}
               >
@@ -85,10 +85,10 @@ export const SharedShell = () => {
           })}
         </nav>
 
-        <div className="p-4 bg-slate-950 border-t border-slate-800">
+        <div className="p-4 bg-white border-t border-slate-200">
           <button
             onClick={logout}
-            className={`flex items-center text-slate-400 hover:text-white transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
+            className={`flex items-center text-slate-500 hover:text-rose-500 transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
           >
             <LogOut className="h-5 w-5" />
             {!isSidebarOpen && <span className="ml-3 font-medium">Logout</span>}
