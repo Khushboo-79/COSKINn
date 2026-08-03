@@ -96,12 +96,50 @@ export class AdminService implements OnModuleInit {
   }
 
   async getRoles() {
-    return this.prisma.role.findMany({
+    const roles = await this.prisma.role.findMany({
       include: {
         _count: {
           select: { users: true }
+        },
+        users: {
+          include: {
+            user: {
+              include: {
+                devices: {
+                  orderBy: { lastActiveAt: 'desc' },
+                  take: 1
+                },
+                sessions: {
+                  where: { isRevoked: false, expiresAt: { gt: new Date() } }
+                }
+              }
+            }
+          }
         }
       }
+    });
+
+    const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+    return roles.map(role => {
+      let isOnline = false;
+
+      for (const userRole of role.users) {
+        const user = userRole.user;
+        const hasRecentDevice = user.devices.some(d => d.lastActiveAt > fifteenMinsAgo);
+        const hasActiveSession = user.sessions.length > 0;
+        
+        if (hasRecentDevice || hasActiveSession) {
+          isOnline = true;
+          break;
+        }
+      }
+
+      const { users, ...roleData } = role;
+      return {
+        ...roleData,
+        isActive: isOnline
+      };
     });
   }
 
@@ -115,7 +153,7 @@ export class AdminService implements OnModuleInit {
     });
   }
 
-  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[] }) {
+  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[], isActive?: boolean }) {
     return this.prisma.role.update({
       where: { id },
       data

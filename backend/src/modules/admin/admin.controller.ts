@@ -26,7 +26,7 @@ export class AdminController {
   }
 
   @Put('roles/:id')
-  updateRole(@Param('id') id: string, @Body() body: { name?: string, description?: string, panelAccess?: string[] }) {
+  updateRole(@Param('id') id: string, @Body() body: { name?: string, description?: string, panelAccess?: string[], isActive?: boolean }) {
     return this.adminService.updateRole(id, body);
   }
 

@@ -365,7 +365,7 @@ export const RoleManagementScreen = () => {
 
             <div className="p-6 overflow-y-auto flex-1">
               <div className="space-y-6">
-                <div>
+                <div className="mb-6">
                   <label className="block text-sm font-medium text-slate-700 mb-2">Role Name</label>
                   <input
                     type="text"
@@ -413,10 +413,14 @@ export const RoleManagementScreen = () => {
               <button onClick={() => setSelectedRole(null)} className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-slate-100">Cancel</button>
               <button
                 onClick={() => {
+                  const payload = {
+                    name: selectedRole.name,
+                    panelAccess: selectedRole.panelAccess || selectedRole.panel_access || []
+                  };
                   if (selectedRole.id) {
                     updateMutation.mutate({ id: selectedRole.id, data: { name: selectedRole.name, panelAccess: selectedRole.panelAccess || selectedRole.panel_access } });
                   } else {
-                    createMutation.mutate({ name: selectedRole.name, panelAccess: selectedRole.panelAccess || [] });
+                    createMutation.mutate(payload);
                   }
                 }}
                 disabled={selectedRole.name === 'SUPER_ADMIN' || createMutation.isPending || updateMutation.isPending}
