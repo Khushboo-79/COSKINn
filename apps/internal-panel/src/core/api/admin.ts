@@ -48,5 +48,9 @@ export const adminApi = {
   getOverview: async (platform?: string) => {
     const response = await apiClient.get('/admin/config/overview', { params: { platform } });
     return response.data;
+  },
+  getNotifications: async () => {
+    const response = await apiClient.get('/admin/config/notifications');
+    return response.data;
   }
 };

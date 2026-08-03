@@ -22,18 +22,18 @@ export const GlobalSearchScreen = () => {
     const lowerQuery = query.toLowerCase();
     
     const matchedOrders = orders?.filter((o: any) => 
-      o.id.toLowerCase().includes(lowerQuery) || 
+      o.id?.toLowerCase().includes(lowerQuery) || 
       o.customerName?.toLowerCase().includes(lowerQuery)
     ) || [];
 
     const matchedUsers = users?.filter((u: any) => 
       u.name?.toLowerCase().includes(lowerQuery) || 
-      u.email.toLowerCase().includes(lowerQuery)
+      u.email?.toLowerCase().includes(lowerQuery)
     ) || [];
 
     const matchedProducts = inventory?.filter((i: any) => 
-      i.name.toLowerCase().includes(lowerQuery) || 
-      i.sku.toLowerCase().includes(lowerQuery)
+      i.name?.toLowerCase().includes(lowerQuery) || 
+      i.sku?.toLowerCase().includes(lowerQuery)
     ) || [];
 
     return { orders: matchedOrders, users: matchedUsers, products: matchedProducts };

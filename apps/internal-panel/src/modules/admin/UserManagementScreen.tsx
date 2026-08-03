@@ -1,4 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+// Force HMR reload
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { rbacApi } from '../../core/api/rbac';
 import { DataTable } from '../../components/ui/DataTable';
 import { Users, Plus, Edit2, ShieldAlert } from 'lucide-react';
@@ -16,29 +18,6 @@ export const UserManagementScreen = () => {
     retry: false,
   });
 
-  const { data: roles = [] } = useQuery({
-    queryKey: ['roles'],
-    queryFn: rbacApi.getRoles,
-    retry: false,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: rbacApi.createUser,
-    onSuccess: () => {
-      toast.success('User created successfully!');
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      setIsAddModalOpen(false);
-    }
-  });
-
-  const updateRoleMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string, data: any }) => rbacApi.updateUserRole(id, data),
-    onSuccess: () => {
-      toast.success('User updated successfully!');
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      setSelectedUser(null);
-    }
-  });
 
   const users = Array.isArray(rawUsers) ? rawUsers.map((u: any) => ({
     id: u.id,

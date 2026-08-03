@@ -56,9 +56,9 @@ const Promotions: React.FC = () => {
   ];
 
   return (
-    <section className={`py-10 ${isGlam ? 'bg-[#faf9f6]' : 'bg-white'}`}>
-      <div className={`${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-6 lg:px-10`}>
-        <div className="grid md:grid-cols-3 gap-4">
+    <section className={`py-8 ${isGlam ? 'bg-[#f4ebe1]' : 'bg-white'}`}>
+      <div className={`max-w-[1400px] mx-auto px-4 lg:px-8`}>
+        <div className="grid md:grid-cols-3 gap-6">
           {isGlam ? (
             glamPromotions.map((promo, idx) => (
               <motion.div
@@ -67,28 +67,30 @@ const Promotions: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="relative p-8 border border-[#d3be93] flex flex-col items-center justify-center text-center bg-[#faf9f6]"
+                className="relative py-6 px-6 border border-[#c9af7a] flex flex-col items-center justify-center text-center bg-[#fdfbf7]"
               >
-                {/* Top-Left Corner Bracket */}
-                <div className="absolute top-2 left-2 w-3 h-3 border-t border-l border-[#d3be93]" />
-                {/* Bottom-Right Corner Bracket */}
-                <div className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-[#d3be93]" />
+                {/* Top-Left Corner Bracket (Inset) */}
+                <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-[#c9af7a]" />
+                {/* Bottom-Right Corner Bracket (Inset) */}
+                <div className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-[#c9af7a]" />
                 
-                <span className="text-[10px] font-bold tracking-[0.2em] text-[#cdae77] mb-3 uppercase">
+                <span className="text-[10px] font-bold tracking-[0.25em] text-[#c9af7a] mb-2 uppercase mt-1">
                   {promo.offer}
                 </span>
-                <h4 className="font-serif text-[22px] md:text-2xl text-[#2a2a2a] mb-1">
+                <h4 className="font-serif text-[20px] xl:text-[22px] text-[#2c3338] mb-1 whitespace-nowrap">
                   {promo.title}
                 </h4>
-                <p className="text-[12px] text-gray-500 mb-6 font-medium">
+                <p className="text-[12px] text-[#6b7280] mb-4 font-medium">
                   {promo.sub}
                 </p>
-                <Link 
-                  to="/collections"
-                  className="text-[11px] font-bold tracking-widest text-[#7a1b26] uppercase border-b border-[#7a1b26] pb-[2px] hover:opacity-70 transition-opacity"
-                >
-                  {promo.cta}
-                </Link>
+                <div className="mt-auto mb-1">
+                  <Link 
+                    to="/collections"
+                    className="text-[11px] font-bold tracking-[0.15em] text-[#831826] uppercase border-b-[1.5px] border-[#831826] pb-[2px] hover:opacity-70 transition-opacity"
+                  >
+                    {promo.cta}
+                  </Link>
+                </div>
               </motion.div>
             ))
           ) : (

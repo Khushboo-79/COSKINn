@@ -21,7 +21,7 @@ export const rbacApi = {
     const response = await apiClient.post('/admin/config/users', data);
     return response.data;
   },
-  updateUserRole: async (userId: string, data: any) => {
+  updateUserRole: async (userId: string, data: { roleId: string }) => {
     const response = await apiClient.put(`/admin/config/users/${userId}/role`, data);
     return response.data;
   },

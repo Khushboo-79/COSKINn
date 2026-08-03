@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
+import { useCurrency } from '../context/CurrencyContext';
 import { motion } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Star, Redo2 } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
@@ -71,6 +72,7 @@ const glamRoutine: Product[] = [
 const RoutineResult: React.FC = () => {
   const { mode } = useTheme();
   const { addToCart } = useCart();
+  const { formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
   const location = useLocation();
 
@@ -82,7 +84,7 @@ const RoutineResult: React.FC = () => {
       addToCart({
         id: product.id,
         name: product.name,
-        price: `₹${product.price}`,
+        price: product.price,
         image: product.image,
         quantity: 1,
       });
@@ -138,19 +140,48 @@ const RoutineResult: React.FC = () => {
               </div>
 
               {/* Product Info */}
-              <div className="p-6">
-                <h3 className={`font-bold text-lg mb-2 ${isGlam ? 'font-serif text-[#2a2a2a]' : 'text-gray-900'}`}>{product.name}</h3>
-                <p className="text-sm text-gray-500 font-medium mb-4 leading-relaxed">{product.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className={`text-2xl font-bold ${isGlam ? 'text-[#7a1b26]' : 'text-gray-900'}`}>₹{product.price}</span>
-                  <button
-                    onClick={() => addToCart({ id: product.id, name: product.name, price: `₹${product.price}`, image: product.image, quantity: 1 })}
-                    className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
-                  >
-                    Add
-                  </button>
+              {!isGlam && (
+                <div className="p-6">
+                  <h3 className="font-bold text-lg mb-2 text-gray-900">{product.name}</h3>
+                  <p className="text-sm text-gray-500 font-medium mb-4 leading-relaxed">{product.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900">{formatPrice(product.price)}</span>
+                    <button
+                      onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 })}
+                      className="px-5 py-2.5 rounded-xl font-bold text-sm transition-all bg-gray-100 text-gray-800 hover:bg-gray-200"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {isGlam && (
+                <div className="p-6 relative pb-16">
+                  <p className="text-sm text-gray-500 font-medium mb-4 leading-relaxed">{product.description}</p>
+                  <div className="absolute bottom-[10px] left-[-10px] bg-[#faf9f6] border border-[#d2b27b] p-3 shadow-md z-20 w-[130px] h-[95px] flex flex-col justify-between group-hover:translate-y-[-5px] transition-transform duration-300">
+                    <div>
+                      <div className="text-[8px] uppercase tracking-[0.2em] font-bold text-[#8e95a1] mb-1 truncate flex items-center justify-between">
+                        <span>{product.badge || 'Featured'}</span>
+                      </div>
+                      <div className="font-serif text-[13px] text-[#2c3338] leading-tight line-clamp-2">
+                        {product.name}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-[#8b1527] font-bold text-[12px]">
+                        {formatPrice(product.price)}
+                      </div>
+                      <button
+                        onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 })}
+                        className="px-2 py-1 bg-[#2a2a2a] text-[#e5b376] text-[9px] uppercase font-bold tracking-wider hover:bg-black"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </motion.div>
           ))}
         </div>

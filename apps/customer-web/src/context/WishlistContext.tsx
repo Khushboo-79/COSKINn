@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNotification } from './NotificationContext';
+import { useAuth } from './AuthContext';
 
 export interface WishlistItem {
   id: string;
@@ -21,9 +22,15 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { showToast } = useNotification();
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>(() => {
-    const saved = localStorage.getItem('coskin_wishlist');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('coskin_wishlist');
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
   });
 
   useEffect(() => {
@@ -31,6 +38,10 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [wishlistItems]);
 
   const addToWishlist = (item: WishlistItem) => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
     setWishlistItems(prev => {
       if (prev.find(i => i.id === item.id)) return prev;
       showToast(`${item.name} added to wishlist!`);
