@@ -55,9 +55,9 @@ export const SharedShell = () => {
         className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
           } fixed md:relative z-30 inset-y-0 left-0 bg-gradient-to-b from-[#fff0f2] to-[#FFDAB9]/20 border-r border-primary-200 text-slate-700 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
       >
-        <div className="h-16 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative w-full">
-          {isSidebarOpen && <img src="/logo-icon.png" alt="Fairenne Icon" className="h-8 w-auto object-contain" />}
-          {!isSidebarOpen && <img src="/logo-full.png" alt="Fairenne Logo" className="h-10 w-auto max-w-[160px] object-contain" />}
+        <div className="h-20 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative w-full">
+          {isSidebarOpen && <img src="/logo-icon.png" alt="Fairenne Icon" className="h-10 w-auto object-contain" />}
+          {!isSidebarOpen && <img src="/logo-full.png" alt="Fairenne Logo" className="h-14 w-auto max-w-[200px] object-contain scale-110" />}
           <button onClick={toggleSidebar} className="text-slate-400 hover:text-primary-500 md:hidden absolute right-4">
             <X className="h-5 w-5" />
           </button>
