@@ -98,6 +98,12 @@ export class AdminService implements OnModuleInit {
   async getRoles() {
     const roles = await this.prisma.role.findMany({
       include: {
+        createdBy: {
+          select: { firstName: true, lastName: true, email: true }
+        },
+        updatedBy: {
+          select: { firstName: true, lastName: true, email: true }
+        },
         _count: {
           select: { users: true }
         },
@@ -123,47 +129,83 @@ export class AdminService implements OnModuleInit {
 
     return roles.map(role => {
       let isOnline = false;
+      let lastActiveAt: Date | null = null;
+      let lastLoginAt: Date | null = null;
 
       for (const userRole of role.users) {
         const user = userRole.user;
-        const hasRecentDevice = user.devices.some(d => d.lastActiveAt > fifteenMinsAgo);
-        const hasActiveSession = user.sessions.length > 0;
         
-        if (hasRecentDevice || hasActiveSession) {
+        // Compute last active date across all users with this role
+        if (user.devices && user.devices.length > 0) {
+          const userLastActive = user.devices[0].lastActiveAt;
+          if (!lastActiveAt || userLastActive > lastActiveAt) {
+            lastActiveAt = userLastActive;
+          }
+          if (userLastActive > fifteenMinsAgo) {
+            isOnline = true;
+          }
+        }
+        
+        // Compute last login date across all users with this role
+        if (user.sessions && user.sessions.length > 0) {
+          // Sort sessions to find the latest creation date (login time)
+          const sortedSessions = [...user.sessions].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+          const userLastLogin = sortedSessions[0].createdAt;
+          if (!lastLoginAt || userLastLogin > lastLoginAt) {
+            lastLoginAt = userLastLogin;
+          }
           isOnline = true;
-          break;
         }
       }
 
-      const { users, ...roleData } = role;
+      const { users, createdBy, updatedBy, ...roleData } = role;
+      
       return {
         ...roleData,
-        isActive: isOnline
+        isOnline,
+        lastActiveAt,
+        lastLoginAt,
+        createdByName: createdBy ? `${createdBy.firstName || ''} ${createdBy.lastName || ''}`.trim() || createdBy.email : null,
+        updatedByName: updatedBy ? `${updatedBy.firstName || ''} ${updatedBy.lastName || ''}`.trim() || updatedBy.email : null,
       };
     });
   }
 
-  async createRole(data: { name: string, description?: string, panelAccess: string[] }) {
+  async createRole(data: { name: string, description?: string, panelAccess: string[] }, userId?: string) {
     return this.prisma.role.create({
       data: {
         name: data.name,
         description: data.description,
-        panelAccess: data.panelAccess
+        panelAccess: data.panelAccess,
+        ...(userId ? { createdById: userId, updatedById: userId } : {})
       }
     });
   }
 
-  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[], isActive?: boolean }) {
-    return this.prisma.role.update({
-      where: { id },
-      data
-    });
+  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[], isActive?: boolean }, userId?: string) {
+    try {
+      console.log('UpdateRole called with id:', id, 'data:', data);
+      return await this.prisma.role.update({
+        where: { id },
+        data: {
+          ...data,
+          ...(userId ? { updatedById: userId } : {})
+        }
+      });
+    } catch (e) {
+      console.error('UpdateRole ERROR:', e);
+      require('fs').writeFileSync('error_dump.txt', e.message + '\n' + e.stack);
+      throw e;
+    }
   }
 
-  async updateRolePanelAccess(roleId: string, panelAccess: string[]) {
+  async updateRolePanelAccess(roleId: string, panelAccess: string[], userId?: string) {
     return this.prisma.role.update({
       where: { id: roleId },
-      data: { panelAccess }
+      data: { 
+        panelAccess,
+        ...(userId ? { updatedById: userId } : {})
+      }
     });
   }
 
