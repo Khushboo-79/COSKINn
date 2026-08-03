@@ -12,7 +12,7 @@ const ScrollToTop = () => {
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
-      }, 100);
+      }, 500);
       return;
     }
     window.scrollTo(0, 0);

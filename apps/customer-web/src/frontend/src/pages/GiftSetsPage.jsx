@@ -116,7 +116,7 @@ export default function GiftSetsPage() {
               The Art of Gifting
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black mb-6 leading-tight tracking-tight text-black">
-              Luxury COSKINn <br/>
+              Luxury Fairenne <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF0069] to-[#FF90B6]">Gift Sets</span>
             </h1>
             <p className="text-lg md:text-xl text-black/70 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
@@ -139,7 +139,7 @@ export default function GiftSetsPage() {
         <div className="relative max-w-7xl mx-auto px-6 z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-heading font-bold mb-4">Perfect For Every Occasion</h2>
-            <p className="text-black/60 font-medium text-lg">Select an occasion to see curated COSKINn gift recommendations.</p>
+            <p className="text-black/60 font-medium text-lg">Select an occasion to see curated Fairenne gift recommendations.</p>
           </div>
           
           <AnimatePresence mode="wait">
@@ -257,7 +257,7 @@ export default function GiftSetsPage() {
           <div className="flex items-center justify-between mb-16">
             <div>
               <h2 className="text-4xl font-heading font-bold mb-4">The Gift Collection</h2>
-              <p className="text-black/60 font-medium">Premium COSKINn bundles for an unparalleled unboxing experience.</p>
+              <p className="text-black/60 font-medium">Premium Fairenne bundles for an unparalleled unboxing experience.</p>
             </div>
             <div className="hidden md:flex items-center gap-2 text-sm font-bold tracking-widest text-black/50 uppercase">
               <CheckCircle className="w-4 h-4 text-green-500" /> Complimentary Gift Wrapping
@@ -327,11 +327,11 @@ export default function GiftSetsPage() {
         </div>
       </section>
 
-      {/* Why Choose COSKINn Gift Sets */}
+      {/* Why Choose Fairenne Gift Sets */}
       <section className="w-full bg-white py-24 border-y border-black/5">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-heading font-bold mb-4">Why Choose COSKINn Gift Sets</h2>
+            <h2 className="text-4xl font-heading font-bold mb-4">Why Choose Fairenne Gift Sets</h2>
             <p className="text-black/60 font-medium">Crafted with care, designed to impress.</p>
           </div>
           

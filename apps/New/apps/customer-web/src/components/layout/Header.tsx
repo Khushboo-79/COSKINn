@@ -82,12 +82,14 @@ const Header: React.FC = () => {
           </div>
 
           {/* Center Logo */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center justify-center pointer-events-none">
-            <Link to="/" className="flex flex-col items-center pointer-events-auto">
-              <div className={`flex items-center ${isGlam ? 'text-[36px] font-serif font-medium text-[#141824] tracking-tight leading-none' : 'text-3xl font-display font-extrabold text-[#2a2a2a] tracking-widest'}`}>
-                COSKIN<span className={isGlam ? 'text-[#8b1527]' : 'text-[#ff9aa8]'}>n</span>
-              </div>
-              <span className={`uppercase ${isGlam ? 'mt-1.5 text-[9.5px] text-[#8e95a1] font-serif tracking-[0.4em]' : 'mt-1 text-[9px] text-[#e5b376] tracking-[0.3em] font-bold'}`}>
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[72px] flex items-center justify-center pointer-events-none w-64 z-10">
+            <Link to="/" className="flex flex-col items-center justify-center pointer-events-auto w-full h-full relative">
+              <img 
+                src="/fairenne-full.png" 
+                alt="Fairenne Logo" 
+                className={`w-[180px] md:w-[200px] h-auto absolute top-[35%] transform -translate-y-1/2 object-contain mix-blend-multiply transition-all duration-300 ${isGlam ? 'contrast-125 saturate-150' : 'opacity-90'}`}
+              />
+              <span className={`uppercase absolute bottom-1 w-full text-center ${isGlam ? 'text-[9.5px] text-[#8e95a1] font-serif tracking-[0.4em]' : 'text-[9px] text-[#e5b376] tracking-[0.3em] font-bold'}`}>
                 {isGlam ? 'ATELIER DE BEAUTÉ' : 'Skin, Refresh, Repeat'}
               </span>
             </Link>

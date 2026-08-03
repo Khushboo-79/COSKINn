@@ -21,7 +21,7 @@ const awardFeatures = [
 const AWARD_PRODUCTS = [
   {
     id: 114,
-    name: 'COSKINn Niacinamide Serum',
+    name: 'Fairenne Niacinamide Serum',
     type: 'Face Care • Serums',
     price: 899,
     originalPrice: 1199,
@@ -34,7 +34,7 @@ const AWARD_PRODUCTS = [
   },
   {
     id: 101,
-    name: 'COSKINn Sunscreen SPF 50',
+    name: 'Fairenne Sunscreen SPF 50',
     type: 'Face Care • Sunscreen',
     price: 699,
     originalPrice: 899,
@@ -47,7 +47,7 @@ const AWARD_PRODUCTS = [
   },
   {
     id: 112,
-    name: 'COSKINn Daily Moisturiser',
+    name: 'Fairenne Daily Moisturiser',
     type: 'Face Care • Moisturisers',
     price: 649,
     originalPrice: 849,
@@ -60,7 +60,7 @@ const AWARD_PRODUCTS = [
   },
   {
     id: 104,
-    name: 'COSKINn Gentle Cleanser',
+    name: 'Fairenne Gentle Cleanser',
     type: 'Face Care • Cleansers',
     price: 499,
     originalPrice: 699,
@@ -73,7 +73,7 @@ const AWARD_PRODUCTS = [
   },
   {
     id: 110,
-    name: 'COSKINn Overnight Mask',
+    name: 'Fairenne Overnight Mask',
     type: 'Face Care • Masks',
     price: 999,
     originalPrice: 1299,
@@ -86,7 +86,7 @@ const AWARD_PRODUCTS = [
   },
   {
     id: 105,
-    name: 'COSKINn Cleansing Balm',
+    name: 'Fairenne Cleansing Balm',
     type: 'Face Care • Cleansers',
     price: 849,
     originalPrice: 1099,
@@ -99,7 +99,7 @@ const AWARD_PRODUCTS = [
   },
   {
     id: 109,
-    name: 'COSKINn Hydrating Face Mist',
+    name: 'Fairenne Hydrating Face Mist',
     type: 'Face Care • Toners',
     price: 449,
     originalPrice: 599,
@@ -112,7 +112,7 @@ const AWARD_PRODUCTS = [
   },
   {
     id: 111,
-    name: 'COSKINn Under Eye Patches',
+    name: 'Fairenne Under Eye Patches',
     type: 'Face Care • Masks',
     price: 1299,
     originalPrice: 1599,
@@ -137,7 +137,7 @@ const TESTIMONIALS = [
     id: 2,
     name: "Priya Sharma",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop&fm=webp",
-    text: "I've tried luxury sunscreens that cost triple, but COSKINn's SPF 50 is unmatched. Zero white cast and it feels like nothing on the skin."
+    text: "I've tried luxury sunscreens that cost triple, but Fairenne's SPF 50 is unmatched. Zero white cast and it feels like nothing on the skin."
   },
   {
     id: 3,
@@ -189,7 +189,7 @@ export default function AwardWinnersPage() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF0069] to-[#FF90B6]">Skincare Collection</span>
             </h1>
             <p className="text-lg md:text-xl text-black/70 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-              Discover COSKINn's most celebrated skincare essentials, recognized globally for exceptional quality, innovation, and visible results.
+              Discover Fairenne's most celebrated skincare essentials, recognized globally for exceptional quality, innovation, and visible results.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button onClick={() => { const el = document.getElementById('award-products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="w-full sm:w-auto px-10 py-4 bg-[#FF0069] text-white rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#D40057] transition-all shadow-lg shadow-[#FF0069]/30">

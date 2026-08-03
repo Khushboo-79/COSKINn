@@ -44,7 +44,7 @@ const About: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-xl md:text-2xl text-gray-600 font-medium leading-relaxed max-w-2xl"
             >
-              COSKINn was born out of a simple need: products that actually work without needing a 12-step routine.
+              Fairenne was born out of a simple need: products that actually work without needing a 12-step routine.
             </motion.p>
           </div>
         </div>
@@ -57,7 +57,7 @@ const About: React.FC = () => {
             <div className="scroll-reveal scroll-reveal-left relative aspect-[4/5] rounded-[32px] overflow-hidden shadow-xl">
               <img 
                 src={isGlam ? 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678' : 'https://www.dotandkey.com/cdn/shop/files/dfs.jpg'} 
-                alt="COSKINn Lifestyle" 
+                alt="Fairenne Lifestyle" 
                 className="w-full h-full object-cover"
               />
             </div>

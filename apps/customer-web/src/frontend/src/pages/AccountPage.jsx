@@ -66,7 +66,7 @@ export default function AccountPage() {
   }, [user]);
 
   // Read explicit memberships from localStorage (ONLY purchase status)
-  const explicitMemberships = JSON.parse(localStorage.getItem('coskinn_memberships') || '{}');
+  const explicitMemberships = JSON.parse(localStorage.getItem('fairenne_memberships') || '{}');
   const userEmail = user?.email || 'guest';
   const userMemberships = explicitMemberships[userEmail] || {};
 
@@ -1032,7 +1032,7 @@ function WishlistTab() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {wishlist.map(item => {
-          const displayName = item.name.startsWith('COSKINn') ? item.name : `COSKINn ${item.name}`;
+          const displayName = item.name.startsWith('Fairenne') ? item.name : `Fairenne ${item.name}`;
           return (
             <div key={item.id} className="border border-gray-100 rounded-2xl p-4 flex flex-col group hover:border-[#FF0069]/30 transition-colors relative bg-white font-sans">
               <button
@@ -1110,9 +1110,9 @@ function WishlistTab() {
                   <img src={resolveProductImage(quickViewItem)} alt={quickViewItem.name} className="w-full h-full object-cover mix-blend-multiply" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-bold text-[#FF0069] uppercase tracking-wider">COSKINn Brand</span>
+                  <span className="text-xs font-bold text-[#FF0069] uppercase tracking-wider">Fairenne Brand</span>
                   <h3 className="text-lg font-bold text-black mt-1 leading-tight truncate">
-                    {quickViewItem.name.startsWith('COSKINn') ? quickViewItem.name : `COSKINn ${quickViewItem.name}`}
+                    {quickViewItem.name.startsWith('Fairenne') ? quickViewItem.name : `Fairenne ${quickViewItem.name}`}
                   </h3>
                   <p className="text-xl font-bold text-black mt-2">₹{quickViewItem.price}</p>
                   <p className="text-xs text-gray-500 mt-3 leading-relaxed">
@@ -1165,7 +1165,7 @@ function SettingsTab() {
 
   // Address Settings state
   const [addresses, setAddresses] = useState(() => {
-    const saved = localStorage.getItem('coskinn_addresses');
+    const saved = localStorage.getItem('fairenne_addresses');
     return saved ? JSON.parse(saved) : [];
   });
   const [addressFormData, setAddressFormData] = useState({
@@ -1290,7 +1290,7 @@ function SettingsTab() {
       updated.push(newAddr);
     }
     setAddresses(updated);
-    localStorage.setItem('coskinn_addresses', JSON.stringify(updated));
+    localStorage.setItem('fairenne_addresses', JSON.stringify(updated));
     setIsAddrAdding(false);
     setIsAddrEditing(false);
   };
@@ -1298,7 +1298,7 @@ function SettingsTab() {
   const handleDeleteAddress = (id) => {
     const updated = addresses.filter(a => a.id !== id);
     setAddresses(updated);
-    localStorage.setItem('coskinn_addresses', JSON.stringify(updated));
+    localStorage.setItem('fairenne_addresses', JSON.stringify(updated));
   };
 
   // Revoke device session
@@ -1320,7 +1320,7 @@ function SettingsTab() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `coskinn_user_data_${user?.name?.replace(/\s+/g, '_') || 'account'}.json`;
+    link.download = `fairenne_user_data_${user?.name?.replace(/\s+/g, '_') || 'account'}.json`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -1555,7 +1555,7 @@ function SettingsTab() {
             <h3 className="text-xl font-heading font-medium text-black border-b border-gray-50 pb-2">Privacy Policy & Data Control</h3>
 
             <div className="p-5 border border-pink-100 bg-pink-50/30 rounded-2xl">
-              <h4 className="text-sm font-bold text-black mb-3">COSKINn Privacy Policy</h4>
+              <h4 className="text-sm font-bold text-black mb-3">Fairenne Privacy Policy</h4>
               <div className="h-48 overflow-y-auto pr-2 text-xs text-gray-600 leading-relaxed custom-scrollbar space-y-3">
                 <p>
                   <strong>1. Data Collection:</strong> We collect information such as your name, email, phone number, and shipping address when you create an account or place an order. We also collect browsing behavior to offer tailored skincare and cosmetics recommendations.
@@ -1567,7 +1567,7 @@ function SettingsTab() {
                   <strong>3. Data Protection:</strong> We employ industry-standard encryption protocols to protect your personal data. Payment transactions are processed securely through certified partners, and we do not store your credit card details on our servers.
                 </p>
                 <p>
-                  <strong>4. Third-Party Sharing:</strong> COSKINn strictly respects your privacy. We do not sell, rent, or share your personal data with third-party advertisers. Data is only shared with trusted logistic partners (like ShadowFox) strictly for order fulfillment.
+                  <strong>4. Third-Party Sharing:</strong> Fairenne strictly respects your privacy. We do not sell, rent, or share your personal data with third-party advertisers. Data is only shared with trusted logistic partners (like ShadowFox) strictly for order fulfillment.
                 </p>
                 <p>
                   <strong>5. Your Rights:</strong> You retain full control over your data. You can download a copy of your personal data or request permanent deletion of your account at any time from this privacy panel.
@@ -1644,7 +1644,7 @@ function SettingsTab() {
                 <div>
                   <h4 className="text-sm font-bold text-black">Email Support</h4>
                   <p className="text-xs text-gray-500 mt-1">We usually reply within 24 hours</p>
-                  <a href="mailto:support@coskinn.com" className="mt-2 text-xs font-bold text-[#FF0069] hover:underline block">support@coskinn.com</a>
+                  <a href="mailto:support@fairenne.com" className="mt-2 text-xs font-bold text-[#FF0069] hover:underline block">support@fairenne.com</a>
                 </div>
               </div>
             </div>
@@ -1889,7 +1889,7 @@ function NotificationsTab({ primaryClass }) {
         if (newNotifications.length === 0) {
           newNotifications.push({
             id: idCounter++,
-            title: 'Welcome to COSKINn! ✨',
+            title: 'Welcome to Fairenne! ✨',
             desc: 'Thank you for joining our exclusive beauty community. Explore our collections!',
             date: 'System',
             read: true
@@ -2144,7 +2144,7 @@ function BonusesTab() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col gap-6 font-sans">
       <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-white">
         <h2 className="text-2xl font-heading font-medium text-black">My Bonuses</h2>
-        <p className="text-gray-500 text-sm mt-1">Your earned bonuses and credits from COSKINn rewards program.</p>
+        <p className="text-gray-500 text-sm mt-1">Your earned bonuses and credits from Fairenne rewards program.</p>
       </div>
 
       {bonusTransactions.length === 0 ? (
@@ -2234,7 +2234,7 @@ function ReferralTab() {
     fetchReferralAndStats();
   }, []);
 
-  const referralCode = referralData?.referralCode || 'COSKINN-BEAUTY';
+  const referralCode = referralData?.referralCode || 'FAIRENNE-BEAUTY';
   const totalEarnings = referralTx.reduce((sum, t) => sum + Number(t.amount || 0), 0);
   const successfulCount = referralTx.length;
 
@@ -2243,13 +2243,13 @@ function ReferralTab() {
     alert('Referral Code Copied!');
   };
 
-  const shareText = `✨ Join COSKINn and discover luxury skincare & cosmetics.\n\nUse my referral code:\n${referralCode}\n\nSign up and enjoy exclusive rewards.\n\nhttps://yourdomain.com/referral/${referralCode}`;
+  const shareText = `✨ Join Fairenne and discover luxury skincare & cosmetics.\n\nUse my referral code:\n${referralCode}\n\nSign up and enjoy exclusive rewards.\n\nhttps://yourdomain.com/referral/${referralCode}`;
 
   const handleShareClick = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Join COSKINn',
+          title: 'Join Fairenne',
           text: shareText,
         });
         return;
@@ -2312,7 +2312,7 @@ function ReferralTab() {
     { name: 'Facebook', icon: Globe, color: 'bg-[#1877F2] text-white', url: (text) => `https://www.facebook.com/sharer/sharer.php?u=https://yourdomain.com&quote=${encodeURIComponent(text)}` },
     { name: 'Telegram', icon: Send, color: 'bg-[#0088cc] text-white', url: (text) => `https://t.me/share/url?url=https://yourdomain.com&text=${encodeURIComponent(text)}` },
     { name: 'X (Twitter)', icon: MessageCircle, color: 'bg-black text-white', url: (text) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}` },
-    { name: 'Gmail', icon: Mail, color: 'bg-[#EA4335] text-white', url: (text) => `mailto:?subject=Join COSKINn&body=${encodeURIComponent(text)}` },
+    { name: 'Gmail', icon: Mail, color: 'bg-[#EA4335] text-white', url: (text) => `mailto:?subject=Join Fairenne&body=${encodeURIComponent(text)}` },
     { name: 'Messenger', icon: MessageSquare, color: 'bg-gradient-to-tr from-[#00c6ff] to-[#0072ff] text-white', url: (text) => `fb-messenger://share/?link=https://yourdomain.com` },
     { name: 'Snapchat', icon: Ghost, color: 'bg-[#FFFC00] text-black', action: handleCopy },
     { name: 'Pinterest', icon: Bookmark, color: 'bg-[#E60023] text-white', url: (text) => `https://pinterest.com/pin/create/button/?url=https://yourdomain.com&description=${encodeURIComponent(text)}` },
@@ -2596,7 +2596,7 @@ function RewardPointsTab() {
         <div className="divide-y divide-gray-100">
           {history.length === 0 ? (
             <div className="py-8 text-center text-gray-400 text-sm font-medium">
-              No reward points history yet. Earn points automatically on every COSKINn order!
+              No reward points history yet. Earn points automatically on every Fairenne order!
             </div>
           ) : (
             history.map((hist, idx) => (
@@ -2682,7 +2682,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
           benefitsText: tier.benefits
         },
         activeType: selectedCategory,
-        membershipName: `COSKINn ${selectedCategory === 'skincare' ? 'Skincare' : 'Cosmetics'} ${tier.title} Membership`,
+        membershipName: `Fairenne ${selectedCategory === 'skincare' ? 'Skincare' : 'Cosmetics'} ${tier.title} Membership`,
         price: tier.price,
         duration: '1 Year (365 Days)',
         benefitsText: tier.benefits
@@ -2698,7 +2698,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
         tierId: targetTier.id,
         tier: targetTier,
         activeType: categoryType,
-        membershipName: `COSKINn ${categoryType === 'skincare' ? 'Skincare' : 'Cosmetics'} ${targetTier.title} Membership`,
+        membershipName: `Fairenne ${categoryType === 'skincare' ? 'Skincare' : 'Cosmetics'} ${targetTier.title} Membership`,
         price: targetTier.price,
         duration: '1 Year (365 Days)',
         benefitsText: targetTier.benefits
@@ -2739,7 +2739,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
               You don't have an active membership.
             </h2>
             <p className="text-sm md:text-base font-medium text-gray-600 mt-1">
-              Select a luxury COSKINn membership tier below to unlock member pricing, reward point multipliers, early access, and free shipping.
+              Select a luxury Fairenne membership tier below to unlock member pricing, reward point multipliers, early access, and free shipping.
             </p>
           </div>
         </div>
@@ -2803,7 +2803,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
                   </div>
 
                   <h3 className={`text-2xl font-black mb-2 ${isPlatinum ? 'text-white' : 'text-[#1B1B1B]'}`}>
-                    COSKINn {selectedCategory === 'skincare' ? 'Skincare' : 'Cosmetics'} {tier.title} Membership
+                    Fairenne {selectedCategory === 'skincare' ? 'Skincare' : 'Cosmetics'} {tier.title} Membership
                   </h3>
 
                   <div className="flex items-end gap-1 mb-6">
@@ -2854,7 +2854,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
   }
 
   // CASE 2: USER HAS ACTIVE MEMBERSHIP (After Successful Purchase)
-  const allMemberships = JSON.parse(localStorage.getItem('coskinn_memberships') || '{}');
+  const allMemberships = JSON.parse(localStorage.getItem('fairenne_memberships') || '{}');
   const currentEmail = user?.email || 'guest';
   const userMemObj = allMemberships[currentEmail] || {};
   const historyList = userMemObj.history || [];
@@ -2867,7 +2867,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
       expiryDate: skincareMembership.validTill || skincareMembership.expiry || '30 July 2027',
       amountPaid: `₹${MEMBERSHIP_TIERS.find(t => t.title === skincareMembership.tier)?.price || 699}`,
       transactionId: skincareMembership.transactionId || 'TXN-CSK-892104',
-      membershipType: `COSKINn Skincare ${skincareMembership.tier} Membership`,
+      membershipType: `Fairenne Skincare ${skincareMembership.tier} Membership`,
       tier: skincareMembership.tier
     },
     hasCosmetics && {
@@ -2876,7 +2876,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
       expiryDate: cosmeticsMembership.validTill || cosmeticsMembership.expiry || '30 July 2027',
       amountPaid: `₹${MEMBERSHIP_TIERS.find(t => t.title === cosmeticsMembership.tier)?.price || 699}`,
       transactionId: cosmeticsMembership.transactionId || 'TXN-CSK-492810',
-      membershipType: `COSKINn Cosmetics ${cosmeticsMembership.tier} Membership`,
+      membershipType: `Fairenne Cosmetics ${cosmeticsMembership.tier} Membership`,
       tier: cosmeticsMembership.tier
     }
   ].filter(Boolean);
@@ -2904,7 +2904,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
           </div>
 
           <h2 className="text-3xl md:text-4xl font-black mb-2">
-            COSKINn {categoryType === 'skincare' ? 'Skincare' : 'Cosmetics'} {tierName} Membership
+            Fairenne {categoryType === 'skincare' ? 'Skincare' : 'Cosmetics'} {tierName} Membership
           </h2>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm opacity-90 font-medium mb-6">
@@ -3017,7 +3017,7 @@ function MembershipTab({ dynamicData, user: propUser }) {
           >
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
               <h3 className="text-xl md:text-2xl font-black text-[#1B1B1B]">
-                COSKINn {selectedBenefitsModal.tierName} Benefits
+                Fairenne {selectedBenefitsModal.tierName} Benefits
               </h3>
               <button
                 type="button"

@@ -37,8 +37,8 @@ function resolveBackendProductId(product, apiProducts = []) {
     const matchedBySlug = apiProducts.find(p => {
       const pSlug = (p.slug || '').toLowerCase().trim();
       return pSlug === targetSlug ||
-             pSlug === `coskinn-${targetSlug}` ||
-             pSlug.replace(/^coskinn-/, '') === targetSlug.replace(/^coskinn-/, '');
+             pSlug === `fairenne-${targetSlug}` ||
+             pSlug.replace(/^fairenne-/, '') === targetSlug.replace(/^fairenne-/, '');
     });
     if (matchedBySlug) {
       return String(matchedBySlug.id);
@@ -46,17 +46,17 @@ function resolveBackendProductId(product, apiProducts = []) {
   }
 
   // 3. Lookup by name in apiProducts (fuzzy / partial)
-  const cleanTarget = (product.name || '').toLowerCase().trim().replace(/^coskinn\s+/i, '');
+  const cleanTarget = (product.name || '').toLowerCase().trim().replace(/^fairenne\s+/i, '');
   if (cleanTarget && apiProducts.length > 0) {
     // Try exact match first
     let matchedByName = apiProducts.find(p => {
-      const pName = (p.name || '').toLowerCase().trim().replace(/^coskinn\s+/i, '');
+      const pName = (p.name || '').toLowerCase().trim().replace(/^fairenne\s+/i, '');
       return pName === cleanTarget;
     });
     // Try partial match (e.g. database name contains target name or vice versa)
     if (!matchedByName) {
       matchedByName = apiProducts.find(p => {
-        const pName = (p.name || '').toLowerCase().trim().replace(/^coskinn\s+/i, '');
+        const pName = (p.name || '').toLowerCase().trim().replace(/^fairenne\s+/i, '');
         return pName.includes(cleanTarget) || cleanTarget.includes(pName);
       });
     }
@@ -99,7 +99,7 @@ export function CartProvider({ children }) {
   }, []);
 
   const fetchCart = useCallback(async () => {
-    const sessionStr = localStorage.getItem('coskinn_session');
+    const sessionStr = localStorage.getItem('fairenne_session');
     if (!user && !sessionStr) {
       setCart([]);
       setCartSummary(null);

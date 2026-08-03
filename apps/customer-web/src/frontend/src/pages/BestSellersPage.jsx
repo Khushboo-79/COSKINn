@@ -18,7 +18,7 @@ const trustFeatures = [
 const ALL_PRODUCTS = [
   {
     id: 114,
-    name: 'COSKINn Niacinamide Serum',
+    name: 'Fairenne Niacinamide Serum',
     type: 'Face Care • Serums',
     price: 899,
     originalPrice: 1199,
@@ -33,7 +33,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 101,
-    name: 'COSKINn Sunscreen SPF 50',
+    name: 'Fairenne Sunscreen SPF 50',
     type: 'Face Care • Sunscreen',
     price: 699,
     originalPrice: 899,
@@ -48,7 +48,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 102,
-    name: 'COSKINn Body Sunscreen',
+    name: 'Fairenne Body Sunscreen',
     type: 'Body Care • Sunscreen',
     price: 1099,
     originalPrice: 1499,
@@ -63,7 +63,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 103,
-    name: 'COSKINn Tinted Sunscreen',
+    name: 'Fairenne Tinted Sunscreen',
     type: 'Face Care • Sunscreen',
     price: 799,
     originalPrice: 999,
@@ -78,7 +78,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 104,
-    name: 'COSKINn Gentle Cleanser',
+    name: 'Fairenne Gentle Cleanser',
     type: 'Face Care • Cleansers',
     price: 499,
     originalPrice: 699,
@@ -93,7 +93,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 105,
-    name: 'COSKINn Cleansing Balm',
+    name: 'Fairenne Cleansing Balm',
     type: 'Face Care • Cleansers',
     price: 849,
     originalPrice: 1099,
@@ -108,7 +108,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 112,
-    name: 'COSKINn Daily Moisturiser',
+    name: 'Fairenne Daily Moisturiser',
     type: 'Face Care • Moisturisers',
     price: 649,
     originalPrice: 849,
@@ -123,7 +123,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 110,
-    name: 'COSKINn Overnight Mask',
+    name: 'Fairenne Overnight Mask',
     type: 'Face Care • Masks',
     price: 999,
     originalPrice: 1299,
@@ -138,7 +138,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 109,
-    name: 'COSKINn Hydrating Face Mist',
+    name: 'Fairenne Hydrating Face Mist',
     type: 'Face Care • Toners',
     price: 449,
     originalPrice: 599,
@@ -153,7 +153,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 106,
-    name: 'COSKINn Lip Balm SPF',
+    name: 'Fairenne Lip Balm SPF',
     type: 'Lip Care',
     price: 299,
     originalPrice: 399,
@@ -168,7 +168,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 111,
-    name: 'COSKINn Under Eye Patches',
+    name: 'Fairenne Under Eye Patches',
     type: 'Face Care • Masks',
     price: 1299,
     originalPrice: 1599,
@@ -183,7 +183,7 @@ const ALL_PRODUCTS = [
   },
   {
     id: 107,
-    name: 'COSKINn Hand Cream',
+    name: 'Fairenne Hand Cream',
     type: 'Body Care',
     price: 349,
     originalPrice: 499,
@@ -253,7 +253,7 @@ export default function BestSellersPage() {
         <div className="absolute inset-0 opacity-40 mix-blend-multiply">
           <img 
             src={heroImg} 
-            alt="COSKINn Best Sellers" 
+            alt="Fairenne Best Sellers" 
             className="w-full h-full object-cover"
           />
         </div>
@@ -266,7 +266,7 @@ export default function BestSellersPage() {
               Customer Favorites
             </div>
             <h1 className="text-5xl md:text-7xl font-heading font-black mb-6 leading-[1.1] tracking-tight">
-              COSKINn Best Sellers
+              Fairenne Best Sellers
             </h1>
             <p className="text-lg md:text-xl text-black/70 mb-10 max-w-2xl mx-auto leading-relaxed">
               Discover our most-loved skincare products trusted by thousands of customers for healthy, glowing skin.
@@ -442,10 +442,10 @@ export default function BestSellersPage() {
 
       </section>
 
-      {/* Trust Section: Why Customers Love COSKINn */}
+      {/* Trust Section: Why Customers Love Fairenne */}
       <section className="w-full bg-white py-24 mt-12 border-t border-black/5">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 text-center">
-          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">Why Customers Love COSKINn</h2>
+          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">Why Customers Love Fairenne</h2>
           <p className="text-black/60 font-medium mb-16 max-w-2xl mx-auto">Experience the perfect blend of science and nature. Our products are formulated to deliver visible results without compromising on safety.</p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">

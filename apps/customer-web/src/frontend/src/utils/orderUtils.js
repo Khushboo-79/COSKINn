@@ -7,7 +7,7 @@ export function resolveOrderPlatform(order, cartItems = []) {
   const items = (order?.items && order.items.length > 0) ? order.items : (cartItems || []);
 
   if (!items || items.length === 0) {
-    const activeTheme = typeof window !== 'undefined' ? localStorage.getItem('coskinn_theme') : null;
+    const activeTheme = typeof window !== 'undefined' ? localStorage.getItem('fairenne_theme') : null;
     return activeTheme === 'skincare' ? 'SKINCARE' : 'COSMETICS';
   }
 
