@@ -156,6 +156,7 @@ const OTPVerification: React.FC = () => {
                   <h3 className="text-3xl font-serif text-white italic mb-2">"Unlock the velvet rope."</h3>
                   <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison COSKINn</p>
                 </div>
+              </div>
             </div>
           ) : (
             <div className="w-full h-full relative">

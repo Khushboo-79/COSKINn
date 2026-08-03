@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { ArrowRight, ArrowLeft, Star, SlidersHorizontal, X, Heart } from 'lucide-react';
+import { ArrowLeft, Star, SlidersHorizontal, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FilterSidebar from '../components/shop/FilterSidebar';
 
