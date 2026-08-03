@@ -40,7 +40,7 @@ export const SharedShell = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-[#fafafa] flex flex-col md:flex-row font-sans">
 
       {/* Mobile Overlay */}
       {!isSidebarOpen && (
@@ -53,12 +53,12 @@ export const SharedShell = () => {
       {/* Sidebar */}
       <aside
         className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-          } fixed md:relative z-30 inset-y-0 left-0 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col shadow-xl`}
+          } fixed md:relative z-30 inset-y-0 left-0 bg-gradient-to-b from-[#fff0f2] to-[#FFDAB9]/20 border-r border-primary-200 text-slate-700 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
       >
-        <div className="h-16 flex items-center justify-between px-4 bg-slate-950 border-b border-slate-800">
-          {!isSidebarOpen && <img src="/logo.png" alt="Fairenne Logo" className="h-8 w-auto" />}
-          {isSidebarOpen && <span className="font-bold text-white text-lg mx-auto">FA</span>}
-          <button onClick={toggleSidebar} className="text-slate-400 hover:text-white md:hidden">
+        <div className="h-20 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative w-full">
+          {isSidebarOpen && <img src="/logo-icon.png" alt="Fairenne Icon" className="h-10 w-auto object-contain" />}
+          {!isSidebarOpen && <img src="/logo-full.png" alt="Fairenne Logo" className="h-14 w-auto max-w-[200px] object-contain scale-110" />}
+          <button onClick={toggleSidebar} className="text-slate-400 hover:text-primary-500 md:hidden absolute right-4">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -72,9 +72,9 @@ export const SharedShell = () => {
               <Link
                 key={route.id}
                 to={route.path}
-                className={`flex items-center px-4 py-3 mx-2 rounded-lg transition-colors ${isActive
-                    ? 'bg-primary-600 text-white'
-                    : 'hover:bg-slate-800 hover:text-white'
+                className={`flex items-center px-4 py-3 mx-2 rounded-xl transition-all ${isActive
+                    ? 'bg-gradient-to-r from-[#FF7F50] to-[#ff9aa8] text-white shadow-lg shadow-[#FF7F50]/30 font-semibold scale-[1.02]'
+                    : 'hover:bg-white hover:text-[#FF7F50] hover:shadow-sm'
                   } ${isSidebarOpen ? 'justify-center' : ''}`}
                 title={isSidebarOpen ? route.label : ''}
               >
@@ -85,10 +85,10 @@ export const SharedShell = () => {
           })}
         </nav>
 
-        <div className="p-4 bg-slate-950 border-t border-slate-800">
+        <div className="p-4 bg-white/50 border-t border-primary-100">
           <button
             onClick={logout}
-            className={`flex items-center text-slate-400 hover:text-white transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
+            className={`flex items-center text-slate-500 hover:text-rose-500 transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
           >
             <LogOut className="h-5 w-5" />
             {!isSidebarOpen && <span className="ml-3 font-medium">Logout</span>}
@@ -100,7 +100,7 @@ export const SharedShell = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
+        <header className="h-16 bg-gradient-to-r from-[#fff0f2]/90 to-[#FFDAB9]/40 backdrop-blur-md border-b border-primary-200/50 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
           <div className="flex items-center flex-1">
             <button
               onClick={toggleSidebar}
@@ -224,7 +224,7 @@ export const SharedShell = () => {
         </header>
 
         {/* Content Frame */}
-        <main className="flex-1 overflow-auto bg-background p-4 lg:p-8">
+        <main className="flex-1 overflow-auto p-4 lg:p-8">
           <Outlet />
         </main>
         <GlobalSearch />

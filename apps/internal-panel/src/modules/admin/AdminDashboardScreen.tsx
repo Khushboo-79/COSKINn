@@ -36,7 +36,7 @@ const KPICard = ({ title, value, trend, icon: Icon, color, loading, to }: any) =
   const content = (
     <>
       <div className="flex justify-between items-start mb-4">
-        <div className={`p-2.5 rounded-xl ${color} group-hover:scale-110 transition-transform`}>
+        <div className={`p-2.5 rounded-xl ${color} group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-sm`}>
           <Icon className="h-5 w-5" />
         </div>
         {trend && (
@@ -47,29 +47,36 @@ const KPICard = ({ title, value, trend, icon: Icon, color, loading, to }: any) =
         )}
       </div>
       <div>
-        <h3 className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">{title}</h3>
-        <p className="text-2xl font-bold text-slate-800">{loading ? '...' : (value !== undefined && value !== null ? value : 'N/A')}</p>
+        <h3 className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1 group-hover:text-[#FF7F50] transition-colors">{title}</h3>
+        <p className="text-3xl font-extrabold text-slate-800 tracking-tight">{loading ? '...' : (value !== undefined && value !== null ? value : 'N/A')}</p>
       </div>
     </>
   );
 
-  const className = "block bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-md hover:border-[#FF3E7F]/30 transition-all group";
+  const className = "block bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-all duration-300 ease-out group hover:-translate-y-1.5 hover:shadow-xl hover:shadow-[#FF7F50]/10 hover:border-[#FF7F50]/30 hover:bg-gradient-to-br hover:from-white hover:to-[#fff0f2] active:scale-95 active:bg-[#fff0f2] cursor-pointer overflow-hidden relative";
+
+  const wrappedContent = (
+    <>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF7F50]/10 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+      <div className="relative z-10">{content}</div>
+    </>
+  );
 
   if (to) {
-    return <Link to={to} className={`${className} cursor-pointer`}>{content}</Link>;
+    return <Link to={to} className={className}>{wrappedContent}</Link>;
   }
 
-  return <div className={className}>{content}</div>;
+  return <div className={className}>{wrappedContent}</div>;
 };
 
 // Section Wrapper
 const Section = ({ title, children, action }: any) => (
-  <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
-    <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+  <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-full hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300">
+    <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
       <h2 className="text-sm font-bold text-slate-800">{title}</h2>
       {action && <div>{action}</div>}
     </div>
-    <div className="p-5 flex-1 overflow-auto">
+    <div className="p-6 flex-1 overflow-auto bg-gradient-to-b from-white to-slate-50/30">
       {children}
     </div>
   </div>
@@ -121,14 +128,14 @@ export const AdminDashboardScreen = () => {
 
       {/* 1. Welcome Header */}
       <header className="mb-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#FF3E7F]/5 to-purple-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-[#FF7F50]/10 to-[#ff9aa8]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:scale-110 transition-transform duration-700"></div>
           <div className="flex items-center gap-5 relative z-10">
-            <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-[#FF3E7F] to-rose-400 text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-rose-200 border-4 border-white">
+            <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-[#FF7F50] to-[#ff9aa8] text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-[#FF7F50]/30 border-4 border-white group-hover:rotate-12 transition-transform duration-500">
               {user?.email?.charAt(0).toUpperCase() || 'A'}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Welcome back, {user?.name || 'Admin'}</h1>
+              <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Welcome back, {user?.name || 'Admin'}</h1>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 mt-2 font-medium">
                 <span className="flex items-center"><Calendar className="h-4 w-4 mr-1.5 text-slate-400" /> {format(new Date(), 'dd MMMM yyyy')}</span>
                 <span className="hidden sm:flex items-center"><Clock className="h-4 w-4 mr-1.5 text-slate-400" /> Last Login: {user?.lastLoginAt ? format(new Date(user.lastLoginAt), "dd MMM, hh:mm a") : 'Just now'}</span>
@@ -181,15 +188,15 @@ export const AdminDashboardScreen = () => {
                     <AreaChart data={financeMonthly} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#FF3E7F" stopOpacity={0.2} />
-                          <stop offset="95%" stopColor="#FF3E7F" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#FF7F50" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#ff9aa8" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b', fontWeight: 500 }} dy={10} />
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b', fontWeight: 500 }} tickFormatter={(val) => `₹${val / 1000}k`} />
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '3 3' }} />
-                      <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#FF3E7F" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+                      <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)' }} cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '3 3' }} />
+                      <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#FF7F50" strokeWidth={4} fillOpacity={1} fill="url(#colorRev)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -223,7 +230,7 @@ export const AdminDashboardScreen = () => {
           {/* 6 & 7. Recent Orders & Customers */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <Section title="Recent Orders" action={<Link to="/orders" className="text-xs font-bold text-[#FF3E7F] hover:underline bg-[#FF3E7F]/10 px-3 py-1.5 rounded-full transition-colors">View All</Link>}>
+              <Section title="Recent Orders" action={<Link to="/orders" className="text-xs font-bold text-[#FF7F50] hover:text-white hover:bg-[#FF7F50] bg-[#FF7F50]/10 px-4 py-2 rounded-full transition-all active:scale-95 shadow-sm">View All</Link>}>
                 {!ordersData || ordersData.length === 0 ? (
                   <EmptyState title="No Orders Yet" message="When customers place orders, they will appear here." icon={ShoppingBag} />
                 ) : (
@@ -338,20 +345,20 @@ export const AdminDashboardScreen = () => {
         <div className="w-full xl:w-80 flex flex-col gap-6">
 
           {/* 15. Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
-            <h2 className="text-sm font-bold text-slate-800 mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <Link to="/product/create" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-[#FF3E7F]/5 hover:border-[#FF3E7F]/30 hover:text-[#FF3E7F] transition-all text-slate-600 text-xs font-bold group">
-                <Plus className="h-5 w-5 mb-2 text-slate-400 group-hover:text-[#FF3E7F] transition-colors" /> Add Product
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <h2 className="text-sm font-bold text-slate-800 mb-5">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <Link to="/product/create" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <Plus className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Add Product
               </Link>
-              <Link to="/marketing/coupons" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-[#FF3E7F]/5 hover:border-[#FF3E7F]/30 hover:text-[#FF3E7F] transition-all text-slate-600 text-xs font-bold group">
-                <Ticket className="h-5 w-5 mb-2 text-slate-400 group-hover:text-[#FF3E7F] transition-colors" /> Create Coupon
+              <Link to="/marketing/coupons" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <Ticket className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Create Coupon
               </Link>
-              <Link to="/admin/users" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-[#FF3E7F]/5 hover:border-[#FF3E7F]/30 hover:text-[#FF3E7F] transition-all text-slate-600 text-xs font-bold group">
-                <Users className="h-5 w-5 mb-2 text-slate-400 group-hover:text-[#FF3E7F] transition-colors" /> Add User
+              <Link to="/admin/users" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <Users className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Add User
               </Link>
-              <Link to="/orders" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-[#FF3E7F]/5 hover:border-[#FF3E7F]/30 hover:text-[#FF3E7F] transition-all text-slate-600 text-xs font-bold group">
-                <ShoppingBag className="h-5 w-5 mb-2 text-slate-400 group-hover:text-[#FF3E7F] transition-colors" /> Manage Orders
+              <Link to="/orders" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <ShoppingBag className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Manage Orders
               </Link>
             </div>
           </div>

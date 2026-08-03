@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #fde8e9;
-  --color-primary-100: #fbd1d4;
-  --color-primary-200: #f8a3ab;
-  --color-primary-300: #f47582;
-  --color-primary-400: #ef4759;
-  --color-primary-500: #9b2c2c;
-  --color-primary-600: #701a22;
-  --color-primary-700: #5c151c;
-  --color-primary-800: #481016;
-  --color-primary-900: #340c10;
+  --color-primary-50: #FFF5F0;
+  --color-primary-100: #FFE4D6;
+  --color-primary-200: #FFCEB3;
+  --color-primary-300: #FFB185;
+  --color-primary-400: #FF9256;
+  --color-primary-500: #FF7F50;
+  --color-primary-600: #F06536;
+  --color-primary-700: #D64E22;
+  --color-primary-800: #B33A18;
+  --color-primary-900: #902D17;
   
-  --color-background: #fdf9f1;
-  --color-surface: #ffffff;
+  --color-background: #FAFAFA;
+  --color-surface: #FFFFFF;
   
-  --font-sans: "Inter", "Nunito", sans-serif;
+  --font-sans: "Inter", sans-serif;
   --font-serif: "Playfair Display", serif;
-  --font-display: "Fredoka", "Playfair Display", cursive;
+  --font-display: "Fredoka One", "Fredoka", cursive;
 }
 
 @layer base {

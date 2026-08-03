@@ -18,7 +18,7 @@ const Bestsellers: React.FC = () => {
   const products = getAllProducts(isGlam).slice(0, 4);
 
   return (
-    <section id="bestsellers" className={`py-16 relative ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
+    <section id="bestsellers" className={`py-16 relative scroll-mt-20 ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
       {!isGlam && (
         <>
           {/* Top Brushed Edge */}

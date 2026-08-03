@@ -31,13 +31,13 @@ const AdminNav = () => {
           <Link
             key={tab.path}
             to={tab.path}
-            className={`flex items-center whitespace-nowrap px-4 py-4 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex items-center whitespace-nowrap px-5 py-4 text-sm font-bold border-b-2 transition-all duration-300 ease-out active:scale-95 ${
               isActive
                 ? 'border-[#FF3E7F] text-[#FF3E7F] bg-[#FF3E7F]/5'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50/50'
             }`}
           >
-            <Icon className="h-4 w-4 mr-2" />
+            <Icon className={`h-4 w-4 mr-2.5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-6'}`} />
             {tab.name}
           </Link>
         );

@@ -25,8 +25,8 @@ const Account: React.FC = () => {
       total: 7085,
       status: 'In Transit',
       items: [
-        { name: isGlam ? 'Midnight Elixir Serum' : 'Peachy Glow Vitamin C Serum', qty: 1, image: isGlam ? 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80' : 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800' },
-        { name: isGlam ? 'Scarlet Kiss Lipstick' : 'Berry Bounce Sleep Mask', qty: 1, image: isGlam ? 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80' : 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800' }
+        { name: isGlam ? 'Midnight Elixir Serum' : 'Peachy Glow Vitamin C Serum', qty: 1, image: isGlam ? 'https://www.dotandkey.com/cdn/shop/files/Artboard1_95ac3e40-4665-40b5-ae87-a3379ff9847e.jpg' : 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg' },
+        { name: isGlam ? 'Scarlet Kiss Lipstick' : 'Berry Bounce Sleep Mask', qty: 1, image: isGlam ? 'https://www.dotandkey.com/cdn/shop/files/ann_2_1_9036910d-d727-4641-ae46-a916a0408fcf.jpg' : 'https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg' }
       ]
     },
     {
@@ -35,7 +35,7 @@ const Account: React.FC = () => {
       total: 3499,
       status: 'Delivered',
       items: [
-        { name: isGlam ? 'Golden Hour Highlighter' : 'Avocado Melt Eye Cream', qty: 1, image: isGlam ? 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1615397323133-c90a2a16d557?auto=format&fit=crop&q=80' }
+        { name: isGlam ? 'Golden Hour Highlighter' : 'Avocado Melt Eye Cream', qty: 1, image: isGlam ? 'https://www.dotandkey.com/cdn/shop/files/1-175.jpg' : 'https://www.dotandkey.com/cdn/shop/files/1_de25ac2d-c470-43f2-9217-538f92860f78.jpg' }
       ]
     }
   ];

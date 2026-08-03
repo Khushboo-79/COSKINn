@@ -118,7 +118,7 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, onMouseEnter, onMo
                   {isGlam ? (
                     <div className="w-full h-full relative">
                       <img 
-                        src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80" 
+                        src="https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588" 
                         alt="Midnight Gala Collection" 
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />

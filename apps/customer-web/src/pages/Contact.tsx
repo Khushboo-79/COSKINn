@@ -49,7 +49,7 @@ const Contact: React.FC = () => {
               className="relative aspect-[16/9] md:aspect-[4/3] rounded-[32px] overflow-hidden shadow-xl"
             >
               <img 
-                src={isGlam ? 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951' : 'https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=800'}
+                src={isGlam ? 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951' : 'https://www.dotandkey.com/cdn/shop/files/Banner_Mob_c80fe41c-c277-4cdb-a135-343928f3e8aa.jpg'}
                 alt="Contact Us"
                 className="w-full h-full object-cover"
               />
