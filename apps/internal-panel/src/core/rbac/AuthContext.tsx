@@ -4,10 +4,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface User {
   id: string;
+  name?: string;
   email: string;
   role: string;
   panel_access: string[];
   permissions: string[];
+  lastLoginAt?: number;
 }
 
 interface AuthContextType {
@@ -25,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(localStorage.getItem('access_token'));
 
   // Fetch current user if token exists
-  const { data: user, isLoading, isError, refetch } = useQuery({
+  const { data: user, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ['currentUser'],
     queryFn: authApi.getCurrentUser,
     enabled: !!token,
@@ -63,7 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user: user || null,
         isAuthenticated: !!user,
-        isLoading,
+        isLoading: isLoading || isFetching || (!!token && !user && !isError),
         login,
         logout,
       }}

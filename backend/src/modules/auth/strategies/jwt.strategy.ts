@@ -48,8 +48,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     return { 
       id: user.id, 
+      name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : null,
       email: user.email,
       phone: user.phone,
+      lastLoginAt: payload.iat ? payload.iat * 1000 : Date.now(),
       roles,
       permissions,
       panel_access: Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])))
