@@ -54,8 +54,8 @@ export const SupportRouter = () => {
         <Route path="*" element={
           <div className="p-12 text-center text-slate-500">
             <MessageSquare className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-slate-700 mb-2">Coming Soon</h2>
-            <p>This section of the CRM is scheduled for a future phase.</p>
+            <h2 className="text-xl font-bold text-slate-700 mb-2">Page Not Found</h2>
+            <p>This section doesn't exist.</p>
           </div>
         } />
       </Routes>

@@ -1,4 +1,4 @@
-# COSKINn — Internal Panel: Full Day-Wise Build Plan (All-In-One)
+# Fairenne — Internal Panel: Full Day-Wise Build Plan (All-In-One)
 
 Everything needed to build the internal-panel frontend — shared login/RBAC core, Admin, Product Management, Inventory, Order Management, Warehouse, Customer Support, Tax/Finance, Marketing/CRM, Content, HR, Auditor — in **one continuous day sequence**. No other file needs to be opened.
 

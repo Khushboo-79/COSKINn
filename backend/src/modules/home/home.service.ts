@@ -61,7 +61,7 @@ export class HomeService {
     const heroBanners = [
       {
         id: 'banner_1',
-        imageUrl: 'https://coskinn-assets.s3.amazonaws.com/banners/summer-sale.jpg',
+        imageUrl: 'https://fairenne-assets.s3.amazonaws.com/banners/summer-sale.jpg',
         linkUrl: '/products?minPrice=500',
         altText: 'Summer Skincare Sale'
       }

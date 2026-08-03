@@ -179,7 +179,8 @@ export default function CleanserPage() {
                 whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => {
-                  document.getElementById('products-grid').scrollIntoView({ behavior: 'smooth' });
+                  const el = document.getElementById('products-grid');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
                 className="px-10 py-4 bg-white text-[#FF0069] font-bold rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.2)] text-sm uppercase tracking-widest"
               >
@@ -218,7 +219,7 @@ export default function CleanserPage() {
       </section>
 
       {/* Filters Section */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
+      <section id="ingredients-section" className="max-w-7xl mx-auto px-6 py-12">
         {/* Shop by Skin Type */}
         <div className="mb-12">
           <h2 className="text-2xl font-heading font-bold text-black mb-6">Shop by Skin Type</h2>

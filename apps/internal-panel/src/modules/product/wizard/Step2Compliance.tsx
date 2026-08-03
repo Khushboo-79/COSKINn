@@ -42,7 +42,7 @@ export const Step2Compliance = () => {
           <input
             type="text"
             {...register('manufacturerName')}
-            placeholder="e.g. COSKINn Manufacturing Unit"
+            placeholder="e.g. Fairenne Manufacturing Unit"
             className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
           />
         </div>

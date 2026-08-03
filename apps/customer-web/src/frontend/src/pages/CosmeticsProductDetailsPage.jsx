@@ -180,7 +180,7 @@ export default function CosmeticsProductDetailsPage({ product }) {
                 <div className="flex flex-col gap-3 w-full mt-1">
                   <button
                     onClick={handleAddToCart}
-                    className="w-full h-12 bg-[#FF8FB1] text-white rounded-full hover:bg-[#FF0069] flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-xs transition-all shadow-sm relative overflow-hidden group"
+                    className="w-full h-12 bg-gradient-to-r from-[#FF0069] to-[#FF4F9A] text-white rounded-full hover:shadow-[0_10px_20px_rgba(255,0,105,0.3)] hover:scale-[1.02] flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-xs transition-all shadow-md relative overflow-hidden group"
                   >
                     <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
                     <ShoppingBag className="w-4 h-4 relative z-10" /> <span className="relative z-10">Add to Cart</span>

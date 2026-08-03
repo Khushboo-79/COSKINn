@@ -40,12 +40,12 @@ export const StockAdjustmentScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stock'] });
       queryClient.invalidateQueries({ queryKey: ['inventory', 'stats'] });
-      toast.success();
+      toast.success('Action successful');
       reset();
       navigate('/inventory');
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

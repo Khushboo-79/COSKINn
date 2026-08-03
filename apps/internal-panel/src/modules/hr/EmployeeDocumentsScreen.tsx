@@ -46,7 +46,7 @@ export const EmployeeDocumentsScreen = () => {
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
       console.error("Upload failed", err);
-      toast.error();
+      toast.error('An error occurred');
     } finally {
       setIsUploading(false);
     }
