@@ -30,6 +30,7 @@ export const SharedShell = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
+  const [isMailOpen, setMailOpen] = useState(false);
   const location = useLocation();
 
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
@@ -129,17 +130,42 @@ export const SharedShell = () => {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <button className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative group">
-              <Mail className="h-5 w-5" />
-              {/* Tooltip for Mail */}
-              <div className="absolute top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity">
-                No new messages
-              </div>
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => {
+                  setMailOpen(!isMailOpen);
+                  setNotificationOpen(false);
+                  setProfileOpen(false);
+                }}
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative"
+              >
+                <Mail className="h-5 w-5" />
+              </button>
+
+              {/* Messages Dropdown */}
+              {isMailOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setMailOpen(false)}></div>
+                  <div className="absolute right-0 top-12 w-72 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
+                    <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
+                      <h3 className="font-bold text-sm text-slate-800">Messages</h3>
+                      <span className="text-xs text-primary-600 cursor-pointer hover:underline">Mark all read</span>
+                    </div>
+                    <div className="p-6 text-center">
+                      <Mail className="h-8 w-8 text-slate-200 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-slate-600">No new messages</p>
+                      <p className="text-xs text-slate-400 mt-1">You're all caught up!</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            
             <div className="relative">
               <button
                 onClick={() => {
                   setNotificationOpen(!isNotificationOpen);
+                  setMailOpen(false);
                   setProfileOpen(false);
                 }}
                 className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative"
@@ -180,6 +206,7 @@ export const SharedShell = () => {
                 onClick={() => {
                   setProfileOpen(!isProfileOpen);
                   setNotificationOpen(false);
+                  setMailOpen(false);
                 }}
                 className="flex items-center cursor-pointer p-1 pr-2 rounded-full hover:bg-slate-50 transition-colors focus:outline-none"
               >
