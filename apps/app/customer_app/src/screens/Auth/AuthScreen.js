@@ -30,7 +30,7 @@ const AuthScreen = ({ navigation }) => {
 
   return (
     <LinearGradient
-      colors={[AppTheme.colors.backgroundStart, AppTheme.colors.backgroundEnd]}
+      colors={['#F5F5F5', '#ff9ac4ff']}
       style={styles.container}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}

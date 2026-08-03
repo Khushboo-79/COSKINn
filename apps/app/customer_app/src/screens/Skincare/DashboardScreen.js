@@ -897,10 +897,11 @@ const styles = StyleSheet.create({
   featuresScroll: {
     paddingHorizontal: scaleh(20),
     marginBottom: scalev(40),
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   featureItem: {
     alignItems: 'center',
-    marginRight: scaleh(25),
   },
   featureCircle: {
     width: scaleh(60),
