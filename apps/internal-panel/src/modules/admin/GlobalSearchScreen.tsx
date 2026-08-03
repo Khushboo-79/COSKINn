@@ -60,36 +60,36 @@ export const GlobalSearchScreen = () => {
       </div>
 
       {/* 1. The Aura Search Bar & 2. Quick Filter Chips */}
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-[#FF7F50] to-[#ff9aa8] rounded-[2rem] blur opacity-25 group-focus-within:opacity-60 transition duration-1000 group-hover:duration-200"></div>
-          <div className="relative bg-white rounded-full flex items-center p-2 shadow-sm border border-slate-100">
-            <div className="pl-4 pr-2">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <div className="relative group mx-4 md:mx-0">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-400 to-primary-200 rounded-[2rem] blur opacity-20 group-focus-within:opacity-50 transition duration-500"></div>
+          <div className="relative bg-white rounded-[2rem] flex items-center p-2 shadow-sm border border-slate-200 focus-within:border-primary-400 focus-within:shadow-md transition-all">
+            <div className="pl-5 pr-3">
               <Search className="h-6 w-6 text-primary-500" />
             </div>
             <input
               type="text"
-              className="w-full bg-transparent border-none text-lg text-slate-800 placeholder-slate-400 focus:ring-0 px-2 py-3"
+              className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 outline-none text-lg text-slate-800 placeholder-slate-400 py-4 px-2"
               placeholder="Enter order ID, customer name, email..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               autoFocus
             />
-            <div className="pr-4 hidden sm:flex items-center gap-1">
-              <kbd className="font-sans font-bold text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-lg border border-slate-200 shadow-sm">Press ↵</kbd>
+            <div className="pr-5 hidden md:flex items-center">
+              <span className="font-sans font-bold text-xs bg-slate-100 text-slate-500 px-3 py-1.5 rounded-lg border border-slate-200/60 shadow-sm whitespace-nowrap">Enter</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-3 flex-wrap">
+        <div className="flex items-center justify-center gap-2.5 flex-wrap px-4">
           {filters.map(filter => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 active:scale-95 ${
+              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
                 activeFilter === filter 
-                ? 'bg-[#FF7F50] text-white shadow-md shadow-[#FF7F50]/30 -translate-y-0.5' 
-                : 'bg-white text-slate-600 border border-slate-200 hover:border-[#FF7F50] hover:text-[#FF7F50] hover:bg-[#FF7F50]/5'
+                ? 'bg-primary-500 text-white shadow-md shadow-primary-500/20' 
+                : 'bg-white text-slate-600 border border-slate-200 hover:border-primary-400 hover:text-primary-500 hover:bg-primary-50/50'
               }`}
             >
               {filter}
