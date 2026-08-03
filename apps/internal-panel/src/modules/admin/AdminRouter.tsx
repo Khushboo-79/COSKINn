@@ -33,7 +33,7 @@ const AdminNav = () => {
             to={tab.path}
             className={`flex items-center whitespace-nowrap px-4 py-4 text-sm font-medium border-b-2 transition-colors ${
               isActive
-                ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
+                ? 'border-[#FF3E7F] text-[#FF3E7F] bg-[#FF3E7F]/5'
                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50/50'
             }`}
           >

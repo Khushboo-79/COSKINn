@@ -50,16 +50,49 @@ export class AdminService implements OnModuleInit {
     
     const totalRevenue = payments._sum.amount || 0;
 
+    // --- Calculate Trends ---
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+    const currentOrders = await this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: thirtyDaysAgo }, ...platformWhere } });
+    const prevOrders = await this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, ...platformWhere } });
+    const ordersTrend = this.calculateTrend(currentOrders, prevOrders);
+
+    const currentUsers = await this.prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } });
+    const prevUsers = await this.prisma.user.count({ where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } });
+    const usersTrend = this.calculateTrend(currentUsers, prevUsers);
+
+    const currentPayments = await this.prisma.paymentTransaction.aggregate({
+      _sum: { amount: true },
+      where: { status: 'SUCCESS', createdAt: { gte: thirtyDaysAgo }, ...platformWhere }
+    });
+    const prevPayments = await this.prisma.paymentTransaction.aggregate({
+      _sum: { amount: true },
+      where: { status: 'SUCCESS', createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, ...platformWhere }
+    });
+    const revenueTrend = this.calculateTrend(currentPayments._sum.amount || 0, prevPayments._sum.amount || 0);
+
+    // Dynamic system health: Assuming healthy if some users/orders exist
+    const systemHealth = (activeUsers > 0) ? '100%' : '95%';
+
     return {
       totalRevenue,
       activeUsers,
       totalOrders,
       totalProducts,
-      systemHealth: '100%',
-      revenueTrend: '+12.5%', 
-      usersTrend: '+8.2%',
-      ordersTrend: '+15.4%',
+      systemHealth,
+      revenueTrend,
+      usersTrend,
+      ordersTrend,
     };
+  }
+
+  private calculateTrend(current: number, previous: number): string {
+    if (previous === 0) return current > 0 ? '+100%' : '0%';
+    const percent = ((current - previous) / previous) * 100;
+    const sign = percent > 0 ? '+' : '';
+    return `${sign}${percent.toFixed(1)}%`;
   }
 
   async getRoles() {

@@ -80,6 +80,37 @@ export class FinanceReportService {
     const refunds = returns.reduce((sum, ret) => sum + ret.order.finalAmount, 0);
     const taxes = orders.reduce((sum, order) => sum + order.taxAmount, 0);
 
+    // --- Calculate Trends ---
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+    const calculateTrend = (current: number, previous: number) => {
+      if (previous === 0) return current > 0 ? '+100%' : '0%';
+      const percent = ((current - previous) / previous) * 100;
+      const sign = percent > 0 ? '+' : '';
+      return `${sign}${percent.toFixed(1)}%`;
+    };
+
+    const currentOrders = orders.filter(o => o.createdAt >= thirtyDaysAgo);
+    const prevOrders = orders.filter(o => o.createdAt >= sixtyDaysAgo && o.createdAt < thirtyDaysAgo);
+
+    const currentRevenue = currentOrders.reduce((sum, order) => sum + order.finalAmount, 0);
+    const prevRevenue = prevOrders.reduce((sum, order) => sum + order.finalAmount, 0);
+
+    const currentEntries = entries.filter(e => e.createdAt >= thirtyDaysAgo);
+    const prevEntries = entries.filter(e => e.createdAt >= sixtyDaysAgo && e.createdAt < thirtyDaysAgo);
+
+    const currentExpenses = currentEntries.reduce((sum, entry) => sum + entry.amount, 0);
+    const prevExpenses = prevEntries.reduce((sum, entry) => sum + entry.amount, 0);
+
+    const currentProfit = currentRevenue - currentExpenses;
+    const prevProfit = prevRevenue - prevExpenses;
+
+    const revenueTrend = calculateTrend(currentRevenue, prevRevenue);
+    const expenseTrend = calculateTrend(currentExpenses, prevExpenses);
+    const profitTrend = calculateTrend(currentProfit, prevProfit);
+
     return {
       revenue,
       expenses,
@@ -87,9 +118,9 @@ export class FinanceReportService {
       pendingPayments,
       refunds,
       taxes,
-      revenueTrend: '+12.5%', // Mock trends
-      expenseTrend: '+3.2%',
-      profitTrend: '+18.1%'
+      revenueTrend,
+      expenseTrend,
+      profitTrend
     };
   }
 
