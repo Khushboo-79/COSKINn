@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 import type { ReactNode } from 'react';
 import { useNotification } from './NotificationContext';
+import { useAuth } from './AuthContext';
 import confetti from 'canvas-confetti';
 
 export interface CartItem {
@@ -27,6 +28,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { showToast } = useNotification();
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -61,6 +63,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const addToCart = (newItem: CartItem) => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
     setCartItems(prev => {
       const existing = prev.find(item => item.id === newItem.id);
       if (existing) {

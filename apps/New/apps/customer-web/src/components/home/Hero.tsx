@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight, Leaf, Shield, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+const glamImages = [
+  'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588',
+  'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678',
+  'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299'
+];
+
 const Hero: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
+  
+  const [imgIndex, setImgIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImgIndex(prev => (prev + 1) % 3);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className={`relative overflow-hidden w-full flex flex-col transition-colors duration-700 ${
@@ -32,8 +47,8 @@ const Hero: React.FC = () => {
       
       {/* Decorative Separator for Glam Mode */}
       {isGlam && (
-        <div className="absolute top-0 left-0 w-full flex items-center justify-center pt-8 z-20">
-          <div className="w-full max-w-[1150px] flex items-center px-4 sm:px-6 lg:px-8">
+        <div className="absolute top-0 left-0 w-full flex items-center justify-center pt-16 z-20">
+          <div className="w-full max-w-[800px] flex items-center px-4 sm:px-6 lg:px-8">
             <div className="flex-1 h-[1px] bg-[#d2b27b] opacity-50"></div>
             <span 
               className="px-6 text-[12px] md:text-[14px] uppercase tracking-[0.25em] font-serif italic text-[#d2b27b] font-medium whitespace-nowrap"
@@ -48,10 +63,12 @@ const Hero: React.FC = () => {
         </div>
       )}
 
-      <div className={`relative z-10 w-full h-full ${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between pt-16 md:pt-0`}>
+      <div className={`relative z-10 w-full min-h-screen mx-auto flex flex-col md:flex-row items-center justify-between pt-16 md:pt-0 ${
+        isGlam ? 'max-w-full pl-4 sm:pl-8 lg:pl-12 pr-0' : 'max-w-[1400px] px-4 sm:px-6 lg:px-12'
+      }`}>
         
         {/* Left Side: Content */}
-        <div className={`w-full ${isGlam ? 'md:w-[50%]' : 'md:w-[60%]'} h-full pr-0 md:pr-12 flex flex-col justify-center items-start text-left z-20 pb-16 md:pb-24`}>
+        <div className={`w-full ${isGlam ? 'md:w-[55%] pt-16 md:pt-32 lg:pt-40' : 'md:w-[60%]'} h-full pr-0 md:pr-12 lg:pr-20 flex flex-col justify-center items-start text-left z-20 pb-8 md:pb-0`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-content' : 'skin-content'}
@@ -68,7 +85,7 @@ const Hero: React.FC = () => {
               )}
               
               {isGlam ? (
-                <h1 className="text-[3.5rem] lg:text-[4.5rem] xl:text-[5.5rem] leading-[0.9] tracking-tight mb-4 mt-2">
+                <h1 className="text-[3rem] lg:text-[4.5rem] xl:text-[5.5rem] leading-[0.9] tracking-tight mb-4 mt-2">
                   <span className="block font-serif text-[#2a2a2a]">Painted</span>
                   <span className="block font-serif italic text-[#8b1527]">like a</span>
                   <span className="block font-serif text-[#2a2a2a]">Fairytale.</span>
@@ -80,7 +97,7 @@ const Hero: React.FC = () => {
                 </h1>
               )}
               
-              <p className={`text-[14px] lg:text-[16px] mb-8 max-w-[420px] xl:max-w-[480px] leading-[1.6] ${
+              <p className={`text-[13px] lg:text-[15px] xl:text-[16px] mb-8 max-w-[420px] xl:max-w-[480px] leading-[1.6] ${
                 isGlam ? 'text-[#8e95a1] font-sans' : 'text-[#6b6b6b] font-sans'
               }`}>
                 {isGlam 
@@ -170,15 +187,77 @@ const Hero: React.FC = () => {
               className="absolute inset-0 w-full h-full"
             >
               {isGlam ? (
-                <div className="relative w-full h-full border border-[#e5b376] p-2 flex mx-auto mt-4">
-                  {/* Top Left Corner Bracket */}
-                  <div className="absolute top-[-1px] left-[-1px] w-[15px] h-[15px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
-                  <div className="w-full h-full relative overflow-hidden bg-white shadow-xl flex items-center justify-center">
-                    <img src="https://images.unsplash.com/photo-1599305090598-fe179d501227?auto=format&fit=crop&q=80" alt="Glam Collection" className="w-full h-full object-cover" />
-                  </div>
+                <div className="relative w-full h-full flex items-center justify-center pt-8">
+                  
+                  {/* Tertiary Frame (Top Left) */}
+                  <motion.div 
+                    className="absolute top-[8%] left-[5%] w-[38%] h-[40%] border border-[#e5b376] p-1.5 bg-white z-10 shadow-lg"
+                    whileHover={{ scale: 1.02, zIndex: 40 }}
+                  >
+                    <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
+                    <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
+                      <AnimatePresence mode="popLayout">
+                        <motion.img 
+                          key={glamImages[(imgIndex + 2) % 3]}
+                          src={glamImages[(imgIndex + 2) % 3]}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 1.2 }}
+                          alt="Glam Collection Detail" 
+                          className="absolute inset-0 w-full h-full object-cover sepia-[0.2]" 
+                        />
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+
+                  {/* Main Frame (Center) */}
+                  <motion.div 
+                    className="absolute top-[15%] left-[22%] w-[52%] h-[68%] border border-[#e5b376] p-2 bg-white z-20 shadow-xl"
+                    whileHover={{ scale: 1.02, zIndex: 40 }}
+                  >
+                    <div className="absolute top-[-1px] left-[-1px] w-[15px] h-[15px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
+                    <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
+                      <AnimatePresence mode="popLayout">
+                        <motion.img 
+                          key={glamImages[imgIndex]}
+                          src={glamImages[imgIndex]}
+                          initial={{ opacity: 0, scale: 1.05 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 1.2 }}
+                          alt="Glam Collection Main" 
+                          className="absolute inset-0 w-full h-full object-cover" 
+                        />
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+
+                  {/* Secondary Frame (Bottom Right) */}
+                  <motion.div 
+                    className="absolute bottom-[5%] right-[5%] w-[42%] h-[38%] border border-[#e5b376] p-1.5 bg-white z-30 shadow-2xl"
+                    whileHover={{ scale: 1.02, zIndex: 40 }}
+                  >
+                    <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
+                    <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
+                      <AnimatePresence mode="popLayout">
+                        <motion.img 
+                          key={glamImages[(imgIndex + 1) % 3]}
+                          src={glamImages[(imgIndex + 1) % 3]}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 1.2 }}
+                          alt="Glam Collection Accent" 
+                          className="absolute inset-0 w-full h-full object-cover" 
+                        />
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+
                 </div>
               ) : (
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
                   {/* Middle Left Image (Jar) */}
                   <div className="absolute top-[25%] left-[0%] w-[45%] h-[50%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white">
                     <img src="https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Jar" className="w-full h-full object-cover" />
