@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { ArrowLeft, CreditCard, Apple, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, CreditCard, Apple, CheckCircle2, ChevronDown, ChevronUp, Loader2, FileText, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Checkout: React.FC = () => {
@@ -16,6 +16,9 @@ const Checkout: React.FC = () => {
   const [step, setStep] = useState<1 | 2>(1); // 1: Shipping, 2: Payment
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
   const [phone, setPhone] = useState(currency.code === 'INR' ? '+91 ' : '+1 ');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [showBillModal, setShowBillModal] = useState(false);
 
   React.useEffect(() => {
     setPhone(currency.code === 'INR' ? '+91 ' : '+1 ');
@@ -28,8 +31,17 @@ const Checkout: React.FC = () => {
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === 1) setStep(2);
-    else navigate('/order-success');
+    if (step === 1) {
+      setStep(2);
+    } else {
+      setIsProcessingPayment(true);
+      setTimeout(() => {
+        setPaymentSuccess(true);
+        setTimeout(() => {
+          navigate('/order-success');
+        }, 1500);
+      }, 2000);
+    }
   };
 
   return (
@@ -78,6 +90,12 @@ const Checkout: React.FC = () => {
                 <div className="flex justify-between font-bold text-lg pt-4 border-t border-gray-100 text-gray-900">
                   <span>Total</span><span>{formatPrice(total)}</span>
                 </div>
+                <button 
+                  onClick={() => setShowBillModal(true)}
+                  className={`mt-4 w-full py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-colors ${isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}
+                >
+                  <FileText size={16} /> View Detailed Bill
+                </button>
               </div>
             </motion.div>
           )}
@@ -201,9 +219,109 @@ const Checkout: React.FC = () => {
             <div className="flex justify-between font-black text-xl pt-6 border-t border-gray-200 text-gray-900 mt-6">
               <span>Total</span><span>{formatPrice(total)}</span>
             </div>
+            <button 
+              onClick={(e) => { e.preventDefault(); setShowBillModal(true); }}
+              className={`mt-6 w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors ${isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-white border border-gray-200 text-gray-900 hover:bg-gray-50'}`}
+            >
+              <FileText size={18} /> View Detailed Bill
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <AnimatePresence>
+        {isProcessingPayment && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className={`w-full max-w-sm rounded-[2rem] p-10 flex flex-col items-center justify-center text-center shadow-2xl ${isGlam ? 'bg-[#1a1a1a] text-[#e5b376]' : 'bg-white'}`}
+            >
+              {!paymentSuccess ? (
+                <>
+                  <Loader2 size={48} className="animate-spin mb-6 text-current opacity-80" />
+                  <h3 className={`text-2xl font-bold mb-2 ${isGlam ? 'font-serif' : 'font-display text-gray-900'}`}>Processing Payment</h3>
+                  <p className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Please do not close this window...</p>
+                </>
+              ) : (
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex flex-col items-center">
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${isGlam ? 'bg-[#e5b376]/20 text-[#e5b376]' : 'bg-green-100 text-green-500'}`}>
+                    <CheckCircle2 size={40} strokeWidth={2} />
+                  </div>
+                  <h3 className={`text-2xl font-bold mb-2 ${isGlam ? 'font-serif' : 'font-display text-gray-900'}`}>Payment Successful!</h3>
+                  <p className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Redirecting you to your order details...</p>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        )}
+
+        {showBillModal && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              className={`w-full max-w-md rounded-t-[2rem] sm:rounded-[2rem] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto ${isGlam ? 'bg-[#1a1a1a] text-[#e5b376]' : 'bg-white'}`}
+            >
+              <div className="flex justify-between items-center mb-8">
+                <h3 className={`text-2xl font-bold ${isGlam ? 'font-serif' : 'font-display text-gray-900'}`}>Detailed Bill</h3>
+                <button onClick={() => setShowBillModal(false)} className={`p-2 rounded-full transition-colors ${isGlam ? 'hover:bg-white/10' : 'hover:bg-gray-100 text-gray-500'}`}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 ${isGlam ? 'text-[#e5b376]/60' : 'text-gray-400'}`}>Items</h4>
+                  <div className="space-y-4">
+                    {cartItems.map(item => (
+                      <div key={item.id} className="flex justify-between items-start gap-4">
+                        <div className="flex gap-3">
+                          <span className={`font-medium ${isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}`}>{item.quantity}x</span>
+                          <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{item.name}</span>
+                        </div>
+                        <span className={`font-medium whitespace-nowrap ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(item.price * item.quantity)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={`pt-6 border-t ${isGlam ? 'border-[#e5b376]/20' : 'border-gray-100'}`}>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Subtotal</span>
+                      <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Shipping (Standard)</span>
+                      <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(shipping)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Estimated Taxes (8%)</span>
+                      <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(tax)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`pt-6 border-t ${isGlam ? 'border-[#e5b376]/20' : 'border-gray-100'} flex justify-between items-center`}>
+                  <span className={`text-lg font-bold ${isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}`}>Total Amount</span>
+                  <span className={`text-2xl font-black ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(total)}</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setShowBillModal(false)}
+                className={`mt-10 w-full py-4 rounded-xl font-bold transition-colors ${isGlam ? 'bg-[#e5b376] text-[#1a1a1a] hover:bg-white' : 'bg-gray-900 text-white hover:bg-black'}`}
+              >
+                Close Details
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

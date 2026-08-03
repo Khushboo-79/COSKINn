@@ -111,20 +111,95 @@ body {
   backface-visibility: hidden;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(150, 150, 150, 0.5);
-  border-radius: 5px;
+  background-color: rgba(128, 128, 128, 0.3);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-scrollbar-hover);
+  background-color: rgba(128, 128, 128, 0.7);
+}
+
+/* === Scroll Reveal Animations === */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-36px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(36px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Base state — hidden before intersecting */
+.scroll-reveal {
+  opacity: 0;
+  transition: none;
+}
+
+/* Triggered when element enters viewport */
+.scroll-reveal.is-visible {
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 0.75s;
+}
+
+.scroll-reveal-up.is-visible         { animation-name: fadeInUp; }
+.scroll-reveal-left.is-visible       { animation-name: fadeInLeft; }
+.scroll-reveal-right.is-visible      { animation-name: fadeInRight; }
+.scroll-reveal-fade.is-visible       { animation-name: fadeIn; animation-duration: 0.9s; }
+.scroll-reveal-scale.is-visible      { animation-name: scaleIn; }
+
+/* Stagger delays */
+.delay-100.is-visible { animation-delay: 0.10s; }
+.delay-200.is-visible { animation-delay: 0.20s; }
+.delay-300.is-visible { animation-delay: 0.30s; }
+.delay-400.is-visible { animation-delay: 0.40s; }
+.delay-500.is-visible { animation-delay: 0.50s; }
+.delay-600.is-visible { animation-delay: 0.60s; }
+
+/* Glam Mode Custom Scrollbar */
+.theme-glam ::-webkit-scrollbar-thumb {
+  background-color: rgba(210, 178, 123, 0.8); /* Gold */
+  border-radius: 4px;
+}
+
+.theme-glam ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(122, 27, 38, 0.9); /* Burgundy */
+}
+
+/* Glam Mode Typography Override */
+.glam-typography,
+.glam-typography * {
+  font-family: 'Playfair Display', serif !important;
+  font-style: italic !important;
 }

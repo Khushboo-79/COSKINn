@@ -21,12 +21,12 @@ export class AdminController {
   }
 
   @Post('roles')
-  createRole(@Body() body: any) {
+  createRole(@Body() body: { name: string, description?: string, panelAccess: string[] }) {
     return this.adminService.createRole(body);
   }
 
   @Put('roles/:id')
-  updateRole(@Param('id') id: string, @Body() body: any) {
+  updateRole(@Param('id') id: string, @Body() body: { name?: string, description?: string, panelAccess?: string[] }) {
     return this.adminService.updateRole(id, body);
   }
 
@@ -41,8 +41,13 @@ export class AdminController {
   }
 
   @Post('users')
-  createUser(@Body() body: any) {
-    return this.adminService.createUser(body);
+  createStaffUser(@Body() body: { firstName: string, lastName: string, email: string, phone: string, roleId: string }) {
+    return this.adminService.createStaffUser(body);
+  }
+
+  @Put('users/:id/role')
+  updateUserRole(@Param('id') id: string, @Body() body: { roleId: string }) {
+    return this.adminService.updateUserRole(id, body.roleId);
   }
 
   @Post('users/assign-role')

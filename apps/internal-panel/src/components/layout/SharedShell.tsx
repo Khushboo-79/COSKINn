@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../core/rbac/AuthContext';
-import { 
+import {
   Menu, X, Search, Bell, Mail, LogOut, User,
-  LayoutDashboard, ShoppingBag, Package, ShoppingCart, 
+  LayoutDashboard, ShoppingBag, Package, ShoppingCart,
   Truck, HeadphonesIcon, FileText, Megaphone,
   Briefcase, ShieldCheck, DollarSign, ShieldAlert, Boxes, Box,
   RefreshCw, MessageSquare
@@ -35,26 +35,25 @@ export const SharedShell = () => {
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
   // Filter available routes based on panel_access
-  const availableRoutes = PANEL_ROUTES.filter(route => 
+  const availableRoutes = PANEL_ROUTES.filter(route =>
     user?.panel_access.includes('admin') || user?.panel_access.includes(route.id)
   );
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans">
-      
+
       {/* Mobile Overlay */}
       {!isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-slate-900/50 z-20 md:hidden" 
+        <div
+          className="fixed inset-0 bg-slate-900/50 z-20 md:hidden"
           onClick={() => setSidebarOpen(true)}
         />
       )}
 
       {/* Sidebar */}
-      <aside 
-        className={`${
-          isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-        } fixed md:relative z-30 inset-y-0 left-0 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col shadow-xl`}
+      <aside
+        className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
+          } fixed md:relative z-30 inset-y-0 left-0 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col shadow-xl`}
       >
         <div className="h-16 flex items-center justify-between px-4 bg-slate-950 border-b border-slate-800">
           {!isSidebarOpen && <img src="/logo.png" alt="Fairenne Logo" className="h-8 w-auto" />}
@@ -68,16 +67,15 @@ export const SharedShell = () => {
           {availableRoutes.map((route) => {
             const Icon = route.icon;
             const isActive = location.pathname.startsWith(route.path);
-            
+
             return (
               <Link
                 key={route.id}
                 to={route.path}
-                className={`flex items-center px-4 py-3 mx-2 rounded-lg transition-colors ${
-                  isActive 
-                    ? 'bg-primary-600 text-white' 
+                className={`flex items-center px-4 py-3 mx-2 rounded-lg transition-colors ${isActive
+                    ? 'bg-primary-600 text-white'
                     : 'hover:bg-slate-800 hover:text-white'
-                } ${isSidebarOpen ? 'justify-center' : ''}`}
+                  } ${isSidebarOpen ? 'justify-center' : ''}`}
                 title={isSidebarOpen ? route.label : ''}
               >
                 <Icon className={`h-5 w-5 flex-shrink-0 ${isSidebarOpen ? '' : 'mr-3'}`} />
@@ -88,7 +86,7 @@ export const SharedShell = () => {
         </nav>
 
         <div className="p-4 bg-slate-950 border-t border-slate-800">
-          <button 
+          <button
             onClick={logout}
             className={`flex items-center text-slate-400 hover:text-white transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
           >
@@ -100,17 +98,17 @@ export const SharedShell = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
+
         {/* Topbar */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
           <div className="flex items-center flex-1">
-            <button 
-              onClick={toggleSidebar} 
+            <button
+              onClick={toggleSidebar}
               className="text-slate-500 hover:text-slate-700 focus:outline-none p-2 -ml-2 mr-2 rounded-md"
             >
               <Menu className="h-5 w-5" />
             </button>
-            
+
             <div className="hidden sm:flex max-w-md w-full ml-4">
               <div className="relative w-full">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -139,7 +137,7 @@ export const SharedShell = () => {
               </div>
             </button>
             <div className="relative">
-              <button 
+              <button
                 onClick={() => {
                   setNotificationOpen(!isNotificationOpen);
                   setProfileOpen(false);
@@ -149,7 +147,7 @@ export const SharedShell = () => {
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
               </button>
-              
+
               {/* Notifications Dropdown */}
               {isNotificationOpen && (
                 <>
@@ -173,12 +171,12 @@ export const SharedShell = () => {
                 </>
               )}
             </div>
-            
+
             <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block"></div>
-            
+
             {/* Profile Dropdown */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => {
                   setProfileOpen(!isProfileOpen);
                   setNotificationOpen(false);
@@ -193,14 +191,14 @@ export const SharedShell = () => {
                   <span className="block text-slate-500 text-xs capitalize">{user?.role}</span>
                 </div>
               </button>
-              
+
               {/* Dropdown Menu */}
               {isProfileOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)}></div>
                   <div className="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
-                    <Link 
-                      to="/admin/profile" 
+                    <Link
+                      to="/admin/profile"
                       onClick={() => setProfileOpen(false)}
                       className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center"
                     >
@@ -208,7 +206,7 @@ export const SharedShell = () => {
                       My Profile
                     </Link>
                     <div className="border-t border-slate-100 my-1"></div>
-                    <button 
+                    <button
                       onClick={() => {
                         setProfileOpen(false);
                         logout();

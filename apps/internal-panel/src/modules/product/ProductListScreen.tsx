@@ -5,6 +5,7 @@ import { productApi } from '../../core/api/product';
 import { DataTable } from '../../components/ui/DataTable';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { Edit2, Package, Tag, Filter, Search } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const ProductListScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,9 +27,17 @@ export const ProductListScreen = () => {
       sortable: true,
       render: (product: any) => (
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            {product.images?.[0] ? (
-              <img src={product.images[0].url} alt="" className="h-full w-full object-cover rounded-lg" />
+          <div className="h-10 w-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+            {product.images?.[0]?.url ? (
+              <img 
+                src={product.images[0].url.startsWith('http') ? product.images[0].url : `http://localhost:3000${product.images[0].url}`} 
+                alt="" 
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).onerror = null;
+                  (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=No+Img';
+                }}
+              />
             ) : (
               <Package className="h-5 w-5 text-slate-400" />
             )}
@@ -76,8 +85,11 @@ export const ProductListScreen = () => {
     {
       key: 'actions',
       header: '',
-      render: () => (
-        <button className="p-1.5 text-slate-400 hover:text-primary-600 rounded-lg hover:bg-primary-50 transition-colors">
+      render: (product: any) => (
+        <button 
+          onClick={() => toast.info('Edit product feature is under development!')}
+          className="p-1.5 text-slate-400 hover:text-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
+        >
           <Edit2 className="h-4 w-4" />
         </button>
       )
@@ -107,6 +119,7 @@ export const ProductListScreen = () => {
         columns={columns} 
         searchPlaceholder="Search by product name or SKU..."
         onSearch={setSearchTerm}
+        onFilterClick={() => toast.info('Advanced filtering options coming soon!')}
       />
     </div>
   );

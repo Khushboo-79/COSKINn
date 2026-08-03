@@ -30,10 +30,23 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     setExpanded(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const filters = [
+  const filters = isGlam ? [
     {
       id: 'Category',
-      options: ['Cleansers', 'Serums', 'Moisturisers', 'Masks', 'Sun Care', 'Eye Care', 'Face', 'Lips']
+      options: ['Lips', 'Eyes', 'Face', 'Sets', 'Brushes']
+    },
+    {
+      id: 'Price',
+      options: ['Under 2500', '2500 - 5000', 'Over 5000']
+    },
+    {
+      id: 'Finish',
+      options: ['Matte', 'Dewy', 'Satin', 'Shimmer']
+    }
+  ] : [
+    {
+      id: 'Category',
+      options: ['Cleansers', 'Serums', 'Moisturisers', 'Masks', 'Sun Care']
     },
     {
       id: 'Price',
@@ -45,7 +58,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     },
     {
       id: 'Concern',
-      options: ['Acne-Prone', 'Anti-Aging', 'Dark Circles', 'Fine Lines', 'Dullness', 'Uneven Texture', 'Dryness', 'Redness', 'Uneven Tone', 'Longevity']
+      options: ['Acne', 'Aging', 'Pigmentation', 'Texture', 'Redness', 'Dullness']
+    },
+    {
+      id: 'Flavour',
+      options: ['Peach', 'Watermelon', 'Strawberry', 'Avocado', 'Plum']
     }
   ];
 

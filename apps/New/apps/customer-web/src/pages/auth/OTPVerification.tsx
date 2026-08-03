@@ -145,10 +145,10 @@ const OTPVerification: React.FC = () => {
         >
           {isGlam ? (
             <div className="w-full h-full relative">
-              <div className="absolute inset-0 bg-black/30 z-10"></div>
+              <div className="absolute inset-0 bg-black/10 z-10"></div>
               <img 
-                src="https://images.pexels.com/photos/11191060/pexels-photo-11191060.jpeg?auto=compress&cs=tinysrgb&w=1200" 
-                alt="Glamorous Aesthetics" 
+                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80" 
+                alt="Glam Beauty Details" 
                 className="w-full h-full object-cover"
               />
               <div className="absolute bottom-12 left-12 right-12 z-20">
