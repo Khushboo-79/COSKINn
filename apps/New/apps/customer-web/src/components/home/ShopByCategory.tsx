@@ -14,7 +14,7 @@ const skinCategories = [
     image: "https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg"
   },
   {
-    name: "Moisturisers",
+    name: "Moisturizers",
     image: "https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg"
   },
   {
@@ -57,7 +57,7 @@ const ShopByCategory: React.FC = () => {
   const categories = isGlam ? glamCategories : skinCategories;
 
   return (
-    <section id="shop-by-category" className={`pt-12 pb-32 md:pb-48 relative overflow-hidden scroll-mt-20 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
+    <section id="shop-by-category" className={`pt-12 pb-32 md:pb-48 relative overflow-hidden scroll-mt-32 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
       {!isGlam && (
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div 

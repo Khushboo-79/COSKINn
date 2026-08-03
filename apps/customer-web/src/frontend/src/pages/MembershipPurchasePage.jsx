@@ -251,11 +251,11 @@ export default function MembershipPurchasePage() {
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border mb-5"
                 style={{ color: accentColor, borderColor: accentColor + "33", background: accentColor + "10" }}
               >
-                <Crown size={13} /> COSKINn Loyalty Program
+                <Crown size={13} /> Fairenne Loyalty Program
               </div>
               <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 leading-tight"
                 style={{ fontFamily: fontHeading }}>
-                COSKINn Membership
+                Fairenne Membership
               </h1>
               <p className="text-gray-500 text-base md:text-lg max-w-xl leading-relaxed mb-2">
                 A <strong style={{ color: accentColor }}>free, automatic</strong> tiered loyalty program.
@@ -331,7 +331,7 @@ export default function MembershipPurchasePage() {
                       <div>
                         <p className="text-xs font-bold uppercase tracking-widest opacity-70">Your Current Tier</p>
                         <h2 className="text-2xl md:text-3xl font-black" style={{ fontFamily: fontHeading }}>
-                          COSKINn {currentTier.name} Member
+                          Fairenne {currentTier.name} Member
                         </h2>
                       </div>
                     </div>

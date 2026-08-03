@@ -10,7 +10,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Read the session from localStorage (matching AuthContext logic)
-    const sessionStr = localStorage.getItem('coskinn_session');
+    const sessionStr = localStorage.getItem('fairenne_session');
     if (sessionStr) {
       try {
         const session = JSON.parse(sessionStr);
@@ -37,7 +37,7 @@ apiClient.interceptors.response.use(
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
-          const sessionStr = localStorage.getItem('coskinn_session');
+          const sessionStr = localStorage.getItem('fairenne_session');
           if (sessionStr) {
             const session = JSON.parse(sessionStr);
             if (session.refreshToken) {
@@ -49,7 +49,7 @@ apiClient.interceptors.response.use(
                 // Update session
                 session.token = res.data.access_token;
                 session.refreshToken = res.data.refresh_token;
-                localStorage.setItem('coskinn_session', JSON.stringify(session));
+                localStorage.setItem('fairenne_session', JSON.stringify(session));
                 
                 // Retry original request
                 originalRequest.headers.Authorization = `Bearer ${res.data.access_token}`;

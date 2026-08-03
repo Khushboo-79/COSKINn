@@ -117,7 +117,7 @@ export default function CleanserPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1.5, ease: 'easeOut' }}
                 src={cleanserHeroImg}
-                alt="COSKINn Gentle Daily Cleanser"
+                alt="Fairenne Gentle Daily Cleanser"
                 className="w-full h-full object-cover object-[right_top]"
               />
             </div>
@@ -131,7 +131,7 @@ export default function CleanserPage() {
             <div className="flex flex-wrap items-center gap-2 text-xs font-medium tracking-wide mb-6 lg:mb-8">
               <Link to="/" className="text-[#555555] hover:text-[#FF2D7A] transition-colors">Home</Link>
               <ChevronRight className="w-3 h-3 text-[#555555]" />
-              <span className="text-[#FF2D7A] font-bold truncate">COSKINn Cleansers</span>
+              <span className="text-[#FF2D7A] font-bold truncate">Fairenne Cleansers</span>
             </div>
 
             <motion.h1
@@ -140,7 +140,7 @@ export default function CleanserPage() {
               transition={{ duration: 0.9, delay: 0.5, ease: 'easeOut' }}
               className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-black leading-[1.05] mb-6"
             >
-              <span className="text-[#111111]">COSKINn</span><br />
+              <span className="text-[#111111]">Fairenne</span><br />
               <span className="italic font-light text-transparent bg-clip-text bg-gradient-to-r from-[#FF2D7A] to-[#FF8CB3]">Gentle Daily</span><br />
               <span className="text-[#111111]">Cleanser</span>
             </motion.h1>

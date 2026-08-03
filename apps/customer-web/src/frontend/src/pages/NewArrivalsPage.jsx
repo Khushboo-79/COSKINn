@@ -44,13 +44,13 @@ export default function NewArrivalsPage() {
   const filters = theme === 'skincare' ? skincareFilters : cosmeticsFilters;
 
   const legacyProducts = [
-    { id: 1, name: "COSKINn Strawberry Glow Cleanser", price: 499, rating: 4.9, category: "Skincare", image: cleanserImg, badge: "NEW" },
-    { id: 2, name: "COSKINn Velvet Blush", price: 699, rating: 4.8, category: "Cosmetics", image: blushImg, badge: "TRENDING" },
-    { id: 3, name: "COSKINn Vitamin C Sunscreen SPF 50", price: 899, rating: 4.7, category: "Skincare", image: sunscreenImg, badge: "EDITOR'S PICK" },
-    { id: 4, name: "COSKINn Magnetic Lipstick", price: 999, rating: 5.0, category: "Cosmetics", image: lipstickImg, badge: "LIMITED EDITION" },
-    { id: 5, name: "COSKINn Green Tea Face Mist", price: 499, rating: 4.6, category: "Skincare", image: cleanserImg, badge: "BEST SELLER" },
-    { id: 6, name: "COSKINn Blueberry Overnight Mask", price: 1299, rating: 4.9, category: "Skincare", image: cleanserImg, badge: "JUST DROPPED" },
-    { id: 7, name: "COSKINn Lift & Curl Mascara", price: 899, rating: 4.8, category: "Cosmetics", image: mascaraImg, badge: "MOST LOVED" }
+    { id: 1, name: "Fairenne Strawberry Glow Cleanser", price: 499, rating: 4.9, category: "Skincare", image: cleanserImg, badge: "NEW" },
+    { id: 2, name: "Fairenne Velvet Blush", price: 699, rating: 4.8, category: "Cosmetics", image: blushImg, badge: "TRENDING" },
+    { id: 3, name: "Fairenne Vitamin C Sunscreen SPF 50", price: 899, rating: 4.7, category: "Skincare", image: sunscreenImg, badge: "EDITOR'S PICK" },
+    { id: 4, name: "Fairenne Magnetic Lipstick", price: 999, rating: 5.0, category: "Cosmetics", image: lipstickImg, badge: "LIMITED EDITION" },
+    { id: 5, name: "Fairenne Green Tea Face Mist", price: 499, rating: 4.6, category: "Skincare", image: cleanserImg, badge: "BEST SELLER" },
+    { id: 6, name: "Fairenne Blueberry Overnight Mask", price: 1299, rating: 4.9, category: "Skincare", image: cleanserImg, badge: "JUST DROPPED" },
+    { id: 7, name: "Fairenne Lift & Curl Mascara", price: 899, rating: 4.8, category: "Cosmetics", image: mascaraImg, badge: "MOST LOVED" }
   ];
 
   const activeProducts = theme === 'skincare' ? skincareProducts : legacyProducts;
@@ -98,7 +98,7 @@ export default function NewArrivalsPage() {
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-7xl font-heading text-white drop-shadow-xl mb-6 tracking-wide leading-tight"
           >
-            Freshly Launched at <span className="font-bold text-theme-primary">COSKINn</span>
+            Freshly Launched at <span className="font-bold text-theme-primary">Fairenne</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
@@ -332,7 +332,7 @@ export default function NewArrivalsPage() {
               <span className="px-4 py-1.5 bg-white/20 backdrop-blur-md text-white text-xs font-bold tracking-widest uppercase rounded-full w-max mb-6 border border-white/30 shadow-lg">
                 Coming Soon
               </span>
-              <h3 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4 drop-shadow-lg">COSKINn Holographic<br/>Collection</h3>
+              <h3 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4 drop-shadow-lg">Fairenne Holographic<br/>Collection</h3>
               <button className="mt-8 px-8 py-3 bg-[#FF0069] text-white font-bold uppercase tracking-widest text-sm rounded-full w-max hover:bg-[#D40057] transition-colors shadow-[0_10px_30px_rgba(255,0,105,0.4)]">
                 Shop Holographic
               </button>

@@ -5,7 +5,7 @@
  * Supports resolving from:
  * 1. An object (cart item, order item, product object) by checking image fields or product name
  * 2. A backend relative path (e.g., "/assets/overnight_mask.webp")
- * 3. A product name (e.g., "COSKINn Overnight Mask")
+ * 3. A product name (e.g., "Fairenne Overnight Mask")
  */
 
 import { skincareProducts } from '../constants/skincareProducts';

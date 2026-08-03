@@ -110,7 +110,7 @@ const CartPage = React.lazy(() => import('./pages/CartPage'));
 const GlobalLoader = () => (
   <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
     <div className="w-12 h-12 rounded-full border-4 border-black/10 border-t-theme-primary animate-spin mb-4"></div>
-    <p className="font-heading font-bold text-sm text-black uppercase tracking-widest">Loading COSKINn</p>
+    <p className="font-heading font-bold text-sm text-black uppercase tracking-widest">Loading Fairenne</p>
   </div>
 );
 

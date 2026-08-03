@@ -5,23 +5,23 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
-const CoskinnLogo = ({ fill = "black" }) => (
+const FairenneLogo = ({ fill = "black" }) => (
   <svg className="h-[36px] w-[135px] lg:h-[42px] lg:w-[158px] object-contain drop-shadow-sm" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <linearGradient id="fairenne-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#FF0069" />
         <stop offset="35%" stopColor="#FF6B6B" />
         <stop offset="70%" stopColor="#FFA07A" />
         <stop offset="100%" stopColor="#FFD498" />
       </linearGradient>
     </defs>
-    <path d="M 72 20 A 8 8 0 1 1 62 30 C 52 20, 35 30, 30 55 C 25 80, 40 95, 60 95 C 70 95, 85 82, 85 82 C 85 82, 95 92, 75 105 C 45 118, 10 105, 8 60 C 5 15, 45 2, 72 20 Z" fill="url(#coskinn-logo-grad)" />
-    <path d="M 75 92 C 75 92, 65 82, 65 74 A 6 6 0 0 1 75 70 A 6 6 0 0 1 85 74 C 85 82, 75 92, 75 92 Z" stroke="url(#coskinn-logo-grad)" strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M 72 20 A 8 8 0 1 1 62 30 C 52 20, 35 30, 30 55 C 25 80, 40 95, 60 95 C 70 95, 85 82, 85 82 C 85 82, 95 92, 75 105 C 45 118, 10 105, 8 60 C 5 15, 45 2, 72 20 Z" fill="url(#fairenne-logo-grad)" />
+    <path d="M 75 92 C 75 92, 65 82, 65 74 A 6 6 0 0 1 75 70 A 6 6 0 0 1 85 74 C 85 82, 75 92, 75 92 Z" stroke="url(#fairenne-logo-grad)" strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
     <text x="105" y="95" fontFamily="var(--font-heading)" fill={fill}>
       <tspan fontSize="85" fontWeight="600" letterSpacing="2">OSKIN</tspan>
       <tspan fontSize="65" fontWeight="600">n</tspan>
     </text>
-    <path d="M 280 40 C 280 40, 266 28, 266 18 A 7 7 0 0 1 280 15 A 7 7 0 0 1 294 18 C 294 28, 280 40, 280 40 Z" fill="url(#coskinn-logo-grad)" />
+    <path d="M 280 40 C 280 40, 266 28, 266 18 A 7 7 0 0 1 280 15 A 7 7 0 0 1 294 18 C 294 28, 280 40, 280 40 Z" fill="url(#fairenne-logo-grad)" />
   </svg>
 );
 
@@ -272,15 +272,15 @@ export default function AuthModal({ isOpen, onClose }) {
         {/* Left Side: Banner */}
         <div className="hidden md:flex w-[45%] relative bg-gray-50 flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-theme-secondary/20 to-theme-primary/10 z-10" />
-          <img loading="lazy" src="/mockup_product_1.webp" alt="Coskinn Banner" className="absolute inset-0 w-full h-full object-cover opacity-90 scale-105" />
+          <img loading="lazy" src="/mockup_product_1.webp" alt="Fairenne Banner" className="absolute inset-0 w-full h-full object-cover opacity-90 scale-105" />
           <div className="absolute inset-0 bg-black/20 mix-blend-multiply z-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
           
           <div className="relative z-20 flex flex-col items-center text-center p-10 mt-auto w-full">
             <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-lg mb-6 w-full flex justify-center">
-              <CoskinnLogo fill="black" />
+              <FairenneLogo fill="black" />
             </div>
-            <h2 className="text-white font-heading text-3xl mb-2 font-light">Welcome to COSKINn</h2>
+            <h2 className="text-white font-heading text-3xl mb-2 font-light">Welcome to Fairenne</h2>
             <p className="text-white/80 font-body text-sm tracking-wide uppercase">Luxury Beauty Starts Here</p>
           </div>
         </div>
@@ -304,7 +304,7 @@ export default function AuthModal({ isOpen, onClose }) {
                     This mobile number is not registered.
                   </h3>
                   <p className="text-sm text-gray-500 font-body">
-                    We couldn&apos;t find an existing COSKINn account for <span className="font-semibold text-gray-800">+91 {mobile}</span>. Would you like to sign up instead?
+                    We couldn&apos;t find an existing Fairenne account for <span className="font-semibold text-gray-800">+91 {mobile}</span>. Would you like to sign up instead?
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full pt-2">
@@ -399,7 +399,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 className="flex flex-col"
               >
                 <div className="md:hidden flex justify-center mb-6">
-                  <CoskinnLogo fill="black" />
+                  <FairenneLogo fill="black" />
                 </div>
                 <h3 className="text-2xl font-heading font-medium text-black mb-2">
                   {isSignUp ? 'Create Account' : 'Welcome Back'}

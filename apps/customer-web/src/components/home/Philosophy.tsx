@@ -59,7 +59,7 @@ const Philosophy: React.FC = () => {
                 Skincare that tastes like summer.
               </h2>
               <p className="text-base md:text-lg text-gray-600 mb-6 leading-relaxed font-sans">
-                We built COSKINn on a simple idea: the fun of choosing your favorite fruit shouldn't stop at the grocery store. Every drop is packed with real fruit extracts and clinically proven actives.
+                We built Fairenne on a simple idea: the fun of choosing your favorite fruit shouldn't stop at the grocery store. Every drop is packed with real fruit extracts and clinically proven actives.
               </p>
               
               <div className="grid grid-cols-2 gap-6">

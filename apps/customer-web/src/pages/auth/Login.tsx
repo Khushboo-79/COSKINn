@@ -126,7 +126,7 @@ const Login: React.FC = () => {
           </form>
 
           <p className="mt-8 text-center text-[10px] text-gray-400 font-sans">
-            By continuing, you agree to COSKINn's <a href="#" className="underline hover:text-gray-800">Terms of Service</a> and <a href="#" className="underline hover:text-gray-800">Privacy Policy</a>.
+            By continuing, you agree to Fairenne's <a href="#" className="underline hover:text-gray-800">Terms of Service</a> and <a href="#" className="underline hover:text-gray-800">Privacy Policy</a>.
           </p>
         </motion.div>
       </div>
@@ -150,7 +150,7 @@ const Login: React.FC = () => {
               <div className="absolute bottom-12 left-12 right-12 z-20">
                 <div className="p-8 backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl">
                   <h3 className="text-3xl font-serif text-white italic mb-2">"True beauty is an art form."</h3>
-                  <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison COSKINn</p>
+                  <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison Fairenne</p>
                 </div>
               </div>
             </div>

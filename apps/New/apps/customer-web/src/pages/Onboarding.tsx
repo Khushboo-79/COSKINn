@@ -16,7 +16,7 @@ const Onboarding: React.FC = () => {
   ];
 
   const glamSteps = [
-    { title: 'Maison COSKINn', desc: 'Step into the atelier of timeless elegance.', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588' },
+    { title: 'Maison Fairenne', desc: 'Step into the atelier of timeless elegance.', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588' },
     { title: 'Curated Palettes', desc: 'Rich pigments and vintage romance.', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951' },
     { title: 'Flawless Finish', desc: 'Discover your signature look for every occasion.', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260420-103644.jpg?v=1776653923' },
   ];

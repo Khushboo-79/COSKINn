@@ -54,7 +54,7 @@ const Hero: React.FC = () => {
               className="px-6 text-[12px] md:text-[14px] uppercase tracking-[0.25em] font-serif italic text-[#d2b27b] font-medium whitespace-nowrap"
               style={{ marginLeft: '0.25em' }}
             >
-              MAISON COSKINN
+              MAISON FAIRENNE
             </span>
             <div className="flex-1 h-[1px] bg-[#d2b27b] opacity-50"></div>
             {/* The little dot on the right, seen in Image 2 */}
@@ -281,14 +281,7 @@ const Hero: React.FC = () => {
         </div>
       </div>
       
-      {/* Soft Wavy Bottom Divider */}
-      {!isGlam && (
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
-          <svg className="relative block w-full h-[40px] md:h-[80px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
-            <path d="M0,100 L0,50 C 120,80 240,80 360,50 C 480,20 600,20 720,50 C 840,80 960,80 1080,50 C 1200,20 1320,20 1440,50 L1440,100 Z" fill="#ffffff" />
-          </svg>
-        </div>
-      )}
+
     </section>
   );
 };
