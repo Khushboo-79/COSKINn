@@ -4,10 +4,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface User {
   id: string;
+  name?: string;
   email: string;
   role: string;
   panel_access: string[];
   permissions: string[];
+  lastLoginAt?: number;
 }
 
 interface AuthContextType {
