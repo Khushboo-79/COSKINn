@@ -122,29 +122,15 @@ export const RoleManagementScreen = () => {
             
             <div className="p-6 overflow-y-auto flex-1">
               <div className="space-y-6">
-                <div className="flex space-x-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Role Name</label>
-                    <input 
-                      type="text" 
-                      value={selectedRole.name} 
-                      onChange={(e) => setSelectedRole({...selectedRole, name: e.target.value})}
-                      disabled={selectedRole.name === 'Super Admin'} 
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500" 
-                    />
-                  </div>
-                  <div className="w-32">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                    <select
-                      value={selectedRole.isActive !== false ? 'true' : 'false'}
-                      onChange={(e) => setSelectedRole({...selectedRole, isActive: e.target.value === 'true'})}
-                      disabled={selectedRole.name === 'Super Admin'}
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                      <option value="true">Active</option>
-                      <option value="false">Inactive</option>
-                    </select>
-                  </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Role Name</label>
+                  <input 
+                    type="text" 
+                    value={selectedRole.name} 
+                    onChange={(e) => setSelectedRole({...selectedRole, name: e.target.value})}
+                    disabled={selectedRole.name === 'Super Admin'} 
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 disabled:bg-slate-50 disabled:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500" 
+                  />
                 </div>
 
                 <div>
@@ -186,8 +172,7 @@ export const RoleManagementScreen = () => {
                 onClick={() => {
                   const payload = {
                     name: selectedRole.name,
-                    panelAccess: selectedRole.panelAccess || selectedRole.panel_access || [],
-                    isActive: selectedRole.isActive !== false
+                    panelAccess: selectedRole.panelAccess || selectedRole.panel_access || []
                   };
                   if (selectedRole.id) {
                     updateMutation.mutate({ id: selectedRole.id, data: payload });

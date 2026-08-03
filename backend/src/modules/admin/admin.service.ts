@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
@@ -96,12 +96,50 @@ export class AdminService implements OnModuleInit {
   }
 
   async getRoles() {
-    return this.prisma.role.findMany({
+    const roles = await this.prisma.role.findMany({
       include: {
         _count: {
           select: { users: true }
+        },
+        users: {
+          include: {
+            user: {
+              include: {
+                devices: {
+                  orderBy: { lastActiveAt: 'desc' },
+                  take: 1
+                },
+                sessions: {
+                  where: { isRevoked: false, expiresAt: { gt: new Date() } }
+                }
+              }
+            }
+          }
         }
       }
+    });
+
+    const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+    return roles.map(role => {
+      let isOnline = false;
+
+      for (const userRole of role.users) {
+        const user = userRole.user;
+        const hasRecentDevice = user.devices.some(d => d.lastActiveAt > fifteenMinsAgo);
+        const hasActiveSession = user.sessions.length > 0;
+        
+        if (hasRecentDevice || hasActiveSession) {
+          isOnline = true;
+          break;
+        }
+      }
+
+      const { users, ...roleData } = role;
+      return {
+        ...roleData,
+        isActive: isOnline
+      };
     });
   }
 
@@ -156,7 +194,7 @@ export class AdminService implements OnModuleInit {
       });
 
       if (existingRole) {
-        throw new import('@nestjs/common').ConflictException('A user with this email already exists and is already assigned to this role.');
+        throw new ConflictException('A user with this email already exists and is already assigned to this role.');
       }
 
       // Clear any existing roles and assign the new one, since UI expects one role
