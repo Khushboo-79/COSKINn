@@ -40,7 +40,7 @@ export const SharedShell = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50/80 via-[#fff9fa] to-white flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-[#fafafa] flex flex-col md:flex-row font-sans">
 
       {/* Mobile Overlay */}
       {!isSidebarOpen && (
@@ -53,11 +53,15 @@ export const SharedShell = () => {
       {/* Sidebar */}
       <aside
         className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-          } fixed md:relative z-30 inset-y-0 left-0 bg-white/70 backdrop-blur-xl border-r border-primary-100 text-slate-600 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
+          } fixed md:relative z-30 inset-y-0 left-0 bg-gradient-to-b from-[#fff0f2] to-[#FFDAB9]/20 border-r border-primary-200 text-slate-700 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
       >
-        <div className="h-16 flex items-center justify-between px-4 bg-white/50 border-b border-primary-100">
-          {!isSidebarOpen && <img src="/logo.png" alt="Fairenne Logo" className="h-8 w-auto" />}
-          {isSidebarOpen && <span className="font-bold text-primary-500 text-lg mx-auto">FA</span>}
+        <div className="h-16 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative">
+          {isSidebarOpen && <img src="/logo.png" alt="COSKINn Logo" className="h-8 w-auto" />}
+          {!isSidebarOpen && (
+            <span className="font-display font-extrabold text-primary-600 text-2xl tracking-tight w-full text-left">
+              COSKINn
+            </span>
+          )}
           <button onClick={toggleSidebar} className="text-slate-400 hover:text-primary-500 md:hidden">
             <X className="h-5 w-5" />
           </button>
@@ -73,8 +77,8 @@ export const SharedShell = () => {
                 key={route.id}
                 to={route.path}
                 className={`flex items-center px-4 py-3 mx-2 rounded-xl transition-all ${isActive
-                    ? 'bg-gradient-to-r from-primary-400 to-primary-500 text-white shadow-md shadow-primary-400/30 font-semibold scale-[1.02]'
-                    : 'hover:bg-primary-50 hover:text-primary-600'
+                    ? 'bg-gradient-to-r from-[#FF7F50] to-[#ff9aa8] text-white shadow-lg shadow-[#FF7F50]/30 font-semibold scale-[1.02]'
+                    : 'hover:bg-white hover:text-[#FF7F50] hover:shadow-sm'
                   } ${isSidebarOpen ? 'justify-center' : ''}`}
                 title={isSidebarOpen ? route.label : ''}
               >
@@ -100,7 +104,7 @@ export const SharedShell = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Topbar */}
-        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-primary-100 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
+        <header className="h-16 bg-gradient-to-r from-[#fff0f2]/90 to-[#FFDAB9]/40 backdrop-blur-md border-b border-primary-200/50 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
           <div className="flex items-center flex-1">
             <button
               onClick={toggleSidebar}
