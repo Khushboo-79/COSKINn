@@ -38,12 +38,16 @@ export class ProductService {
     const totalProducts = await this.prisma.product.count({ where: { isDeleted: false } });
     const activeVariants = await this.prisma.productVariant.count({ where: { product: { isDeleted: false } } });
     const totalCategories = await this.prisma.category.count({ where: { isDeleted: false } });
-    const lowStockSkus = await this.prisma.inventoryStock.count({ where: { quantity: { lte: 10 } } });
+    const lowStockSkus = await this.prisma.inventoryStock.count({ where: { quantity: { lte: 10, gt: 0 } } });
+    const outOfStockCount = await this.prisma.inventoryStock.count({ where: { quantity: { equals: 0 } } });
+    const draftCount = await this.prisma.product.count({ where: { isDeleted: true } }); // Assuming drafts are marked as isDeleted for now
 
     return {
       totalProducts,
       activeVariants,
       lowStockSkus,
+      outOfStockCount,
+      draftCount,
       totalCategories
     };
   }

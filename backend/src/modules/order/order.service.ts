@@ -265,7 +265,13 @@ export class OrderService {
 
   async getAdminOrders(filters: { status?: string; paymentMode?: string; email?: string; mobile?: string; platform?: 'COSMETICS' | 'SKINCARE' }) {
     const where: any = {};
-    if (filters.status) where.status = filters.status;
+    if (filters.status) {
+      if (filters.status === 'PENDING') {
+        where.status = { in: ['PLACED', 'PAYMENT_CONFIRMED', 'PROCESSING'] };
+      } else {
+        where.status = filters.status;
+      }
+    }
     if (filters.paymentMode) where.paymentMode = filters.paymentMode;
     if (filters.platform) where.platform = filters.platform;
 

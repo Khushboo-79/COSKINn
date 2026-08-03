@@ -62,6 +62,7 @@ model Role {
   name        String   @unique // e.g., 'customer', 'admin', 'product-manager'
   description String?
   panelAccess String[] @default([]) // Which of the 11 panels this role can access
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
