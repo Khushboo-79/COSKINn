@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService implements OnModuleInit {
@@ -71,6 +72,23 @@ export class AdminService implements OnModuleInit {
     });
   }
 
+  async createRole(data: { name: string, description?: string, panelAccess: string[] }) {
+    return this.prisma.role.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        panelAccess: data.panelAccess
+      }
+    });
+  }
+
+  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[] }) {
+    return this.prisma.role.update({
+      where: { id },
+      data
+    });
+  }
+
   async updateRolePanelAccess(roleId: string, panelAccess: string[]) {
     return this.prisma.role.update({
       where: { id: roleId },
@@ -91,6 +109,39 @@ export class AdminService implements OnModuleInit {
             role: true
           }
         }
+      }
+    });
+  }
+
+  async createStaffUser(data: { firstName: string, lastName: string, email: string, phone: string, roleId: string }) {
+    const passwordHash = await bcrypt.hash('password123', 10);
+    return this.prisma.user.create({
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        passwordHash,
+        roles: {
+          create: {
+            roleId: data.roleId
+          }
+        }
+      }
+    });
+  }
+
+  async updateUserRole(userId: string, roleId: string) {
+    // Delete existing roles for this user
+    await this.prisma.userRole.deleteMany({
+      where: { userId }
+    });
+    
+    // Assign new role
+    return this.prisma.userRole.create({
+      data: {
+        userId,
+        roleId
       }
     });
   }

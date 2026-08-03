@@ -20,6 +20,16 @@ export class AdminController {
     return this.adminService.getRoles();
   }
 
+  @Post('roles')
+  createRole(@Body() body: { name: string, description?: string, panelAccess: string[] }) {
+    return this.adminService.createRole(body);
+  }
+
+  @Put('roles/:id')
+  updateRole(@Param('id') id: string, @Body() body: { name?: string, description?: string, panelAccess?: string[] }) {
+    return this.adminService.updateRole(id, body);
+  }
+
   @Put('roles/:id/panels')
   updateRolePanelAccess(@Param('id') id: string, @Body() body: { panelAccess: string[] }) {
     return this.adminService.updateRolePanelAccess(id, body.panelAccess);
@@ -28,6 +38,16 @@ export class AdminController {
   @Get('users')
   getUsers() {
     return this.adminService.getUsers();
+  }
+
+  @Post('users')
+  createStaffUser(@Body() body: { firstName: string, lastName: string, email: string, phone: string, roleId: string }) {
+    return this.adminService.createStaffUser(body);
+  }
+
+  @Put('users/:id/role')
+  updateUserRole(@Param('id') id: string, @Body() body: { roleId: string }) {
+    return this.adminService.updateUserRole(id, body.roleId);
   }
 
   @Post('users/assign-role')
