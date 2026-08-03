@@ -335,7 +335,7 @@ export default function CheckoutPage() {
           key: razorpayKey,
           amount: rzpData.amount,
           currency: rzpData.currency || 'INR',
-          name: 'COSKINn Luxury Beauty',
+          name: 'Fairenne Luxury Beauty',
           description: `Order #${orderData.id.substring(0, 8).toUpperCase()}`,
           order_id: rzpData.id,
           handler: async function (response) {
@@ -479,7 +479,7 @@ export default function CheckoutPage() {
       {(paymentStatus !== 'bnpl-flow' && paymentStatus !== 'wallet-flow') && (
         <div className="w-full bg-white border-b border-black/5 py-4 px-6 flex justify-between items-center sticky top-0 z-50">
           <Link to="/" className="text-2xl font-heading font-black tracking-widest text-black">
-            COSKINn
+            Fairenne
           </Link>
           <div className="flex items-center gap-2 text-xs font-bold text-black/60 uppercase tracking-widest">
             <ShieldCheck className="w-5 h-5 text-green-500" /> 100% Secure Checkout
@@ -529,7 +529,7 @@ export default function CheckoutPage() {
             </h2>
             <p className="text-black/50 font-medium mb-8">
               {paymentMethod === 'bnpl' 
-                ? 'COSKINn does not collect Aadhaar or PAN details. Verification is securely handled by the provider.'
+                ? 'Fairenne does not collect Aadhaar or PAN details. Verification is securely handled by the provider.'
                 : 'Please do not refresh or press back on this page.'}
             </p>
             
@@ -586,7 +586,7 @@ export default function CheckoutPage() {
             </motion.div>
 
             <span className="text-xs font-bold uppercase tracking-widest text-theme-primary bg-theme-primary/10 px-4 py-2 rounded-full mb-4">
-              Thank you for shopping with COSKINn
+              Thank you for shopping with Fairenne
             </span>
 
             <h1 className="text-4xl md:text-6xl font-heading font-black mb-4">
@@ -1253,7 +1253,7 @@ export default function CheckoutPage() {
                                   <div className="bg-theme-secondary/20 rounded-xl p-4 border border-theme-secondary/40">
                                     <p className="text-xs text-black/70 font-medium leading-relaxed">
                                       <strong className="text-black">Note:</strong> You will be securely redirected to the provider's portal for authentication. 
-                                      <strong> COSKINn does not collect or store PAN/Aadhaar details.</strong> All KYC verification is handled exclusively by the provider.
+                                      <strong> Fairenne does not collect or store PAN/Aadhaar details.</strong> All KYC verification is handled exclusively by the provider.
                                     </p>
                                   </div>
                                 </div>

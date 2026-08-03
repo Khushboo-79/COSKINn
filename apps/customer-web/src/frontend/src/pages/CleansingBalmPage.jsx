@@ -96,12 +96,12 @@ export default function CleansingBalmPage() {
 
   // Carousel product list
   const routineProducts = [
-    { id: 105, name: "COSKINn Cleansing Balm", price: 719, originalPrice: 899, rating: 4.9, reviews: 1024, image: cleansingBalmImg },
-    { id: 104, name: "COSKINn Gentle Cleanser", price: 499, originalPrice: 699, rating: 4.9, reviews: 4200, image: gentleCleanserImg },
-    { id: 109, name: "COSKINn Hydrating Face Mist", price: 449, originalPrice: 599, rating: 4.6, reviews: 1120, image: faceMistImg },
-    { id: 114, name: "COSKINn Niacinamide Serum", price: 899, originalPrice: 1199, rating: 4.9, reviews: 2450, image: niacinamideSerumImg },
-    { id: 112, name: "COSKINn Daily Moisturiser", price: 649, originalPrice: 849, rating: 4.8, reviews: 2100, image: dailyMoisturiserImg },
-    { id: 101, name: "COSKINn Sunscreen SPF 50", price: 699, originalPrice: 899, rating: 4.8, reviews: 3120, image: sunscreenImg }
+    { id: 105, name: "Fairenne Cleansing Balm", price: 719, originalPrice: 899, rating: 4.9, reviews: 1024, image: cleansingBalmImg },
+    { id: 104, name: "Fairenne Gentle Cleanser", price: 499, originalPrice: 699, rating: 4.9, reviews: 4200, image: gentleCleanserImg },
+    { id: 109, name: "Fairenne Hydrating Face Mist", price: 449, originalPrice: 599, rating: 4.6, reviews: 1120, image: faceMistImg },
+    { id: 114, name: "Fairenne Niacinamide Serum", price: 899, originalPrice: 1199, rating: 4.9, reviews: 2450, image: niacinamideSerumImg },
+    { id: 112, name: "Fairenne Daily Moisturiser", price: 649, originalPrice: 849, rating: 4.8, reviews: 2100, image: dailyMoisturiserImg },
+    { id: 101, name: "Fairenne Sunscreen SPF 50", price: 699, originalPrice: 899, rating: 4.8, reviews: 3120, image: sunscreenImg }
   ];
 
   // Reviews Data
@@ -116,7 +116,7 @@ export default function CleansingBalmPage() {
     {
       user: "Rahul K.",
       date: "12 April 2026",
-      text: "Usually, balms clog my combination skin, but the COSKINn Charcoal option is wonderful. Dissolves blackheads and makeup instantly. Highly recommended.",
+      text: "Usually, balms clog my combination skin, but the Fairenne Charcoal option is wonderful. Dissolves blackheads and makeup instantly. Highly recommended.",
       rating: 5,
       avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=150"
     },
@@ -195,12 +195,12 @@ export default function CleansingBalmPage() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/5 bg-white/80 backdrop-blur-sm shadow-[0_4px_20px_rgba(0,0,0,0.03)] text-xs font-bold tracking-[0.2em] uppercase mb-8"
             >
               <span className="w-2 h-2 rounded-full bg-[#FF0069] shadow-[0_0_8px_rgba(255,0,105,0.6)] animate-pulse"></span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-black/70">New COSKINn Collection</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-black/70">New Fairenne Collection</span>
             </motion.div>
             
             {/* Heading */}
             <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-heading font-black text-black leading-[1.05] tracking-tight mb-6">
-              COSKINn<br/>
+              Fairenne<br/>
               <span className="font-light italic tracking-normal text-black/80 font-serif">Cleansing Balm</span>
             </h1>
             
@@ -298,7 +298,7 @@ export default function CleansingBalmPage() {
                 
                 <img 
                   src={premiumBalmJar} 
-                  alt="COSKINn Premium Cleansing Balm Jar" 
+                  alt="Fairenne Premium Cleansing Balm Jar" 
                   className="relative w-full object-contain z-20 drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
                 />
               </motion.div>
@@ -754,7 +754,7 @@ export default function CleansingBalmPage() {
                   <img src={quickViewItem.image} alt={quickViewItem.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-[10px] bg-pink-50 text-[#FF0069] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">COSKINn Skincare</span>
+                  <span className="text-[10px] bg-pink-50 text-[#FF0069] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Fairenne Skincare</span>
                   <h3 className="text-lg font-bold text-black mt-2 leading-tight truncate">
                     {quickViewItem.name}
                   </h3>

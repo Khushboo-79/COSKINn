@@ -73,7 +73,7 @@ export const Returns: React.FC = () => {
       <div className={`space-y-8 text-[15px] leading-relaxed ${isGlam ? 'text-gray-600 font-serif' : 'text-gray-600'}`}>
         <div>
           <h3 className={`text-xl font-bold mb-3 ${isGlam ? 'text-[#2a2a2a]' : 'text-gray-900'}`}>30-Day Money-Back Guarantee</h3>
-          <p>We want you to love your COSKINn products! If you are not completely satisfied, you may return the item(s) within 30 days of purchase for a full refund or exchange. Products must be at least half full to be eligible.</p>
+          <p>We want you to love your Fairenne products! If you are not completely satisfied, you may return the item(s) within 30 days of purchase for a full refund or exchange. Products must be at least half full to be eligible.</p>
         </div>
         <div>
           <h3 className={`text-xl font-bold mb-3 ${isGlam ? 'text-[#2a2a2a]' : 'text-gray-900'}`}>How to Return</h3>

@@ -124,8 +124,8 @@ const Contact: React.FC = () => {
                   <Mail size={24} />
                 </div>
                 <h3 className="font-bold text-gray-900 mb-2">Email Us</h3>
-                <p className="text-gray-500 font-medium text-sm">hello@coskinn.com</p>
-                <p className="text-gray-500 font-medium text-sm">support@coskinn.com</p>
+                <p className="text-gray-500 font-medium text-sm">hello@fairenne.com</p>
+                <p className="text-gray-500 font-medium text-sm">support@fairenne.com</p>
               </div>
               <div>
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${isGlam ? 'bg-[#7a1b26]/10 text-[#7a1b26]' : 'bg-[#ff9aa8]/10 text-[#ff9aa8]'}`}>

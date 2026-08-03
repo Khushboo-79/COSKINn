@@ -74,7 +74,20 @@ const PLP: React.FC = () => {
 
   let allProducts = getAllProducts(isGlam);
   if (category) {
-    allProducts = allProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+    const lowerCategory = category.toLowerCase().trim();
+    if (lowerCategory === 'new') {
+      allProducts = allProducts.filter(p => p.badge === 'NEW');
+    } else if (lowerCategory === 'bestsellers') {
+      allProducts = allProducts.filter(p => p.badge === 'BESTSELLER');
+    } else {
+      allProducts = allProducts.filter(p => {
+        const cat = p.category.toLowerCase().trim();
+        // Remove trailing 's' to safely match singular/plural differences
+        const searchBase = lowerCategory.replace(/s$/, '').replace(/z$/, '');
+        const catBase = cat.replace(/s$/, '').replace(/z$/, '');
+        return catBase.includes(searchBase) || searchBase.includes(catBase);
+      });
+    }
   }
 
   // Apply filters
@@ -168,9 +181,9 @@ const PLP: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group cursor-pointer"
+                  className="group cursor-pointer relative"
                 >
-                  <Link to={`/product/${product.id}`} className="block h-full relative group cursor-pointer">
+                  <Link to={`/product/${product.id}`} state={{ from: category || fromState || 'collections' }} className="block h-full relative group cursor-pointer">
                     {/* Image Container */}
                     <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[24px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
                       <img 

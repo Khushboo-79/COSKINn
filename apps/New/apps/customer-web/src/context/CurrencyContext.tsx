@@ -24,7 +24,7 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 
 const getSavedCurrency = (): Currency => {
   try {
-    const saved = localStorage.getItem('coskinn_currency');
+    const saved = localStorage.getItem('fairenne_currency');
     if (saved) {
       const found = CURRENCIES.find(c => c.code === saved);
       if (found) return found;
@@ -40,7 +40,7 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
     const found = CURRENCIES.find(c => c.code === code);
     if (found) {
       setCurrency(found);
-      try { localStorage.setItem('coskinn_currency', code); } catch (_) {}
+      try { localStorage.setItem('fairenne_currency', code); } catch (_) {}
     }
   }, []);
 

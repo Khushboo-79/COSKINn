@@ -60,7 +60,7 @@ export default function CosmeticsProductDetailsPage({ product }) {
 
   return (
     <div ref={containerRef} className="w-full min-h-screen bg-[#FFFDFD] font-sans text-[#75263F] selection:bg-[#FF8FB1] selection:text-white relative overflow-x-hidden">
-      <SEO title={`${product.name} | COSKINn`} description={product.shortDescription || product.name} />
+      <SEO title={`${product.name} | Fairenne`} description={product.shortDescription || product.name} />
       
       {/* Global Magical Glow */}
       <div className="fixed inset-0 pointer-events-none z-0">

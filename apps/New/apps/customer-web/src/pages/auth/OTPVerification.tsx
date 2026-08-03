@@ -154,7 +154,7 @@ const OTPVerification: React.FC = () => {
               <div className="absolute bottom-12 left-12 right-12 z-20">
                 <div className="p-8 backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl">
                   <h3 className="text-3xl font-serif text-white italic mb-2">"Unlock the velvet rope."</h3>
-                  <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison COSKINn</p>
+                  <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison Fairenne</p>
                 </div>
               </div>
             </div>

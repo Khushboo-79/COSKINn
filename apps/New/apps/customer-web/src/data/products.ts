@@ -29,7 +29,7 @@ export const skinProducts: Product[] = [
 ];
 
 export const glamProducts: Product[] = [
-  { id: 201, name: 'Coskin Angel 9-Color Palette', category: 'Eyes', price: 4500, rating: 4.9, reviews: 2145, badge: 'ICON', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588' },
+  { id: 201, name: 'Fairenne Angel 9-Color Palette', category: 'Eyes', price: 4500, rating: 4.9, reviews: 2145, badge: 'ICON', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588' },
   { id: 202, name: 'Velvet Angel Matte Lipstick', category: 'Lips', price: 2000, rating: 4.8, reviews: 1420, badge: 'BESTSELLER', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299' },
   { id: 203, name: 'Strawberry Cupid Blush', category: 'Face', price: 2800, rating: 4.9, reviews: 934, badge: null, image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951' },
   { id: 204, name: 'Gilded Halo Highlighter', category: 'Face', price: 3200, rating: 4.8, reviews: 541, badge: 'NEW', image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260420-103644.jpg?v=1776653923' },

@@ -126,7 +126,7 @@ const OrderSuccess: React.FC = () => {
                     <p className="text-sm text-gray-500">
                       123 Beauty Blvd, Suite 400<br/>
                       Los Angeles, CA 90012<br/>
-                      hello@coskinn.com
+                      hello@fairenne.com
                     </p>
                   </div>
                   <div className="mt-6 md:mt-0 md:text-right">

@@ -23,8 +23,8 @@ function resolveBackendProductId(product, apiProducts = []) {
     const matchedBySlug = apiProducts.find(p => {
       const pSlug = (p.slug || '').toLowerCase().trim();
       return pSlug === targetSlug ||
-        pSlug === `coskinn-${targetSlug}` ||
-        pSlug.replace(/^coskinn-/, '') === targetSlug.replace(/^coskinn-/, '');
+        pSlug === `fairenne-${targetSlug}` ||
+        pSlug.replace(/^fairenne-/, '') === targetSlug.replace(/^fairenne-/, '');
     });
     if (matchedBySlug) {
       return String(matchedBySlug.id);
@@ -37,8 +37,8 @@ function resolveBackendProductId(product, apiProducts = []) {
     const matchedByName = apiProducts.find(p => {
       const pName = (p.name || '').toLowerCase().trim();
       return pName === targetName ||
-        pName === `coskinn ${targetName}` ||
-        pName.replace(/^coskinn\s+/i, '') === targetName.replace(/^coskinn\s+/i, '');
+        pName === `fairenne ${targetName}` ||
+        pName.replace(/^fairenne\s+/i, '') === targetName.replace(/^fairenne\s+/i, '');
     });
     if (matchedByName) {
       return String(matchedByName.id);
@@ -80,7 +80,7 @@ export function WishlistProvider({ children }) {
   // Fetch wishlist from backend when user is logged in
   const fetchWishlist = useCallback(async () => {
     if (!user) {
-      const savedWishlist = localStorage.getItem('coskinn_wishlist_guest');
+      const savedWishlist = localStorage.getItem('fairenne_wishlist_guest');
       if (savedWishlist) {
         try {
           setWishlist(JSON.parse(savedWishlist));
@@ -104,7 +104,7 @@ export function WishlistProvider({ children }) {
           id: prod.id || item.productId,
           originalId: prod.id || item.productId,
           productId: prod.id || item.productId,
-          name: prod.name || item.name || 'COSKINn Product',
+          name: prod.name || item.name || 'Fairenne Product',
           price: prod.discountPrice || prod.mrp || item.price,
           mrp: prod.mrp || item.price,
           image: prod.images?.[0]?.url || prod.image || '/default-product.png',
@@ -134,7 +134,7 @@ export function WishlistProvider({ children }) {
   // Save guest wishlist to localStorage when not logged in
   useEffect(() => {
     if (!user) {
-      localStorage.setItem('coskinn_wishlist_guest', JSON.stringify(wishlist));
+      localStorage.setItem('fairenne_wishlist_guest', JSON.stringify(wishlist));
     }
   }, [wishlist, user]);
 
