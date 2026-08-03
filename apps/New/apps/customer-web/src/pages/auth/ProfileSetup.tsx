@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { ArrowRight, ArrowLeft, Check, Sparkles, Droplets } from 'lucide-react';
+import { ArrowRight, Check, Sparkles, Droplets } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ProfileSetup: React.FC = () => {
