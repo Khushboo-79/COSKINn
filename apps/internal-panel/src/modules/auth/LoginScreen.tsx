@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../core/api/auth';
 import { useMutation } from '@tanstack/react-query';
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../../core/rbac/AuthContext';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address').or(z.string().min(3, 'Username must be at least 3 characters')),
@@ -16,8 +17,15 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const LoginScreen = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [errorMsg, setErrorMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const { register, handleSubmit, formState: { errors } } = useRHForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),

@@ -18,6 +18,36 @@ export const UserManagementScreen = () => {
     retry: false,
   });
 
+  const { data: roles = [] } = useQuery({
+    queryKey: ['roles'],
+    queryFn: rbacApi.getRoles,
+    retry: false,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: rbacApi.createUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setIsAddModalOpen(false);
+      toast.success('User created successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to create user');
+    }
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string, data: { roleId: string } }) => rbacApi.updateUserRole(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setSelectedUser(null);
+      toast.success('User role updated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to update user role');
+    }
+  });
+
 
   const users = Array.isArray(rawUsers) ? rawUsers.map((u: any) => ({
     id: u.id,

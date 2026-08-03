@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(localStorage.getItem('access_token'));
 
   // Fetch current user if token exists
-  const { data: user, isLoading, isError, refetch } = useQuery({
+  const { data: user, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ['currentUser'],
     queryFn: authApi.getCurrentUser,
     enabled: !!token,
@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user: user || null,
         isAuthenticated: !!user,
-        isLoading,
+        isLoading: isLoading || isFetching || (!!token && !user && !isError),
         login,
         logout,
       }}

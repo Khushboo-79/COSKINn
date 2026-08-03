@@ -47,7 +47,7 @@ export const LoyaltyScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Loyalty & Rewards</h1>
           <p className="text-slate-500 text-sm mt-1">Manage membership tiers and view points distribution.</p>
@@ -81,7 +81,7 @@ export const LoyaltyScreen = () => {
             </div>
             <button 
               onClick={() => setIsAddingTier(true)}
-              className="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-800 transition-colors"
+              className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#E0356F] transition-colors"
             >
               <Plus className="h-4 w-4 mr-2" /> Add Tier
             </button>

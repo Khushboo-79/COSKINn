@@ -114,13 +114,39 @@ export class AdminService implements OnModuleInit {
   }
 
   async createStaffUser(data: { firstName: string, lastName: string, email: string, phone: string, roleId: string }) {
+    const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
+    
+    if (existingUser) {
+      // Check if they already have a role assigned
+      const existingRole = await this.prisma.userRole.findFirst({
+        where: { userId: existingUser.id, roleId: data.roleId }
+      });
+
+      if (existingRole) {
+        throw new import('@nestjs/common').ConflictException('A user with this email already exists and is already assigned to this role.');
+      }
+
+      // Clear any existing roles and assign the new one, since UI expects one role
+      await this.prisma.userRole.deleteMany({ where: { userId: existingUser.id } });
+      
+      // Update existing user with the new role
+      return this.prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          roles: {
+            create: { roleId: data.roleId }
+          }
+        }
+      });
+    }
+
     const passwordHash = await bcrypt.hash('password123', 10);
     return this.prisma.user.create({
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
-        phone: data.phone,
+        phone: data.phone || null,
         passwordHash,
         roles: {
           create: {
