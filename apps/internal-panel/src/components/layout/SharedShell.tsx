@@ -55,10 +55,10 @@ export const SharedShell = () => {
         className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
           } fixed md:relative z-30 inset-y-0 left-0 bg-gradient-to-b from-[#fff0f2] to-[#FFDAB9]/20 border-r border-primary-200 text-slate-700 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
       >
-        <div className="h-28 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative w-full">
-          {isSidebarOpen && <img src="/logo-icon.png" alt="Fairenne Icon" className="h-14 w-auto object-contain drop-shadow-sm" />}
-          {!isSidebarOpen && <img src="/logo-full.png" alt="Fairenne Logo" className="h-20 w-auto max-w-[220px] object-contain scale-[1.7] drop-shadow-sm origin-center" />}
-          <button onClick={toggleSidebar} className="text-slate-400 hover:text-primary-500 md:hidden absolute right-4">
+        <div className="h-20 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative w-full overflow-visible">
+          {isSidebarOpen && <img src="/logo-icon.png" alt="Fairenne Icon" className="h-12 w-auto object-contain scale-[1.3] origin-center" />}
+          {!isSidebarOpen && <img src="/logo-full.png" alt="Fairenne Logo" className="w-[180px] h-auto max-h-[70px] object-contain scale-[1.8] origin-center" />}
+          <button onClick={toggleSidebar} className="text-slate-400 hover:text-primary-500 md:hidden absolute right-4 z-10 bg-white/50 rounded-full p-1">
             <X className="h-5 w-5" />
           </button>
         </div>
