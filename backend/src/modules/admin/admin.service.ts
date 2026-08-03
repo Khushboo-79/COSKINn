@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
@@ -156,7 +156,7 @@ export class AdminService implements OnModuleInit {
       });
 
       if (existingRole) {
-        throw new import('@nestjs/common').ConflictException('A user with this email already exists and is already assigned to this role.');
+        throw new ConflictException('A user with this email already exists and is already assigned to this role.');
       }
 
       // Clear any existing roles and assign the new one, since UI expects one role
