@@ -13,7 +13,7 @@ const InteractiveExperience: React.FC = () => {
       {!isGlam && (
         <div className="absolute top-0 left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
           <svg className="relative block w-full h-[60px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
-            <path d="M0,0 L0,50 C 120,60 240,40 360,70 C 480,100 600,30 720,60 C 840,90 960,40 1080,80 C 1200,120 1320,50 1440,70 L1440,0 Z" fill="#ffffff" />
+            <path d="M0,0 L0,50 C 120,60 240,40 360,70 C 480,100 600,30 720,60 C 840,90 960,40 1080,80 C 1200,120 1320,50 1440,70 L1440,0 Z" fill="#ffe4eb" />
           </svg>
         </div>
       )}
@@ -31,7 +31,7 @@ const InteractiveExperience: React.FC = () => {
                   
                   <div className="aspect-square relative overflow-hidden bg-white">
                     <img 
-                      src="https://images.unsplash.com/photo-1515562141207-7a8efbd347a4?auto=format&fit=crop&q=80" 
+                      src="https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299" 
                       alt="The Enchanted Mirror" 
                       className="w-full h-full object-cover object-center"
                     />
@@ -81,7 +81,7 @@ const InteractiveExperience: React.FC = () => {
               {/* Image Side */}
               <div className="h-[300px] md:h-[450px] overflow-hidden">
                 <img 
-                  src="https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  src="https://www.dotandkey.com/cdn/shop/files/Desk_c1390568-a6ba-43d9-98d3-b87e0790dfc5.png"
                   alt="Experience" 
                   className="w-full h-full object-cover rounded-t-[32px] md:rounded-tr-none md:rounded-l-[32px]"
                 />

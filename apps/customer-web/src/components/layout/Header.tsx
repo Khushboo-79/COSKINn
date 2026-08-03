@@ -5,13 +5,14 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useCurrency } from '../../context/CurrencyContext';
 import { useAuth } from '../../context/AuthContext';
 import { Menu, Search, ShoppingBag, User, Heart, Droplets, Sparkles, X, Globe, ChevronDown, ChevronDown as ChevronDownIcon } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
 import MegaMenu from './MegaMenu';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { mode, toggleMode } = useTheme();
   const { setIsCartOpen, cartCount } = useCart();
   const { wishlistCount } = useWishlist();
@@ -69,8 +70,8 @@ const Header: React.FC = () => {
           <div className="hidden lg:flex space-x-5 xl:space-x-7 items-center justify-start flex-1 text-[15px] font-sans font-medium whitespace-nowrap">
             <Link to="/" className={`transition-all duration-300 ${
               isGlam 
-                ? 'text-gray-800 icon-hover-glam' 
-                : 'text-gray-800 icon-hover-skin'
+                ? `${location.pathname === '/' ? 'text-[#7a1b26]' : 'text-gray-800'} icon-hover-glam` 
+                : `${location.pathname === '/' ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
             }`}>
               Home
             </Link>
@@ -85,8 +86,8 @@ const Header: React.FC = () => {
                 to="/collections" 
                 className={`flex items-center whitespace-nowrap transition-all duration-300 h-full ${
                   isGlam 
-                    ? 'text-[#2a2a2a] icon-hover-glam' 
-                    : 'text-gray-800 icon-hover-skin'
+                    ? `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#7a1b26]' : 'text-[#2a2a2a]'} icon-hover-glam` 
+                    : `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
                 } ${isShopMenuOpen ? (isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]') : ''}`}
               >
                 Shop
@@ -94,19 +95,22 @@ const Header: React.FC = () => {
               </Link>
             </div>
 
-            {navLinks.map((item) => (
-              <Link 
-                key={item.name} 
-                to={item.path}
-                className={`whitespace-nowrap transition-all duration-300 ${
-                  isGlam 
-                    ? 'text-[#2a2a2a] icon-hover-glam' 
-                    : 'text-gray-800 icon-hover-skin'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+            {navLinks.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link 
+                  key={item.name} 
+                  to={item.path}
+                  className={`whitespace-nowrap transition-all duration-300 ${
+                    isGlam 
+                      ? `${isActive ? 'text-[#7a1b26]' : 'text-[#2a2a2a]'} icon-hover-glam` 
+                      : `${isActive ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
           
           {/* Mobile Menu Icon */}

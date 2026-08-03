@@ -14,18 +14,18 @@ export interface Product {
 }
 
 export const skinProducts: Product[] = [
-  { id: 101, name: 'Peachy Glow Vitamin C Serum', category: 'Serums', price: 3499, rating: 4.8, reviews: 1284, badge: null, image: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { id: 102, name: 'Watermelon Burst Hydrator', category: 'Moisturizers', price: 2999, rating: 4.9, reviews: 856, badge: 'BESTSELLER', image: 'https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { id: 103, name: 'Berry Bounce Sleep Mask', category: 'Masks', price: 1999, rating: 4.7, reviews: 512, badge: null, image: 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { id: 104, name: 'Avocado Melt Eye Cream', category: 'Eye Care', price: 2499, rating: 4.6, reviews: 733, badge: 'NEW', image: 'https://images.unsplash.com/photo-1615397323133-c90a2a16d557?auto=format&fit=crop&q=80' },
-  { id: 105, name: 'Papaya Enzyme Cleanser', category: 'Cleansers', price: 1899, rating: 4.8, reviews: 342, badge: null, image: 'https://images.pexels.com/photos/8101522/pexels-photo-8101522.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { id: 106, name: 'Pineapple Brightening Toner', category: 'Toners', price: 2199, rating: 4.5, reviews: 129, badge: null, image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80' },
-  { id: 107, name: 'Coconut Water Splash SPF 50', category: 'Sun Care', price: 2799, rating: 4.9, reviews: 924, badge: 'ESSENTIAL', image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80' },
-  { id: 108, name: 'Plum Plump Hyaluronic Acid', category: 'Serums', price: 3299, rating: 4.8, reviews: 210, badge: null, image: 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80' },
-  { id: 109, name: 'Blueberry Blemish Rescue Patch', category: 'Treatments', price: 999, rating: 4.7, reviews: 1045, badge: 'LIMITED', image: 'https://images.unsplash.com/photo-1599305090598-fe179d501227?auto=format&fit=crop&q=80' },
-  { id: 110, name: 'Kiwi Detox Clay Mask', category: 'Masks', price: 2299, rating: 4.6, reviews: 382, badge: null, image: 'https://images.pexels.com/photos/4465124/pexels-photo-4465124.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { id: 111, name: 'Dragonfruit Nourishing Lip Balm', category: 'Lip Care', price: 799, rating: 4.9, reviews: 1533, badge: null, image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80' },
-  { id: 112, name: 'Citrus Glow Exfoliator', category: 'Exfoliators', price: 2499, rating: 4.7, reviews: 245, badge: 'NEW', image: 'https://images.pexels.com/photos/6621467/pexels-photo-6621467.jpeg?auto=compress&cs=tinysrgb&w=800' }
+  { id: 101, name: 'Peachy Glow Vitamin C Serum', category: 'Serums', price: 3499, rating: 4.8, reviews: 1284, badge: null, image: 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg' },
+  { id: 102, name: 'Watermelon Burst Hydrator', category: 'Moisturizers', price: 2999, rating: 4.9, reviews: 856, badge: 'BESTSELLER', image: 'https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg' },
+  { id: 103, name: 'Berry Bounce Sleep Mask', category: 'Masks', price: 1999, rating: 4.7, reviews: 512, badge: null, image: 'https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg' },
+  { id: 104, name: 'Avocado Melt Eye Cream', category: 'Eye Care', price: 2499, rating: 4.6, reviews: 733, badge: 'NEW', image: 'https://www.dotandkey.com/cdn/shop/files/1_de25ac2d-c470-43f2-9217-538f92860f78.jpg' },
+  { id: 105, name: 'Papaya Enzyme Cleanser', category: 'Cleansers', price: 1899, rating: 4.8, reviews: 342, badge: null, image: 'https://www.dotandkey.com/cdn/shop/files/1-_175g.jpg' },
+  { id: 106, name: 'Pineapple Brightening Toner', category: 'Toners', price: 2199, rating: 4.5, reviews: 129, badge: null, image: 'https://www.dotandkey.com/cdn/shop/files/Artboard_1_f94f4456-d328-4271-ab7e-94bde8c9bbd3.jpg' },
+  { id: 107, name: 'Coconut Water Splash SPF 50', category: 'Sun Care', price: 2799, rating: 4.9, reviews: 924, badge: 'ESSENTIAL', image: 'https://www.dotandkey.com/cdn/shop/files/1-1_b4ae866f-e0a8-43d1-971f-1d143d76f01c.jpg' },
+  { id: 108, name: 'Plum Plump Hyaluronic Acid', category: 'Serums', price: 3299, rating: 4.8, reviews: 210, badge: null, image: 'https://www.dotandkey.com/cdn/shop/files/Artboard1_95ac3e40-4665-40b5-ae87-a3379ff9847e.jpg' },
+  { id: 109, name: 'Blueberry Blemish Rescue Patch', category: 'Treatments', price: 999, rating: 4.7, reviews: 1045, badge: 'LIMITED', image: 'https://www.dotandkey.com/cdn/shop/files/1-175.jpg' },
+  { id: 110, name: 'Kiwi Detox Clay Mask', category: 'Masks', price: 2299, rating: 4.6, reviews: 382, badge: null, image: 'https://www.dotandkey.com/cdn/shop/files/1_7.jpg' },
+  { id: 111, name: 'Dragonfruit Nourishing Lip Balm', category: 'Lip Care', price: 799, rating: 4.9, reviews: 1533, badge: null, image: 'https://www.dotandkey.com/cdn/shop/files/ann_2_1_9036910d-d727-4641-ae46-a916a0408fcf.jpg' },
+  { id: 112, name: 'Citrus Glow Exfoliator', category: 'Exfoliators', price: 2499, rating: 4.7, reviews: 245, badge: 'NEW', image: 'https://www.dotandkey.com/cdn/shop/files/ann_1_fbd46065-e3cb-430d-b50b-a55d129abac1.jpg' }
 ];
 
 export const glamProducts: Product[] = [

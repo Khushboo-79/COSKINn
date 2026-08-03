@@ -14,7 +14,7 @@ const featuredArticle = {
   date: 'October 24, 2023',
   excerpt: 'Achieving that coveted luminous, poreless complexion is easier than you think. Discover the essential steps, from double cleansing to locking in hydration.',
   imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678',
-  imageSkin: 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800',
+  imageSkin: 'https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg',
 };
 
 const articles = [
@@ -24,7 +24,7 @@ const articles = [
     category: 'Ingredient Spotlight',
     readTime: '4 min read',
     imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588',
-    imageSkin: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
+    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg'
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const articles = [
     category: 'Tutorials',
     readTime: '5 min read',
     imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299',
-    imageSkin: 'https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=800'
+    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg'
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ const articles = [
     category: 'Wellness',
     readTime: '7 min read',
     imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951',
-    imageSkin: 'https://images.unsplash.com/photo-1550828520-4cb496926fc9?auto=format&fit=crop&w=800&q=80'
+    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/1-1_b4ae866f-e0a8-43d1-971f-1d143d76f01c.jpg'
   },
   {
     id: 4,
@@ -48,7 +48,7 @@ const articles = [
     category: 'Ingredient Spotlight',
     readTime: '3 min read',
     imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260420-103644.jpg?v=1776653923',
-    imageSkin: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
+    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg'
   },
   {
     id: 5,
@@ -56,7 +56,7 @@ const articles = [
     category: 'Skincare Guides',
     readTime: '6 min read',
     imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/61605ff4361e206d245c64bb08d66c4b_41cd63f3-7c74-4c4d-853d-ef8949a10017.jpg?v=1784689317',
-    imageSkin: 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800'
+    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg'
   },
   {
     id: 6,
@@ -64,7 +64,7 @@ const articles = [
     category: 'Tutorials',
     readTime: '5 min read',
     imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-142134.jpg?v=1784704087',
-    imageSkin: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
+    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg'
   }
 ];
 

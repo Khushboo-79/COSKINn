@@ -8,9 +8,9 @@ import { useState, useEffect } from 'react';
 
 const skinImages = [
   {
-    jar: 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800',
-    topRight: 'https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=800',
-    bottomRight: 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800'
+    jar: 'https://www.dotandkey.com/cdn/shop/files/mob_11bd4c0e-4801-48c4-aeb8-fb07f1d46aba.jpg',
+    topRight: 'https://www.dotandkey.com/cdn/shop/files/MOIST_DESK_be5518ac-2e4e-4dc4-878f-a803c7677b21.jpg',
+    bottomRight: 'https://www.dotandkey.com/cdn/shop/files/MOIST_MOB_copy_2_33302a0c-5902-454d-89fb-b56be26e4b13.jpg'
   },
   {
     jar: 'https://images.pexels.com/photos/2587370/pexels-photo-2587370.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -44,9 +44,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className={`relative overflow-hidden w-full h-[calc(100vh-80px)] min-h-[600px] flex flex-col transition-colors duration-700 ${
-      isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'
-    }`}>
+    <section className={`relative w-full h-[calc(100vh-80px)] min-h-[600px] flex flex-col transition-colors duration-700 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9] overflow-hidden'}`}>
       
       {/* Background Glows for SKIN Mode */}
       {!isGlam && (
@@ -178,7 +176,7 @@ const Hero: React.FC = () => {
       
       {/* Decorative Separator for Glam Mode */}
       {isGlam && (
-        <div className="absolute top-0 left-0 w-full flex items-center justify-center pt-16 z-20">
+        <div className="absolute top-0 left-0 w-full flex items-center justify-center pt-4 md:pt-6 z-20">
           <div className="w-full max-w-[800px] flex items-center px-4 sm:px-6 lg:px-8">
             <div className="flex-1 h-[1px] bg-[#d2b27b] opacity-50"></div>
             <span 
@@ -195,11 +193,11 @@ const Hero: React.FC = () => {
       )}
 
       <div className={`relative z-10 w-full min-h-screen mx-auto flex flex-col md:flex-row items-center justify-between pt-16 md:pt-0 ${
-        isGlam ? 'max-w-full pl-4 sm:pl-8 lg:pl-12 pr-0' : 'max-w-[1400px] px-4 sm:px-6 lg:px-12'
+        isGlam ? 'max-w-full pl-4 sm:pl-8 lg:pl-12 pr-0 pb-40 lg:pb-48 md:pb-0' : 'max-w-[1400px] px-4 sm:px-6 lg:px-12'
       }`}>
         
         {/* Left Side: Content */}
-        <div className={`w-full ${isGlam ? 'md:w-[55%] pt-16 md:pt-32 lg:pt-40' : 'md:w-[60%]'} h-full pr-0 md:pr-12 lg:pr-20 flex flex-col justify-center items-start text-left z-20 pb-8 md:pb-0`}>
+        <div className={`w-full ${isGlam ? 'md:w-[55%] pt-16 md:pt-32 lg:pt-40 pb-8 md:pb-0' : 'md:w-[60%] pb-16 md:pb-32'} h-full pr-0 md:pr-12 lg:pr-20 flex flex-col justify-center items-start text-left z-20`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-content' : 'skin-content'}
@@ -313,7 +311,7 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Right Side: Image Composition */}
-        <div className={`w-full ${isGlam ? 'md:w-[50%]' : 'md:w-[40%]'} h-[90%] relative hidden md:block self-center`}>
+        <div className={`w-full ${isGlam ? 'md:w-[50%] h-[480px] mt-44' : 'md:w-[40%] h-[90%]'} relative hidden md:block self-center`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-images' : 'skin-images'}
@@ -327,7 +325,7 @@ const Hero: React.FC = () => {
                   
                   {/* Tertiary Frame (Top Left) */}
                   <motion.div 
-                    className="absolute top-[8%] left-[5%] w-[38%] h-[40%] border border-[#e5b376] p-1.5 bg-white z-10 shadow-lg"
+                    className="absolute top-[8%] left-[5%] w-[38%] h-[34%] border border-[#e5b376] p-1.5 bg-white z-10 shadow-lg"
                     whileHover={{ scale: 1.02, zIndex: 40 }}
                   >
                     <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
@@ -349,7 +347,7 @@ const Hero: React.FC = () => {
 
                   {/* Main Frame (Center) */}
                   <motion.div 
-                    className="absolute top-[15%] left-[22%] w-[52%] h-[68%] border border-[#e5b376] p-2 bg-white z-20 shadow-xl"
+                    className="absolute top-[15%] left-[22%] w-[52%] h-[60%] border border-[#e5b376] p-2 bg-white z-20 shadow-xl"
                     whileHover={{ scale: 1.02, zIndex: 40 }}
                   >
                     <div className="absolute top-[-1px] left-[-1px] w-[15px] h-[15px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
@@ -371,7 +369,7 @@ const Hero: React.FC = () => {
 
                   {/* Secondary Frame (Bottom Right) */}
                   <motion.div 
-                    className="absolute bottom-[5%] right-[5%] w-[42%] h-[38%] border border-[#e5b376] p-1.5 bg-white z-30 shadow-2xl"
+                    className="absolute bottom-[5%] right-[5%] w-[42%] h-[32%] border border-[#e5b376] p-1.5 bg-white z-30 shadow-2xl"
                     whileHover={{ scale: 1.02, zIndex: 40 }}
                   >
                     <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
@@ -396,94 +394,21 @@ const Hero: React.FC = () => {
                 <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
                   
                   {/* Middle Left Image (Jar) */}
-                  <motion.div 
-                    className="absolute top-[28%] left-[5%] h-[50%] aspect-square overflow-hidden z-20 bg-white"
-                    style={{ transformStyle: 'preserve-3d', boxShadow: '0 25px 50px rgba(0,0,0,0.18)' }}
-                    initial={{ opacity: 0, y: 30, borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%" }}
-                    animate={{ 
-                      opacity: 1, 
-                      y: 0,
-                      borderRadius: ["40% 60% 70% 30% / 40% 50% 60% 50%", "60% 40% 30% 70% / 60% 30% 70% 40%", "40% 60% 70% 30% / 40% 50% 60% 50%"]
-                    }}
-                    transition={{ 
-                      opacity: { duration: 1 }, 
-                      y: { type: 'spring', stiffness: 100, damping: 20 },
-                      borderRadius: { duration: 8, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                    whileHover={{ scale: 1.05, rotateY: 10, rotateX: -5, z: 20, boxShadow: '0 35px 60px rgba(0,0,0,0.25)' }}
-                  >
-                    <AnimatePresence mode="popLayout">
-                      <motion.img 
-                        key={skinImages[imgIndex].jar}
-                        src={skinImages[imgIndex].jar}
-                        initial={{ opacity: 0, scale: 1.05 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1.2, ease: "easeInOut" }}
-                        alt="Jar" className="absolute inset-0 w-full h-full object-cover" 
-                      />
-                    </AnimatePresence>
-                  </motion.div>
+                  <div className="absolute top-[15%] left-[0%] w-[45%] h-[45%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white">
+                    <img src="https://www.dotandkey.com/cdn/shop/files/Banner_Desktop_cdcfa928-5948-4a5c-a344-7992702ed0b9.jpg" alt="Slide 1" className="w-full h-full object-cover" />
+                  </div>
                   
                   {/* Top Right Image */}
-                  <motion.div 
-                    className="absolute top-[5%] right-[5%] h-[58%] aspect-[3/4] overflow-hidden z-10 bg-white"
-                    style={{ transformStyle: 'preserve-3d', boxShadow: '0 15px 40px rgba(0,0,0,0.12)' }}
-                    initial={{ opacity: 0, x: 30, borderRadius: "50% 50% 20% 80% / 25% 80% 20% 75%" }}
-                    animate={{ 
-                      opacity: 1, 
-                      x: 0,
-                      borderRadius: ["50% 50% 20% 80% / 25% 80% 20% 75%", "80% 20% 50% 50% / 75% 20% 80% 25%", "50% 50% 20% 80% / 25% 80% 20% 75%"]
-                    }}
-                    transition={{ 
-                      opacity: { duration: 1, delay: 0.1 }, 
-                      x: { type: 'spring', stiffness: 100, damping: 20, delay: 0.1 },
-                      borderRadius: { duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }
-                    }}
-                    whileHover={{ scale: 1.05, rotateY: -10, rotateX: 5, z: 20, boxShadow: '0 25px 50px rgba(0,0,0,0.2)' }}
-                  >
-                    <AnimatePresence mode="popLayout">
-                      <motion.img 
-                        key={skinImages[imgIndex].topRight}
-                        src={skinImages[imgIndex].topRight}
-                        initial={{ opacity: 0, scale: 1.05 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1.2, delay: 0.1, ease: "easeInOut" }}
-                        alt="Dropper" className="absolute inset-0 w-full h-full object-cover object-center" 
-                      />
-                    </AnimatePresence>
-                  </motion.div>
+                  <div className="absolute top-[0%] right-[0%] w-[45%] h-[48%] rounded-[32px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] z-10 bg-white">
+                    <img src="https://www.dotandkey.com/cdn/shop/files/Desktop_Banner_2.jpg" alt="Slide 2" className="w-full h-full object-cover object-center" />
+                  </div>
 
                   {/* Bottom Right Image */}
-                  <motion.div 
-                    className="absolute top-[48%] right-[20%] h-[55%] aspect-[4/5] overflow-hidden z-30 bg-white"
-                    style={{ transformStyle: 'preserve-3d', boxShadow: '0 20px 50px rgba(0,0,0,0.15)' }}
-                    initial={{ opacity: 0, y: 30, borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%" }}
-                    animate={{ 
-                      opacity: 1, 
-                      y: 0,
-                      borderRadius: ["30% 70% 70% 30% / 30% 30% 70% 70%", "70% 30% 30% 70% / 70% 70% 30% 30%", "30% 70% 70% 30% / 30% 30% 70% 70%"]
-                    }}
-                    transition={{ 
-                      opacity: { duration: 1, delay: 0.2 }, 
-                      y: { type: 'spring', stiffness: 100, damping: 20, delay: 0.2 },
-                      borderRadius: { duration: 9, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
-                    }}
-                    whileHover={{ scale: 1.05, rotateY: -15, rotateX: -10, z: 30, boxShadow: '0 30px 60px rgba(0,0,0,0.25)' }}
-                  >
-                    <AnimatePresence mode="popLayout">
-                      <motion.img 
-                        key={skinImages[imgIndex].bottomRight}
-                        src={skinImages[imgIndex].bottomRight}
-                        initial={{ opacity: 0, scale: 1.05 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1.2, delay: 0.2, ease: "easeInOut" }}
-                        alt="Dropper 2" className="absolute inset-0 w-full h-full object-cover object-center" 
-                      />
-                    </AnimatePresence>
-                  </motion.div>
+                  <div className="absolute bottom-[12%] right-[10%] w-[48%] h-[40%] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-30 bg-white">
+                    <img src="https://www.dotandkey.com/cdn/shop/files/Desk_c1390568-a6ba-43d9-98d3-b87e0790dfc5.png" alt="Slide 3" className="w-full h-full object-cover object-center" />
+                  </div>
+                  
+                  {/* Price Badge removed as requested */}
                 </div>
               )}
             </motion.div>
@@ -496,7 +421,7 @@ const Hero: React.FC = () => {
       {!isGlam && (
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
           <svg className="relative block w-full h-[40px] md:h-[80px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
-            <path d="M0,100 L0,50 C 120,80 240,80 360,50 C 480,20 600,20 720,50 C 840,80 960,80 1080,50 C 1200,20 1320,20 1440,50 L1440,100 Z" fill="#fcfaf9" />
+            <path d="M0,100 L0,50 C 120,80 240,80 360,50 C 480,20 600,20 720,50 C 840,80 960,80 1080,50 C 1200,20 1320,20 1440,50 L1440,100 Z" fill="#ffffff" />
           </svg>
         </div>
       )}

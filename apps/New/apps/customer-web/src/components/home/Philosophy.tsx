@@ -88,7 +88,7 @@ const Philosophy: React.FC = () => {
             >
               <div className="relative aspect-video md:aspect-[16/10] rounded-[24px] overflow-hidden">
                 <img 
-                  src="https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  src="https://www.dotandkey.com/cdn/shop/files/Banner_Desktop_cdcfa928-5948-4a5c-a344-7992702ed0b9.jpg"
                   alt="Philosophy" 
                   className="w-full h-full object-cover"
                 />

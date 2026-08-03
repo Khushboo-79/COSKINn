@@ -7,23 +7,23 @@ import { motion } from 'framer-motion';
 const skinCategories = [
   {
     name: "Cleansers",
-    image: "https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800"
+    image: "https://www.dotandkey.com/cdn/shop/files/1-_175g.jpg"
   },
   {
     name: "Serums",
-    image: "https://images.unsplash.com/photo-1550828520-4cb496926fc9?auto=format&fit=crop&w=800&q=80"
+    image: "https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg"
   },
   {
     name: "Moisturisers",
-    image: "https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800"
+    image: "https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg"
   },
   {
     name: "Masks",
-    image: "https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800"
+    image: "https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg"
   },
   {
     name: "Sun Care",
-    image: "https://images.unsplash.com/photo-1550828520-4cb496926fc9?auto=format&fit=crop&w=800&q=80"
+    image: "https://www.dotandkey.com/cdn/shop/files/1-1_b4ae866f-e0a8-43d1-971f-1d143d76f01c.jpg"
   }
 ];
 
@@ -57,7 +57,7 @@ const ShopByCategory: React.FC = () => {
   const categories = isGlam ? glamCategories : skinCategories;
 
   return (
-    <section id="shop-by-category" className={`pt-12 pb-16 relative overflow-hidden ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
+    <section id="shop-by-category" className={`pt-12 pb-32 md:pb-48 relative overflow-hidden scroll-mt-20 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
       {!isGlam && (
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div 
