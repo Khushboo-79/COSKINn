@@ -41,14 +41,14 @@ export const CampaignsScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Campaigns</h1>
           <p className="text-slate-500 text-sm mt-1">Schedule and manage Email, SMS, and Push notifications.</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-800 transition-colors"
+          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#E0356F] transition-colors"
         >
           <Plus className="h-4 w-4 mr-2" /> New Campaign
         </button>
@@ -108,7 +108,7 @@ export const CampaignsScreen = () => {
             <button 
               onClick={() => addMutation.mutate()}
               disabled={!name || addMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 disabled:opacity-50 flex items-center"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#E0356F] disabled:opacity-50 flex items-center"
             >
               {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Save Draft
