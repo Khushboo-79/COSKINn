@@ -40,7 +40,7 @@ export const SharedShell = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50/80 via-[#fff9fa] to-white flex flex-col md:flex-row font-sans">
 
       {/* Mobile Overlay */}
       {!isSidebarOpen && (
@@ -53,12 +53,12 @@ export const SharedShell = () => {
       {/* Sidebar */}
       <aside
         className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-          } fixed md:relative z-30 inset-y-0 left-0 bg-white border-r border-slate-200 text-slate-600 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
+          } fixed md:relative z-30 inset-y-0 left-0 bg-white/70 backdrop-blur-xl border-r border-primary-100 text-slate-600 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
       >
-        <div className="h-16 flex items-center justify-between px-4 bg-white border-b border-slate-200">
+        <div className="h-16 flex items-center justify-between px-4 bg-white/50 border-b border-primary-100">
           {!isSidebarOpen && <img src="/logo.png" alt="Fairenne Logo" className="h-8 w-auto" />}
-          {isSidebarOpen && <span className="font-bold text-primary-600 text-lg mx-auto">FA</span>}
-          <button onClick={toggleSidebar} className="text-slate-400 hover:text-slate-600 md:hidden">
+          {isSidebarOpen && <span className="font-bold text-primary-500 text-lg mx-auto">FA</span>}
+          <button onClick={toggleSidebar} className="text-slate-400 hover:text-primary-500 md:hidden">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -72,9 +72,9 @@ export const SharedShell = () => {
               <Link
                 key={route.id}
                 to={route.path}
-                className={`flex items-center px-4 py-3 mx-2 rounded-lg transition-colors ${isActive
-                    ? 'bg-primary-50 text-primary-600 font-semibold'
-                    : 'hover:bg-slate-50 hover:text-primary-500'
+                className={`flex items-center px-4 py-3 mx-2 rounded-xl transition-all ${isActive
+                    ? 'bg-gradient-to-r from-primary-400 to-primary-500 text-white shadow-md shadow-primary-400/30 font-semibold scale-[1.02]'
+                    : 'hover:bg-primary-50 hover:text-primary-600'
                   } ${isSidebarOpen ? 'justify-center' : ''}`}
                 title={isSidebarOpen ? route.label : ''}
               >
@@ -85,7 +85,7 @@ export const SharedShell = () => {
           })}
         </nav>
 
-        <div className="p-4 bg-white border-t border-slate-200">
+        <div className="p-4 bg-white/50 border-t border-primary-100">
           <button
             onClick={logout}
             className={`flex items-center text-slate-500 hover:text-rose-500 transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
@@ -100,7 +100,7 @@ export const SharedShell = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
+        <header className="h-16 bg-white/70 backdrop-blur-md border-b border-primary-100 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
           <div className="flex items-center flex-1">
             <button
               onClick={toggleSidebar}
@@ -224,7 +224,7 @@ export const SharedShell = () => {
         </header>
 
         {/* Content Frame */}
-        <main className="flex-1 overflow-auto bg-background p-4 lg:p-8">
+        <main className="flex-1 overflow-auto p-4 lg:p-8">
           <Outlet />
         </main>
         <GlobalSearch />
