@@ -6,8 +6,11 @@ import Bestsellers from '../components/home/Bestsellers';
 import InteractiveExperience from '../components/home/InteractiveExperience';
 import Philosophy from '../components/home/Philosophy';
 import { ScrollSection } from '../components/ui/ScrollSection';
+import { useHomeData } from '../hooks/useHomeData';
 
 const Home: React.FC = () => {
+  const { bestSellers, categories } = useHomeData();
+
   return (
     <div className="flex flex-col min-h-screen">
       <ScrollSection index={0}>
@@ -17,10 +20,10 @@ const Home: React.FC = () => {
         <Promotions />
       </ScrollSection>
       <ScrollSection index={2}>
-        <ShopByCategory />
+        <ShopByCategory categories={categories} />
       </ScrollSection>
       <ScrollSection index={3}>
-        <Bestsellers />
+        <Bestsellers products={bestSellers} />
       </ScrollSection>
       <ScrollSection index={4}>
         <InteractiveExperience />

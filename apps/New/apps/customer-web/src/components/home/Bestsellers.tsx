@@ -3,19 +3,22 @@ import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCurrency } from '../../context/CurrencyContext';
-import { ArrowRight, Star, Heart, ShoppingBag } from 'lucide-react';
+import { ArrowRight, Heart, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { getAllProducts } from '../../data/products';
+import { ProductData } from '../../hooks/useHomeData';
 
-const Bestsellers: React.FC = () => {
+interface BestsellersProps {
+  products: ProductData[];
+  title?: string;
+}
+
+const Bestsellers: React.FC<BestsellersProps> = ({ products = [] }) => {
   const { mode } = useTheme();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
-
-  const products = getAllProducts(isGlam).slice(0, 4);
 
   return (
     <section id="bestsellers" className={`py-16 relative scroll-mt-20 ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
