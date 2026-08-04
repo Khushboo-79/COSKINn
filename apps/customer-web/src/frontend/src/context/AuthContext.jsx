@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
   const mergeAndPersistProfile = (baseUser = {}, updates = {}, saveToStorage = false) => {
     const safeBase = baseUser || {};
     const userKey = safeBase.userId || safeBase.id || safeBase.mobile || safeBase.phone || safeBase.email || 'default';
-    const storedStr = localStorage.getItem('coskinn_profile_' + userKey);
+    const storedStr = localStorage.getItem('fairenne_profile_' + userKey);
     let stored = {};
     if (storedStr) {
       try { stored = JSON.parse(storedStr); } catch (e) { }
@@ -93,7 +93,7 @@ export function AuthProvider({ children }) {
         favShade: merged.favShade,
         avatarUrl: merged.avatarUrl
       };
-      localStorage.setItem('coskinn_profile_' + userKey, JSON.stringify(toSave));
+      localStorage.setItem('fairenne_profile_' + userKey, JSON.stringify(toSave));
     }
 
     return merged;
@@ -102,7 +102,7 @@ export function AuthProvider({ children }) {
   // Initialize session on mount
   useEffect(() => {
     const initSession = async () => {
-      const sessionStr = localStorage.getItem('coskinn_session');
+      const sessionStr = localStorage.getItem('fairenne_session');
       if (sessionStr) {
         try {
           const session = JSON.parse(sessionStr);
@@ -124,7 +124,7 @@ export function AuthProvider({ children }) {
                   const freshMerged = mergeAndPersistProfile(incoming, {}, true);
                   setUser(freshMerged);
                   session.user = freshMerged;
-                  localStorage.setItem('coskinn_session', JSON.stringify(session));
+                  localStorage.setItem('fairenne_session', JSON.stringify(session));
                 }
               } catch (err) {
                 console.error("Failed to fetch fresh profile from /auth/me", err);
@@ -149,7 +149,7 @@ export function AuthProvider({ children }) {
 
   /**
    * Checks if a mobile number is already registered.
-   * Uses the coskinn_registered_numbers list that is populated
+   * Uses the fairenne_registered_numbers list that is populated
    * every time a user successfully verifies an OTP (sign up or sign in).
    * Returns true if the number is known to be registered.
    */
@@ -157,7 +157,7 @@ export function AuthProvider({ children }) {
     const formattedPhone = phone.length === 10 ? `+91${phone}` : phone;
     const raw10 = phone.replace(/^\+91/, '');
     try {
-      const list = JSON.parse(localStorage.getItem('coskinn_registered_numbers') || '[]');
+      const list = JSON.parse(localStorage.getItem('fairenne_registered_numbers') || '[]');
       return list.includes(formattedPhone) || list.includes(raw10) || list.includes(phone);
     } catch (e) {
       return false;
@@ -179,7 +179,7 @@ export function AuthProvider({ children }) {
 
       let registeredList = [];
       try {
-        registeredList = JSON.parse(localStorage.getItem('coskinn_registered_numbers') || '[]');
+        registeredList = JSON.parse(localStorage.getItem('fairenne_registered_numbers') || '[]');
       } catch (e) {
         registeredList = [];
       }
@@ -205,7 +205,7 @@ export function AuthProvider({ children }) {
         registeredList.push(formattedPhone);
         registeredList.push(phone);
         try {
-          localStorage.setItem('coskinn_registered_numbers', JSON.stringify(registeredList));
+          localStorage.setItem('fairenne_registered_numbers', JSON.stringify(registeredList));
         } catch (e) { }
       }
 
@@ -218,7 +218,7 @@ export function AuthProvider({ children }) {
       };
 
       setUser(sessionUser);
-      localStorage.setItem('coskinn_session', JSON.stringify(sessionData));
+      localStorage.setItem('fairenne_session', JSON.stringify(sessionData));
       return sessionData;
     }
     throw new Error('Authentication failed');
@@ -283,12 +283,12 @@ export function AuthProvider({ children }) {
 
     setUser(freshUser);
 
-    const sessionStr = localStorage.getItem('coskinn_session');
+    const sessionStr = localStorage.getItem('fairenne_session');
     if (sessionStr) {
       try {
         const session = JSON.parse(sessionStr);
         session.user = freshUser;
-        localStorage.setItem('coskinn_session', JSON.stringify(session));
+        localStorage.setItem('fairenne_session', JSON.stringify(session));
       } catch (e) {
         console.error("Failed to update session", e);
       }
@@ -298,7 +298,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    const sessionStr = localStorage.getItem('coskinn_session');
+    const sessionStr = localStorage.getItem('fairenne_session');
     if (sessionStr) {
       try {
         const session = JSON.parse(sessionStr);
@@ -311,7 +311,7 @@ export function AuthProvider({ children }) {
       }
     }
 
-    // NOTE: We intentionally keep coskinn_profile_* keys so that avatarUrl,
+    // NOTE: We intentionally keep fairenne_profile_* keys so that avatarUrl,
     // name, and other profile details persist across logout/login for the same user.
     // Only session tokens, cart, wishlist, and orders are cleared on logout.
     const keysToRemove = [];
@@ -319,13 +319,13 @@ export function AuthProvider({ children }) {
       const k = localStorage.key(i);
       if (
         k && (
-          k.startsWith('coskinn_cart') ||
-          k.startsWith('coskinn_membership') ||
-          k.startsWith('coskinn_address') ||
-          k.startsWith('coskinn_wishlist') ||
-          k.startsWith('coskinn_order') ||
-          k === 'coskinn_session' ||
-          k === 'coskinn_token' ||
+          k.startsWith('fairenne_cart') ||
+          k.startsWith('fairenne_membership') ||
+          k.startsWith('fairenne_address') ||
+          k.startsWith('fairenne_wishlist') ||
+          k.startsWith('fairenne_order') ||
+          k === 'fairenne_session' ||
+          k === 'fairenne_token' ||
           k === 'access_token' ||
           k === 'refresh_token'
         )

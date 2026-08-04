@@ -22,28 +22,26 @@ const OrderNav = () => {
   }
 
   return (
-    <div className="bg-white border-b border-slate-200 px-6 py-2 mb-6 -mx-6 -mt-6">
-      <nav className="flex space-x-6">
+    <div className="flex border-b border-slate-200 bg-white mb-6 rounded-2xl shadow-sm overflow-x-auto px-2 scrollbar-hide w-full">
         {tabs.map((tab) => {
           const isActive = tab.exact ? location.pathname === tab.path : location.pathname.startsWith(tab.path);
           const Icon = tab.icon;
           return (
             <Link
-              key={tab.name}
+              key={tab.name || tab.path}
               to={tab.path}
-              className={`flex items-center py-3 border-b-2 text-sm font-medium transition-colors ${
+              className={`flex items-center whitespace-nowrap px-5 py-4 text-sm font-bold border-b-2 transition-all duration-300 ease-out active:scale-95 ${
                 isActive
-                  ? 'border-primary-600 text-primary-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                  ? 'border-[#FF7F50] text-[#FF7F50] bg-gradient-to-t from-[#FF7F50]/10 to-transparent shadow-[inset_0_-2px_4px_rgba(255,127,80,0.1)]'
+                  : 'border-transparent text-slate-500 hover:text-[#FF7F50] hover:bg-gradient-to-t hover:from-[#FF7F50]/5 hover:to-transparent'
               }`}
             >
-              <Icon className="h-4 w-4 mr-2" />
+              <Icon className={`h-4 w-4 mr-2.5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-6'}`} />
               {tab.name}
             </Link>
           );
         })}
-      </nav>
-    </div>
+      </div>
   );
 };
 

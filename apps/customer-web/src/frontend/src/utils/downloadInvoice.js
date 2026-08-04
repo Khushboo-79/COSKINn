@@ -146,7 +146,7 @@ export const downloadInvoice = (order) => {
     <body>
       <div class="header">
         <div>
-          <h1>COSKINn</h1>
+          <h1>Fairenne</h1>
           <p>Premium Luxury Beauty</p>
         </div>
         <div style="text-align: right;">
@@ -203,8 +203,8 @@ export const downloadInvoice = (order) => {
       </div>
 
       <div class="footer">
-        <p>Thank you for shopping with COSKINn!</p>
-        <p>If you have any questions regarding this invoice, please contact support@coskinn.com.</p>
+        <p>Thank you for shopping with Fairenne!</p>
+        <p>If you have any questions regarding this invoice, please contact support@fairenne.com.</p>
       </div>
       <script>
         // Automatically trigger print dialog when opened
@@ -219,7 +219,7 @@ export const downloadInvoice = (order) => {
   
   const link = document.createElement('a');
   link.href = url;
-  link.download = `COSKINn_Invoice_${order.id || 'order'}.html`;
+  link.download = `Fairenne_Invoice_${order.id || 'order'}.html`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

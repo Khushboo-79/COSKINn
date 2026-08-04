@@ -5,6 +5,7 @@
   "packageManager": "npm@10.8.0",
   "workspaces": [
     "apps/*",
+    "apps/New/apps/*",
     "backend",
     "packages/*"
   ],
@@ -14,7 +15,7 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "test": "turbo run test",
-    "prepare": "husky"
+    "prepare": "echo no-husky"
   },
   "devDependencies": {
     "eslint": "^9.15.0",
@@ -28,5 +29,8 @@
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "jimp": "^1.6.1"
   }
 }

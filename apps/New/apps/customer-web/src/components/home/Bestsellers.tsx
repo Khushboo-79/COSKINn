@@ -18,8 +18,41 @@ const Bestsellers: React.FC = () => {
   const products = getAllProducts(isGlam).slice(0, 4);
 
   return (
-    <section id="bestsellers" className={`py-16 relative ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
-      <div className={`${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-6 lg:px-10`}>
+    <section id="bestsellers" className={`py-16 relative scroll-mt-20 ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
+      {!isGlam && (
+        <>
+          {/* Top Brushed Edge */}
+          <div className="absolute top-0 left-0 w-full overflow-hidden leading-none z-0 -translate-y-full pointer-events-none">
+            <svg className="relative block w-full h-[60px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
+              <path d="M0,100 L0,50 C 120,40 240,60 360,30 C 480,0 600,70 720,40 C 840,10 960,60 1080,20 C 1200,-20 1320,50 1440,30 L1440,100 Z" fill="#ffe4eb" />
+            </svg>
+          </div>
+          
+          {/* Bottom Brushed Edge */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 translate-y-full pointer-events-none">
+            <svg className="relative block w-full h-[60px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
+              <path d="M0,0 L0,50 C 120,60 240,40 360,70 C 480,100 600,30 720,60 C 840,90 960,40 1080,80 C 1200,120 1320,50 1440,70 L1440,0 Z" fill="#ffe4eb" />
+            </svg>
+          </div>
+
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <div 
+              className="absolute top-[10%] left-[-5%] w-[40%] h-[400px] bg-[#ffb3c6] blur-[80px] rounded-full transform-gpu" 
+              style={{ animation: 'float 15s ease-in-out infinite' }}
+            ></div>
+            <div 
+              className="absolute top-[30%] left-[30%] w-[50%] h-[300px] bg-[#a3e6d8] blur-[80px] rounded-full transform-gpu" 
+              style={{ animation: 'float 18s ease-in-out infinite reverse' }}
+            ></div>
+            <div 
+              className="absolute top-[20%] right-[-5%] w-[40%] h-[400px] bg-[#ffefb3] blur-[80px] rounded-full transform-gpu" 
+              style={{ animation: 'float 12s ease-in-out infinite' }}
+            ></div>
+          </div>
+        </>
+      )}
+
+      <div className={`${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-6 lg:px-10 relative z-10`}>
         
         {/* Header */}
         {isGlam ? (
@@ -67,7 +100,7 @@ const Bestsellers: React.FC = () => {
               className="w-[45%] sm:w-[30%] md:w-[22%] lg:w-[20%] max-w-[240px] flex flex-col group cursor-pointer"
             >
 
-              <Link to={`/product/${product.id}`} className={`block h-full relative ${isGlam ? '' : ''}`}>
+              <Link to={`/product/${product.id}`} state={{ from: 'bestsellers' }} className={`block h-full relative ${isGlam ? '' : ''}`}>
                 {/* Image Container */}
                 <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[40px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
                   <img 

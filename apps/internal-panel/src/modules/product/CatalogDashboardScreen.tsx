@@ -23,47 +23,50 @@ export const CatalogDashboardScreen = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex justify-end gap-3">
-        <Link to="/product/feed" className="px-4 py-2 bg-slate-50 text-slate-700 rounded-xl font-medium hover:bg-slate-100 transition-colors flex items-center border border-slate-200">
-          <Tag className="h-4 w-4 mr-2" />
+        <Link to="/product/feed" className="px-5 py-2.5 bg-white text-slate-700 rounded-2xl font-bold hover:text-[#FF7F50] hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center border border-slate-100 shadow-sm">
+          <Tag className="h-4 w-4 mr-2 text-slate-400" />
           Marketing Feed
         </Link>
-        <Link to="/product/import" className="px-4 py-2 bg-slate-50 text-slate-700 rounded-xl font-medium hover:bg-slate-100 transition-colors flex items-center border border-slate-200">
-          <List className="h-4 w-4 mr-2" />
+        <Link to="/product/import" className="px-5 py-2.5 bg-white text-slate-700 rounded-2xl font-bold hover:text-[#FF7F50] hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center border border-slate-100 shadow-sm">
+          <List className="h-4 w-4 mr-2 text-slate-400" />
           Bulk Import
         </Link>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Link to="/product/create" className="bg-primary-600 text-white p-4 rounded-xl shadow-sm hover:bg-primary-700 transition-all flex items-center justify-between group">
-          <div>
-            <p className="font-semibold text-lg">Add Product</p>
-            <p className="text-primary-100 text-sm">Launch new wizard</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <Link to="/product/create" className="bg-gradient-to-br from-primary-500 to-primary-600 text-white p-5 rounded-3xl shadow-[0_8px_16px_rgba(255,127,80,0.2)] hover:shadow-[0_12px_24px_rgba(255,127,80,0.3)] hover:-translate-y-1.5 active:scale-95 transition-all duration-300 ease-out flex items-center justify-between group overflow-hidden relative">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0)_0%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0)_100%)] w-[200%] -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+          <div className="relative z-10">
+            <p className="font-extrabold text-xl tracking-tight mb-1">Add Product</p>
+            <p className="text-white/80 text-sm font-medium">Launch new wizard</p>
           </div>
-          <PlusCircle className="h-8 w-8 text-primary-200 group-hover:scale-110 transition-transform" />
+          <PlusCircle className="h-10 w-10 text-white/90 group-hover:scale-125 group-hover:rotate-90 transition-transform duration-500 relative z-10" />
         </Link>
         
-        <Link to="/product/list" className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:border-primary-300 hover:shadow-md transition-all flex items-center justify-between group">
-          <div>
-            <p className="font-semibold text-slate-900 text-lg">All Products</p>
-            <p className="text-slate-500 text-sm">View and edit catalog</p>
+        <Link to="/product/list" className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-100/50 hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-between group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary-50 to-transparent rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-150 transition-all duration-500"></div>
+          <div className="relative z-10">
+            <p className="font-extrabold text-slate-800 text-xl tracking-tight mb-1">All Products</p>
+            <p className="text-slate-500 text-sm font-medium group-hover:text-primary-600 transition-colors">View and edit catalog</p>
           </div>
-          <List className="h-8 w-8 text-slate-300 group-hover:text-primary-500 transition-colors" />
+          <List className="h-10 w-10 text-slate-200 group-hover:text-primary-500 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300 relative z-10" />
         </Link>
         
-        <Link to="/product/categories" className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:border-primary-300 hover:shadow-md transition-all flex items-center justify-between group">
-          <div>
-            <p className="font-semibold text-slate-900 text-lg">Categories</p>
-            <p className="text-slate-500 text-sm">Manage taxonomy</p>
+        <Link to="/product/categories" className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-100/50 hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-between group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary-50 to-transparent rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-150 transition-all duration-500"></div>
+          <div className="relative z-10">
+            <p className="font-extrabold text-slate-800 text-xl tracking-tight mb-1">Categories</p>
+            <p className="text-slate-500 text-sm font-medium group-hover:text-primary-600 transition-colors">Manage taxonomy</p>
           </div>
-          <Tag className="h-8 w-8 text-slate-300 group-hover:text-primary-500 transition-colors" />
+          <Tag className="h-10 w-10 text-slate-200 group-hover:text-primary-500 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 relative z-10" />
         </Link>
         
-        <div className="bg-amber-50 p-4 rounded-xl shadow-sm border border-amber-100 flex flex-col justify-center">
-          <div className="flex items-center gap-2 text-amber-700 font-semibold mb-1">
-            <AlertTriangle className="h-4 w-4" /> Action Required
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 p-5 rounded-3xl shadow-sm border border-amber-200/50 flex flex-col justify-center hover:-translate-y-1 hover:shadow-md transition-all duration-300 group cursor-default">
+          <div className="flex items-center gap-2 text-amber-700 font-bold mb-1.5">
+            <AlertTriangle className="h-4 w-4 group-hover:animate-bounce" /> Action Required
           </div>
-          <p className="text-sm text-amber-600">3 products need missing SEO descriptions</p>
+          <p className="text-sm text-amber-700/80 font-medium leading-relaxed">3 products need missing SEO descriptions</p>
         </div>
       </div>
 
@@ -94,10 +97,10 @@ export const CatalogDashboardScreen = () => {
       </div>
 
       {/* Recent Products Table Preview */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-slate-900">Recently Added</h2>
-          <Link to="/product/list" className="text-sm font-medium text-primary-600 hover:text-primary-700">View All</Link>
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all duration-300">
+        <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+          <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">Recently Added</h2>
+          <Link to="/product/list" className="text-sm font-bold text-primary-600 hover:text-white hover:bg-primary-500 bg-primary-50 px-4 py-2 rounded-full transition-all active:scale-95 shadow-sm">View All</Link>
         </div>
         <div className="p-0 overflow-x-auto">
           {isProductsLoading ? (

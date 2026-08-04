@@ -10,10 +10,10 @@ import { skincareProducts } from '../../constants/skincareProducts';
 import { ShopMegaMenu, CategoriesMegaMenu, RoutineMenu, JournalMenu } from './MegaMenus';
 import MobileMenu from './MobileMenu';
 
-const CoskinnLogo = ({ isScrolled, forceWhite }) => (
-  <svg role="img" aria-label="COSKINn Logo" className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+const FairenneLogo = ({ isScrolled, forceWhite }) => (
+  <svg role="img" aria-label="Fairenne Logo" className={`w-auto object-contain drop-shadow-sm transition-all duration-300 ${isScrolled ? 'h-[32px] lg:h-[38px]' : 'h-[42px] lg:h-[48px]'}`} viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="coskinn-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <linearGradient id="fairenne-logo-grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#FF0069" />  {/* Hot Pink */}
         <stop offset="35%" stopColor="#FF6B6B" /> {/* Coral */}
         <stop offset="70%" stopColor="#FFA07A" /> {/* Soft Orange */}
@@ -34,7 +34,7 @@ const CoskinnLogo = ({ isScrolled, forceWhite }) => (
         C 5 15, 45 2, 72 20
         Z
       "
-      fill="url(#coskinn-logo-grad)"
+      fill="url(#fairenne-logo-grad)"
     />
 
     {/* The small outlined heart nestled inside the C */}
@@ -47,7 +47,7 @@ const CoskinnLogo = ({ isScrolled, forceWhite }) => (
         C 85 82, 75 92, 75 92
         Z
       "
-      stroke="url(#coskinn-logo-grad)"
+      stroke="url(#fairenne-logo-grad)"
       strokeWidth="3.5"
       fill="none"
       strokeLinecap="round"
@@ -76,7 +76,7 @@ const CoskinnLogo = ({ isScrolled, forceWhite }) => (
         C 294 28, 280 40, 280 40
         Z
       "
-      fill="url(#coskinn-logo-grad)"
+      fill="url(#fairenne-logo-grad)"
     />
   </svg>
 );
@@ -471,7 +471,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to={`/${theme}`} className="flex flex-col items-start cursor-pointer group flex-shrink-0 relative">
-          <CoskinnLogo isScrolled={isScrolled} forceWhite={isNewArrivalsPage ? false : forceWhite} />
+          <FairenneLogo isScrolled={isScrolled} forceWhite={isNewArrivalsPage ? false : forceWhite} />
         </Link>
 
         {/* Desktop Navigation Links */}

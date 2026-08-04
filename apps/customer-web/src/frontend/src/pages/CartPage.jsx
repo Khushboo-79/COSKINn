@@ -40,7 +40,7 @@ export default function CartPage() {
   const featuredSkincare = [
     {
       id: 101,
-      name: "COSKINn Sunscreen SPF 50",
+      name: "Fairenne Sunscreen SPF 50",
       price: 789,
       originalPrice: 899,
       image: skincareProducts.find(p => p.id === 101)?.image || '',
@@ -51,7 +51,7 @@ export default function CartPage() {
     },
     {
       id: 104,
-      name: "COSKINn Gentle Cleanser",
+      name: "Fairenne Gentle Cleanser",
       price: 499,
       originalPrice: 599,
       image: skincareProducts.find(p => p.id === 104)?.image || '',
@@ -62,7 +62,7 @@ export default function CartPage() {
     },
     {
       id: 110,
-      name: "COSKINn Overnight Mask",
+      name: "Fairenne Overnight Mask",
       price: 1099,
       originalPrice: 1299,
       image: skincareProducts.find(p => p.id === 110)?.image || '',
@@ -73,7 +73,7 @@ export default function CartPage() {
     },
     {
       id: 111,
-      name: "COSKINn Under Eye Patches",
+      name: "Fairenne Under Eye Patches",
       price: 679,
       originalPrice: 799,
       image: skincareProducts.find(p => p.id === 111)?.image || '',
@@ -88,7 +88,7 @@ export default function CartPage() {
   const featuredEnchantments = [
     {
       id: 315,
-      name: "COSKINn Velvet Blush",
+      name: "Fairenne Velvet Blush",
       price: 699,
       originalPrice: 899,
       image: fairyBlushClean,
@@ -99,7 +99,7 @@ export default function CartPage() {
     },
     {
       id: 301,
-      name: "COSKINn Magnetic Lipstick",
+      name: "Fairenne Magnetic Lipstick",
       price: 899,
       originalPrice: 1199,
       image: fairyLipstickClean,
@@ -110,7 +110,7 @@ export default function CartPage() {
     },
     {
       id: 311,
-      name: "COSKINn Eyeshadow Palette",
+      name: "Fairenne Eyeshadow Palette",
       price: 1299,
       originalPrice: 1699,
       image: fairyPaletteClean,
@@ -121,7 +121,7 @@ export default function CartPage() {
     },
     {
       id: 312,
-      name: "COSKINn Lift & Curl Mascara",
+      name: "Fairenne Lift & Curl Mascara",
       price: 799,
       originalPrice: 999,
       image: liftCurlMascara,
@@ -169,8 +169,8 @@ export default function CartPage() {
   return (
     <div className="min-h-screen w-full bg-[#FFFDFD] text-[#75263F] font-body overflow-x-hidden selection:bg-[#FFC2D1] selection:text-white pt-40 md:pt-44 lg:pt-48 pb-0">
       <SEO 
-        title={isSkincare ? "Your Skincare Cart | COSKINn" : "Your Enchanted Cart | COSKINn"} 
-        description={isSkincare ? "Review your COSKINn skincare routine." : "Review your fairytale cosmetics collection."} 
+        title={isSkincare ? "Your Skincare Cart | Fairenne" : "Your Enchanted Cart | Fairenne"} 
+        description={isSkincare ? "Review your Fairenne skincare routine." : "Review your fairytale cosmetics collection."} 
       />
 
       {/* Floating Sparkles & Dust in Background */}
@@ -277,7 +277,7 @@ export default function CartPage() {
                       </div>
                       <div>
                         <h4 className="font-heading font-black text-[#5E1930] text-lg leading-tight mb-1">{item.name}</h4>
-                        <p className="text-xs text-[#C96E8A] font-semibold">COSKINn Brand Premium</p>
+                        <p className="text-xs text-[#C96E8A] font-semibold">Fairenne Brand Premium</p>
                         <div className="text-sm font-bold text-[#FF0069] mt-1 flex items-center gap-2">
                           {item.mrp && item.mrp > item.price && (
                             <span className="text-xs line-through text-gray-400 font-normal">₹{item.mrp}</span>
@@ -508,8 +508,8 @@ export default function CartPage() {
               </h2>
               <p className="text-xs text-[#C96E8A] font-semibold mt-1">
                 {isSkincare 
-                  ? "Discover other signature selections from the COSKINn skincare catalog"
-                  : "Discover other signature selections from the COSKINn catalog"}
+                  ? "Discover other signature selections from the Fairenne skincare catalog"
+                  : "Discover other signature selections from the Fairenne catalog"}
               </p>
             </div>
             
@@ -530,7 +530,7 @@ export default function CartPage() {
                     <img src={product.image} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   </div>
                   
-                  <span className="text-[9px] font-bold tracking-wider text-[#C96E8A] uppercase">COSKINn Brand</span>
+                  <span className="text-[9px] font-bold tracking-wider text-[#C96E8A] uppercase">Fairenne Brand</span>
                   <h4 className="font-heading font-black text-[#5E1930] text-sm line-clamp-2 mt-1 min-h-[40px]">{product.name}</h4>
                 </div>
 

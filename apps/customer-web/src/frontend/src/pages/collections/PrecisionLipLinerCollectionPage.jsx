@@ -216,7 +216,7 @@ export default function PrecisionLipLinerCollectionPage() {
                         <span className="text-[10px] text-gray-400 font-medium ml-1">(4.8)</span>
                       </div>
 
-                      <h3 className="font-heading font-black text-xl text-black mb-1">COSKINn Precision Lip Liner</h3>
+                      <h3 className="font-heading font-black text-xl text-black mb-1">Fairenne Precision Lip Liner</h3>
                       <p className="text-sm text-gray-500 font-light mb-4">Shade: <span className="font-medium text-black">{shade.name}</span></p>
 
                       <div className="mt-auto flex flex-col gap-4">

@@ -126,7 +126,7 @@ const Login: React.FC = () => {
           </form>
 
           <p className="mt-8 text-center text-[10px] text-gray-400 font-sans">
-            By continuing, you agree to COSKINn's <a href="#" className="underline hover:text-gray-800">Terms of Service</a> and <a href="#" className="underline hover:text-gray-800">Privacy Policy</a>.
+            By continuing, you agree to Fairenne's <a href="#" className="underline hover:text-gray-800">Terms of Service</a> and <a href="#" className="underline hover:text-gray-800">Privacy Policy</a>.
           </p>
         </motion.div>
       </div>
@@ -143,14 +143,14 @@ const Login: React.FC = () => {
             <div className="w-full h-full relative">
               <div className="absolute inset-0 bg-black/10 z-10"></div>
               <img 
-                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80" 
+                src="https://www.dotandkey.com/cdn/shop/files/1-175.jpg" 
                 alt="Glam Beauty Details" 
                 className="w-full h-full object-cover"
               />
               <div className="absolute bottom-12 left-12 right-12 z-20">
                 <div className="p-8 backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl">
                   <h3 className="text-3xl font-serif text-white italic mb-2">"True beauty is an art form."</h3>
-                  <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison COSKINn</p>
+                  <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison Fairenne</p>
                 </div>
               </div>
             </div>
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
             <div className="w-full h-full relative">
               <div className="absolute inset-0 bg-gradient-to-t from-[#ff9aa8]/40 to-transparent z-10"></div>
               <img 
-                src="https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=1200" 
+                src="https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg" 
                 alt="Skin Fresh" 
                 className="w-full h-full object-cover"
               />

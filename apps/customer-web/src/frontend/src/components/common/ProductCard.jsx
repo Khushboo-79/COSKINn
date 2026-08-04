@@ -32,11 +32,11 @@ export default function ProductCard({ product, onQuickView }) {
   const productImg = product.image || product.img;
   const oldPrice = product.originalPrice || product.oldPrice;
 
-  // Split COSKINn from the product name for premium formatting
+  // Split Fairenne from the product name for premium formatting
   const formatProductName = (name) => {
     if (!name) return { brand: '', main: '' };
-    if (name.toUpperCase().startsWith('COSKINN ')) {
-      return { brand: 'COSKINn', main: name.substring(8).trim() };
+    if (name.toUpperCase().startsWith('FAIRENNE ')) {
+      return { brand: 'Fairenne', main: name.substring(8).trim() };
     }
     return { brand: '', main: name };
   };

@@ -21,8 +21,20 @@ const PLP: React.FC = () => {
   const location = useLocation();
   const isGlam = mode === 'glam';
   
-  const fromSection = location.state?.from === 'bestsellers' ? 'bestsellers' : 'shop-by-category';
-  const backText = fromSection === 'bestsellers' ? 'Back to bestsellers' : 'Back to collection';
+  const fromState = location.state?.from;
+  let backText = 'Back to collection';
+  let backLink = '/#shop-by-category';
+
+  if (fromState === 'bestsellers') {
+    backText = 'Back to bestsellers';
+    backLink = '/#bestsellers';
+  } else if (fromState === 'shop-by-category') {
+    backText = 'Back to category';
+    backLink = '/#shop-by-category';
+  } else {
+    backText = 'Back to Home';
+    backLink = '/';
+  }
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -62,7 +74,20 @@ const PLP: React.FC = () => {
 
   let allProducts = getAllProducts(isGlam);
   if (category) {
-    allProducts = allProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+    const lowerCategory = category.toLowerCase().trim();
+    if (lowerCategory === 'new') {
+      allProducts = allProducts.filter(p => p.badge === 'NEW');
+    } else if (lowerCategory === 'bestsellers') {
+      allProducts = allProducts.filter(p => p.badge === 'BESTSELLER');
+    } else {
+      allProducts = allProducts.filter(p => {
+        const cat = p.category.toLowerCase().trim();
+        // Remove trailing 's' to safely match singular/plural differences
+        const searchBase = lowerCategory.replace(/s$/, '').replace(/z$/, '');
+        const catBase = cat.replace(/s$/, '').replace(/z$/, '');
+        return catBase.includes(searchBase) || searchBase.includes(catBase);
+      });
+    }
   }
 
   // Apply filters
@@ -93,7 +118,7 @@ const PLP: React.FC = () => {
       <div className={`py-12 md:py-20 border-b relative ${isGlam ? 'border-gray-200 bg-[#faf9f6]' : 'border-[#ffe4e8] bg-gradient-to-b from-[#ffe4e8]/30 to-white'}`}>
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 relative">
           <Link 
-            to={`/#${fromSection}`} 
+            to={backLink} 
             className={`absolute left-6 lg:left-10 top-0 md:-top-4 flex items-center text-sm font-bold transition-colors ${isGlam ? 'text-[#7a1b26] hover:text-[#2a2a2a]' : 'text-[#ff9aa8] hover:text-[#ff7b8c]'}`}
           >
             <ArrowLeft className="mr-1.5 w-4 h-4" />
@@ -156,9 +181,9 @@ const PLP: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group cursor-pointer"
+                  className="group cursor-pointer relative"
                 >
-                  <Link to={`/product/${product.id}`} className="block h-full relative group cursor-pointer">
+                  <Link to={`/product/${product.id}`} state={{ from: category || fromState || 'collections' }} className="block h-full relative group cursor-pointer">
                     {/* Image Container */}
                     <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[24px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
                       <img 

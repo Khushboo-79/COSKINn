@@ -53,9 +53,9 @@ export default function CosmeticsPage() {
   return (
     <div className="min-h-screen w-full bg-[#FAFAFA] font-body text-[#4A4A4A] overflow-x-hidden">
       <SEO
-        title="COSKINn Cosmetics | Luxury Fairytale Makeup & Beauty"
-        description="Experience luxury fairytale cosmetics by COSKINn. Discover our velvet blushes, magnetic lipsticks, and magical eyeshadows crafted for a flawless, enchanted look."
-        url="https://www.coskinn.com/cosmetics"
+        title="Fairenne Cosmetics | Luxury Fairytale Makeup & Beauty"
+        description="Experience luxury fairytale cosmetics by Fairenne. Discover our velvet blushes, magnetic lipsticks, and magical eyeshadows crafted for a flawless, enchanted look."
+        url="https://www.fairenne.com/cosmetics"
       />
 
       <PremiumFairyHero />
@@ -112,7 +112,7 @@ export default function CosmeticsPage() {
             <div className="flex flex-row gap-6 overflow-x-auto pt-16 pb-8 snap-x snap-mandatory -mt-16 scrollbar-thin scrollbar-thumb-pink-200 scrollbar-track-transparent">
 
               {/* Card 1: Eyeshadow Palette */}
-              <Link to="/product/coskinn-nude-elegance" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
+              <Link to="/product/fairenne-nude-elegance" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
                 <div className="w-full aspect-square mb-6 flex items-center justify-center p-4 relative">
                   <motion.img
                     animate={{ y: [0, -10, 0] }}
@@ -123,7 +123,7 @@ export default function CosmeticsPage() {
                     className="w-[90%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Fairytale 6-Color Palette</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Fairytale 6-Color Palette</h3>
                 <p className="text-gray-500 text-sm mb-4">₹2,899</p>
                 <div className="flex gap-2">
                   <span className="w-4 h-4 rounded-full bg-[#F3D1D7] ring-1 ring-gray-200" />
@@ -144,7 +144,7 @@ export default function CosmeticsPage() {
                     className="w-[90%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Fairytale Satin Blush</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Fairytale Satin Blush</h3>
                 <p className="text-gray-500 text-sm mb-4">₹2,199</p>
                 <div className="flex gap-2">
                   <span className="w-4 h-4 rounded-full bg-[#FFAFC5] ring-1 ring-gray-200" />
@@ -154,7 +154,7 @@ export default function CosmeticsPage() {
               </Link>
 
               {/* Card 3: Magnetic Lipstick */}
-              <Link to="/product/coskinn-magnetic-lipstick-ruby-red" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
+              <Link to="/product/fairenne-magnetic-lipstick-ruby-red" className="snap-start min-w-[280px] md:min-w-[300px] w-[280px] md:w-[300px] flex-shrink-0 bg-[#FFEAEF]/90 backdrop-blur-sm flex flex-col items-center text-center p-6 hover:shadow-[0_30px_50px_rgba(239,168,168,0.2)] transition-all duration-500 border border-white relative group">
                 <div className="w-full aspect-square mb-6 flex items-center justify-center p-4 relative">
                   <motion.img
                     animate={{ y: [0, -11, 0] }}
@@ -165,7 +165,7 @@ export default function CosmeticsPage() {
                     className="w-[90%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Magnetic Crystal Lipstick</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Magnetic Crystal Lipstick</h3>
                 <p className="text-gray-500 text-sm mb-4">₹1,699</p>
                 <div className="flex gap-2">
                   <span className="w-4 h-4 rounded-full bg-[#B25367] ring-1 ring-gray-200" />
@@ -185,7 +185,7 @@ export default function CosmeticsPage() {
                     className="w-[80%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Fairytale Pocket Perfume</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Fairytale Pocket Perfume</h3>
                 <p className="text-gray-500 text-sm mb-4">₹3,699</p>
                 <div className="flex gap-2">
                   <span className="w-4 h-4 rounded-full bg-[#E8DDF2] ring-1 ring-gray-200" />
@@ -205,7 +205,7 @@ export default function CosmeticsPage() {
                     className="w-[90%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Fairytale Brush Set</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Fairytale Brush Set</h3>
                 <p className="text-gray-500 text-sm mb-4">₹3,999</p>
                 <div className="flex gap-2">
                   <span className="w-4 h-4 rounded-full bg-[#D4AF37] ring-1 ring-gray-200" />
@@ -225,7 +225,7 @@ export default function CosmeticsPage() {
                     className="w-[85%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Lift & Curl Mascara</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Lift & Curl Mascara</h3>
                 <p className="text-gray-500 text-sm mb-4">₹1,999</p>
                 <div className="flex gap-2">
                   <span className="w-4 h-4 rounded-full bg-[#000000] ring-1 ring-gray-200" />
@@ -315,7 +315,7 @@ export default function CosmeticsPage() {
                     className="w-[90%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Rosy Daydream Set</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Rosy Daydream Set</h3>
                 <p className="text-gray-500 text-sm font-bold">₹5,799</p>
               </div>
 
@@ -334,7 +334,7 @@ export default function CosmeticsPage() {
                     className="w-[90%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Unicorn Treasure Set</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Unicorn Treasure Set</h3>
                 <p className="text-gray-500 text-sm font-bold">₹9,999</p>
               </div>
 
@@ -353,7 +353,7 @@ export default function CosmeticsPage() {
                     className="w-[90%] object-contain drop-shadow-[0_15px_20px_rgba(117,38,63,0.15)] hover:drop-shadow-[0_25px_30px_rgba(117,38,63,0.3)] transition-all duration-500 relative z-10 cursor-pointer"
                   />
                 </div>
-                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">COSKINn Unicorn Folding Grace</h3>
+                <h3 className="text-sm font-body text-[#333] mb-2 font-medium">Fairenne Unicorn Folding Grace</h3>
                 <p className="text-gray-500 text-sm font-bold">₹7,599</p>
               </div>
 
@@ -388,7 +388,7 @@ export default function CosmeticsPage() {
             </h2>
 
             <p className="text-gray-600 text-sm leading-relaxed mb-6 max-w-md font-medium">
-              Join the COSKINn Coven. Earn points on every magical purchase, unlock exclusive birthday gifts, and get early access to our most enchanting collections.
+              Join the Fairenne Coven. Earn points on every magical purchase, unlock exclusive birthday gifts, and get early access to our most enchanting collections.
             </p>
 
             <div className="flex flex-col gap-4 mb-8">
@@ -421,14 +421,14 @@ export default function CosmeticsPage() {
         </section>
 
         {/* =========================================
-          6.5 COSKINn EVENTS SPLIT
+          6.5 Fairenne EVENTS SPLIT
           ========================================= */}
         <section className="w-full flex flex-col lg:flex-row bg-[#FFF6F7] relative overflow-hidden border-t border-[#FFE0E9]">
           {/* Left Side: Campaign Events Image */}
           <div className="w-full lg:w-1/2 min-h-[40vh] lg:min-h-[50vh] relative overflow-hidden group z-10">
             <img
               src={fairyEventsCampaignBright}
-              alt="COSKINn Events"
+              alt="Fairenne Events"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] hover:scale-105"
             />
           </div>
@@ -436,7 +436,7 @@ export default function CosmeticsPage() {
           {/* Right Side: Text & Explore Button */}
           <div className="w-full lg:w-1/2 flex flex-col justify-center px-10 lg:px-24 py-12 lg:py-16 relative z-10 text-[#75263F]">
             <div className="flex flex-col mb-4">
-              <span className="text-xs font-bold tracking-[0.2em] text-[#FF8FB1] uppercase mb-3">COSKINn Events</span>
+              <span className="text-xs font-bold tracking-[0.2em] text-[#FF8FB1] uppercase mb-3">Fairenne Events</span>
               <h2 className="text-4xl lg:text-5xl font-heading font-black mb-4 leading-[1.1] max-w-lg">
                 Connections and Exclusive Events Await - Let's Celebrate Beauty Together!
               </h2>
@@ -465,7 +465,7 @@ export default function CosmeticsPage() {
 
               {/* Elegant Label Overlay */}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#75263F]/90 via-[#75263F]/50 to-transparent p-6 z-20 flex flex-col justify-end text-left h-1/2 opacity-95 group-hover:opacity-100 transition-opacity">
-                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">COSKINn Vintage</span>
+                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">Fairenne Vintage</span>
                 <h3 className="font-heading text-lg text-white leading-tight font-bold">Velvet Blush Collection</h3>
               </div>
             </Link>
@@ -476,7 +476,7 @@ export default function CosmeticsPage() {
               <img src={fairyRewardsCampaign} alt="Crystal Mascara Hover" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 scale-100 group-hover:scale-105 z-0" />
 
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#75263F]/90 via-[#75263F]/50 to-transparent p-6 z-20 flex flex-col justify-end text-left h-1/2 opacity-95 group-hover:opacity-100 transition-opacity">
-                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">COSKINn Archive</span>
+                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">Fairenne Archive</span>
                 <h3 className="font-heading text-lg text-white leading-tight font-bold">Crystal Mascara Collection</h3>
               </div>
             </Link>
@@ -487,7 +487,7 @@ export default function CosmeticsPage() {
               <img src={fairyCollectionDisplay} alt="Fairy Eyeshadow Hover" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 scale-100 group-hover:scale-105 z-0" />
 
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#75263F]/90 via-[#75263F]/50 to-transparent p-6 z-20 flex flex-col justify-end text-left h-1/2 opacity-95 group-hover:opacity-100 transition-opacity">
-                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">COSKINn Vintage</span>
+                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">Fairenne Vintage</span>
                 <h3 className="font-heading text-lg text-white leading-tight font-bold">Fairy Eyeshadow Collection</h3>
               </div>
             </Link>
@@ -498,7 +498,7 @@ export default function CosmeticsPage() {
               <img src={fairyEventsCampaignBright} alt="Magnetic Lipstick Hover" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 scale-100 group-hover:scale-105 z-0" />
 
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#75263F]/90 via-[#75263F]/50 to-transparent p-6 z-20 flex flex-col justify-end text-left h-1/2 opacity-95 group-hover:opacity-100 transition-opacity">
-                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">COSKINn Archive</span>
+                <span className="text-[9px] text-[#FF8FB1] uppercase tracking-[0.2em] font-bold mb-1">Fairenne Archive</span>
                 <h3 className="font-heading text-lg text-white leading-tight font-bold">Magnetic Lipstick Collection</h3>
               </div>
             </Link>

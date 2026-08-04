@@ -18,7 +18,7 @@ const Bestsellers: React.FC = () => {
   const products = getAllProducts(isGlam).slice(0, 4);
 
   return (
-    <section id="bestsellers" className={`py-16 relative ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
+    <section id="bestsellers" className={`py-16 relative scroll-mt-20 ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
       {!isGlam && (
         <>
           {/* Top Brushed Edge */}
@@ -110,7 +110,7 @@ const Bestsellers: React.FC = () => {
               }}
               className="w-[45%] sm:w-[30%] md:w-[22%] lg:w-[20%] max-w-[240px] flex flex-col group cursor-pointer"
             >
-              <Link to={`/product/${product.id}`} className={`block h-full relative ${isGlam ? '' : ''}`}>
+              <Link to={`/product/${product.id}`} state={{ from: 'bestsellers' }} className={`block h-full relative ${isGlam ? '' : ''}`}>
                 {/* Image Container */}
                 <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[40px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
                   <img 

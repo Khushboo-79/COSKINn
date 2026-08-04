@@ -49,25 +49,27 @@ const Footer: React.FC = () => {
         {/* Main Footer Grid */}
         <div className={`flex flex-col lg:flex-row gap-12 lg:gap-20 pb-12`}>
           <div className="w-full lg:w-1/3 xl:w-1/4 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <h2 className={`text-2xl font-medium tracking-tight mb-4 flex items-center justify-center lg:justify-start ${isGlam ? 'font-serif text-[#141824]' : 'font-display text-[#2a2a2a]'}`}>
-              COSKIN<span className={isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}>n</span>
-            </h2>
+            <img 
+              src="/fairenne-full.png" 
+              alt="Fairenne Logo" 
+              className={`w-[160px] md:w-[200px] h-auto mb-6 object-contain mix-blend-multiply transition-all duration-300 mx-auto lg:mx-0 ${isGlam ? 'contrast-125 saturate-150' : 'opacity-90'}`}
+            />
             <p className={`mb-6 text-[14px] max-w-[280px] leading-relaxed mx-auto lg:mx-0 ${isGlam ? 'font-sans text-[#5c5c5c]' : 'text-[#7d7d7d]'}`}>
               {isGlam 
                 ? 'A house of ornate, hand-crafted cosmetics. Made slowly, worn poetically.' 
                 : 'Juicy, hydrating, mood-lifting skincare — squeezed from real fruit science.'}
             </p>
             <div className="flex gap-3 justify-center lg:justify-start">
-              <a href="https://instagram.com/coskinn" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
+              <a href="https://instagram.com/fairenne" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
               </a>
-              <a href="https://youtube.com/@coskinn" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
+              <a href="https://youtube.com/@fairenne" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7.1C2.5 7.1 2.3 5.4 3.1 4.6C4 3.6 5 3.6 5.5 3.5C8.3 3.3 12 3.3 12 3.3C12 3.3 15.7 3.3 18.5 3.5C19 3.6 20 3.6 20.9 4.6C21.7 5.4 21.5 7.1 21.5 7.1C21.7 8.3 21.8 9.6 21.8 10.9V13.1C21.8 14.4 21.7 15.7 21.5 16.9C21.5 16.9 21.7 18.6 20.9 19.4C20 20.4 18.8 20.4 18.2 20.5C15.2 20.8 12 20.7 12 20.7C12 20.7 8.3 20.7 5.5 20.5C5 20.4 4 20.4 3.1 19.4C2.3 18.6 2.5 16.9 2.5 16.9C2.3 15.7 2.2 14.4 2.2 13.1V10.9C2.2 9.6 2.3 8.3 2.5 7.1Z"/><path d="M9.7 15.7L15.5 12L9.7 8.3V15.7Z"/></svg>
               </a>
-              <a href="https://twitter.com/coskinn" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
+              <a href="https://twitter.com/fairenne" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
               </a>
-              <a href="https://tiktok.com/@coskinn" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
+              <a href="https://tiktok.com/@fairenne" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5v3a8 8 0 0 1-5-3v5.5a8 8 0 0 1-16 0A7.9 7.9 0 0 1 5 6v3a5 5 0 0 0-2 4 5 5 0 0 0 5 5c2 0 3.7-1.3 4.3-3z"/></svg>
               </a>
             </div>
@@ -111,7 +113,7 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className={`flex flex-col md:flex-row justify-between items-center pt-6 pb-2 border-t text-[11px] font-medium gap-4 md:gap-0 ${isGlam ? 'border-[#d2b27b]/20 text-[#8b8581]' : 'border-[#2a2022]/10 text-[#888]'}`}>
           <p className="mb-0">
-            © 2026 COSKINn · Made with peaches & pearls
+            © 2026 Fairenne · Made with peaches & pearls
           </p>
           <div className="flex space-x-6">
             <Link to="/privacy" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Privacy</Link>

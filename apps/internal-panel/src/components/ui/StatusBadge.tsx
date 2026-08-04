@@ -16,8 +16,8 @@ const variantStyles: Record<BadgeVariant, string> = {
   default: 'bg-slate-100 text-slate-700 border-slate-200',
 };
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({ 
-  status, 
+export const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
   variant = 'default',
   className = ''
 }) => {

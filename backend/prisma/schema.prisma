@@ -27,8 +27,10 @@ model User {
 
   roles    UserRole[]
   otpLogs  OtpLog[]
-  sessions LoginSession[]
-  devices  Device[]
+  sessions         LoginSession[]
+  devices          Device[]
+  rolesCreated     Role[]             @relation("RoleCreatedBy")
+  rolesUpdated     Role[]             @relation("RoleUpdatedBy")
 
   customerProfile CustomerProfile?
   addresses       CustomerAddress[]
@@ -62,11 +64,16 @@ model Role {
   name        String   @unique // e.g., 'customer', 'admin', 'product-manager'
   description String?
   panelAccess String[] @default([]) // Which of the 11 panels this role can access
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  createdById String?
+  updatedById String?
 
   users       UserRole[]
   permissions RolePermission[]
+  createdBy   User?      @relation("RoleCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?      @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("roles")
 }

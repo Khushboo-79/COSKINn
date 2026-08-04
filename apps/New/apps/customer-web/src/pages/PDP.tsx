@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -10,6 +10,19 @@ import { getAllProducts } from '../data/products';
 
 const PDP: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const fromState = location.state?.from;
+  let backText = 'Back to Shop';
+  let backLink = '/collections';
+
+  if (fromState === 'bestsellers') {
+    backText = 'Back to bestsellers';
+    backLink = '/#bestsellers';
+  } else if (fromState === 'shop-by-category') {
+    backText = 'Back to category';
+    backLink = '/#shop-by-category';
+  }
+
   const { mode } = useTheme();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
@@ -20,6 +33,11 @@ const PDP: React.FC = () => {
   const [activeAccordion, setActiveAccordion] = useState<string | null>('description');
   const [added, setAdded] = useState(false);
 
+  React.useEffect(() => {
+    const timer = setTimeout(() => { window.scrollTo(0, 0); }, 100);
+    return () => clearTimeout(timer);
+  }, [id]);
+
   const allProducts = getAllProducts(isGlam);
   const foundProduct = allProducts.find(p => p.id.toString() === id);
   const fallbackProduct = allProducts[0];
@@ -29,8 +47,8 @@ const PDP: React.FC = () => {
     ...productData,
     id: productData.id.toString(),
     description: productData.description || (isGlam 
-      ? 'A decadent, velvet-finish product infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow.' 
-      : 'A juicy, fruit-forward product packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.'),
+      ? 'Fairenne presents a decadent, velvet-finish product infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow.' 
+      : 'Fairenne brings you a juicy, fruit-forward product packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.'),
     ingredients: productData.ingredients || (isGlam 
       ? 'Aqua, Rosa Damascena Flower Water, Gold leaf, Niacinamide, Squalane, Peptides, Parfum.' 
       : 'Water, Peach Extract, Ascorbic Acid (Vitamin C), Hyaluronic Acid, Glycerin, Orange Peel Oil.'),
@@ -59,8 +77,8 @@ const PDP: React.FC = () => {
       
       {/* Breadcrumb */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-6">
-        <Link to="/collections" className={`inline-flex items-center text-sm font-bold transition-colors ${isGlam ? 'text-gray-500 hover:text-[#7a1b26]' : 'text-gray-400 hover:text-[#ff9aa8]'}`}>
-          <ArrowLeft size={16} className="mr-2" /> Back to Shop
+        <Link to={backLink} className={`inline-flex items-center text-sm font-bold transition-colors ${isGlam ? 'text-gray-500 hover:text-[#7a1b26]' : 'text-gray-400 hover:text-[#ff9aa8]'}`}>
+          <ArrowLeft size={16} className="mr-2" /> {backText}
         </Link>
       </div>
 

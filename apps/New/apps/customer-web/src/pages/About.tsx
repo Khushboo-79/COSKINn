@@ -44,7 +44,7 @@ const About: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-xl md:text-2xl text-gray-600 font-medium leading-relaxed max-w-2xl"
             >
-              COSKINn was born out of a simple need: products that actually work without needing a 12-step routine.
+              Fairenne was born out of a simple need: products that actually work without needing a 12-step routine.
             </motion.p>
           </div>
         </div>
@@ -56,8 +56,8 @@ const About: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="scroll-reveal scroll-reveal-left relative aspect-[4/5] rounded-[32px] overflow-hidden shadow-xl">
               <img 
-                src={isGlam ? 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678' : 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'} 
-                alt="COSKINn Lifestyle" 
+                src={isGlam ? 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678' : 'https://www.dotandkey.com/cdn/shop/files/dfs.jpg'} 
+                alt="Fairenne Lifestyle" 
                 className="w-full h-full object-cover"
               />
             </div>
@@ -116,14 +116,14 @@ const About: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             <div className="text-center scroll-reveal scroll-reveal-up delay-200">
               <div className="aspect-square rounded-full overflow-hidden mb-6 mx-auto w-48 md:w-64 shadow-lg">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400" alt="Jane Doe" className="w-full h-full object-cover" />
+                <img src="https://www.dotandkey.com/cdn/shop/files/Desktop_Banner_2.jpg" alt="Jane Doe" className="w-full h-full object-cover" />
               </div>
               <h4 className="text-xl font-bold text-gray-900 mb-1">Sarah Jenkins</h4>
               <p className={`text-sm font-bold uppercase tracking-widest ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>Co-Founder & CEO</p>
             </div>
             <div className="text-center scroll-reveal scroll-reveal-up delay-400">
               <div className="aspect-square rounded-full overflow-hidden mb-6 mx-auto w-48 md:w-64 shadow-lg">
-                <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&q=80&w=400" alt="John Smith" className="w-full h-full object-cover" />
+                <img src="https://www.dotandkey.com/cdn/shop/files/Artboard_2_11.jpg" alt="John Smith" className="w-full h-full object-cover" />
               </div>
               <h4 className="text-xl font-bold text-gray-900 mb-1">Emily Chen</h4>
               <p className={`text-sm font-bold uppercase tracking-widest ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>Co-Founder & CPO</p>

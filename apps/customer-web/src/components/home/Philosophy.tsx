@@ -59,7 +59,7 @@ const Philosophy: React.FC = () => {
                 Skincare that tastes like summer.
               </h2>
               <p className="text-base md:text-lg text-gray-600 mb-6 leading-relaxed font-sans">
-                We built COSKINn on a simple idea: the fun of choosing your favorite fruit shouldn't stop at the grocery store. Every drop is packed with real fruit extracts and clinically proven actives.
+                We built Fairenne on a simple idea: the fun of choosing your favorite fruit shouldn't stop at the grocery store. Every drop is packed with real fruit extracts and clinically proven actives.
               </p>
               
               <div className="grid grid-cols-2 gap-6">
@@ -88,7 +88,7 @@ const Philosophy: React.FC = () => {
             >
               <div className="relative aspect-video md:aspect-[16/10] rounded-[24px] overflow-hidden">
                 <img 
-                  src="https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  src="https://www.dotandkey.com/cdn/shop/files/Banner_Desktop_cdcfa928-5948-4a5c-a344-7992702ed0b9.jpg"
                   alt="Philosophy" 
                   className="w-full h-full object-cover"
                 />
