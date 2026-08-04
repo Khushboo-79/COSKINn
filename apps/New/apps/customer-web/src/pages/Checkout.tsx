@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { ArrowLeft, CreditCard, Apple, CheckCircle2, ChevronDown, ChevronUp, Loader2, FileText, X, Plus } from 'lucide-react';
+import { ArrowLeft, CreditCard, CheckCircle2, ChevronDown, ChevronUp, Loader2, FileText, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../services/api';
 
@@ -25,20 +25,21 @@ const Checkout: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const { cartItems, getCartTotal, clearCart } = useCart();
-  const { currency, formatPrice } = useCurrency();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
   const [step, setStep] = useState<1 | 2>(1); // 1: Shipping, 2: Payment
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [showBillModal, setShowBillModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   // Addresses State
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [isCodAvailable, setIsCodAvailable] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<'ONLINE' | 'COD'>('ONLINE');
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
 
   // New Address Form State
@@ -85,6 +86,51 @@ const Checkout: React.FC = () => {
     fetchAddresses();
   }, [navigate, cartItems.length]);
 
+  // Check pincode serviceability when typing new address
+  useEffect(() => {
+    if (newAddress.pincode.length === 6 && isAddingNew) {
+      const checkPincode = async () => {
+        try {
+          const res = await api.get(`/serviceable-pincode/check/${newAddress.pincode}`);
+          if (res.data?.serviceable) {
+            setNewAddress(prev => ({
+              ...prev,
+              city: res.data.details?.city || prev.city,
+              state: res.data.details?.state || prev.state,
+            }));
+            setErrorMsg('');
+          } else {
+            setErrorMsg('Sorry, we do not deliver to this pincode yet.');
+          }
+        } catch (err) {
+          // ignore error
+        }
+      };
+      checkPincode();
+    }
+  }, [newAddress.pincode, isAddingNew]);
+
+  // Check COD availability for selected address
+  useEffect(() => {
+    if (selectedAddressId && step === 2) {
+      const selected = addresses.find(a => a.id === selectedAddressId);
+      if (selected?.pincode) {
+        api.get(`/serviceable-pincode/check/${selected.pincode}`)
+          .then(res => {
+            if (res.data?.serviceable) {
+               const canCod = res.data.details?.isCod ?? true;
+               setIsCodAvailable(canCod);
+               if (!canCod && paymentMethod === 'COD') setPaymentMethod('ONLINE');
+            } else {
+               setIsCodAvailable(false);
+               if (paymentMethod === 'COD') setPaymentMethod('ONLINE');
+            }
+          })
+          .catch(() => setIsCodAvailable(true));
+      }
+    }
+  }, [selectedAddressId, step, addresses]);
+
   const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -105,6 +151,7 @@ const Checkout: React.FC = () => {
           setSelectedAddressId(added.id);
           setIsAddingNew(false);
           setStep(2);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
           console.error(err);
           setErrorMsg(err.response?.data?.message || 'Failed to save address');
@@ -118,32 +165,33 @@ const Checkout: React.FC = () => {
         }
         setStep(2);
       }
-    } else {
       // Payment Step
       setIsProcessingPayment(true);
       try {
-        // 1. Create Order (ONLINE)
+        // 1. Create Order
         const orderRes = await api.post('/orders', {
           addressId: selectedAddressId,
-          paymentMode: 'ONLINE'
+          paymentMode: paymentMethod
         });
         const orderId = orderRes.data.id || orderRes.data.data?.id;
 
-        // 2. Mock Razorpay Initialization
-        const rzpRes = await api.post('/payments/create-order', { orderId });
-        const rzpOrderId = rzpRes.data.id;
+        if (paymentMethod === 'ONLINE') {
+          // 2. Mock Razorpay Initialization
+          const rzpRes = await api.post('/payments/create-order', { orderId });
+          const rzpOrderId = rzpRes.data.id;
 
-        // 3. Trigger Mock Webhook for success
-        await api.post('/payments/webhook', {
-          event: 'mock.payment.success',
-          payload: {
-            payment: {
-              entity: {
-                order_id: rzpOrderId
+          // 3. Trigger Mock Webhook for success
+          await api.post('/payments/webhook', {
+            event: 'mock.payment.success',
+            payload: {
+              payment: {
+                entity: {
+                  order_id: rzpOrderId
+                }
               }
             }
-          }
-        });
+          });
+        }
 
         // 4. Clear Cart and Show Success
         clearCart();
@@ -152,7 +200,7 @@ const Checkout: React.FC = () => {
           navigate(`/order-success/${orderId}`);
         }, 1500);
 
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Checkout failed', err);
         setErrorMsg(err.response?.data?.message || 'Failed to process checkout. Please try again.');
         setIsProcessingPayment(false);
@@ -303,29 +351,53 @@ const Checkout: React.FC = () => {
                   
                   <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white">
                     {/* Credit Card Option */}
-                    <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                    <label className={`p-4 border-b border-gray-200 flex items-center justify-between cursor-pointer ${paymentMethod === 'ONLINE' ? 'bg-gray-50' : 'bg-white'}`}>
                       <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full border-[5px] border-[#2a2a2a] bg-white"></div>
-                        <span className="font-bold text-sm">Credit card</span>
+                        <input 
+                          type="radio" 
+                          name="paymentMethod" 
+                          checked={paymentMethod === 'ONLINE'} 
+                          onChange={() => setPaymentMethod('ONLINE')}
+                          className={`w-4 h-4 ${isGlam ? 'accent-[#7a1b26]' : 'accent-[#ff9aa8]'}`} 
+                        />
+                        <span className="font-bold text-sm text-gray-900">Credit card / UPI / NetBanking</span>
                       </div>
                       <div className="flex gap-1"><CreditCard size={20} className="text-gray-400" /></div>
-                    </div>
-                    <div className="p-4 space-y-4 bg-white opacity-60 pointer-events-none">
-                      <input type="text" placeholder="Card number (Simulated)" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      <div className="grid grid-cols-2 gap-4">
-                        <input type="text" placeholder="MM / YY" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                        <input type="text" placeholder="CVV" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      </div>
-                    </div>
+                    </label>
 
-                    {/* Apple Pay Option */}
-                    <div className="p-4 flex items-center justify-between border-t border-gray-200">
-                      <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full border border-gray-300"></div>
-                        <span className="font-bold text-sm">Apple Pay</span>
+                    {paymentMethod === 'ONLINE' && (
+                      <div className="p-4 space-y-4 bg-gray-50 opacity-60 pointer-events-none border-b border-gray-200">
+                        <input type="text" placeholder="Card number (Simulated)" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        <div className="grid grid-cols-2 gap-4">
+                          <input type="text" placeholder="MM / YY" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <input type="text" placeholder="CVV" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        </div>
                       </div>
-                      <Apple size={20} className="text-gray-900" />
-                    </div>
+                    )}
+
+                    {/* Cash on Delivery Option */}
+                    {isCodAvailable ? (
+                      <label className={`p-4 flex items-center justify-between cursor-pointer ${paymentMethod === 'COD' ? 'bg-gray-50' : 'bg-white'}`}>
+                        <div className="flex items-center gap-3">
+                          <input 
+                            type="radio" 
+                            name="paymentMethod" 
+                            checked={paymentMethod === 'COD'} 
+                            onChange={() => setPaymentMethod('COD')}
+                            className={`w-4 h-4 ${isGlam ? 'accent-[#7a1b26]' : 'accent-[#ff9aa8]'}`} 
+                          />
+                          <span className="font-bold text-sm text-gray-900">Cash on Delivery (COD)</span>
+                        </div>
+                        <FileText size={20} className="text-gray-900" />
+                      </label>
+                    ) : (
+                      <div className="p-4 flex items-center justify-between bg-gray-100 opacity-60">
+                        <div className="flex items-center gap-3">
+                          <input type="radio" disabled className="w-4 h-4" />
+                          <span className="font-bold text-sm text-gray-500">Cash on Delivery (Not available for this location)</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
