@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { ArrowLeft, CreditCard, Apple, CheckCircle2, ChevronDown, ChevronUp, Loader2, FileText, X } from 'lucide-react';
+import { ArrowLeft, CreditCard, CheckCircle2, ChevronDown, ChevronUp, Loader2, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Checkout: React.FC = () => {
@@ -19,10 +19,31 @@ const Checkout: React.FC = () => {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [showBillModal, setShowBillModal] = useState(false);
+  
+  // New States
+  const [pincode, setPincode] = useState('');
+  const [city, setCity] = useState('');
+  const [stateForm, setStateForm] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'ONLINE' | 'COD'>('ONLINE');
 
   React.useEffect(() => {
     setPhone(currency.code === 'INR' ? '+91 ' : '+1 ');
   }, [currency.code]);
+
+  React.useEffect(() => {
+    if (pincode.length === 6) {
+      fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data[0].Status === 'Success') {
+            const postOffice = data[0].PostOffice[0];
+            setCity(postOffice.Block || postOffice.District);
+            setStateForm(postOffice.State);
+          }
+        })
+        .catch(err => console.error(err));
+    }
+  }, [pincode]);
 
   const subtotal = getCartTotal();
   const shipping = 5.00;
@@ -132,9 +153,9 @@ const Checkout: React.FC = () => {
                     <input type="text" placeholder="Address" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                     <input type="text" placeholder="Apartment, suite, etc. (optional)" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                     <div className="grid grid-cols-3 gap-4">
-                      <input type="text" placeholder="City" required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      <input type="text" placeholder="State" required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      <input type="text" placeholder="ZIP code" inputMode="numeric" required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                      <input type="text" placeholder="City" value={city} onChange={e => setCity(e.target.value)} required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                      <input type="text" placeholder="State" value={stateForm} onChange={e => setStateForm(e.target.value)} required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                      <input type="text" placeholder="ZIP code" inputMode="numeric" value={pincode} onChange={e => setPincode(e.target.value)} required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                     </div>
                     <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                   </div>
@@ -148,30 +169,44 @@ const Checkout: React.FC = () => {
                   
                   <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white">
                     {/* Credit Card Option */}
-                    <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                    <label className={`p-4 border-b border-gray-200 flex items-center justify-between cursor-pointer ${paymentMethod === 'ONLINE' ? 'bg-gray-50' : 'bg-white'}`}>
                       <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full border-[5px] border-[#2a2a2a] bg-white"></div>
-                        <span className="font-bold text-sm">Credit card</span>
+                        <input 
+                          type="radio" 
+                          name="paymentMethod" 
+                          checked={paymentMethod === 'ONLINE'} 
+                          onChange={() => setPaymentMethod('ONLINE')}
+                          className={`w-4 h-4 ${isGlam ? 'accent-[#7a1b26]' : 'accent-[#ff9aa8]'}`} 
+                        />
+                        <span className="font-bold text-sm text-gray-900">Credit card / UPI / NetBanking</span>
                       </div>
                       <div className="flex gap-1"><CreditCard size={20} className="text-gray-400" /></div>
-                    </div>
-                    <div className="p-4 space-y-4 bg-white">
-                      <input type="text" placeholder="Card number" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      <div className="grid grid-cols-2 gap-4">
-                        <input type="text" placeholder="Expiration date (MM / YY)" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                        <input type="text" placeholder="Security code" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      </div>
-                      <input type="text" placeholder="Name on card" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                    </div>
+                    </label>
 
-                    {/* Apple Pay Option */}
-                    <div className="p-4 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full border border-gray-300"></div>
-                        <span className="font-bold text-sm">Apple Pay</span>
+                    {paymentMethod === 'ONLINE' && (
+                      <div className="p-4 space-y-4 bg-gray-50 opacity-60 pointer-events-none border-b border-gray-200">
+                        <input type="text" placeholder="Card number (Simulated)" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        <div className="grid grid-cols-2 gap-4">
+                          <input type="text" placeholder="MM / YY" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <input type="text" placeholder="CVV" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        </div>
                       </div>
-                      <Apple size={20} className="text-gray-900" />
-                    </div>
+                    )}
+
+                    {/* Cash on Delivery Option */}
+                    <label className={`p-4 flex items-center justify-between cursor-pointer ${paymentMethod === 'COD' ? 'bg-gray-50' : 'bg-white'}`}>
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="radio" 
+                          name="paymentMethod" 
+                          checked={paymentMethod === 'COD'} 
+                          onChange={() => setPaymentMethod('COD')}
+                          className={`w-4 h-4 ${isGlam ? 'accent-[#7a1b26]' : 'accent-[#ff9aa8]'}`} 
+                        />
+                        <span className="font-bold text-sm text-gray-900">Cash on Delivery (COD)</span>
+                      </div>
+                      <FileText size={20} className="text-gray-900" />
+                    </label>
                   </div>
                 </div>
               </motion.div>
