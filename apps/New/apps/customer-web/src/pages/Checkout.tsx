@@ -1,46 +1,162 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { ArrowLeft, CreditCard, Apple, CheckCircle2, ChevronDown, ChevronUp, Loader2, FileText, X } from 'lucide-react';
+import { ArrowLeft, CreditCard, Apple, CheckCircle2, ChevronDown, ChevronUp, Loader2, FileText, X, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../services/api';
+
+interface Address {
+  id: string;
+  type: string;
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country: string;
+  isDefault: boolean;
+}
 
 const Checkout: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
-  const { cartItems, getCartTotal } = useCart();
+  const { cartItems, getCartTotal, clearCart } = useCart();
   const { currency, formatPrice } = useCurrency();
   const navigate = useNavigate();
 
   const [step, setStep] = useState<1 | 2>(1); // 1: Shipping, 2: Payment
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
-  const [phone, setPhone] = useState(currency.code === 'INR' ? '+91 ' : '+1 ');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [showBillModal, setShowBillModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  React.useEffect(() => {
-    setPhone(currency.code === 'INR' ? '+91 ' : '+1 ');
-  }, [currency.code]);
+  // Addresses State
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
+
+  // New Address Form State
+  const [newAddress, setNewAddress] = useState({
+    fullName: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    state: '',
+    pincode: '',
+  });
 
   const subtotal = getCartTotal();
   const shipping = 5.00;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
-  const handleNext = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      navigate('/cart'); // or wherever empty cart goes
+      return;
+    }
+
+    const fetchAddresses = async () => {
+      try {
+        const res = await api.get('/customer/addresses');
+        const data = res.data?.data || res.data;
+        if (Array.isArray(data)) {
+          setAddresses(data);
+          if (data.length > 0) {
+            const def = data.find(a => a.isDefault);
+            setSelectedAddressId(def ? def.id : data[0].id);
+          } else {
+            setIsAddingNew(true);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load addresses', err);
+      } finally {
+        setIsLoadingAddresses(false);
+      }
+    };
+    fetchAddresses();
+  }, [navigate, cartItems.length]);
+
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
+
     if (step === 1) {
-      setStep(2);
+      if (isAddingNew) {
+        // Save new address first
+        try {
+          setIsProcessingPayment(true);
+          const res = await api.post('/customer/addresses', {
+            ...newAddress,
+            type: 'home',
+            country: 'India',
+            isDefault: addresses.length === 0
+          });
+          const added = res.data?.data || res.data;
+          setAddresses([...addresses, added]);
+          setSelectedAddressId(added.id);
+          setIsAddingNew(false);
+          setStep(2);
+        } catch (err: any) {
+          console.error(err);
+          setErrorMsg(err.response?.data?.message || 'Failed to save address');
+        } finally {
+          setIsProcessingPayment(false);
+        }
+      } else {
+        if (!selectedAddressId) {
+          setErrorMsg('Please select a shipping address');
+          return;
+        }
+        setStep(2);
+      }
     } else {
+      // Payment Step
       setIsProcessingPayment(true);
-      setTimeout(() => {
+      try {
+        // 1. Create Order (ONLINE)
+        const orderRes = await api.post('/orders', {
+          addressId: selectedAddressId,
+          paymentMode: 'ONLINE'
+        });
+        const orderId = orderRes.data.id || orderRes.data.data?.id;
+
+        // 2. Mock Razorpay Initialization
+        const rzpRes = await api.post('/payments/create-order', { orderId });
+        const rzpOrderId = rzpRes.data.id;
+
+        // 3. Trigger Mock Webhook for success
+        await api.post('/payments/webhook', {
+          event: 'mock.payment.success',
+          payload: {
+            payment: {
+              entity: {
+                order_id: rzpOrderId
+              }
+            }
+          }
+        });
+
+        // 4. Clear Cart and Show Success
+        clearCart();
         setPaymentSuccess(true);
         setTimeout(() => {
-          navigate('/order-success');
+          navigate(`/order-success/${orderId}`);
         }, 1500);
-      }, 2000);
+
+      } catch (err: any) {
+        console.error('Checkout failed', err);
+        setErrorMsg(err.response?.data?.message || 'Failed to process checkout. Please try again.');
+        setIsProcessingPayment(false);
+      }
     }
   };
 
@@ -79,7 +195,7 @@ const Checkout: React.FC = () => {
                       </div>
                       <span className="ml-4 text-sm font-bold text-gray-700">{item.name}</span>
                     </div>
-                    <span className="text-sm font-medium text-gray-900">{item.price}</span>
+                    <span className="text-sm font-medium text-gray-900">{formatPrice(item.price)}</span>
                   </div>
                 ))}
               </div>
@@ -90,12 +206,6 @@ const Checkout: React.FC = () => {
                 <div className="flex justify-between font-bold text-lg pt-4 border-t border-gray-100 text-gray-900">
                   <span>Total</span><span>{formatPrice(total)}</span>
                 </div>
-                <button 
-                  onClick={() => setShowBillModal(true)}
-                  className={`mt-4 w-full py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-colors ${isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}
-                >
-                  <FileText size={16} /> View Detailed Bill
-                </button>
               </div>
             </motion.div>
           )}
@@ -105,8 +215,8 @@ const Checkout: React.FC = () => {
       {/* Left: Form Area */}
       <div className="w-full md:w-[55%] lg:w-[60%] p-6 md:p-12 lg:p-20 order-2 md:order-1 flex justify-end">
         <div className="w-full max-w-2xl">
-          <Link to="/collections" className="text-sm font-bold text-gray-500 hover:text-gray-900 mb-8 inline-block transition-colors">
-            <ArrowLeft size={16} className="inline mr-2" /> Return to shopping
+          <Link to="/cart" className="text-sm font-bold text-gray-500 hover:text-gray-900 mb-8 inline-block transition-colors">
+            <ArrowLeft size={16} className="inline mr-2" /> Return to cart
           </Link>
           
           <div className="flex items-center space-x-2 text-sm font-bold mb-10 tracking-wide text-gray-400">
@@ -115,36 +225,81 @@ const Checkout: React.FC = () => {
             <span className={step >= 2 ? (isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]') : ''}>Payment</span>
           </div>
 
+          {errorMsg && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl font-bold text-sm">
+              {errorMsg}
+            </div>
+          )}
+
           <form onSubmit={handleNext}>
             {step === 1 ? (
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
                 <div>
-                  <h2 className={`text-2xl font-bold mb-4 ${isGlam ? 'font-serif text-[#2a2a2a]' : 'font-display text-gray-900'}`}>Contact</h2>
-                  <input type="email" placeholder="Email" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                </div>
-                <div>
-                  <h2 className={`text-2xl font-bold mb-4 ${isGlam ? 'font-serif text-[#2a2a2a]' : 'font-display text-gray-900'}`}>Shipping Address</h2>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <input type="text" placeholder="First name" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      <input type="text" placeholder="Last name" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                    </div>
-                    <input type="text" placeholder="Address" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                    <input type="text" placeholder="Apartment, suite, etc. (optional)" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                    <div className="grid grid-cols-3 gap-4">
-                      <input type="text" placeholder="City" required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      <input type="text" placeholder="State" required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                      <input type="text" placeholder="ZIP code" inputMode="numeric" required className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                    </div>
-                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className={`text-2xl font-bold ${isGlam ? 'font-serif text-[#2a2a2a]' : 'font-display text-gray-900'}`}>Shipping Address</h2>
+                    {!isAddingNew && (
+                      <button type="button" onClick={() => setIsAddingNew(true)} className={`text-sm font-bold flex items-center ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
+                        <Plus size={16} className="mr-1" /> Add New
+                      </button>
+                    )}
                   </div>
+
+                  {isLoadingAddresses ? (
+                    <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-gray-400" /></div>
+                  ) : (
+                    <div className="space-y-6">
+                      {!isAddingNew && addresses.length > 0 && (
+                        <div className="space-y-3">
+                          {addresses.map((addr) => (
+                            <label key={addr.id} className={`flex items-start p-4 border rounded-xl cursor-pointer transition-all ${selectedAddressId === addr.id ? (isGlam ? 'border-[#7a1b26] bg-[#7a1b26]/5' : 'border-[#ff9aa8] bg-[#ff9aa8]/5') : 'border-gray-200 hover:border-gray-300'}`}>
+                              <input 
+                                type="radio" 
+                                name="address" 
+                                value={addr.id}
+                                checked={selectedAddressId === addr.id}
+                                onChange={(e) => setSelectedAddressId(e.target.value)}
+                                className={`mt-1 mr-3 ${isGlam ? 'accent-[#7a1b26]' : 'accent-[#ff9aa8]'}`}
+                              />
+                              <div>
+                                <p className="font-bold text-gray-900">{addr.fullName} <span className="text-gray-400 font-normal text-xs ml-2">({addr.phone})</span></p>
+                                <p className="text-sm text-gray-500 mt-1">{addr.addressLine1} {addr.addressLine2 ? `, ${addr.addressLine2}` : ''}</p>
+                                <p className="text-sm text-gray-500">{addr.city}, {addr.state} {addr.pincode}</p>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+
+                      {isAddingNew && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <input type="text" placeholder="Full name" required value={newAddress.fullName} onChange={e => setNewAddress({...newAddress, fullName: e.target.value})} className="col-span-2 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          </div>
+                          <input type="text" placeholder="Address Line 1" required value={newAddress.addressLine1} onChange={e => setNewAddress({...newAddress, addressLine1: e.target.value})} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <input type="text" placeholder="Apartment, suite, etc. (optional)" value={newAddress.addressLine2} onChange={e => setNewAddress({...newAddress, addressLine2: e.target.value})} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <div className="grid grid-cols-3 gap-4">
+                            <input type="text" placeholder="City" required value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                            <input type="text" placeholder="State" required value={newAddress.state} onChange={e => setNewAddress({...newAddress, state: e.target.value})} className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                            <input type="text" placeholder="ZIP code" inputMode="numeric" required value={newAddress.pincode} onChange={e => setNewAddress({...newAddress, pincode: e.target.value})} className="col-span-1 w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          </div>
+                          <input type="tel" placeholder="Phone" required value={newAddress.phone} onChange={e => setNewAddress({...newAddress, phone: e.target.value})} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          
+                          {addresses.length > 0 && (
+                            <button type="button" onClick={() => setIsAddingNew(false)} className="text-sm font-bold text-gray-500 hover:text-gray-900 mt-2">
+                              Cancel
+                            </button>
+                          )}
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ) : (
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
                 <div>
                   <h2 className={`text-2xl font-bold mb-4 ${isGlam ? 'font-serif text-[#2a2a2a]' : 'font-display text-gray-900'}`}>Payment</h2>
-                  <p className="text-sm text-gray-500 mb-6 font-medium">All transactions are secure and encrypted.</p>
+                  <p className="text-sm text-gray-500 mb-6 font-medium">All transactions are secure and encrypted. (Mock Payment)</p>
                   
                   <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white">
                     {/* Credit Card Option */}
@@ -155,17 +310,16 @@ const Checkout: React.FC = () => {
                       </div>
                       <div className="flex gap-1"><CreditCard size={20} className="text-gray-400" /></div>
                     </div>
-                    <div className="p-4 space-y-4 bg-white">
-                      <input type="text" placeholder="Card number" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                    <div className="p-4 space-y-4 bg-white opacity-60 pointer-events-none">
+                      <input type="text" placeholder="Card number (Simulated)" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                       <div className="grid grid-cols-2 gap-4">
-                        <input type="text" placeholder="Expiration date (MM / YY)" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
-                        <input type="text" placeholder="Security code" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        <input type="text" placeholder="MM / YY" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        <input type="text" placeholder="CVV" disabled className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                       </div>
-                      <input type="text" placeholder="Name on card" required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                     </div>
 
                     {/* Apple Pay Option */}
-                    <div className="p-4 flex items-center justify-between">
+                    <div className="p-4 flex items-center justify-between border-t border-gray-200">
                       <div className="flex items-center gap-3">
                         <div className="w-4 h-4 rounded-full border border-gray-300"></div>
                         <span className="font-bold text-sm">Apple Pay</span>
@@ -177,14 +331,20 @@ const Checkout: React.FC = () => {
               </motion.div>
             )}
 
-            <div className="mt-10 pt-6 border-t border-gray-200 flex justify-end">
+            <div className="mt-10 pt-6 border-t border-gray-200 flex justify-between items-center">
+              {step === 2 && (
+                <button type="button" onClick={() => setStep(1)} className="text-sm font-bold text-gray-500 hover:text-gray-900">
+                  &lt; Back to shipping
+                </button>
+              )}
               <button 
                 type="submit"
+                disabled={isProcessingPayment}
                 className={`py-4 px-8 rounded-xl font-bold text-lg w-full md:w-auto transition-all ${
                   isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091] shadow-lg shadow-[#ff9aa8]/30'
-                }`}
+                } ${isProcessingPayment ? 'opacity-70 cursor-not-allowed' : ''} ${step === 2 ? 'ml-auto' : 'w-full'}`}
               >
-                {step === 1 ? 'Continue to payment' : 'Pay now'}
+                {step === 1 ? 'Continue to payment' : (isProcessingPayment ? 'Processing...' : 'Pay now')}
               </button>
             </div>
           </form>
@@ -219,19 +379,13 @@ const Checkout: React.FC = () => {
             <div className="flex justify-between font-black text-xl pt-6 border-t border-gray-200 text-gray-900 mt-6">
               <span>Total</span><span>{formatPrice(total)}</span>
             </div>
-            <button 
-              onClick={(e) => { e.preventDefault(); setShowBillModal(true); }}
-              className={`mt-6 w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors ${isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-white border border-gray-200 text-gray-900 hover:bg-gray-50'}`}
-            >
-              <FileText size={18} /> View Detailed Bill
-            </button>
           </div>
         </div>
       </div>
 
       {/* Modals */}
       <AnimatePresence>
-        {isProcessingPayment && (
+        {isProcessingPayment && step === 2 && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -257,70 +411,6 @@ const Checkout: React.FC = () => {
             </motion.div>
           </div>
         )}
-
-        {showBillModal && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm">
-            <motion.div 
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              className={`w-full max-w-md rounded-t-[2rem] sm:rounded-[2rem] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto ${isGlam ? 'bg-[#1a1a1a] text-[#e5b376]' : 'bg-white'}`}
-            >
-              <div className="flex justify-between items-center mb-8">
-                <h3 className={`text-2xl font-bold ${isGlam ? 'font-serif' : 'font-display text-gray-900'}`}>Detailed Bill</h3>
-                <button onClick={() => setShowBillModal(false)} className={`p-2 rounded-full transition-colors ${isGlam ? 'hover:bg-white/10' : 'hover:bg-gray-100 text-gray-500'}`}>
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <h4 className={`text-xs font-bold uppercase tracking-wider mb-4 ${isGlam ? 'text-[#e5b376]/60' : 'text-gray-400'}`}>Items</h4>
-                  <div className="space-y-4">
-                    {cartItems.map(item => (
-                      <div key={item.id} className="flex justify-between items-start gap-4">
-                        <div className="flex gap-3">
-                          <span className={`font-medium ${isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}`}>{item.quantity}x</span>
-                          <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{item.name}</span>
-                        </div>
-                        <span className={`font-medium whitespace-nowrap ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(item.price * item.quantity)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={`pt-6 border-t ${isGlam ? 'border-[#e5b376]/20' : 'border-gray-100'}`}>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Subtotal</span>
-                      <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Shipping (Standard)</span>
-                      <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(shipping)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className={isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}>Estimated Taxes (8%)</span>
-                      <span className={`font-medium ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(tax)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`pt-6 border-t ${isGlam ? 'border-[#e5b376]/20' : 'border-gray-100'} flex justify-between items-center`}>
-                  <span className={`text-lg font-bold ${isGlam ? 'text-[#e5b376]/70' : 'text-gray-500'}`}>Total Amount</span>
-                  <span className={`text-2xl font-black ${isGlam ? 'text-white' : 'text-gray-900'}`}>{formatPrice(total)}</span>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => setShowBillModal(false)}
-                className={`mt-10 w-full py-4 rounded-xl font-bold transition-colors ${isGlam ? 'bg-[#e5b376] text-[#1a1a1a] hover:bg-white' : 'bg-gray-900 text-white hover:bg-black'}`}
-              >
-                Close Details
-              </button>
-            </motion.div>
-          </div>
-        )}
       </AnimatePresence>
 
     </div>
@@ -328,3 +418,4 @@ const Checkout: React.FC = () => {
 };
 
 export default Checkout;
+

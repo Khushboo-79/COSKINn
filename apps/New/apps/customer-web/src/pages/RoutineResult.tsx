@@ -82,7 +82,8 @@ const RoutineResult: React.FC = () => {
   const handleAddAll = () => {
     routine.forEach(product => {
       addToCart({
-        id: product.id,
+        id: 'temp-' + product.id,
+        productId: product.id,
         name: product.name,
         price: product.price,
         image: product.image,
@@ -147,7 +148,7 @@ const RoutineResult: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-gray-900">{formatPrice(product.price)}</span>
                     <button
-                      onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 })}
+                      onClick={() => addToCart({ id: 'temp-' + product.id, productId: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 })}
                       className="px-5 py-2.5 rounded-xl font-bold text-sm transition-all bg-gray-100 text-gray-800 hover:bg-gray-200"
                     >
                       Add
@@ -173,7 +174,7 @@ const RoutineResult: React.FC = () => {
                         {formatPrice(product.price)}
                       </div>
                       <button
-                        onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 })}
+                        onClick={() => addToCart({ id: 'temp-' + product.id, productId: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 })}
                         className="px-2 py-1 bg-[#2a2a2a] text-[#e5b376] text-[9px] uppercase font-bold tracking-wider hover:bg-black"
                       >
                         Add

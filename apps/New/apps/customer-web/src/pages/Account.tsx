@@ -3,7 +3,9 @@ import { useTheme } from '../context/ThemeContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Package, User, Settings, LogOut, ChevronRight, MapPin, Truck, RefreshCw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import api from '../services/api';
 
 type Tab = 'profile' | 'orders' | 'settings';
 
@@ -11,34 +13,42 @@ const Account: React.FC = () => {
   const { mode } = useTheme();
   const { currency, formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('orders');
   const [phone, setPhone] = useState(currency.code === 'INR' ? '+91 98765 43210' : '+1 (555) 123-4567');
 
   React.useEffect(() => {
-    setPhone(currency.code === 'INR' ? '+91 98765 43210' : '+1 (555) 123-4567');
-  }, [currency.code]);
-
-  const mockOrders = [
-    {
-      id: 'CSK-9824',
-      date: 'Nov 10, 2023',
-      total: 7085,
-      status: 'In Transit',
-      items: [
-        { name: isGlam ? 'Midnight Elixir Serum' : 'Peachy Glow Vitamin C Serum', qty: 1, image: isGlam ? 'https://www.dotandkey.com/cdn/shop/files/Artboard1_95ac3e40-4665-40b5-ae87-a3379ff9847e.jpg' : 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg' },
-        { name: isGlam ? 'Scarlet Kiss Lipstick' : 'Berry Bounce Sleep Mask', qty: 1, image: isGlam ? 'https://www.dotandkey.com/cdn/shop/files/ann_2_1_9036910d-d727-4641-ae46-a916a0408fcf.jpg' : 'https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg' }
-      ]
-    },
-    {
-      id: 'CSK-8711',
-      date: 'Oct 02, 2023',
-      total: 3499,
-      status: 'Delivered',
-      items: [
-        { name: isGlam ? 'Golden Hour Highlighter' : 'Avocado Melt Eye Cream', qty: 1, image: isGlam ? 'https://www.dotandkey.com/cdn/shop/files/1-175.jpg' : 'https://www.dotandkey.com/cdn/shop/files/1_de25ac2d-c470-43f2-9217-538f92860f78.jpg' }
-      ]
+    if (user?.phone) {
+      setPhone(user.phone);
+    } else {
+      setPhone(currency.code === 'INR' ? '+91 ' : '+1 ');
     }
-  ];
+  }, [currency.code, user]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+
+  React.useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await api.get('/orders');
+        setOrders(res.data.data || res.data || []);
+      } catch (err) {
+        console.error('Failed to load orders', err);
+      } finally {
+        setLoadingOrders(false);
+      }
+    };
+    if (activeTab === 'orders') {
+      fetchOrders();
+    }
+  }, [activeTab]);
 
   return (
     <div className={`min-h-screen pt-10 pb-24 transition-colors duration-500 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
@@ -49,7 +59,7 @@ const Account: React.FC = () => {
           <h1 className={`text-4xl md:text-5xl font-extrabold mb-2 text-[#2a2a2a] ${isGlam ? 'font-serif' : 'font-display'}`}>
             My Account
           </h1>
-          <p className="text-gray-500 font-medium">Welcome back, Jane.</p>
+          <p className="text-gray-500 font-medium">Welcome back{user?.firstName ? `, ${user.firstName}` : ''}.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
@@ -105,12 +115,12 @@ const Account: React.FC = () => {
                 <Settings size={20} className="mr-3" /> Settings
               </button>
               <div className="pt-6 mt-6 border-t border-gray-200">
-                <Link 
-                  to="/login"
+                <button 
+                  onClick={handleLogout}
                   className="w-full flex items-center p-4 rounded-2xl font-bold text-red-500 hover:bg-red-50 transition-all"
                 >
                   <LogOut size={20} className="mr-3" /> Log Out
-                </Link>
+                </button>
               </div>
             </nav>
           </div>
@@ -131,27 +141,38 @@ const Account: React.FC = () => {
                     Order History
                   </h2>
                   
-                  {mockOrders.map(order => (
+                  {loadingOrders ? (
+                    <div className="py-20 text-center text-gray-500">Loading orders...</div>
+                  ) : orders.length === 0 ? (
+                    <div className="text-center py-20 bg-white rounded-[32px] border border-gray-100 shadow-sm">
+                      <Package size={48} className="mx-auto text-gray-300 mb-4" />
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">No orders yet</h3>
+                      <p className="text-gray-500 font-medium mb-6">Looks like you haven't made your first purchase.</p>
+                      <Link to="/collections" className={`px-8 py-3 rounded-xl font-bold transition-all ${isGlam ? 'bg-[#2a2a2a] text-[#e5b376]' : 'bg-[#ff9aa8] text-white'}`}>
+                        Start Shopping
+                      </Link>
+                    </div>
+                  ) : orders.map((order: any, index: number) => (
                     <div key={order.id} className="bg-white border border-gray-200 rounded-[32px] overflow-hidden shadow-sm">
                       <div className="p-6 md:p-8 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                           <div className="flex items-center gap-3 mb-2">
-                            <span className="font-bold text-gray-900">{order.id}</span>
+                            <span className="font-bold text-gray-900">#{order.id.slice(0,8).toUpperCase()}</span>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                              order.status === 'Delivered' 
+                              ['DELIVERED', 'PLACED'].includes(order.status) 
                                 ? 'bg-green-100 text-green-700' 
                                 : 'bg-blue-100 text-blue-700'
                             }`}>
                               {order.status}
                             </span>
                           </div>
-                          <p className="text-sm font-medium text-gray-500">Placed on {order.date} • {order.total}</p>
+                          <p className="text-sm font-medium text-gray-500">Placed on {new Date(order.createdAt).toLocaleDateString()} • {formatPrice(order.finalAmount)}</p>
                         </div>
                         <div className="flex flex-wrap gap-3 mt-2 md:mt-0">
-                          <button className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                          <button onClick={() => navigate(`/order-success/${order.id}`)} className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
                             isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091]'
                           }`}>
-                            <Truck size={16} className="inline mr-2" /> Track Order
+                            <Truck size={16} className="inline mr-2" /> View Details
                           </button>
                           {order.status === 'Delivered' && (
                             <button className="px-5 py-2.5 rounded-xl font-bold text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all border border-gray-200">
@@ -162,14 +183,14 @@ const Account: React.FC = () => {
                       </div>
                       <div className="p-6 md:p-8 bg-gray-50/50">
                         <div className="flex flex-col gap-6">
-                          {order.items.map((item, idx) => (
+                          {order.items?.map((item: any, idx: number) => (
                             <div key={idx} className="flex items-center gap-4">
                               <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                <img src={item.product?.images?.[0]?.url || 'https://via.placeholder.com/150'} alt={item.name} className="w-full h-full object-cover" />
                               </div>
                               <div>
                                 <h4 className="font-bold text-gray-900 text-sm md:text-base">{item.name}</h4>
-                                <p className="text-sm text-gray-500 font-medium">Qty: {item.qty}</p>
+                                <p className="text-sm text-gray-500 font-medium">Qty: {item.quantity}</p>
                               </div>
                             </div>
                           ))}
@@ -196,16 +217,16 @@ const Account: React.FC = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-bold text-gray-700 mb-2">First Name</label>
-                          <input type="text" defaultValue="Jane" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <input type="text" defaultValue={user?.firstName || ''} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-gray-700 mb-2">Last Name</label>
-                          <input type="text" defaultValue="Doe" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <input type="text" defaultValue={user?.lastName || ''} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                         </div>
                       </div>
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
-                        <input type="email" defaultValue="jane.doe@example.com" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        <input type="email" defaultValue={user?.email || ''} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                       </div>
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>

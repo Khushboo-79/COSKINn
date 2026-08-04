@@ -116,7 +116,9 @@ export class PaymentService {
         throw new BadRequestException('Invalid webhook signature');
       }
     } else {
-      throw new BadRequestException('Webhook signature missing');
+      if (process.env.USE_MOCK_PAYMENT !== 'true') {
+        throw new BadRequestException('Webhook signature missing');
+      }
     }
 
     const event = payload.event;

@@ -8,7 +8,7 @@ import { ArrowRight, ArrowLeft, Star, SlidersHorizontal, X, Heart, ShoppingBag }
 import { motion, AnimatePresence } from 'framer-motion';
 import FilterSidebar from '../components/shop/FilterSidebar';
 
-import { getAllProducts } from '../data/products';
+import { useProducts } from '../hooks/useProducts';
 
 const PLP: React.FC = () => {
   const { category } = useParams<{ category: string }>();
@@ -40,7 +40,9 @@ const PLP: React.FC = () => {
   const pageTitle = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Shop all';
   const subtitle = "Pick your flavour";
 
-  let products = getAllProducts(isGlam);
+  const { products: apiProducts, isLoading } = useProducts(category);
+
+  let products = apiProducts;
   if (category) {
     const lowerCategory = category.toLowerCase().trim();
     if (lowerCategory === 'new') {
@@ -115,8 +117,18 @@ const PLP: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-              {products.map((product, idx) => (
+            {isLoading ? (
+              <div className="flex justify-center items-center py-20 w-full col-span-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+                {products.length === 0 ? (
+                  <div className="col-span-full text-center py-10 text-gray-500">
+                    No products found in this category.
+                  </div>
+                ) : (
+                  products.map((product, idx) => (
                 <motion.div 
                   key={product.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -140,7 +152,7 @@ const PLP: React.FC = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          addToCart({ id: product.id.toString(), name: product.name, price: product.price, image: product.image, quantity: 1 });
+                          addToCart({ id: 'temp-' + product.id.toString(), productId: product.id.toString(), name: product.name, price: product.price, image: product.image, quantity: 1 });
                         }}
                         className={`w-full py-3 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center gap-2 ${
                         isGlam ? 'bg-[#7a1b26] text-white hover:bg-[#5a121b]' : 'bg-white text-gray-900 hover:bg-[#ff9aa8] hover:text-white'
@@ -198,8 +210,9 @@ const PLP: React.FC = () => {
                     >
                       <Heart size={16} fill={isInWishlist(product.id.toString()) ? "currentColor" : "none"} className={isInWishlist(product.id.toString()) ? "text-red-500" : ""} />
                     </button>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))
+              )}
             </div>
             
             {/* Load More */}

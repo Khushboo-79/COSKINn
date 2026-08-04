@@ -59,6 +59,7 @@ const MainLayout = () => {
 
 import Login from './pages/auth/Login';
 import OTPVerification from './pages/auth/OTPVerification';
+import PasswordVerification from './pages/auth/PasswordVerification';
 import ProfileSetup from './pages/auth/ProfileSetup';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -84,6 +85,7 @@ function App() {
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify-otp" element={<OTPVerification />} />
+          <Route path="/password" element={<PasswordVerification />} />
           <Route path="/profile-setup" element={<ProfileSetup />} />
 
           {/* Main Layout Routes */}
@@ -94,7 +96,7 @@ function App() {
             <Route path="/product/:id" element={<PDP />} />
             <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-            <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/order-success/:orderId" element={<OrderSuccess />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/shipping" element={<Shipping />} />

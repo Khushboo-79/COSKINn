@@ -6,7 +6,7 @@ import { useCurrency } from '../../context/CurrencyContext';
 import { ArrowRight, Heart, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ProductData } from '../../hooks/useHomeData';
+import type { ProductData } from '../../hooks/useHomeData';
 
 interface BestsellersProps {
   products: ProductData[];
@@ -126,7 +126,8 @@ const Bestsellers: React.FC<BestsellersProps> = ({ products = [] }) => {
                         e.preventDefault();
                         e.stopPropagation();
                         addToCart({
-                          id: product.id.toString(),
+                          id: 'temp-' + product.id.toString(),
+                          productId: product.id.toString(),
                           name: product.name,
                           price: product.price,
                           image: product.image,

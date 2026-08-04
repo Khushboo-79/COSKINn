@@ -6,7 +6,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { ArrowLeft, Star, Heart, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getAllProducts } from '../data/products';
+import { useProduct } from '../hooks/useProduct';
 
 const PDP: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -38,27 +38,26 @@ const PDP: React.FC = () => {
     return () => clearTimeout(timer);
   }, [id]);
 
-  const allProducts = getAllProducts(isGlam);
-  const foundProduct = allProducts.find(p => p.id.toString() === id);
-  const fallbackProduct = allProducts[0];
-  const productData = foundProduct || fallbackProduct;
-
-  const product = {
-    ...productData,
-    id: productData.id.toString(),
-    description: productData.description || (isGlam 
-      ? 'Fairenne presents a decadent, velvet-finish product infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow.' 
-      : 'Fairenne brings you a juicy, fruit-forward product packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.'),
-    ingredients: productData.ingredients || (isGlam 
-      ? 'Aqua, Rosa Damascena Flower Water, Gold leaf, Niacinamide, Squalane, Peptides, Parfum.' 
-      : 'Water, Peach Extract, Ascorbic Acid (Vitamin C), Hyaluronic Acid, Glycerin, Orange Peel Oil.'),
-    howToUse: productData.howToUse || 'Apply 2-3 drops to clean, dry skin. Massage gently until absorbed. Follow with moisturizer.',
-    image2: productData.image2 || productData.image
+  const { product: apiProduct, isLoading } = useProduct(id);
+  
+  // Use apiProduct if available, otherwise fallback properties
+  const product = apiProduct || {
+    id: id || '1',
+    name: 'Loading...',
+    price: 0,
+    image: '',
+    image2: '',
+    description: '',
+    ingredients: '',
+    howToUse: '',
+    reviews: 0
   };
 
   const handleAddToCart = () => {
+    if (!apiProduct) return;
     addToCart({
-      id: id || '1',
+      id: 'temp-' + (id || '1'),
+      productId: id || '1',
       name: product.name,
       price: product.price,
       image: product.image,
@@ -82,7 +81,12 @@ const PDP: React.FC = () => {
         </Link>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pb-20">
+      {isLoading ? (
+        <div className="flex justify-center items-center py-32">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      ) : (
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pb-20">
         <div className="flex flex-col md:flex-row gap-10 lg:gap-20">
           
           {/* Left: Image Gallery */}
@@ -221,6 +225,7 @@ const PDP: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Mobile Sticky Add to Cart */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-40 flex items-center gap-3">

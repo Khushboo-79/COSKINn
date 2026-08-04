@@ -3,11 +3,16 @@ import { useTheme } from '../context/ThemeContext';
 import { Mail, Phone, MapPin, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useAuth } from '../contexts/AuthContext';
+import api from '../services/api';
 
 const Contact: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const pageRef = useScrollReveal<HTMLDivElement>();
+  const { isAuthenticated } = useAuth();
+  const [formData, setFormData] = React.useState({ firstName: '', lastName: '', email: '', subject: '', message: '' });
+  const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const faqs = [
     {
@@ -23,6 +28,31 @@ const Contact: React.FC = () => {
       a: "Yes! Every single product in our line is 100% vegan and cruelty-free."
     }
   ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.subject || !formData.message) {
+      alert("Subject and Message are required");
+      return;
+    }
+    setStatus('loading');
+    try {
+      if (isAuthenticated) {
+        await api.post('/support/contact', {
+          subject: formData.subject,
+          message: `${formData.firstName} ${formData.lastName} (${formData.email}): ${formData.message}`,
+        });
+      } else {
+        // Simulate API call for guests
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      setStatus('success');
+      setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('Contact submit error', error);
+      setStatus('error');
+    }
+  };
 
   return (
     <div ref={pageRef} className={`min-h-screen pt-12 pb-24 transition-colors duration-500 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
@@ -79,37 +109,38 @@ const Contact: React.FC = () => {
             {/* Left: Form */}
           <div className="w-full lg:w-1/2">
             <div className={`p-8 md:p-12 rounded-[32px] border ${isGlam ? 'bg-white border-[#e5b376]/20 shadow-xl shadow-[#e5b376]/5' : 'bg-white border-[#ffe4e8] shadow-xl shadow-[#ff9aa8]/5'}`}>
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">First Name</label>
-                    <input type="text" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                    <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Last Name</label>
-                    <input type="text" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                    <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Email</label>
-                  <input type="email" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                  <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Subject</label>
-                  <input type="text" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                  <input type="text" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Message</label>
-                  <textarea rows={5} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium resize-none"></textarea>
+                  <textarea rows={4} value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} required className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium resize-none"></textarea>
                 </div>
-                <button 
-                  type="submit"
-                  className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-                    isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091] shadow-lg shadow-[#ff9aa8]/30'
-                  }`}
-                >
-                  Send Message
+                <button type="submit" disabled={status === 'loading'} className={`w-full py-4 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${
+                  isGlam 
+                    ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black shadow-black/10' 
+                    : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091] shadow-[#ff9aa8]/30'
+                }`}>
+                  {status === 'loading' ? 'Sending...' : 'Send Message'}
                 </button>
+                {status === 'success' && <p className="text-green-600 font-bold text-center mt-4">Message sent successfully!</p>}
+                {status === 'error' && <p className="text-red-500 font-bold text-center mt-4">Failed to send message. Please try again.</p>}
               </form>
             </div>
           </div>

@@ -9,6 +9,12 @@ export interface ProductData {
   image: string;
   category: string;
   badge?: string;
+  rating?: number;
+  reviews?: number;
+  description?: string;
+  image2?: string;
+  ingredients?: string;
+  howToUse?: string;
 }
 
 export interface CategoryData {

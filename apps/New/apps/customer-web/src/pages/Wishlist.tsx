@@ -74,7 +74,8 @@ const Wishlist: React.FC = () => {
                           e.preventDefault();
                           e.stopPropagation();
                           addToCart({
-                            id: product.id.toString(),
+                            id: 'temp-' + Date.now(),
+                            productId: product.id.toString(),
                             name: product.name,
                             price: typeof product.price === 'string' ? parseInt(product.price.replace(/[^\d]/g, ''), 10) : product.price,
                             image: product.image,

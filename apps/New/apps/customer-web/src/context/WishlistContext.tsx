@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useTheme } from './ThemeContext';
 import { useAuth } from './AuthContext';
+import api from '../services/api';
 
 export interface WishlistItem {
   id: string;
@@ -24,6 +25,8 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const { mode } = useTheme();
   const { isAuthenticated, openAuthModal } = useAuth();
   const isGlam = mode === 'glam';
+  const [serverWishlist, setServerWishlist] = useState<WishlistItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [wishlistSkin, setWishlistSkin] = useState<WishlistItem[]>(() => {
     try {
@@ -50,39 +53,81 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   });
 
-  const currentWishlist = isGlam ? wishlistGlam : wishlistSkin;
+  useEffect(() => {
+    localStorage.setItem('coskin_wishlist_glam', JSON.stringify(wishlistGlam));
+  }, [wishlistGlam]);
 
   useEffect(() => {
     localStorage.setItem('coskin_wishlist_skin', JSON.stringify(wishlistSkin));
   }, [wishlistSkin]);
 
+  // Fetch wishlist from server on auth
   useEffect(() => {
-    localStorage.setItem('coskin_wishlist_glam', JSON.stringify(wishlistGlam));
-  }, [wishlistGlam]);
+    const fetchWishlist = async () => {
+      if (isAuthenticated) {
+        setIsLoading(true);
+        try {
+          const res = await api.get('/wishlist');
+          if (res.data?.items) {
+            const mapped = res.data.items.map((item: any) => ({
+              id: item.product.id,
+              name: item.product.name,
+              price: item.product.discountPrice || item.product.mrp,
+              image: item.product.images?.[0]?.url || 'https://via.placeholder.com/150',
+            }));
+            setServerWishlist(mapped);
+          }
+        } catch (error) {
+          console.error("Failed to load wishlist", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setServerWishlist([]);
+      }
+    };
+    fetchWishlist();
+  }, [isAuthenticated]);
 
-  const addToWishlist = (item: WishlistItem) => {
+  const currentWishlist = isAuthenticated ? serverWishlist : (isGlam ? wishlistGlam : wishlistSkin);
+
+  const addToWishlist = async (item: WishlistItem) => {
     if (!isAuthenticated) {
       openAuthModal();
       return;
     }
-    if (isGlam) {
-      setWishlistGlam(prev => {
-        if (prev.find(i => i.id === item.id)) return prev;
-        return [...prev, item];
-      });
-    } else {
-      setWishlistSkin(prev => {
-        if (prev.find(i => i.id === item.id)) return prev;
-        return [...prev, item];
-      });
+    
+    // Optimistic UI Update
+    setServerWishlist(prev => {
+      if (prev.find(i => i.id === item.id)) return prev;
+      return [...prev, item];
+    });
+
+    try {
+      await api.post(`/wishlist/${item.id}`);
+    } catch (err) {
+      console.error("Failed to add to wishlist", err);
+      // Revert if failed
+      setServerWishlist(prev => prev.filter(i => i.id !== item.id));
     }
   };
 
-  const removeFromWishlist = (id: string) => {
-    if (isGlam) {
-      setWishlistGlam(prev => prev.filter(item => item.id !== id));
-    } else {
-      setWishlistSkin(prev => prev.filter(item => item.id !== id));
+  const removeFromWishlist = async (id: string) => {
+    if (!isAuthenticated) {
+      if (isGlam) setWishlistGlam(prev => prev.filter(item => item.id !== id));
+      else setWishlistSkin(prev => prev.filter(item => item.id !== id));
+      return;
+    }
+
+    // Optimistic UI Update
+    const previous = [...serverWishlist];
+    setServerWishlist(prev => prev.filter(item => item.id !== id));
+
+    try {
+      await api.delete(`/wishlist/${id}`);
+    } catch (err) {
+      console.error("Failed to remove from wishlist", err);
+      setServerWishlist(previous); // Revert
     }
   };
 

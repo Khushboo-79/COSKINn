@@ -3,6 +3,9 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight, UserCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { KeyRound } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { mode } = useTheme();
@@ -12,11 +15,35 @@ const Login: React.FC = () => {
   
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>(location.state?.authMode || 'signin');
   const [identifier, setIdentifier] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (identifier.length >= 5) {
-      navigate('/verify-otp', { state: { isNewUser: authMode === 'signup' } });
+    if (identifier.length < 5) return;
+    
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const isEmail = identifier.includes('@');
+      
+      if (isEmail) {
+        // Navigate to Password screen
+        navigate('/password', { state: { authMode, email: identifier } });
+      } else {
+        // OTP Login Flow
+        let phone = identifier.replace(/\D/g, '');
+        if (phone.length === 10) phone = '+91' + phone;
+        else if (!phone.startsWith('+')) phone = '+' + phone;
+
+        await api.post('/auth/send-otp', { phone, isAdminLogin: false });
+        navigate('/verify-otp', { state: { isNewUser: authMode === 'signup', phone } });
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to process request.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -110,10 +137,14 @@ const Login: React.FC = () => {
                 />
               </div>
             </div>
+            
+            {error && (
+              <p className="text-red-500 text-sm font-bold text-center">{error}</p>
+            )}
 
             <button 
               type="submit"
-              disabled={identifier.length < 5}
+              disabled={identifier.length < 5 || isLoading}
               className={`w-full group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                 isGlam 
                   ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' 
