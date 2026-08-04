@@ -267,7 +267,7 @@ const Hero: React.FC = () => {
                     className="absolute top-[15%] left-[0%] w-[45%] h-[45%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
                     onClick={() => navigate('/product/101')}
                   >
-                    <img src="https://www.dotandkey.com/cdn/shop/files/Banner_Desktop_cdcfa928-5948-4a5c-a344-7992702ed0b9.jpg" alt="Slide 1" className="w-full h-full object-cover" />
+                    <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Slide 1" className="w-full h-full object-cover" />
                   </div>
                   
                   {/* Top Right Image */}
@@ -275,7 +275,7 @@ const Hero: React.FC = () => {
                     className="absolute top-[0%] right-[0%] w-[45%] h-[48%] rounded-[32px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] z-10 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
                     onClick={() => navigate('/product/102')}
                   >
-                    <img src="https://www.dotandkey.com/cdn/shop/files/Desktop_Banner_2.jpg" alt="Slide 2" className="w-full h-full object-cover object-center" />
+                    <img src="https://images.unsplash.com/photo-1615397323145-0d0f28e21db7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Slide 2" className="w-full h-full object-cover object-center" />
                   </div>
 
                   {/* Bottom Right Image */}
@@ -283,7 +283,7 @@ const Hero: React.FC = () => {
                     className="absolute bottom-[12%] right-[10%] w-[48%] h-[40%] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-30 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
                     onClick={() => navigate('/product/108')}
                   >
-                    <img src="https://www.dotandkey.com/cdn/shop/files/Desk_c1390568-a6ba-43d9-98d3-b87e0790dfc5.png" alt="Slide 3" className="w-full h-full object-cover object-center" />
+                    <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Slide 3" className="w-full h-full object-cover object-center" />
                   </div>
                   
                   {/* Price Badge removed as requested */}
