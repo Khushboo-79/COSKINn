@@ -89,7 +89,7 @@ const Header: React.FC = () => {
                 alt="Fairenne Logo" 
                 className={`w-[180px] md:w-[200px] h-auto absolute top-[35%] transform -translate-y-1/2 object-contain mix-blend-multiply transition-all duration-300 ${isGlam ? 'contrast-125 saturate-150' : 'opacity-90'}`}
               />
-              <span className={`uppercase absolute bottom-1 w-full text-center ${isGlam ? 'text-[9.5px] text-[#8e95a1] font-serif tracking-[0.4em]' : 'text-[9px] text-[#e5b376] tracking-[0.3em] font-bold'}`}>
+              <span className={`uppercase absolute bottom-1 w-full text-center ${isGlam ? 'text-[9.5px] text-[#7a1b26] font-serif tracking-[0.4em]' : 'text-[9px] text-[#e5b376] tracking-[0.3em] font-bold'}`}>
                 {isGlam ? 'ATELIER DE BEAUTÉ' : 'Skin, Refresh, Repeat'}
               </span>
             </Link>

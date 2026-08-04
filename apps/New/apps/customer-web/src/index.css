@@ -199,7 +199,11 @@ html, body {
 
 /* Glam Mode Typography Override */
 .glam-typography,
-.glam-typography * {
+.glam-typography *:not(.font-sans) {
   font-family: 'Playfair Display', serif !important;
   font-style: italic !important;
+}
+
+.glam-typography .font-sans {
+  font-style: normal !important;
 }

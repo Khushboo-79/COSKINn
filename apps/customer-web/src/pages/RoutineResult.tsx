@@ -169,7 +169,7 @@ const RoutineResult: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="text-[#8b1527] font-bold text-[12px]">
+                      <div className="text-[#8b1527] font-bold text-[12px] font-sans">
                         {formatPrice(product.price)}
                       </div>
                       <button

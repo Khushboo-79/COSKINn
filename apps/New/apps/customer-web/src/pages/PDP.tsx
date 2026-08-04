@@ -125,7 +125,7 @@ const PDP: React.FC = () => {
               <h1 className={`text-4xl lg:text-5xl xl:text-6xl mb-4 leading-[1.1] ${isGlam ? 'font-serif text-[#2a2a2a]' : 'font-display font-black text-[#2a2022] tracking-tight'}`}>
                 {product.name}
               </h1>
-              <p className={`text-2xl lg:text-3xl font-medium mb-8 ${isGlam ? 'text-[#7a1b26]' : 'text-gray-900'}`}>
+              <p className={`text-3xl font-bold font-sans mb-8 ${isGlam ? 'text-[#7a1b26]' : 'text-gray-900'}`}>
                 {formatPrice(product.price)}
               </p>
 

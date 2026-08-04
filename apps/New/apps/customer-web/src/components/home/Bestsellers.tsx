@@ -162,7 +162,7 @@ const Bestsellers: React.FC<BestsellersProps> = ({ products = [] }) => {
                         {product.name}
                       </div>
                     </div>
-                    <div className="text-[#8b1527] font-bold text-[12px]">
+                    <div className="text-[#8b1527] font-bold text-[12px] font-sans">
                       {formatPrice(product.price)}
                     </div>
                   </div>
