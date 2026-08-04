@@ -7,7 +7,7 @@ import { Readable } from 'stream';
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(categoryId?: string, search?: string, platform?: 'COSMETICS' | 'SKINCARE') {
+  async findAll(categoryId?: string, search?: string, platform?: 'COSMETICS' | 'SKINCARE', status?: string) {
     const where: any = { isDeleted: false };
     
     if (categoryId) where.categoryId = categoryId;
@@ -16,6 +16,9 @@ export class ProductService {
     }
     if (platform) {
       where.category = { platform };
+    }
+    if (status) {
+      where.status = status;
     }
 
     return this.prisma.product.findMany({

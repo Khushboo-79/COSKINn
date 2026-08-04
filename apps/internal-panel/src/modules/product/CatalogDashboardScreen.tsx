@@ -3,12 +3,22 @@ import { Link } from 'react-router-dom';
 import { productApi } from '../../core/api/product';
 import { Package, PlusCircle, List, Tag, AlertTriangle } from 'lucide-react';
 import { StatCard } from '../../components/ui/StatCard';
+import { StatusBadge } from '../../components/ui/StatusBadge';
+
+const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount || 0);
 
 export const CatalogDashboardScreen = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['productStats'],
     queryFn: productApi.getStats,
   });
+
+  const { data: allProducts, isLoading: isProductsLoading } = useQuery({
+    queryKey: ['recentProducts'],
+    queryFn: productApi.getProducts,
+  });
+
+  const recentProducts = allProducts ? allProducts.slice(0, 5) : [];
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -92,8 +102,52 @@ export const CatalogDashboardScreen = () => {
           <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">Recently Added</h2>
           <Link to="/product/list" className="text-sm font-bold text-primary-600 hover:text-white hover:bg-primary-500 bg-primary-50 px-4 py-2 rounded-full transition-all active:scale-95 shadow-sm">View All</Link>
         </div>
-        <div className="p-6">
-          <p className="text-slate-500 text-center py-8 font-medium">Loading recent products...</p>
+        <div className="p-0 overflow-x-auto">
+          {isProductsLoading ? (
+            <p className="text-slate-500 text-center py-8">Loading recent products...</p>
+          ) : recentProducts.length === 0 ? (
+            <p className="text-slate-500 text-center py-8">No products found.</p>
+          ) : (
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm">
+                  <th className="py-3 px-6 font-medium">Product</th>
+                  <th className="py-3 px-6 font-medium">Category</th>
+                  <th className="py-3 px-6 font-medium">Price</th>
+                  <th className="py-3 px-6 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {recentProducts.map((product: any) => (
+                  <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="py-3 px-6">
+                      <div className="flex items-center gap-3">
+                        {product.images && product.images.length > 0 ? (
+                          <img src={product.images[0].url} alt={product.name} className="h-10 w-10 rounded object-cover border border-slate-100" />
+                        ) : (
+                          <div className="h-10 w-10 rounded bg-slate-100 flex items-center justify-center text-slate-400">
+                            <Package className="h-5 w-5" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium text-slate-900 text-sm line-clamp-1">{product.name}</p>
+                          <p className="text-xs text-slate-500">{product.slug}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3 px-6 text-sm text-slate-600">{product.category?.name || 'N/A'}</td>
+                    <td className="py-3 px-6 text-sm font-medium text-slate-900">{formatCurrency(product.discountPrice || product.mrp)}</td>
+                    <td className="py-3 px-6">
+                      <StatusBadge 
+                        status={product.status === 'LIVE' ? 'Published' : product.status === 'DRAFT' ? 'Draft' : product.status} 
+                        variant={product.status === 'LIVE' ? 'success' : product.status === 'DRAFT' ? 'default' : 'warning'} 
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
