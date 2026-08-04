@@ -3,7 +3,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CategoryData } from '../../hooks/useHomeData';
+import type { CategoryData } from '../../hooks/useHomeData';
 
 const skinCategories = [
   {

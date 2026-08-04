@@ -122,8 +122,9 @@ const PLP: React.FC = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-                {products.length === 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+                  {products.length === 0 ? (
                   <div className="col-span-full text-center py-10 text-gray-500">
                     No products found in this category.
                   </div>
@@ -223,9 +224,11 @@ const PLP: React.FC = () => {
                 Load More
               </button>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
+    </div>
+  </div>
 
       {/* Mobile Filter Drawer */}
       <AnimatePresence>
