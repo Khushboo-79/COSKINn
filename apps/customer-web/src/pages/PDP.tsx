@@ -218,7 +218,7 @@ const PDP: React.FC = () => {
                 {product.subtitle}
               </p>
 
-              <p className={`text-3xl font-bold mb-8 ${isGlam ? 'text-[#7a1b26]' : 'text-gray-900'}`}>
+              <p className={`text-3xl font-bold font-sans mb-8 ${isGlam ? 'text-[#7a1b26]' : 'text-gray-900'}`}>
                 {formatPrice(product.price)}
               </p>
 

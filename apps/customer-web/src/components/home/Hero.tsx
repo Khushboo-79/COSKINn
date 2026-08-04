@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight, Leaf, Shield, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MagicStars } from '../ui/MagicStars';
 import { useState, useEffect } from 'react';
 
@@ -24,13 +24,14 @@ const skinImages = [
   }
 ];
 
-const glamImages = [
-  'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588',
-  'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678',
-  'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299'
+const glamSlides = [
+  { image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588', id: 201 },
+  { image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678', id: 207 },
+  { image: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299', id: 202 }
 ];
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate();
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   
@@ -325,15 +326,16 @@ const Hero: React.FC = () => {
                   
                   {/* Tertiary Frame (Top Left) */}
                   <motion.div 
-                    className="absolute top-[8%] left-[5%] w-[38%] h-[34%] border border-[#e5b376] p-1.5 bg-white z-10 shadow-lg"
+                    className="absolute top-[8%] left-[5%] w-[38%] h-[34%] border border-[#e5b376] p-1.5 bg-white z-10 shadow-lg cursor-pointer"
                     whileHover={{ scale: 1.02, zIndex: 40 }}
+                    onClick={() => navigate(`/product/${glamSlides[(imgIndex + 2) % 3].id}`)}
                   >
                     <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
                     <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
                       <AnimatePresence mode="popLayout">
                         <motion.img 
-                          key={glamImages[(imgIndex + 2) % 3]}
-                          src={glamImages[(imgIndex + 2) % 3]}
+                          key={glamSlides[(imgIndex + 2) % 3].image}
+                          src={glamSlides[(imgIndex + 2) % 3].image}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
@@ -347,15 +349,16 @@ const Hero: React.FC = () => {
 
                   {/* Main Frame (Center) */}
                   <motion.div 
-                    className="absolute top-[15%] left-[22%] w-[52%] h-[60%] border border-[#e5b376] p-2 bg-white z-20 shadow-xl"
+                    className="absolute top-[15%] left-[22%] w-[52%] h-[60%] border border-[#e5b376] p-2 bg-white z-20 shadow-xl cursor-pointer"
                     whileHover={{ scale: 1.02, zIndex: 40 }}
+                    onClick={() => navigate(`/product/${glamSlides[imgIndex].id}`)}
                   >
                     <div className="absolute top-[-1px] left-[-1px] w-[15px] h-[15px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
                     <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
                       <AnimatePresence mode="popLayout">
                         <motion.img 
-                          key={glamImages[imgIndex]}
-                          src={glamImages[imgIndex]}
+                          key={glamSlides[imgIndex].image}
+                          src={glamSlides[imgIndex].image}
                           initial={{ opacity: 0, scale: 1.05 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0 }}
@@ -369,15 +372,16 @@ const Hero: React.FC = () => {
 
                   {/* Secondary Frame (Bottom Right) */}
                   <motion.div 
-                    className="absolute bottom-[5%] right-[5%] w-[42%] h-[32%] border border-[#e5b376] p-1.5 bg-white z-30 shadow-2xl"
+                    className="absolute bottom-[5%] right-[5%] w-[42%] h-[32%] border border-[#e5b376] p-1.5 bg-white z-30 shadow-2xl cursor-pointer"
                     whileHover={{ scale: 1.02, zIndex: 40 }}
+                    onClick={() => navigate(`/product/${glamSlides[(imgIndex + 1) % 3].id}`)}
                   >
                     <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
                     <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
                       <AnimatePresence mode="popLayout">
                         <motion.img 
-                          key={glamImages[(imgIndex + 1) % 3]}
-                          src={glamImages[(imgIndex + 1) % 3]}
+                          key={glamSlides[(imgIndex + 1) % 3].image}
+                          src={glamSlides[(imgIndex + 1) % 3].image}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
@@ -394,17 +398,26 @@ const Hero: React.FC = () => {
                 <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
                   
                   {/* Middle Left Image (Jar) */}
-                  <div className="absolute top-[15%] left-[0%] w-[45%] h-[45%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white">
+                  <div 
+                    className="absolute top-[15%] left-[0%] w-[45%] h-[45%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                    onClick={() => navigate('/product/101')}
+                  >
                     <img src="https://www.dotandkey.com/cdn/shop/files/Banner_Desktop_cdcfa928-5948-4a5c-a344-7992702ed0b9.jpg" alt="Slide 1" className="w-full h-full object-cover" />
                   </div>
                   
                   {/* Top Right Image */}
-                  <div className="absolute top-[0%] right-[0%] w-[45%] h-[48%] rounded-[32px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] z-10 bg-white">
+                  <div 
+                    className="absolute top-[0%] right-[0%] w-[45%] h-[48%] rounded-[32px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] z-10 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                    onClick={() => navigate('/product/102')}
+                  >
                     <img src="https://www.dotandkey.com/cdn/shop/files/Desktop_Banner_2.jpg" alt="Slide 2" className="w-full h-full object-cover object-center" />
                   </div>
 
                   {/* Bottom Right Image */}
-                  <div className="absolute bottom-[12%] right-[10%] w-[48%] h-[40%] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-30 bg-white">
+                  <div 
+                    className="absolute bottom-[12%] right-[10%] w-[48%] h-[40%] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-30 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                    onClick={() => navigate('/product/108')}
+                  >
                     <img src="https://www.dotandkey.com/cdn/shop/files/Desk_c1390568-a6ba-43d9-98d3-b87e0790dfc5.png" alt="Slide 3" className="w-full h-full object-cover object-center" />
                   </div>
                   
@@ -418,6 +431,15 @@ const Hero: React.FC = () => {
       
       
 
+
+      {/* Soft Wavy Bottom Divider */}
+      {!isGlam && (
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 pointer-events-none">
+          <svg className="relative block w-full h-[40px] md:h-[80px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none">
+            <path d="M0,100 L0,50 C 120,80 240,80 360,50 C 480,20 600,20 720,50 C 840,80 960,80 1080,50 C 1200,20 1320,20 1440,50 L1440,100 Z" fill="#ffffff" />
+          </svg>
+        </div>
+      )}
 
       <MagicStars isGlam={isGlam} />
     </section>
