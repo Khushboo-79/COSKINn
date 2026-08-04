@@ -3,19 +3,22 @@ import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCurrency } from '../../context/CurrencyContext';
-import { ArrowRight, Star, Heart, ShoppingBag } from 'lucide-react';
+import { ArrowRight, Heart, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { getAllProducts } from '../../data/products';
+import type { ProductData } from '../../hooks/useHomeData';
 
-const Bestsellers: React.FC = () => {
+interface BestsellersProps {
+  products: ProductData[];
+  title?: string;
+}
+
+const Bestsellers: React.FC<BestsellersProps> = ({ products = [] }) => {
   const { mode } = useTheme();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
-
-  const products = getAllProducts(isGlam).slice(0, 4);
 
   return (
     <section id="bestsellers" className={`py-16 relative scroll-mt-20 ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>
@@ -52,7 +55,7 @@ const Bestsellers: React.FC = () => {
         </>
       )}
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10">
+      <div className={`${isGlam ? 'max-w-[1150px]' : 'max-w-[1400px]'} mx-auto px-6 lg:px-10 relative z-10`}>
         
         {/* Header */}
         {isGlam ? (
@@ -93,23 +96,13 @@ const Bestsellers: React.FC = () => {
           {products.map((product, idx) => (
             <motion.div 
               key={product.id}
-              initial={{ opacity: 0, y: 40, rotateX: 12, scale: 0.92 }}
-              whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.6, delay: idx * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ 
-                rotateY: 4,
-                rotateX: -3,
-                scale: 1.03,
-                z: 30,
-                transition: { duration: 0.25, ease: 'easeOut' }
-              }}
-              style={{ 
-                transformStyle: 'preserve-3d',
-                perspective: 800,
-              }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
               className="w-[45%] sm:w-[30%] md:w-[22%] lg:w-[20%] max-w-[240px] flex flex-col group cursor-pointer"
             >
+
               <Link to={`/product/${product.id}`} state={{ from: 'bestsellers' }} className={`block h-full relative ${isGlam ? '' : ''}`}>
                 {/* Image Container */}
                 <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[40px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
@@ -133,7 +126,8 @@ const Bestsellers: React.FC = () => {
                         e.preventDefault();
                         e.stopPropagation();
                         addToCart({
-                          id: product.id.toString(),
+                          id: 'temp-' + product.id.toString(),
+                          productId: product.id.toString(),
                           name: product.name,
                           price: product.price,
                           image: product.image,

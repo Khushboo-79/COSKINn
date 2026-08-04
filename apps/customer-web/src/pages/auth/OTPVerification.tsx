@@ -3,20 +3,30 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const OTPVerification: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [timer, setTimer] = useState(30);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { loginWithToken } = useAuth();
 
   // Check if they are a new user signing up, or existing user signing in
   const isNewUser = location.state?.isNewUser ?? false;
+  const phone = location.state?.phone || '';
+
+  useEffect(() => {
+    if (!phone) {
+      navigate('/login');
+    }
+  }, [phone, navigate]);
 
   useEffect(() => {
     if (timer > 0) {
@@ -45,14 +55,32 @@ const OTPVerification: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.join('').length === 4) {
-      if (isNewUser) {
-        navigate('/profile-setup');
-      } else {
-        login();
-        navigate('/account');
+      setError('');
+      setIsLoading(true);
+      try {
+        const res = await api.post('/auth/verify-otp', {
+          phone,
+          otp: otp.join('')
+        });
+
+        if (res.data?.token) {
+          loginWithToken(res.data.token, res.data.user);
+          
+          // Check if profile is incomplete
+          const user = res.data.user;
+          if (!user.firstName || isNewUser) {
+            navigate('/profile-setup');
+          } else {
+            navigate('/');
+          }
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Invalid code. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -95,7 +123,7 @@ const OTPVerification: React.FC = () => {
               {otp.map((digit, index) => (
                 <input
                   key={index}
-                  ref={(el) => { inputRefs.current[index] = el; }}
+                  ref={el => { inputRefs.current[index] = el; }}
                   type="text"
                   inputMode="numeric"
                   value={digit}
@@ -111,9 +139,13 @@ const OTPVerification: React.FC = () => {
               ))}
             </div>
 
+            {error && (
+              <p className="text-red-500 text-sm font-bold text-center mt-2">{error}</p>
+            )}
+
             <button 
               type="submit"
-              disabled={!isComplete}
+              disabled={!isComplete || isLoading}
               className={`w-full group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                 isGlam 
                   ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' 
@@ -129,7 +161,18 @@ const OTPVerification: React.FC = () => {
             {timer > 0 ? (
               <p className="text-gray-400">Resend code in 0:{timer.toString().padStart(2, '0')}</p>
             ) : (
-              <button onClick={() => setTimer(30)} className={`hover:underline ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
+              <button 
+                type="button" 
+                onClick={async () => {
+                  setTimer(30);
+                  try {
+                    await api.post('/auth/send-otp', { phone, isAdminLogin: false });
+                  } catch (err: any) {
+                    setError('Failed to resend code.');
+                  }
+                }} 
+                className={`hover:underline ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}
+              >
                 Resend code
               </button>
             )}
@@ -155,23 +198,23 @@ const OTPVerification: React.FC = () => {
               />
               <div className="absolute bottom-12 left-12 right-12 z-20">
                 <div className="p-8 backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl">
-                  <h3 className="text-2xl font-serif text-white mb-2">Secure Access</h3>
-                  <p className="text-white/80 text-sm font-sans">Protecting your premium beauty profile.</p>
+                  <h3 className="text-3xl font-serif text-white italic mb-2">"Unlock the velvet rope."</h3>
+                  <p className="text-[#e5b376] font-serif uppercase tracking-widest text-xs">Maison Fairenne</p>
                 </div>
               </div>
             </div>
           ) : (
             <div className="w-full h-full relative">
-              <div className="absolute inset-0 bg-[#ff9aa8]/10 z-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#99e6d8]/40 to-transparent z-10"></div>
               <img 
                 src="https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg" 
-                alt="Fresh Beauty Verification" 
+                alt="Skin Fresh Textures" 
                 className="w-full h-full object-cover"
               />
               <div className="absolute bottom-12 left-12 right-12 z-20">
-                <div className="p-8 backdrop-blur-md bg-white/40 border border-white/50 rounded-2xl shadow-xl">
-                  <h3 className="text-2xl font-display text-gray-900 mb-2">Almost there!</h3>
-                  <p className="text-gray-800 text-sm font-sans font-medium">Just verifying it's really you.</p>
+                <div className="p-8 backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl shadow-2xl">
+                  <h3 className="text-3xl font-extrabold text-[#2a2a2a] mb-2 tracking-tight">Almost there, gorgeous.</h3>
+                  <p className="text-[#ff9aa8] font-bold font-sans uppercase tracking-widest text-xs">Verify your number</p>
                 </div>
               </div>
             </div>

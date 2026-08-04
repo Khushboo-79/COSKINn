@@ -51,15 +51,12 @@ const Wishlist: React.FC = () => {
                 className="group relative"
               >
                 {/* Remove Button */}
-                <motion.button
-                  whileTap={{ scale: 0.7 }}
+                <button 
                   onClick={() => removeFromWishlist(product.id)}
                   className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:bg-white text-gray-500 hover:text-red-500 transition-colors"
                 >
-                  <motion.div animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 0.4, type: "spring", stiffness: 400, damping: 10 }}>
-                    <Heart size={16} fill="currentColor" className="text-red-500" />
-                  </motion.div>
-                </motion.button>
+                  <Heart size={16} fill="currentColor" className="text-red-500" />
+                </button>
 
                 <Link to={`/product/${product.id}`} className="block h-full relative group cursor-pointer">
                   <div className={`relative ${isGlam ? 'aspect-[4/5] bg-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'aspect-[4/5] rounded-[24px] shadow-[0_8px_0px_rgba(0,0,0,0.1)]'} overflow-hidden mb-4 group-hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300`}>
@@ -77,7 +74,8 @@ const Wishlist: React.FC = () => {
                           e.preventDefault();
                           e.stopPropagation();
                           addToCart({
-                            id: product.id.toString(),
+                            id: 'temp-' + Date.now(),
+                            productId: product.id.toString(),
                             name: product.name,
                             price: typeof product.price === 'string' ? parseInt(product.price.replace(/[^\d]/g, ''), 10) : product.price,
                             image: product.image,

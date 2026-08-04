@@ -3,6 +3,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { CategoryData } from '../../hooks/useHomeData';
 
 const skinCategories = [
   {
@@ -50,11 +51,16 @@ const glamCategories = [
   }
 ];
 
-const ShopByCategory: React.FC = () => {
+interface ShopByCategoryProps {
+  categories?: CategoryData[];
+}
+
+const ShopByCategory: React.FC<ShopByCategoryProps> = ({ categories: apiCategories = [] }) => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
 
-  const categories = isGlam ? glamCategories : skinCategories;
+  const defaultCategories = isGlam ? glamCategories : skinCategories;
+  const categories = apiCategories.length > 0 ? apiCategories : defaultCategories;
 
   return (
     <section id="shop-by-category" className={`pt-12 pb-32 md:pb-48 relative overflow-hidden scroll-mt-32 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>

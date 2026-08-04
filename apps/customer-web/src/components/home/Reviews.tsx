@@ -38,10 +38,10 @@ const Reviews: React.FC = () => {
           {displayReviews.map((review, idx) => (
             <div 
               key={idx} 
-              className={`inline-block min-w-[300px] p-6 rounded-[24px] transition-all duration-300 transform hover:-translate-y-1 ${
+              className={`inline-block min-w-[300px] p-6 transition-all duration-300 transform hover:-translate-y-1 ${
                 isGlam 
-                  ? 'bg-[#faf9f6] border-2 border-gray-200' 
-                  : 'bg-white shadow-[0_0_20px_rgba(255,182,193,0.3)] hover:shadow-[0_0_25px_rgba(255,182,193,0.45)]'
+                  ? 'bg-[#faf9f6] border-2 border-gray-200 rounded-none' 
+                  : 'bg-white shadow-[0_0_20px_rgba(255,154,168,0.25)] hover:shadow-[0_0_25px_rgba(255,154,168,0.4)] rounded-[24px]'
               }`}
             >
               <div className="flex text-yellow-400 mb-3">

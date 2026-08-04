@@ -4,17 +4,9 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface FilterSidebarProps {
   className?: string;
-  selectedFilters: Record<string, string[]>;
-  onFilterChange: (sectionId: string, option: string) => void;
-  onClearAll: () => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ 
-  className = '',
-  selectedFilters,
-  onFilterChange,
-  onClearAll
-}) => {
+const FilterSidebar: React.FC<FilterSidebarProps> = ({ className = '' }) => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
 
@@ -72,10 +64,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <h3 className={`text-xl font-bold ${isGlam ? 'font-serif text-[#2a2a2a]' : 'font-display text-[#2a2a2a]'}`}>
           Filter by
         </h3>
-        <button 
-          onClick={onClearAll}
-          className={`text-xs font-bold underline ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}
-        >
+        <button className={`text-xs font-bold underline ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
           Clear all
         </button>
       </div>
@@ -97,37 +86,31 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             
             {expanded[section.id] && (
               <div className="pt-4 space-y-3">
-                {section.options.map((option, idx) => {
-                  const isChecked = selectedFilters[section.id]?.includes(option) || false;
-                  return (
-                    <label key={idx} className="flex items-center cursor-pointer group">
-                      <div className="relative flex items-center justify-center">
-                        <input 
-                          type="checkbox" 
-                          className="peer sr-only"
-                          checked={isChecked}
-                          onChange={() => onFilterChange(section.id, option)}
-                        />
-                        <div className={`w-5 h-5 border-2 rounded transition-all duration-200 flex items-center justify-center ${
-                          isChecked 
-                            ? (isGlam ? 'border-[#7a1b26] bg-[#7a1b26]' : 'border-[#ff9aa8] bg-[#ff9aa8]')
-                            : 'border-gray-200'
-                        }`}>
-                          <svg className={`w-3 h-3 text-white transition-opacity ${isChecked ? 'opacity-100' : 'opacity-0'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      </div>
-                      <span className={`ml-3 text-sm transition-colors ${
-                        isChecked 
-                          ? (isGlam ? 'text-[#7a1b26] font-bold font-serif' : 'text-[#2a2a2a] font-bold font-sans')
-                          : (isGlam ? 'text-gray-600 font-serif' : 'text-gray-600 font-sans')
-                      }`}>
-                        {option}
-                      </span>
-                    </label>
-                  );
-                })}
+                {section.options.map((option, idx) => (
+                  <label key={idx} className="flex items-center cursor-pointer group">
+                    <div className="relative flex items-center justify-center">
+                      <input 
+                        type="checkbox" 
+                        className="peer sr-only"
+                      />
+                      <div className={`w-5 h-5 border-2 rounded transition-all duration-200 ${
+                        isGlam 
+                          ? 'border-gray-200 peer-checked:border-[#7a1b26] peer-checked:bg-[#7a1b26]' 
+                          : 'border-gray-200 peer-checked:border-[#ff9aa8] peer-checked:bg-[#ff9aa8]'
+                      }`}></div>
+                      <svg className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className={`ml-3 text-sm transition-colors ${
+                      isGlam 
+                        ? 'text-gray-600 font-serif peer-checked:text-[#7a1b26] peer-checked:font-bold' 
+                        : 'text-gray-600 font-sans peer-checked:text-[#2a2a2a] peer-checked:font-bold'
+                    }`}>
+                      {option}
+                    </span>
+                  </label>
+                ))}
               </div>
             )}
           </div>

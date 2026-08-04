@@ -1,13 +1,13 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useNotification } from './NotificationContext';
 import { useAuth } from './AuthContext';
-import confetti from 'canvas-confetti';
+import api from '../services/api';
 
 export interface CartItem {
-  id: string;
+  id: string; // Used as cartItemId if from server, otherwise productId
+  productId: string;
   name: string;
-  price: number; // Always stored as INR base value (number)
+  price: number; 
   image: string;
   quantity: number;
 }
@@ -22,82 +22,142 @@ interface CartContextType {
   cartTotal: number; // Total in INR — use CurrencyContext.formatPrice() to display
   cartCount: number;
   getCartTotal: () => number;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { showToast } = useNotification();
   const { isAuthenticated, openAuthModal } = useAuth();
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [localCartItems, setLocalCartItems] = useState<CartItem[]>([]);
+  const [serverCartItems, setServerCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const triggerStars = () => {
-    const defaults = {
-      spread: 360,
-      ticks: 50,
-      gravity: 0,
-      decay: 0.94,
-      startVelocity: 30,
-      colors: ['#000000', '#333333', '#111111']
+  const cartItems = isAuthenticated ? serverCartItems : localCartItems;
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (isAuthenticated) {
+        setIsLoading(true);
+        try {
+          const res = await api.get('/cart');
+          if (res.data?.items) {
+            const mapped = res.data.items.map((item: any) => ({
+              id: item.id, // Cart Item ID
+              productId: item.productId,
+              name: item.product.name,
+              price: Number(item.product.discountPrice || item.product.mrp),
+              image: item.product.images?.[0]?.url || 'https://via.placeholder.com/150',
+              quantity: item.quantity
+            }));
+            setServerCartItems(mapped);
+          }
+        } catch (err) {
+          console.error("Failed to load cart", err);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setServerCartItems([]);
+      }
     };
+    fetchCart();
+  }, [isAuthenticated]);
 
-    function shoot() {
-      confetti({
-        ...defaults,
-        particleCount: 40,
-        scalar: 1.2,
-        shapes: ['star']
-      });
-      confetti({
-        ...defaults,
-        particleCount: 10,
-        scalar: 0.75,
-        shapes: ['circle']
-      });
-    }
-
-    setTimeout(shoot, 0);
-    setTimeout(shoot, 100);
-    setTimeout(shoot, 200);
-  };
-
-  const addToCart = (newItem: CartItem) => {
+  const addToCart = async (newItem: CartItem) => {
     if (!isAuthenticated) {
       openAuthModal();
       return;
     }
-    setCartItems(prev => {
-      const existing = prev.find(item => item.id === newItem.id);
+
+    // Optimistic UI for Server Cart
+    setServerCartItems(prev => {
+      const existing = prev.find(item => item.productId === newItem.productId);
       if (existing) {
-        return prev.map(item =>
-          item.id === newItem.id ? { ...item, quantity: item.quantity + newItem.quantity } : item
+        return prev.map(item => 
+          item.productId === newItem.productId 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
       }
-      return [...prev, newItem];
+      return [...prev, { ...newItem, quantity: 1, id: 'temp-' + Date.now() }];
     });
-    setIsCartOpen(true);
-    showToast(`${newItem.name} added to cart!`);
-    triggerStars();
+
+    try {
+      const res = await api.post('/cart/items', {
+        productId: newItem.productId,
+        quantity: 1
+      });
+      // Sync with exact server state
+      if (res.data?.items) {
+        const mapped = res.data.items.map((item: any) => ({
+          id: item.id,
+          productId: item.productId,
+          name: item.product.name,
+          price: Number(item.product.discountPrice || item.product.mrp),
+          image: item.product.images?.[0]?.url || 'https://via.placeholder.com/150',
+          quantity: item.quantity
+        }));
+        setServerCartItems(mapped);
+      }
+    } catch (err) {
+      console.error("Failed to add to cart", err);
+      // Ideally we'd revert here, but for now we'll just log
+    }
   };
 
-  const removeFromCart = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+  const removeFromCart = async (id: string) => {
+    if (!isAuthenticated) {
+      setLocalCartItems(prev => prev.filter(item => item.id !== id));
+      return;
+    }
+
+    const previous = [...serverCartItems];
+    setServerCartItems(prev => prev.filter(item => item.id !== id));
+
+    try {
+      await api.delete(`/cart/items/${id}`);
+    } catch (err) {
+      setServerCartItems(previous);
+    }
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = async (id: string, quantity: number) => {
     if (quantity < 1) {
       removeFromCart(id);
       return;
     }
-    setCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity } : item));
+
+    if (!isAuthenticated) {
+      setLocalCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity } : item));
+      return;
+    }
+
+    const previous = [...serverCartItems];
+    setServerCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity } : item));
+
+    try {
+      await api.put(`/cart/items/${id}`, { quantity });
+    } catch (err) {
+      setServerCartItems(previous);
+    }
   };
 
   // cartTotal is always in INR (the base currency)
   const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const getCartTotal = () => cartTotal;
+  const getCartTotal = () => {
+    return cartTotal;
+  };
 
-  const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const clearCart = () => {
+    if (isAuthenticated) {
+      setServerCartItems([]);
+    } else {
+      setLocalCartItems([]);
+      localStorage.removeItem('coskinn_cart');
+    }
+  };
 
   return (
     <CartContext.Provider value={{
@@ -108,8 +168,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       removeFromCart,
       updateQuantity,
       cartTotal,
-      cartCount,
+      cartCount: cartItems.reduce((total, item) => total + item.quantity, 0),
       getCartTotal,
+      clearCart
     }}>
       {children}
     </CartContext.Provider>

@@ -3,12 +3,10 @@ import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCurrency } from '../../context/CurrencyContext';
-import { useAuth } from '../../context/AuthContext';
-import { Menu, Search, ShoppingBag, User, Heart, Droplets, Sparkles, X, Globe, ChevronDown, ChevronDown as ChevronDownIcon } from 'lucide-react';
+import { Menu, Search, ShoppingBag, User, Heart, Droplets, Sparkles, X, Globe, ChevronDown } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
-import MegaMenu from './MegaMenu';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +15,6 @@ const Header: React.FC = () => {
   const { setIsCartOpen, cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { currency, currencies, setCurrencyByCode } = useCurrency();
-  const { isAuthenticated, openAuthModal } = useAuth();
   const isGlam = mode === 'glam';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -28,35 +25,13 @@ const Header: React.FC = () => {
     navigate('/');
     window.scrollTo(0, 0);
   };
-  
-  // Mega Menu State
-  const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
-  let shopMenuTimeout: ReturnType<typeof setTimeout>;
 
-  const handleShopEnter = () => {
-    clearTimeout(shopMenuTimeout);
-    setIsShopMenuOpen(true);
-  };
-
-  const handleShopLeave = () => {
-    shopMenuTimeout = setTimeout(() => {
-      setIsShopMenuOpen(false);
-    }, 200);
-  };
-
-  const skinNavLinks = [
+  const navLinks = [
+    { name: 'Shop', path: '/collections' },
     { name: 'About Us', path: '/about' },
     { name: 'Contact Us', path: '/contact' },
     { name: 'Journal', path: '/journal' }
   ];
-
-  const glamNavLinks = [
-    { name: 'About Us', path: '/about' },
-    { name: 'Contact Us', path: '/contact' },
-    { name: 'Journal', path: '/journal' }
-  ];
-
-  const navLinks = isGlam ? glamNavLinks : skinNavLinks;
 
   return (
     <>
@@ -68,33 +43,16 @@ const Header: React.FC = () => {
           
           {/* Left Navigation */}
           <div className="hidden lg:flex space-x-5 xl:space-x-7 items-center justify-start flex-1 text-[15px] font-sans font-medium whitespace-nowrap">
-            <Link to="/" className={`transition-all duration-300 ${
-              isGlam 
-                ? `${location.pathname === '/' ? 'text-[#7a1b26]' : 'text-gray-800'} icon-hover-glam` 
-                : `${location.pathname === '/' ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
-            }`}>
+            <Link 
+              to="/" 
+              className={`whitespace-nowrap transition-all duration-300 ${
+                isGlam 
+                  ? `${location.pathname === '/' ? 'text-[#7a1b26]' : 'text-[#2a2a2a]'} icon-hover-glam` 
+                  : `${location.pathname === '/' ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
+              }`}
+            >
               Home
             </Link>
-            
-            {/* Shop Mega Menu Trigger */}
-            <div 
-              className="relative h-[72px] flex items-center"
-              onMouseEnter={handleShopEnter}
-              onMouseLeave={handleShopLeave}
-            >
-              <Link 
-                to="/collections" 
-                className={`flex items-center whitespace-nowrap transition-all duration-300 h-full ${
-                  isGlam 
-                    ? `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#7a1b26]' : 'text-[#2a2a2a]'} icon-hover-glam` 
-                    : `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
-                } ${isShopMenuOpen ? (isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]') : ''}`}
-              >
-                Shop
-                {!isGlam && <ChevronDownIcon size={14} className={`ml-1 transition-transform duration-300 ${isShopMenuOpen ? 'rotate-180' : ''}`} />}
-              </Link>
-            </div>
-
             {navLinks.map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -148,49 +106,22 @@ const Header: React.FC = () => {
               >
                 <Search size={22} strokeWidth={1.5} />
               </button>
-              <button 
-                className={`hidden sm:block ${isGlam ? 'icon-hover-glam' : 'icon-hover-skin'}`}
-                onClick={(e) => {
-                  if (!isAuthenticated) {
-                    e.preventDefault();
-                    openAuthModal();
-                  } else {
-                    navigate('/account');
-                  }
-                }}
-              >
+              <Link to="/account" className={`hidden sm:block ${isGlam ? 'icon-hover-glam' : 'icon-hover-skin'}`}>
                 <User size={22} strokeWidth={1.5} />
-              </button>
+              </Link>
               {!isGlam && (
-                <button 
-                  className={`hidden sm:block relative icon-hover-skin`}
-                  onClick={(e) => {
-                    if (!isAuthenticated) {
-                      e.preventDefault();
-                      openAuthModal();
-                    } else {
-                      navigate('/wishlist');
-                    }
-                  }}
-                >
+                <Link to="/wishlist" className={`hidden sm:block relative icon-hover-skin`}>
                   <Heart size={22} strokeWidth={1.5} />
                   {wishlistCount > 0 && (
                     <span className={`absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full text-white bg-[#ff9aa8]`}>
                       {wishlistCount}
                     </span>
                   )}
-                </button>
+                </Link>
               )}
               <button 
                 className={`relative ${isGlam ? 'icon-hover-glam' : 'icon-hover-skin'}`}
-                onClick={(e) => {
-                  if (!isAuthenticated) {
-                    e.preventDefault();
-                    openAuthModal();
-                  } else {
-                    setIsCartOpen(true);
-                  }
-                }}
+                onClick={() => setIsCartOpen(true)}
               >
                 <ShoppingBag size={22} strokeWidth={1.5} />
                 {cartCount > 0 && (
@@ -262,12 +193,11 @@ const Header: React.FC = () => {
             {/* The Segment Toggle */}
             <div 
               className={`hidden sm:flex relative items-center h-[38px] rounded-full cursor-pointer px-[16px] ml-2 transition-colors duration-500 border ${
-                !isGlam ? 'bg-[#f8f6f6] border-[#f0d6df]' : 'bg-[#ffffff] border-[#e2d5c3]'
+                !isGlam ? 'bg-[#f8f6f6] border-[#f0d6df]' : 'bg-[#f4efe8] border-[#e2d5c3]'
               }`}
-              style={isGlam ? { boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.05)' } : {}}
               onClick={handleToggle}
             >
-              <span className={`text-[10px] font-bold tracking-[0.15em] transition-colors duration-500 ${!isGlam ? 'text-[#f38ba5]' : 'text-[#a39a90]'}`}>
+              <span className={`text-[10px] font-bold tracking-[0.15em] transition-colors duration-500 ${!isGlam ? 'text-[#f38ba5]' : 'text-[#8a8a8a]'}`}>
                 SKIN
               </span>
 
@@ -338,7 +268,7 @@ const Header: React.FC = () => {
                   className={`relative flex items-center h-[42px] rounded-full cursor-pointer px-[18px] transition-colors duration-500 border w-fit ${
                     !isGlam ? 'bg-[#f8f6f6] border-[#f0d6df]' : 'bg-[#f4efe8] border-[#e2d5c3]'
                   }`}
-                  onClick={() => { handleToggle(); setIsMenuOpen(false); }}
+                  onClick={() => { navigate('/'); window.scrollTo(0, 0); handleToggle(); setIsMenuOpen(false); }}
                 >
                   <span className={`text-[10px] font-bold tracking-[0.15em] transition-colors duration-500 ${!isGlam ? 'text-[#f38ba5]' : 'text-[#8a8a8a]'}`}>
                     SKIN
@@ -368,13 +298,6 @@ const Header: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <MegaMenu 
-        isOpen={isShopMenuOpen} 
-        onClose={() => setIsShopMenuOpen(false)} 
-        onMouseEnter={handleShopEnter}
-        onMouseLeave={handleShopLeave}
-      />
     </header>
     <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>

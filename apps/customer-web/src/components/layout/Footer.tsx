@@ -5,6 +5,16 @@ import { Link } from 'react-router-dom';
 const Footer: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
+  const [email, setEmail] = React.useState('');
+  const [subscribed, setSubscribed] = React.useState(false);
+
+  const handleSubscribe = () => {
+    if (email.trim()) {
+      setSubscribed(true);
+      setEmail('');
+      setTimeout(() => setSubscribed(false), 3000);
+    }
+  };
 
   return (
     <footer className={`flex flex-col transition-colors duration-500 ${isGlam ? 'bg-[#e8dcc7] text-[#141824]' : 'bg-[#fff5f7] text-[#2a2022]'}`}>
@@ -26,23 +36,32 @@ const Footer: React.FC = () => {
                 : 'Fresh drops, sneaky discounts and skin tips — squeezed into your inbox weekly.'}
             </p>
           </div>
-          <div className={`flex w-full lg:w-auto lg:max-w-md xl:max-w-lg shrink-0 ${isGlam ? 'flex-col sm:flex-row' : 'flex-col sm:flex-row gap-3'}`}>
-            <input 
-              type="email" 
-              placeholder={isGlam ? 'your@email.com' : 'your@email.com'}
-              className={`w-full px-5 py-3 outline-none font-medium ${
+          <div className={`flex flex-col w-full lg:w-auto lg:max-w-md xl:max-w-lg shrink-0`}>
+            <div className={`flex w-full ${isGlam ? 'flex-col sm:flex-row' : 'flex-col sm:flex-row gap-3'}`}>
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={isGlam ? 'your@email.com' : 'your@email.com'}
+                className={`w-full px-5 py-3 outline-none font-medium ${
+                  isGlam 
+                    ? 'flex-1 bg-[#e8dcc7] text-[#141824] placeholder-[#a6a096] rounded-none' 
+                    : 'flex-1 bg-[#fff5f7] border border-[#ffe4eb] text-[#2a2022] placeholder-[#a1999b] focus:border-[#ff9aa8] rounded-full'
+                }`}
+              />
+              <button onClick={handleSubscribe} className={`py-3 font-bold transition-all duration-300 whitespace-nowrap ${
                 isGlam 
-                  ? 'flex-1 bg-[#e8dcc7] text-[#141824] placeholder-[#a6a096] rounded-none' 
-                  : 'flex-1 bg-[#fff5f7] border border-[#ffe4eb] text-[#2a2022] placeholder-[#a1999b] focus:border-[#ff9aa8] rounded-full'
-              }`}
-            />
-            <button className={`py-3 font-bold transition-all duration-300 whitespace-nowrap ${
-              isGlam 
-                ? 'w-full sm:w-auto px-8 bg-[#7a1b26] text-white hover:bg-[#5a111b] rounded-none text-[11px] uppercase tracking-widest' 
-                : 'w-full sm:w-auto px-6 rounded-full bg-[#ff9aa8] text-white hover:bg-[#ff8f9f] shadow-sm shadow-[#ff9aa8]/20'
-            }`}>
-              {isGlam ? 'Subscribe' : 'Sign me up'}
-            </button>
+                  ? 'w-full sm:w-auto px-8 bg-[#7a1b26] text-white hover:bg-[#5a111b] rounded-none text-[11px] uppercase tracking-widest' 
+                  : 'w-full sm:w-auto px-6 rounded-full bg-[#ff9aa8] text-white hover:bg-[#ff8f9f] shadow-sm shadow-[#ff9aa8]/20'
+              }`}>
+                {isGlam ? 'Subscribe' : 'Sign me up'}
+              </button>
+            </div>
+            {subscribed && (
+              <p className={`mt-3 text-sm font-bold ${isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'}`}>
+                Thanks for subscribing!
+              </p>
+            )}
           </div>
         </div>
         

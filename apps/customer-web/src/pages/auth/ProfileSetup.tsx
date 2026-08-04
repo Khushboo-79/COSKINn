@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { ArrowRight, ArrowLeft, Check, Sparkles, Droplets } from 'lucide-react';
+import { ArrowRight, Check, Sparkles, Droplets } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const ProfileSetup: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const navigate = useNavigate();
-  const { login } = useAuth();
   
   const [step, setStep] = useState(1);
   const totalSteps = 3;
+  const { fetchUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Form State
   const [name, setName] = useState('');
@@ -24,12 +27,33 @@ const ProfileSetup: React.FC = () => {
   
   const [glamStyle, setGlamStyle] = useState('');
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < totalSteps) {
       setStep(s => s + 1);
     } else {
-      login();
-      navigate('/account'); // Navigate to account on successful login instead of home
+      setIsLoading(true);
+      setError('');
+      try {
+        const nameParts = name.trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        await api.put('/customer/profile', {
+          firstName,
+          lastName,
+          email,
+          // We can pass the quiz info too if the backend accepts it in profile or quiz endpoint
+          // But for now, updating profile is the main goal
+        });
+        
+        // Refresh the user context so the app knows the profile is complete
+        await fetchUser();
+        navigate('/');
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -268,20 +292,21 @@ const ProfileSetup: React.FC = () => {
                 </div>
 
                 <div className="flex justify-between pt-4">
-                  <button onClick={handleBack} className="px-6 py-4 text-gray-500 hover:text-gray-900 font-bold transition-colors">Back</button>
+                  <button onClick={handleBack} disabled={isLoading} className="px-6 py-4 text-gray-500 hover:text-gray-900 font-bold transition-colors disabled:opacity-50">Back</button>
                   <button 
                     onClick={handleNext}
-                    disabled={!glamStyle}
+                    disabled={!glamStyle || isLoading}
                     className={`group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                       isGlam 
                         ? 'bg-[#7a1b26] text-white hover:bg-[#5a121b]' 
                         : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091]'
                     }`}
                   >
-                    <span>Complete Profile</span>
-                    {isGlam ? <Sparkles className="ml-2 w-4 h-4" /> : <Droplets className="ml-2 w-4 h-4" />}
+                    <span>{isLoading ? 'Saving...' : 'Complete Profile'}</span>
+                    {!isLoading && (isGlam ? <Sparkles className="ml-2 w-4 h-4" /> : <Droplets className="ml-2 w-4 h-4" />)}
                   </button>
                 </div>
+                {error && <p className="text-red-500 text-sm text-center font-bold">{error}</p>}
               </motion.div>
             )}
 

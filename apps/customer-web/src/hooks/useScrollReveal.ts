@@ -25,7 +25,6 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
-            // Unobserve so the animation runs once
             observer.unobserve(entry.target);
           }
         });

@@ -220,9 +220,9 @@ const Journal: React.FC = () => {
           </>
         )}
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <div className={`p-10 md:p-16 text-center flex flex-col items-center justify-center relative overflow-hidden scroll-reveal scroll-reveal-up ${
-          isGlam ? 'text-white' : 'text-gray-900'
-        }`}>
+          <div className={`p-10 md:p-16 text-center flex flex-col items-center justify-center relative overflow-hidden ${
+            isGlam ? 'text-white' : 'text-gray-900'
+          }`}>
             {/* Decorative Elements */}
             <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 -mr-20 -mt-20 ${
               isGlam ? 'bg-[#e5b376]' : 'bg-[#ff9aa8]'
