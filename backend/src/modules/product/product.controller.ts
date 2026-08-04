@@ -13,7 +13,7 @@ export class ProductController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
@@ -23,8 +23,9 @@ export class ProductController {
     @Query('categoryId') categoryId?: string,
     @Query('search') search?: string,
     @Query('platform') platform?: 'COSMETICS' | 'SKINCARE',
+    @Query('status') status?: string,
   ) {
-    return this.productService.findAll(categoryId, search, platform);
+    return this.productService.findAll(categoryId, search, platform, status);
   }
 
   @Get('marketing-feed')
@@ -34,7 +35,7 @@ export class ProductController {
 
   @Get('export/csv')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   async exportCsv(@Res() res: Response) {
     const csvData = await this.productService.exportCsv();
     res.header('Content-Type', 'text/csv');
@@ -44,7 +45,7 @@ export class ProductController {
 
   @Post('import/csv')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   @UseInterceptors(FileInterceptor('file'))
   async importCsv(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -55,14 +56,14 @@ export class ProductController {
 
   @Get('stats/reports')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   getReports(@Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
     return this.productService.getReports(platform);
   }
 
   @Get('stats/overview')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   getStats() {
     return this.productService.getStats();
   }
@@ -74,35 +75,35 @@ export class ProductController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(id, updateProductDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   remove(@Param('id') id: string) {
     return this.productService.remove(id);
   }
 
   @Patch(':id/tags')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   updateTags(@Param('id') id: string, @Body() updateTagsDto: UpdateTagsDto) {
     return this.productService.updateTags(id, updateTagsDto);
   }
 
   @Patch(':id/compliance')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   updateCompliance(@Param('id') id: string, @Body() updateComplianceDto: UpdateComplianceDto) {
     return this.productService.updateCompliance(id, updateComplianceDto);
   }
 
   @Post(':id/variant/:variantId/stock')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   initializeOpeningStock(
     @Param('id') id: string,
     @Param('variantId') variantId: string,
@@ -113,56 +114,56 @@ export class ProductController {
 
   @Patch(':id/content')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   updateContent(@Param('id') id: string, @Body() updateContentDto: any) {
     return this.productService.updateContent(id, updateContentDto);
   }
 
   @Post(':id/submit-approval')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   submitForApproval(@Param('id') id: string) {
     return this.productService.submitForApproval(id);
   }
 
   @Post(':id/approve')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   approveProduct(@Param('id') id: string) {
     return this.productService.approveProduct(id);
   }
 
   @Post(':id/reject')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN')
+  @Roles('SUPER_ADMIN', 'ADMIN')
   rejectProduct(@Param('id') id: string, @Body('reason') reason: string) {
     return this.productService.rejectProduct(id, reason);
   }
 
   @Post(':id/deactivate')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   deactivateProduct(@Param('id') id: string) {
     return this.productService.deactivateProduct(id);
   }
 
   @Patch(':id/seo')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER', 'MARKETING_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER', 'MARKETING_MANAGER')
   updateSeo(@Param('id') id: string, @Body() seoData: { seoTitle?: string, seoDesc?: string, seoKeywords?: string }) {
     return this.productService.updateSeo(id, seoData);
   }
 
   @Post(':id/bundle-items')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   addBundleItem(@Param('id') id: string, @Body() data: { componentSku: string, quantity: number }) {
     return this.productService.addBundleItem(id, data);
   }
 
   @Delete(':id/bundle-items/:componentSku')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
   removeBundleItem(@Param('id') id: string, @Param('componentSku') sku: string) {
     return this.productService.removeBundleItem(id, sku);
   }

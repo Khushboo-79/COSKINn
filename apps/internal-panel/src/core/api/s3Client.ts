@@ -1,38 +1,32 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-
-const awsS3Client = new S3Client({
-  region: import.meta.env.VITE_AWS_REGION || 'ap-south-1',
-  credentials: {
-    accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY || '',
-  },
-});
+import { apiClient } from './client';
 
 export const uploadFileToS3 = async (file: File, folder: string = 'products'): Promise<string> => {
-  const bucketName = import.meta.env.VITE_AWS_S3_BUCKET || 'fairenne-media-storage';
-  const fileName = `${folder}/${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-
-  const command = new PutObjectCommand({
-    Bucket: bucketName,
-    Key: fileName,
-    ContentType: file.type,
-  });
-
   try {
-    // We can generate a presigned URL locally and then put, or just directly PutObject 
-    // since we have the credentials in the client. For direct upload from browser with AWS SDK:
-    await awsS3Client.send(new PutObjectCommand({
-      Bucket: bucketName,
-      Key: fileName,
-      Body: file,
-      ContentType: file.type,
-      ACL: 'public-read' // Assumes bucket allows public read for product images
-    }));
+    // 1. Ask our backend for a secure upload ticket (Presigned URL)
+    const { data } = await apiClient.post('/upload/presigned-url', {
+      fileName: file.name,
+      contentType: file.type,
+      folder
+    });
 
-    return `https://${bucketName}.s3.${import.meta.env.VITE_AWS_REGION || 'ap-south-1'}.amazonaws.com/${fileName}`;
+    // 2. Upload the file DIRECTLY to AWS S3 using the Presigned URL
+    // We use standard fetch here to avoid AWS SDK readableStream bugs
+    const response = await fetch(data.presignedUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload to S3: ${response.statusText}`);
+    }
+
+    // 3. Return the final public S3 URL to save in our database
+    return data.finalUrl;
   } catch (error) {
-    console.error("Error uploading to S3:", error);
+    console.error("Error uploading to S3 directly:", error);
     throw error;
   }
 };
