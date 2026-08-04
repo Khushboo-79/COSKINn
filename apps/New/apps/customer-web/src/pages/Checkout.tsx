@@ -91,16 +91,32 @@ const Checkout: React.FC = () => {
     if (newAddress.pincode.length === 6 && isAddingNew) {
       const checkPincode = async () => {
         try {
+          // 1. Fetch real city/state from public API
+          const postalRes = await fetch(`https://api.postalpincode.in/pincode/${newAddress.pincode}`);
+          const postalData = await postalRes.json();
+          let fetchedCity = '';
+          let fetchedState = '';
+          
+          if (postalData && postalData[0].Status === 'Success') {
+             const postOffice = postalData[0].PostOffice[0];
+             fetchedCity = postOffice.Block || postOffice.District;
+             fetchedState = postOffice.State;
+          }
+
+          // 2. Check our backend for COD availability (and local overrides)
           const res = await api.get(`/serviceable-pincode/check/${newAddress.pincode}`);
-          if (res.data?.serviceable) {
-            setNewAddress(prev => ({
-              ...prev,
-              city: res.data.details?.city || prev.city,
-              state: res.data.details?.state || prev.state,
-            }));
-            setErrorMsg('');
-          } else {
+          
+          setNewAddress(prev => ({
+            ...prev,
+            city: res.data?.details?.city || fetchedCity || prev.city,
+            state: res.data?.details?.state || fetchedState || prev.state,
+          }));
+          
+          if (res.data?.serviceable === false && res.data?.details) {
+            // Only block if explicitly marked unserviceable in DB (details exist but isActive is false)
             setErrorMsg('Sorry, we do not deliver to this pincode yet.');
+          } else {
+            setErrorMsg('');
           }
         } catch (err) {
           // ignore error
@@ -117,19 +133,19 @@ const Checkout: React.FC = () => {
       if (selected?.pincode) {
         api.get(`/serviceable-pincode/check/${selected.pincode}`)
           .then(res => {
-            if (res.data?.serviceable) {
-               const canCod = res.data.details?.isCod ?? true;
+            if (res.data?.details) {
+               const canCod = res.data.details.isCod;
                setIsCodAvailable(canCod);
                if (!canCod && paymentMethod === 'COD') setPaymentMethod('ONLINE');
             } else {
-               setIsCodAvailable(false);
-               if (paymentMethod === 'COD') setPaymentMethod('ONLINE');
+               // If pincode not in DB, default to COD available
+               setIsCodAvailable(true);
             }
           })
           .catch(() => setIsCodAvailable(true));
       }
     }
-  }, [selectedAddressId, step, addresses]);
+  }, [selectedAddressId, step, addresses, paymentMethod]);
 
   const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
