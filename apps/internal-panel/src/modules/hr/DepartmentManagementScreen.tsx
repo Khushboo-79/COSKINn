@@ -31,7 +31,7 @@ export const DepartmentManagementScreen = () => {
             {summary.map((dept: any) => (
               <div key={dept.department} className="border border-slate-200 rounded-xl p-6 bg-slate-50 hover:bg-slate-100/50 transition-colors group">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="h-10 w-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
+                  <div className="h-10 w-10 bg-[#FF7F50]/20 text-[#FF7F50] rounded-lg flex items-center justify-center">
                     <Building2 className="h-5 w-5" />
                   </div>
                 </div>

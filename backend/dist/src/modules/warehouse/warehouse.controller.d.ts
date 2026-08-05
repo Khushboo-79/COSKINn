@@ -21,6 +21,19 @@ export declare class WarehouseController {
             unitPrice: number;
             purchaseOrderId: string;
         }[];
+        supplier: {
+            id: string;
+            email: string | null;
+            phone: string | null;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            address: string | null;
+            gstin: string | null;
+            contactPerson: string | null;
+            paymentTerms: string | null;
+        } | null;
     } & {
         status: string;
         id: string;
@@ -38,6 +51,19 @@ export declare class WarehouseController {
             unitPrice: number;
             purchaseOrderId: string;
         }[];
+        supplier: {
+            id: string;
+            email: string | null;
+            phone: string | null;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            address: string | null;
+            gstin: string | null;
+            contactPerson: string | null;
+            paymentTerms: string | null;
+        } | null;
     } & {
         status: string;
         id: string;
@@ -122,4 +148,5 @@ export declare class WarehouseController {
         success: boolean;
         message: string;
     }>;
+    getThroughputAnalytics(): Promise<any[]>;
 }

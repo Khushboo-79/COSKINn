@@ -337,6 +337,7 @@ export declare class InventoryController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;

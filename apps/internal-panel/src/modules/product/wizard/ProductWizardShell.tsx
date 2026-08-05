@@ -95,6 +95,7 @@ export const ProductWizardShell = () => {
     let fieldsToValidate: (keyof ProductFormValues)[] = [];
     if (currentStep === 1) fieldsToValidate = ['name', 'categoryId', 'brandId', 'description'];
     if (currentStep === 2) fieldsToValidate = ['hsnCode', 'gstRate'];
+    if (currentStep >= 3) fieldsToValidate = ['variants'];
 
     const isStepValid = await trigger(fieldsToValidate);
     

@@ -70,4 +70,37 @@ export declare class FinanceReportController {
         tax: number;
         utr: string | null;
     }[]>;
+    getNotes(): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
+        type: string;
+        reason: string;
+        amount: number;
+        referenceType: string;
+        referenceId: string;
+    }[]>;
+    createNote(type: string, referenceType: string, referenceId: string, amount: number, reason: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
+        type: string;
+        reason: string;
+        amount: number;
+        referenceType: string;
+        referenceId: string;
+    }>;
+    updateNoteStatus(id: string, status: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
+        type: string;
+        reason: string;
+        amount: number;
+        referenceType: string;
+        referenceId: string;
+    }>;
 }

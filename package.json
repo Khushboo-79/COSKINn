@@ -31,6 +31,10 @@
     ]
   },
   "dependencies": {
-    "jimp": "^1.6.1"
+    "dotenv": "^16.4.5"
+  },
+  "overrides": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   }
 }

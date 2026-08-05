@@ -475,7 +475,9 @@ export declare class OrderService {
             createdAt: Date;
             updatedAt: Date;
             orderId: string;
+            status: string;
             amount: number;
+            orderId: string;
             method: string | null;
         }[];
         shipments: {

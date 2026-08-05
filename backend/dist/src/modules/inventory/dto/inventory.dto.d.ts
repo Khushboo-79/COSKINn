@@ -17,11 +17,13 @@ export declare class StockTransferDto {
     quantity: number;
 }
 export declare class DamagedStockDto {
+    warehouseId: string;
     sku: string;
     quantity: number;
     reason?: string;
 }
 export declare class ExpiredStockDto {
+    warehouseId: string;
     sku: string;
     batchNo: string;
     quantity: number;

@@ -469,7 +469,7 @@ export const TicketDetailScreen = () => {
                     {new Date(ret.createdAt).toLocaleDateString()} • {ret.reason}
                   </div>
                   <Link 
-                    to={`/returns/qc`}
+                    to={`/returns/requests`}
                     target="_blank"
                     className="text-xs font-medium text-rose-600 hover:text-rose-800"
                   >

@@ -15,7 +15,7 @@ export const SessionLogScreen = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h2 className="text-lg font-bold text-slate-900 flex items-center">
-              <Key className="h-5 w-5 mr-2 text-indigo-600" />
+              <Key className="h-5 w-5 mr-2 text-[#FF7F50]" />
               Active Sessions & Logins
             </h2>
             <p className="text-sm text-slate-500 mt-1">Track login activities and device sessions across the system.</p>
@@ -24,7 +24,7 @@ export const SessionLogScreen = () => {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-64 text-slate-500">
-            <Loader2 className="h-8 w-8 animate-spin mb-4 text-indigo-500" />
+            <Loader2 className="h-8 w-8 animate-spin mb-4 text-[#FF7F50]" />
             <p>Loading session logs...</p>
           </div>
         ) : !sessions || sessions.length === 0 ? (
@@ -48,7 +48,7 @@ export const SessionLogScreen = () => {
                 {sessions.map((session: any) => (
                   <tr key={session.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3">
-                      <p className="font-mono text-xs text-slate-700">{session.userId}</p>
+                      <p className="font-mono text-xs text-slate-700">{session.userEmail || session.userId}</p>
                     </td>
                     <td className="px-4 py-3 font-mono text-xs text-slate-500">
                       {session.ipAddress || 'Unknown'}
@@ -57,10 +57,10 @@ export const SessionLogScreen = () => {
                       {session.deviceInfo || 'Unknown Device'}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-slate-500 text-xs">
-                      {format(new Date(session.createdAt), 'dd MMM yyyy, HH:mm')}
+                      {session.timestamp ? format(new Date(session.timestamp), 'dd MMM yyyy, HH:mm') : (session.createdAt ? format(new Date(session.createdAt), 'dd MMM yyyy, HH:mm') : '-')}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {session.isRevoked ? (
+                      {session.details === 'Session revoked manually' || session.isRevoked ? (
                         <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-rose-100 text-rose-700">
                           <ShieldAlert className="h-3 w-3 mr-1" />
                           REVOKED

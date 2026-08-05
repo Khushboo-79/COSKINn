@@ -32,8 +32,8 @@ export const TicketListScreen = () => {
   };
 
   const filteredTickets = tickets?.filter((t: any) => 
-    t.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    t.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    t.id?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    t.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     t.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
 

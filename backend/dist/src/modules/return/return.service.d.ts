@@ -27,6 +27,7 @@ export declare class ReturnService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;
@@ -36,6 +37,7 @@ export declare class ReturnService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;
@@ -45,6 +47,7 @@ export declare class ReturnService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;
@@ -54,6 +57,7 @@ export declare class ReturnService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;

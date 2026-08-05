@@ -3,6 +3,7 @@ import { warehouseApi } from '../../core/api/warehouse';
 import { orderApi } from '../../core/api/orders';
 import { Package, Truck, ClipboardCheck, ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export const WarehouseDashboard = () => {
   const { data: pos } = useQuery({
@@ -18,6 +19,11 @@ export const WarehouseDashboard = () => {
   const { data: returns } = useQuery({
     queryKey: ['admin', 'returns'],
     queryFn: () => orderApi.getAllReturns(),
+  });
+
+  const { data: analytics, isLoading: analyticsLoading } = useQuery({
+    queryKey: ['admin', 'warehouse', 'analytics'],
+    queryFn: () => warehouseApi.getThroughputAnalytics(),
   });
 
   const pendingInbound = pos?.filter((po: any) => po.status === 'PENDING').length || 0;
@@ -82,17 +88,62 @@ export const WarehouseDashboard = () => {
               <h2 className="text-3xl font-bold text-slate-900">{pendingReturns}</h2>
             </div>
           </div>
-          <Link to="/warehouse/returns-qc" className="text-sm font-medium text-amber-600 hover:text-amber-700 flex items-center relative z-10">
+          <Link to="/returns/qc" className="text-sm font-medium text-amber-600 hover:text-amber-700 flex items-center relative z-10">
             View QC Queue &rarr;
           </Link>
         </div>
       </div>
-      
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center text-slate-500 mt-8">
-        <Activity className="h-16 w-16 text-slate-200 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-slate-900 mb-2">Throughput Analytics</h3>
-        <p>Daily throughput charts (Received vs Picked vs Shipped) will populate here once enough historical data is gathered.</p>
-      </div>
+      {analyticsLoading ? (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        </div>
+      ) : analytics && analytics.length > 0 ? (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mt-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Throughput Analytics</h3>
+              <p className="text-sm text-slate-500">Items Received vs Picked vs Shipped (Last 30 Days)</p>
+            </div>
+          </div>
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={analytics} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorReceived" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorPicked" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#eab308" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#eab308" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorShipped" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  labelStyle={{ fontWeight: 'bold', color: '#0f172a', marginBottom: '8px' }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                <Area type="monotone" dataKey="received" name="Received (In)" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorReceived)" />
+                <Area type="monotone" dataKey="picked" name="Picked (Out)" stroke="#eab308" strokeWidth={3} fillOpacity={1} fill="url(#colorPicked)" />
+                <Area type="monotone" dataKey="shipped" name="Shipped" stroke="#22c55e" strokeWidth={3} fillOpacity={1} fill="url(#colorShipped)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center text-slate-500 mt-8">
+          <Activity className="h-16 w-16 text-slate-200 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-slate-900 mb-2">Throughput Analytics</h3>
+          <p>No historical data gathered yet.</p>
+        </div>
+      )}
     </div>
   );
 };

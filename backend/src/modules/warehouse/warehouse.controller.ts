@@ -30,7 +30,7 @@ export class WarehouseController {
   }
 
   @Post('bins')
-  @Roles('SUPER_ADMIN', 'WAREHOUSE_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_STAFF', 'INVENTORY_MANAGER')
   createBin(@Body() dto: { warehouseId: string, code: string, description?: string }) {
     return this.warehouseService.createBin(dto);
   }
@@ -51,5 +51,11 @@ export class WarehouseController {
   @Roles('SUPER_ADMIN', 'WAREHOUSE_STAFF')
   verifyBarcodeScan(@Body() dto: BarcodeScanDto) {
     return this.warehouseService.verifyBarcodeScan(dto);
+  }
+
+  @Get('analytics/throughput')
+  @Roles('SUPER_ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_STAFF')
+  getThroughputAnalytics() {
+    return this.warehouseService.getThroughputAnalytics(30);
   }
 }

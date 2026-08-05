@@ -1,4 +1,21 @@
-import { apiClient } from './client';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
+const apiClient = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const warehouseApi = {
   getPurchaseOrders: async (): Promise<any[]> => {
@@ -28,6 +45,11 @@ export const warehouseApi = {
 
   verifyBarcodeScan: async (payload: { orderId: string, barcode: string }): Promise<any> => {
     const { data } = await apiClient.post('/warehouse/scan', payload);
+    return data;
+  },
+
+  getThroughputAnalytics: async (): Promise<any[]> => {
+    const { data } = await apiClient.get('/warehouse/analytics/throughput');
     return data;
   }
 };

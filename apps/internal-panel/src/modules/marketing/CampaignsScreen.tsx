@@ -41,14 +41,14 @@ export const CampaignsScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Campaigns</h1>
           <p className="text-slate-500 text-sm mt-1">Schedule and manage Email, SMS, and Push notifications.</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#E0356F] transition-colors"
+          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#E0356F] transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> New Campaign
         </button>
@@ -98,17 +98,17 @@ export const CampaignsScreen = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-slate-200 pt-4">
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-slate-200 pt-4">
             <button 
               onClick={() => setIsAdding(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-100"
+              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 w-full sm:w-auto"
             >
               Cancel
             </button>
             <button 
               onClick={() => addMutation.mutate()}
               disabled={!name || addMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#E0356F] disabled:opacity-50 flex items-center"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#E0356F] disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
             >
               {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Save Draft
@@ -125,7 +125,7 @@ export const CampaignsScreen = () => {
           <p className="font-medium text-slate-900">No campaigns found.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden overflow-x-auto">
           <table className="w-full text-left min-w-[800px]">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
@@ -157,7 +157,7 @@ export const CampaignsScreen = () => {
                     <span className={`text-xs font-bold px-2 py-1 rounded tracking-wide ${
                       camp.status === 'SENT' ? 'bg-emerald-100 text-emerald-800' :
                       camp.status === 'DRAFT' ? 'bg-slate-100 text-slate-600' :
-                      'bg-blue-100 text-blue-800'
+                      'bg-[#FF7F50]/20 text-[#FF7F50]'
                     }`}>
                       {camp.status}
                     </span>

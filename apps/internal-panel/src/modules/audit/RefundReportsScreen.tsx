@@ -22,18 +22,18 @@ export const RefundReportsScreen = () => {
   const successfulRefunds = refunds?.filter((r: any) => r.status === 'PROCESSED' || r.status === 'SUCCESS').length || 0;
   const pendingRefunds = refunds?.filter((r: any) => r.status === 'PENDING').length || 0;
   
-  const walletRefunds = refunds?.filter((r: any) => r.type === 'WALLET') || [];
-  const gatewayRefunds = refunds?.filter((r: any) => r.type === 'GATEWAY') || [];
+  const walletRefunds = refunds?.filter((r: any) => (r.type || r.method) === 'WALLET') || [];
+  const gatewayRefunds = refunds?.filter((r: any) => (r.type || r.method) === 'GATEWAY') || [];
 
-  const totalWalletRefunded = walletRefunds.reduce((sum: number, r: any) => sum + r.amount, 0);
-  const totalGatewayRefunded = gatewayRefunds.reduce((sum: number, r: any) => sum + r.amount, 0);
+  const totalWalletRefunded = walletRefunds.reduce((sum: number, r: any) => sum + (typeof r.amount === 'string' ? parseFloat(r.amount.replace(/[^0-9.-]+/g,"")) : (r.amount || 0)), 0);
+  const totalGatewayRefunded = gatewayRefunds.reduce((sum: number, r: any) => sum + (typeof r.amount === 'string' ? parseFloat(r.amount.replace(/[^0-9.-]+/g,"")) : (r.amount || 0)), 0);
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 flex items-center">
-            <RefreshCcw className="h-6 w-6 mr-3 text-indigo-600" />
+            <RefreshCcw className="h-6 w-6 mr-3 text-[#FF7F50]" />
             Global Refunds Ledger
           </h2>
           <p className="text-sm text-slate-500 mt-1">Read-only audit trail of all refunds processed across Wallet and Payment Gateways.</p>
@@ -65,12 +65,12 @@ export const RefundReportsScreen = () => {
           <p className="text-2xl font-black text-sky-900">₹{totalWalletRefunded.toLocaleString()}</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 bg-gradient-to-br from-white to-indigo-50">
-          <div className="flex items-center text-indigo-600 mb-2">
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 bg-gradient-to-br from-white to-[#FF7F50]/10">
+          <div className="flex items-center text-[#FF7F50] mb-2">
             <CreditCard className="h-4 w-4 mr-1.5" />
             <h3 className="font-semibold text-xs uppercase tracking-wider">Total Gateway Reversals</h3>
           </div>
-          <p className="text-2xl font-black text-indigo-900">₹{totalGatewayRefunded.toLocaleString()}</p>
+          <p className="text-2xl font-black text-[#FF7F50]">₹{totalGatewayRefunded.toLocaleString()}</p>
         </div>
       </div>
 
@@ -99,19 +99,19 @@ export const RefundReportsScreen = () => {
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">{refund.id}</td>
                     <td className="px-6 py-4 font-mono text-xs font-bold text-slate-700">{refund.orderId}</td>
                     <td className="px-6 py-4">
-                      {refund.type === 'WALLET' ? (
+                      {(refund.type || refund.method) === 'WALLET' ? (
                         <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-sky-100 text-sky-700">
                           <Wallet className="h-3 w-3 mr-1" />
                           WALLET
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-indigo-100 text-indigo-700">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-[#FF7F50]/20 text-[#FF7F50]">
                           <CreditCard className="h-3 w-3 mr-1" />
                           GATEWAY
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900">₹{refund.amount}</td>
+                    <td className="px-6 py-4 font-bold text-slate-900">{typeof refund.amount === 'string' ? refund.amount : `₹${refund.amount}`}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold ${
                         refund.status === 'PROCESSED' || refund.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-700' :
@@ -122,7 +122,7 @@ export const RefundReportsScreen = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-xs font-mono">
-                      {format(new Date(refund.createdAt), 'dd MMM yyyy, HH:mm')}
+                      {refund.initiationDate ? format(new Date(refund.initiationDate), 'dd MMM yyyy, HH:mm') : (refund.createdAt ? format(new Date(refund.createdAt), 'dd MMM yyyy, HH:mm') : '-')}
                     </td>
                   </tr>
                 ))}

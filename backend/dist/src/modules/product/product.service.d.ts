@@ -423,6 +423,11 @@ export declare class ProductService {
             id: string;
             createdAt: Date;
             productId: string;
+            userId: string;
+            title: string | null;
+            isApproved: boolean;
+            content: string | null;
+            rating: number;
         }[];
         benefits: {
             name: string;

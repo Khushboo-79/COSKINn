@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Param } from '@nestjs/common';
 import { FinanceReportService } from './finance-report.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -48,6 +48,30 @@ export class FinanceReportController {
   @Post('settlements/sync')
   syncSettlements(@Body('settlements') settlements: any[]) {
     return this.financeReportService.syncSettlements(settlements);
+  }
+
+  @Get('notes')
+  getNotes() {
+    return this.financeReportService.getNotes();
+  }
+
+  @Post('notes')
+  createNote(
+    @Body('type') type: string,
+    @Body('referenceType') referenceType: string,
+    @Body('referenceId') referenceId: string,
+    @Body('amount') amount: number,
+    @Body('reason') reason: string
+  ) {
+    return this.financeReportService.createNote(type, referenceType, referenceId, amount, reason);
+  }
+
+  @Post('notes/:id/status')
+  updateNoteStatus(
+    @Param('id') id: string,
+    @Body('status') status: string
+  ) {
+    return this.financeReportService.updateNoteStatus(id, status);
   }
 }
 

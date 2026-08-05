@@ -4,7 +4,6 @@ import { OrderListScreen } from './OrderListScreen';
 import { OrderDetailScreen } from './OrderDetailScreen';
 import { InvoiceScreen } from './InvoiceScreen';
 import { ShipmentScreen } from './ShipmentScreen';
-import { ReturnListScreen } from './ReturnListScreen';
 import { RefundListScreen } from './RefundListScreen';
 
 const OrderNav = () => {
@@ -12,7 +11,6 @@ const OrderNav = () => {
   const tabs = [
     { name: 'All Orders', path: '/orders', icon: ShoppingBag, exact: true },
     { name: 'Shipments', path: '/orders/shipments', icon: Truck },
-    { name: 'Returns QC', path: '/orders/returns', icon: RefreshCcw },
     { name: 'Refunds', path: '/orders/refunds', icon: IndianRupee },
   ];
 
@@ -52,7 +50,6 @@ export const OrderRouter = () => {
       <Routes>
         <Route path="/" element={<OrderListScreen />} />
         <Route path="/shipments" element={<ShipmentScreen />} />
-        <Route path="/returns" element={<ReturnListScreen />} />
         <Route path="/refunds" element={<RefundListScreen />} />
         <Route path="/:id" element={<OrderDetailScreen />} />
         <Route path="/:id/invoice" element={<InvoiceScreen />} />

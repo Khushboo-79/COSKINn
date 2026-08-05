@@ -1,3 +1,4 @@
+// IDE refresh trigger
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -204,5 +205,32 @@ export class FinanceReportService {
     const currentMonth = new Date().getMonth();
     return breakdown.slice(0, currentMonth + 1);
   }
+
+  // --- Financial Notes ---
+
+  async getNotes() {
+    return this.prisma.financialNote.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async createNote(type: string, referenceType: string, referenceId: string, amount: number, reason: string) {
+    return this.prisma.financialNote.create({
+      data: {
+        type,
+        referenceType,
+        referenceId,
+        amount,
+        reason,
+        status: 'DRAFT'
+      }
+    });
+  }
+
+  async updateNoteStatus(id: string, status: string) {
+    return this.prisma.financialNote.update({
+      where: { id },
+      data: { status }
+    });
+  }
 }
-// Trigger IDE re-parse

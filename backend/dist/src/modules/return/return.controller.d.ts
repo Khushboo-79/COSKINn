@@ -8,6 +8,7 @@ export declare class ReturnController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;
@@ -32,6 +33,7 @@ export declare class ReturnController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;
@@ -41,6 +43,7 @@ export declare class ReturnController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;
@@ -50,6 +53,7 @@ export declare class ReturnController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         reason: string;
         orderId: string;
         refundType: string;

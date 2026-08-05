@@ -50,10 +50,13 @@ export const PurchaseOrderScreen = () => {
   const addItem = () => setItems([...items, { sku: '', requestedQty: 1, unitPrice: 0 }]);
   const removeItem = (idx: number) => setItems(items.filter((_, i) => i !== idx));
 
-  const filteredPOs = pos?.filter((po: any) => 
-    po.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    po.vendorId?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPOs = pos?.filter((po: any) => {
+    const search = searchTerm.toLowerCase();
+    return po.id.toLowerCase().includes(search) ||
+      po.supplierId?.toLowerCase().includes(search) ||
+      po.vendorId?.toLowerCase().includes(search) ||
+      po.supplier?.name?.toLowerCase().includes(search);
+  });
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -126,7 +129,7 @@ export const PurchaseOrderScreen = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm flex items-center text-slate-700">
                         <Truck className="h-4 w-4 mr-2 text-slate-400" />
-                        {po.vendorId || 'N/A'}
+                        {po.supplier?.name || po.supplierId || po.vendorId || 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

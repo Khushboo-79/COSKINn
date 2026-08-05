@@ -376,8 +376,8 @@ export declare class CatalogController {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     })[]>;
     submitProductReview(req: any, id: string, dto: {
         rating: number;
@@ -391,8 +391,8 @@ export declare class CatalogController {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     }>;
     getSimilarProducts(id: string): Promise<({
         category: {

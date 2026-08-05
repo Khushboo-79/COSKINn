@@ -74,56 +74,56 @@ export const FaqManagementScreen = () => {
         </div>
         <button 
           onClick={() => { resetForm(); setIsAdding(true); }}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 transition-colors w-full sm:w-auto"
+          className="bg-[#FF7F50] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#FF7F50]/90 transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> Add FAQ
         </button>
       </div>
 
       {isAdding && (
-        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-indigo-900 mb-4">{editingId ? 'Edit FAQ' : 'New FAQ'}</h3>
+        <div className="bg-[#FF7F50]/10 border border-[#FF7F50]/20 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold text-[#FF7F50] mb-4">{editingId ? 'Edit FAQ' : 'New FAQ'}</h3>
           
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-indigo-900 mb-1">Question <span className="text-rose-500">*</span></label>
+              <label className="block text-sm font-medium text-[#FF7F50] mb-1">Question <span className="text-rose-500">*</span></label>
               <input 
                 type="text" 
                 value={question}
                 onChange={e => setQuestion(e.target.value)}
                 placeholder="e.g. How long does shipping take?"
-                className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full border-[#FF7F50]/30 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] bg-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-indigo-900 mb-1">Answer <span className="text-rose-500">*</span></label>
+              <label className="block text-sm font-medium text-[#FF7F50] mb-1">Answer <span className="text-rose-500">*</span></label>
               <textarea 
                 value={answer}
                 onChange={e => setAnswer(e.target.value)}
                 rows={3}
-                className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full border-[#FF7F50]/30 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] bg-white"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-medium text-indigo-900 mb-1">Category</label>
+                <label className="block text-sm font-medium text-[#FF7F50] mb-1">Category</label>
                 <input 
                   type="text" 
                   value={category}
                   onChange={e => setCategory(e.target.value.toUpperCase())}
                   placeholder="e.g. SHIPPING"
-                  className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="w-full border-[#FF7F50]/30 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] bg-white"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-indigo-900 mb-1">Display Order</label>
+                <label className="block text-sm font-medium text-[#FF7F50] mb-1">Display Order</label>
                 <input 
                   type="number" 
                   value={displayOrder}
                   onChange={e => setDisplayOrder(Number(e.target.value))}
-                  className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="w-full border-[#FF7F50]/30 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] bg-white"
                 />
               </div>
               <div className="flex flex-col justify-center">
@@ -132,25 +132,25 @@ export const FaqManagementScreen = () => {
                     type="checkbox" 
                     checked={published}
                     onChange={(e) => setPublished(e.target.checked)}
-                    className="rounded text-indigo-600 focus:ring-indigo-500" 
+                    className="rounded text-[#FF7F50] focus:ring-[#FF7F50]" 
                   />
-                  <span className="text-sm font-medium text-indigo-900">Publish immediately</span>
+                  <span className="text-sm font-medium text-[#FF7F50]">Publish immediately</span>
                 </label>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-indigo-100 pt-4">
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-[#FF7F50]/20 pt-4">
             <button 
               onClick={resetForm}
-              className="px-4 py-2 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50 w-full sm:w-auto"
+              className="px-4 py-2 text-sm font-medium text-[#FF7F50] bg-white border border-[#FF7F50]/30 rounded-lg hover:bg-[#FF7F50]/10 w-full sm:w-auto"
             >
               Cancel
             </button>
             <button 
               onClick={() => editingId ? updateMutation.mutate() : addMutation.mutate()}
               disabled={!question || !answer || addMutation.isPending || updateMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#FF7F50] rounded-lg hover:bg-[#FF7F50]/90 disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
             >
               {addMutation.isPending || updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               {editingId ? 'Update FAQ' : 'Save FAQ'}
@@ -192,7 +192,7 @@ export const FaqManagementScreen = () => {
                       <div className="flex gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => handleEdit(faq)}
-                          className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"
+                          className="p-2 text-slate-400 hover:text-[#FF7F50] transition-colors"
                         >
                           <Edit className="h-4 w-4" />
                         </button>

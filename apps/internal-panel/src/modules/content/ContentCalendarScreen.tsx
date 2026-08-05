@@ -12,7 +12,7 @@ export const ContentCalendarScreen = () => {
 
   const getIconForType = (type: string) => {
     switch (type) {
-      case 'BLOG': return <FileText className="h-4 w-4 text-indigo-500" />;
+      case 'BLOG': return <FileText className="h-4 w-4 text-[#FF7F50]" />;
       case 'TIP': return <Sparkles className="h-4 w-4 text-amber-500" />;
       case 'ROUTINE': return <Droplets className="h-4 w-4 text-cyan-500" />;
       case 'LEGAL': return <Scale className="h-4 w-4 text-slate-500" />;
@@ -47,7 +47,7 @@ export const ContentCalendarScreen = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
         <div className="p-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="font-medium text-slate-700 flex items-center">
-            <Calendar className="h-5 w-5 mr-2 text-indigo-500" /> Publishing Pipeline
+            <Calendar className="h-5 w-5 mr-2 text-[#FF7F50]" /> Publishing Pipeline
           </div>
           <div className="text-sm font-medium text-slate-500">
             Total Content Entries: {articles?.length || 0}
@@ -109,7 +109,7 @@ export const ContentCalendarScreen = () => {
                   <td className="py-4 px-6 text-right">
                     <Link 
                       to={getEditPathForType(article.type)}
-                      className="text-indigo-600 hover:text-indigo-900 text-sm font-medium hover:underline"
+                      className="text-[#FF7F50] hover:text-[#FF7F50] text-sm font-medium hover:underline"
                     >
                       Edit
                     </Link>

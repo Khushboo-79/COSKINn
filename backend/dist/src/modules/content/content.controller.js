@@ -59,6 +59,15 @@ let ContentController = class ContentController {
     updateGlobalSeo(data) {
         return this.contentService.updateGlobalSeo(data);
     }
+    getVideos() {
+        return this.contentService.getVideos();
+    }
+    createVideo(data) {
+        return this.contentService.createVideo(data);
+    }
+    deleteVideo(id) {
+        return this.contentService.deleteVideo(id);
+    }
 };
 exports.ContentController = ContentController;
 __decorate([
@@ -163,6 +172,32 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ContentController.prototype, "updateGlobalSeo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'CONTENT_MANAGER'),
+    (0, common_1.Get)('admin/videos'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "getVideos", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'CONTENT_MANAGER'),
+    (0, common_1.Post)('admin/videos'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "createVideo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'CONTENT_MANAGER'),
+    (0, common_1.Delete)('admin/videos/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "deleteVideo", null);
 exports.ContentController = ContentController = __decorate([
     (0, common_1.Controller)('content'),
     __metadata("design:paramtypes", [content_service_1.ContentService])
