@@ -8,13 +8,6 @@ export declare class ReturnService {
     private refundService;
     constructor(prisma: PrismaService, inventoryService: InventoryService, refundService: RefundService);
     findAll(status?: string): Promise<({
-        items: {
-            id: string;
-            createdAt: Date;
-            quantity: number;
-            sku: string;
-            returnId: string;
-        }[];
         order: {
             id: string;
             user: {
@@ -22,7 +15,15 @@ export declare class ReturnService {
                 firstName: string | null;
             };
         };
+        items: {
+            sku: string;
+            id: string;
+            quantity: number;
+            createdAt: Date;
+            returnId: string;
+        }[];
     } & {
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -32,6 +33,7 @@ export declare class ReturnService {
         refundType: string;
     })[]>;
     requestReturn(dto: RequestReturnDto, userId: string): Promise<{
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -41,6 +43,7 @@ export declare class ReturnService {
         refundType: string;
     }>;
     processReturn(id: string, dto: ProcessReturnDto): Promise<{
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -50,6 +53,7 @@ export declare class ReturnService {
         refundType: string;
     }>;
     processQC(id: string, dto: ReturnQcDto): Promise<{
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;

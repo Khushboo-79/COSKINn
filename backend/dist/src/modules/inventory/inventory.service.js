@@ -84,6 +84,8 @@ let InventoryService = class InventoryService {
                 name: v.product?.name || 'Unknown Product',
                 totalQuantity: stock.totalQuantity,
                 totalReservedQty: stock.totalReservedQty,
+                damaged: 0,
+                expired: 0,
                 damaged: damagedMap.get(v.sku) || 0,
                 expired: expiredMap.get(v.sku) || 0,
                 warehouses: stock.warehouses
