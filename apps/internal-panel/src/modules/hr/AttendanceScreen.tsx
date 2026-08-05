@@ -26,14 +26,14 @@ export const AttendanceScreen = () => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Daily Attendance</h1>
           <p className="text-slate-500 text-sm mt-1">Mark and review attendance for {selectedDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="p-12 text-center text-slate-500 flex flex-col items-center">
             <Loader2 className="h-8 w-8 animate-spin text-slate-300 mb-2" />
@@ -45,7 +45,7 @@ export const AttendanceScreen = () => {
             <p className="font-medium text-slate-900">No employees found to mark attendance.</p>
           </div>
         ) : (
-          <table className="w-full text-left">
+          <table className="w-full text-left min-w-[600px]">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="py-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Employee</th>
