@@ -40,6 +40,7 @@ export const ProductRouter = () => {
         <Routes>
           <Route path="/" element={<CatalogDashboardScreen />} />
           <Route path="/create" element={<ProductWizardShell />} />
+          <Route path="/edit/:id" element={<ProductWizardShell />} />
           <Route path="/feed" element={<ProductFeedScreen />} />
           <Route path="/import" element={<BulkImportScreen />} />
           <Route path="/list" element={<ProductListScreen />} />

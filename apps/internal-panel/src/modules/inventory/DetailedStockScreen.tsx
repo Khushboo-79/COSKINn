@@ -9,8 +9,8 @@ export const DetailedStockScreen = () => {
   const [viewType, setViewType] = useState<'BATCH' | 'WAREHOUSE'>('WAREHOUSE');
 
   const { data: stockList, isLoading } = useQuery({
-    queryKey: ['inventory', 'stock'],
-    queryFn: () => inventoryApi.getGlobalStock(),
+    queryKey: ['inventory', 'detailed-stock'],
+    queryFn: () => inventoryApi.getDetailedStock(),
   });
 
   const { data: warehouses } = useQuery({
@@ -19,7 +19,7 @@ export const DetailedStockScreen = () => {
   });
 
   // Simple client-side filter
-  const filteredStock = stockList?.filter(item => 
+  const filteredStock = stockList?.filter((item: any) => 
     item.sku.toLowerCase().includes(searchTerm.toLowerCase()) || 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -91,11 +91,9 @@ export const DetailedStockScreen = () => {
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
                 {filteredStock?.map((item: any, idx: number) => {
-                  // MOCKING the pivot expansion for UI purposes
-                  // In a real scenario, this data would come grouped from the backend
-                  const mockSplitLabel = viewType === 'WAREHOUSE' 
-                    ? (warehouses && warehouses.length > 0 ? warehouses[0].name : 'Main Fulfillment Center')
-                    : `BCH-${new Date().getFullYear()}-${idx + 100}`;
+                  const splitLabel = viewType === 'WAREHOUSE' 
+                    ? item.warehouseName
+                    : item.batchNumber || 'N/A';
                     
                   return (
                     <tr key={idx} className="hover:bg-slate-50 transition-colors">
@@ -103,7 +101,7 @@ export const DetailedStockScreen = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{item.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-medium">
                         <span className="bg-slate-100 px-2 py-1 rounded-md border border-slate-200">
-                          {mockSplitLabel}
+                          {splitLabel}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-green-600">{item.available}</td>

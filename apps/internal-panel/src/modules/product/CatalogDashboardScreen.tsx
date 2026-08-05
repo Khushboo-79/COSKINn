@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { productApi } from '../../core/api/product';
+import { resolveImageUrl } from '../../core/api/client';
 import { Package, PlusCircle, List, Tag, AlertTriangle } from 'lucide-react';
 import { StatCard } from '../../components/ui/StatCard';
 import { StatusBadge } from '../../components/ui/StatusBadge';
@@ -66,7 +67,7 @@ export const CatalogDashboardScreen = () => {
           <div className="flex items-center gap-2 text-amber-700 font-bold mb-1.5">
             <AlertTriangle className="h-4 w-4 group-hover:animate-bounce" /> Action Required
           </div>
-          <p className="text-sm text-amber-700/80 font-medium leading-relaxed">3 products need missing SEO descriptions</p>
+          <p className="text-sm text-amber-700/80 font-medium leading-relaxed">{stats?.missingSeoCount || 0} products need missing SEO descriptions</p>
         </div>
       </div>
 
@@ -122,13 +123,21 @@ export const CatalogDashboardScreen = () => {
                   <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-3 px-6">
                       <div className="flex items-center gap-3">
-                        {product.images && product.images.length > 0 ? (
-                          <img src={product.images[0].url} alt={product.name} className="h-10 w-10 rounded object-cover border border-slate-100" />
-                        ) : (
-                          <div className="h-10 w-10 rounded bg-slate-100 flex items-center justify-center text-slate-400">
-                            <Package className="h-5 w-5" />
-                          </div>
-                        )}
+                        {product.images && product.images.length > 0 && product.images[0].url ? (
+                          <img 
+                            src={resolveImageUrl(product.images[0].url)} 
+                            alt={product.name} 
+                            className="h-10 w-10 rounded object-cover border border-slate-100"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                              (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                            }} 
+                          />
+                        ) : null}
+                        
+                        <div className={`h-10 w-10 rounded bg-slate-100 flex items-center justify-center text-slate-400 ${product.images && product.images.length > 0 && product.images[0].url ? 'hidden' : ''}`}>
+                          <Package className="h-5 w-5" />
+                        </div>
                         <div>
                           <p className="font-medium text-slate-900 text-sm line-clamp-1">{product.name}</p>
                           <p className="text-xs text-slate-500">{product.slug}</p>

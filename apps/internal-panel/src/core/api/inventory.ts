@@ -1,11 +1,6 @@
 import { apiClient } from './client';
 
-export interface DashboardStats {
-  totalSkus: number;
-  lowStockCount: number;
-  nearExpiryCount: number;
-  pendingGrn: number;
-}
+export type DashboardStats = any;
 
 export interface StockData {
   sku: string;
@@ -30,6 +25,11 @@ export interface StockMovementDto {
 export const inventoryApi = {
   getDashboardStats: async (): Promise<DashboardStats> => {
     const { data } = await apiClient.get('/inventory/dashboard-stats');
+    return data;
+  },
+
+  getDetailedStock: async () => {
+    const { data } = await apiClient.get('/inventory/detailed');
     return data;
   },
 

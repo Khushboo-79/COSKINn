@@ -167,4 +167,6 @@ export class ProductController {
   removeBundleItem(@Param('id') id: string, @Param('componentSku') sku: string) {
     return this.productService.removeBundleItem(id, sku);
   }
+
+
 }
