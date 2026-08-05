@@ -47,7 +47,7 @@ export const LoyaltyScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Loyalty & Rewards</h1>
           <p className="text-slate-500 text-sm mt-1">Manage membership tiers and view points distribution.</p>
@@ -75,13 +75,13 @@ export const LoyaltyScreen = () => {
 
       {activeTab === 'tiers' && (
         <div className="space-y-6">
-          <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
             <div className="text-sm text-slate-600">
               Tiers are re-calculated automatically every night based on customers' lifetime spend.
             </div>
             <button 
               onClick={() => setIsAddingTier(true)}
-              className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#E0356F] transition-colors"
+              className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#E0356F] transition-colors w-full sm:w-auto"
             >
               <Plus className="h-4 w-4 mr-2" /> Add Tier
             </button>
@@ -121,17 +121,17 @@ export const LoyaltyScreen = () => {
                   />
                 </div>
               </div>
-              <div className="flex justify-end gap-3 border-t border-amber-200 pt-4">
+              <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-amber-200 pt-4">
                 <button 
                   onClick={() => setIsAddingTier(false)}
-                  className="px-4 py-2 text-sm font-medium text-amber-800 bg-white border border-amber-300 rounded-lg hover:bg-amber-100"
+                  className="px-4 py-2 text-sm font-medium text-amber-800 bg-white border border-amber-300 rounded-lg hover:bg-amber-100 w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={() => addTierMutation.mutate()}
                   disabled={!name || addTierMutation.isPending}
-                  className="px-4 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 disabled:opacity-50 flex items-center"
+                  className="px-4 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
                 >
                   {addTierMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                   Save Tier
@@ -189,7 +189,7 @@ export const LoyaltyScreen = () => {
       )}
 
       {activeTab === 'ledger' && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
           {isLoadingLedger ? (
             <div className="p-12 text-center text-slate-500">Loading ledger...</div>
           ) : !ledger || ledger.length === 0 ? (
@@ -198,7 +198,7 @@ export const LoyaltyScreen = () => {
               <p className="font-medium text-slate-900">No reward points issued yet.</p>
             </div>
           ) : (
-            <table className="w-full text-left">
+            <table className="w-full text-left min-w-[600px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th className="py-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
