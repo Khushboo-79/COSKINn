@@ -10,7 +10,7 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -45,6 +45,11 @@ export const warehouseApi = {
 
   verifyBarcodeScan: async (payload: { orderId: string, barcode: string }): Promise<any> => {
     const { data } = await apiClient.post('/warehouse/scan', payload);
+    return data;
+  },
+
+  getThroughputAnalytics: async (): Promise<any[]> => {
+    const { data } = await apiClient.get('/warehouse/analytics/throughput');
     return data;
   }
 };

@@ -35,5 +35,15 @@ export const supportApi = {
   getSlaStats: async () => {
     const { data } = await apiClient.get('/support/admin/tickets/stats/sla');
     return data;
+  },
+
+  getSettings: async () => {
+    const { data } = await apiClient.get('/support/admin/settings');
+    return data;
+  },
+
+  updateSettings: async (payload: any) => {
+    const { data } = await apiClient.put('/support/admin/settings', payload);
+    return data;
   }
 };

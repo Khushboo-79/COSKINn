@@ -56,6 +56,20 @@ export class InventoryService {
       include: { warehouse: true },
     });
 
+    // Fetch damaged totals
+    const damagedTotals = await this.prisma.damagedStock.groupBy({
+      by: ['sku'],
+      _sum: { quantity: true },
+    });
+    const damagedMap = new Map(damagedTotals.map(d => [d.sku, d._sum.quantity || 0]));
+
+    // Fetch expired totals
+    const expiredTotals = await this.prisma.expiredStock.groupBy({
+      by: ['sku'],
+      _sum: { quantity: true },
+    });
+    const expiredMap = new Map(expiredTotals.map(e => [e.sku, e._sum.quantity || 0]));
+
     // 3. Group stock by SKU
     const stockBySku = new Map();
     for (const stock of stocks) {
@@ -77,8 +91,8 @@ export class InventoryService {
         name: v.product?.name || 'Unknown Product',
         totalQuantity: stock.totalQuantity,
         totalReservedQty: stock.totalReservedQty,
-        damaged: 0,
-        expired: 0,
+        damaged: damagedMap.get(v.sku) || 0,
+        expired: expiredMap.get(v.sku) || 0,
         warehouses: stock.warehouses
       };
     });
@@ -339,22 +353,60 @@ export class InventoryService {
   }
 
   async reportDamaged(dto: import('./dto/inventory.dto').DamagedStockDto) {
-    return this.prisma.damagedStock.create({
-      data: {
-        sku: dto.sku,
-        quantity: dto.quantity,
-        reason: dto.reason,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const damaged = await tx.damagedStock.create({
+        data: {
+          sku: dto.sku,
+          quantity: dto.quantity,
+          reason: dto.reason,
+        },
+      });
+
+      await tx.inventoryStock.update({
+        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
+        data: { quantity: { decrement: dto.quantity } }
+      });
+
+      await tx.stockMovement.create({
+        data: {
+          warehouseId: dto.warehouseId,
+          sku: dto.sku,
+          type: 'OUT',
+          quantity: dto.quantity,
+          reference: `DAMAGED-${damaged.id}`
+        }
+      });
+
+      return damaged;
     });
   }
 
   async reportExpired(dto: import('./dto/inventory.dto').ExpiredStockDto) {
-    return this.prisma.expiredStock.create({
-      data: {
-        sku: dto.sku,
-        quantity: dto.quantity,
-        batchNo: dto.batchNo,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const expired = await tx.expiredStock.create({
+        data: {
+          sku: dto.sku,
+          quantity: dto.quantity,
+          batchNo: dto.batchNo,
+        },
+      });
+
+      await tx.inventoryStock.update({
+        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
+        data: { quantity: { decrement: dto.quantity } }
+      });
+
+      await tx.stockMovement.create({
+        data: {
+          warehouseId: dto.warehouseId,
+          sku: dto.sku,
+          type: 'OUT',
+          quantity: dto.quantity,
+          reference: `EXPIRED-${expired.id}`
+        }
+      });
+
+      return expired;
     });
   }
 

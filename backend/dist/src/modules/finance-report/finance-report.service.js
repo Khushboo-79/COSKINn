@@ -181,6 +181,29 @@ let FinanceReportService = class FinanceReportService {
         const currentMonth = new Date().getMonth();
         return breakdown.slice(0, currentMonth + 1);
     }
+    async getNotes() {
+        return this.prisma.financialNote.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+    async createNote(type, referenceType, referenceId, amount, reason) {
+        return this.prisma.financialNote.create({
+            data: {
+                type,
+                referenceType,
+                referenceId,
+                amount,
+                reason,
+                status: 'DRAFT'
+            }
+        });
+    }
+    async updateNoteStatus(id, status) {
+        return this.prisma.financialNote.update({
+            where: { id },
+            data: { status }
+        });
+    }
 };
 exports.FinanceReportService = FinanceReportService;
 exports.FinanceReportService = FinanceReportService = __decorate([

@@ -110,6 +110,7 @@ export declare class ProductService {
         outOfStockCount: number;
         draftCount: number;
         totalCategories: number;
+        missingSeoCount: number;
     }>;
     findAllPublic(page: number, limit: number, filters?: {
         minPrice?: number;
@@ -425,8 +426,8 @@ export declare class ProductService {
             userId: string;
             title: string | null;
             isApproved: boolean;
-            rating: number;
             content: string | null;
+            rating: number;
         }[];
         questions: {
             id: string;

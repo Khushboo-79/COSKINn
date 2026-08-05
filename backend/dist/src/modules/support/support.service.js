@@ -105,6 +105,22 @@ let SupportService = class SupportService {
             complianceRate: total > 0 ? Math.round(((total - breached) / total) * 100) : 100
         };
     }
+    async getSettings() {
+        let settings = await this.prisma.supportSettings.findFirst();
+        if (!settings) {
+            settings = await this.prisma.supportSettings.create({
+                data: {}
+            });
+        }
+        return settings;
+    }
+    async updateSettings(data) {
+        const settings = await this.getSettings();
+        return this.prisma.supportSettings.update({
+            where: { id: settings.id },
+            data
+        });
+    }
 };
 exports.SupportService = SupportService;
 exports.SupportService = SupportService = __decorate([

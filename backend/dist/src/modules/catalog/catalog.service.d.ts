@@ -376,8 +376,8 @@ export declare class CatalogService {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     })[]>;
     submitProductReview(productId: string, userId: string, dto: {
         rating: number;
@@ -391,8 +391,8 @@ export declare class CatalogService {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     }>;
     getCategoryBySlug(slug: string): Promise<{
         category: {

@@ -92,11 +92,17 @@ __decorate([
     __metadata("design:type", Number)
 ], StockTransferDto.prototype, "quantity", void 0);
 class DamagedStockDto {
+    warehouseId;
     sku;
     quantity;
     reason;
 }
 exports.DamagedStockDto = DamagedStockDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], DamagedStockDto.prototype, "warehouseId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -113,11 +119,17 @@ __decorate([
     __metadata("design:type", String)
 ], DamagedStockDto.prototype, "reason", void 0);
 class ExpiredStockDto {
+    warehouseId;
     sku;
     batchNo;
     quantity;
 }
 exports.ExpiredStockDto = ExpiredStockDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], ExpiredStockDto.prototype, "warehouseId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),

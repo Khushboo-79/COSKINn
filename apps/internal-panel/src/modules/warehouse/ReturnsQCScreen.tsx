@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
-import { ClipboardCheck, Loader2, Save, X, Search, AlertTriangle, BoxSelect } from 'lucide-react';
+import { ClipboardCheck, Loader2, Save, X, Search, AlertTriangle, PackageSearch } from 'lucide-react';
 
 export const ReturnsQCScreen = () => {
   const queryClient = useQueryClient();
@@ -30,9 +30,19 @@ export const ReturnsQCScreen = () => {
   };
 
   const qcMutation = useMutation({
-    mutationFn: (result: 'PASS' | 'FAIL') => orderApi.processQC(selectedReturn.id, {
-      qcResult: result
-    }),
+    mutationFn: (result: 'PASS' | 'FAIL') => {
+      // If PASS, assume all items are sellable. If FAIL, assume all items are damaged.
+      // Or we can just use the qcItems state if the user modified them.
+      const payloadItems = qcItems.map(item => ({
+        sku: item.sku,
+        sellableQty: result === 'PASS' ? item.returnedQty : item.sellableQty,
+        damagedQty: result === 'FAIL' ? item.returnedQty : item.damagedQty
+      }));
+      return orderApi.processQC(selectedReturn.id, {
+        items: payloadItems,
+        notes: notes || `QC marked as ${result}`
+      });
+    },
     onSuccess: () => {
       toast('Return QC completed. Inventory has been updated.');
       queryClient.invalidateQueries({ queryKey: ['admin', 'returns'] });
@@ -67,7 +77,7 @@ export const ReturnsQCScreen = () => {
             <div className="p-12 text-center"><Loader2 className="h-8 w-8 text-amber-500 animate-spin mx-auto" /></div>
           ) : pendingReturns.length === 0 ? (
             <div className="p-12 text-center text-slate-500">
-              <BoxSelect className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+              <PackageSearch className="h-12 w-12 text-slate-300 mx-auto mb-4" />
               <p className="font-medium">No returned orders waiting for inspection.</p>
             </div>
           ) : (

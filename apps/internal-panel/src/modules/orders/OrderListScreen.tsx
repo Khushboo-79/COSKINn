@@ -4,12 +4,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
 import { Search, Filter, ShoppingBag, Eye, Calendar, CreditCard, RefreshCcw, CheckSquare, ListPlus, Loader2 } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { PromptModal } from '../../components/ui/PromptModal';
 import { PickListModal } from './components/PickListModal';
 export const OrderListScreen = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
-  
+
   const [filters, setFilters] = useState({
     status: searchParams.get('status') || '',
     paymentMode: '',
@@ -27,6 +28,9 @@ export const OrderListScreen = () => {
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [pickListData, setPickListData] = useState<any>(null);
+  
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<string>('');
 
   const { data: orders, isLoading, refetch } = useQuery({
     queryKey: ['admin', 'orders', filters],
@@ -41,7 +45,7 @@ export const OrderListScreen = () => {
         });
         return allOrders.filter((o: any) => ['PLACED', 'PAYMENT_CONFIRMED', 'PROCESSING'].includes(o.status));
       }
-      
+
       return orderApi.getAdminOrders({
         status: filters.status || undefined,
         paymentMode: filters.paymentMode || undefined,
@@ -67,16 +71,19 @@ export const OrderListScreen = () => {
   });
 
   // Bulk status update (using individual API calls for MVP, but a real bulk endpoint is better)
-  const handleBulkStatusUpdate = async (newStatus: string) => {
-    const notes = prompt(`Enter notes for marking ${selectedOrderIds.length} orders as ${newStatus}:`);
-    if (!notes) return;
+  const handleBulkStatusUpdate = (newStatus: string) => {
+    setPendingStatus(newStatus);
+    setIsPromptOpen(true);
+  };
 
+  const executeBulkStatusUpdate = async (notes: string) => {
+    setIsPromptOpen(false);
     setIsBulkUpdating(true);
     let successCount = 0;
 
     for (const id of selectedOrderIds) {
       try {
-        await orderApi.updateOrderStatus(id, newStatus, notes);
+        await orderApi.updateOrderStatus(id, pendingStatus, notes);
         successCount++;
       } catch (err) {
         console.error(`Failed to update ${id}`, err);
@@ -121,6 +128,16 @@ export const OrderListScreen = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <PromptModal
+        isOpen={isPromptOpen}
+        onCancel={() => setIsPromptOpen(false)}
+        onConfirm={(notes) => executeBulkStatusUpdate(notes)}
+        title="Status Update Notes"
+        message={`Please enter a reason or internal note for marking ${selectedOrderIds.length} order(s) as ${pendingStatus}.`}
+        confirmText="Update Status"
+        placeholder="e.g. Verified by QC team..."
+      />
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Order Management</h1>

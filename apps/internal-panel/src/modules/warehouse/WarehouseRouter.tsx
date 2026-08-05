@@ -6,7 +6,6 @@ import { GRNScreen } from './GRNScreen';
 import { OutboundScreen } from './OutboundScreen';
 import { HandoverScreen } from './HandoverScreen';
 import { WarehouseDashboard } from './WarehouseDashboard';
-import { ReturnsQCScreen } from './ReturnsQCScreen';
 import { ExceptionsScreen } from './ExceptionsScreen';
 import { StockAdjustmentScreen } from './StockAdjustmentScreen';
 
@@ -18,7 +17,6 @@ const WarehouseNav = () => {
     { name: 'Inbound (GRN)', path: '/warehouse/grn', icon: PackageCheck },
     { name: 'Outbound (Pick)', path: '/warehouse/outbound', icon: PackageOpen },
     { name: 'Handover', path: '/warehouse/handover', icon: Truck },
-    { name: 'Returns QC', path: '/warehouse/returns-qc', icon: BoxSelect },
     { name: 'Exceptions', path: '/warehouse/exceptions', icon: AlertTriangle },
     { name: 'Adjustments', path: '/warehouse/adjustments', icon: Settings2 },
     { name: 'Bins', path: '/warehouse/bins', icon: LayoutGrid },
@@ -60,7 +58,6 @@ export const WarehouseRouter = () => {
         <Route path="/bins" element={<BinManagementScreen />} />
         <Route path="/outbound" element={<OutboundScreen />} />
         <Route path="/handover" element={<HandoverScreen />} />
-        <Route path="/returns-qc" element={<ReturnsQCScreen />} />
         <Route path="/exceptions" element={<ExceptionsScreen />} />
         <Route path="/adjustments" element={<StockAdjustmentScreen />} />
         <Route path="*" element={<Navigate to="/warehouse/dashboard" replace />} />

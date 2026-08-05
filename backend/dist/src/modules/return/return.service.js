@@ -110,6 +110,7 @@ let ReturnService = class ReturnService {
             else {
                 for (const item of returnReq.items) {
                     await this.inventoryService.reportDamaged({
+                        warehouseId: 'MAIN',
                         sku: item.sku,
                         quantity: item.quantity,
                         reason: `Return QC Fail: ${returnReq.id}`

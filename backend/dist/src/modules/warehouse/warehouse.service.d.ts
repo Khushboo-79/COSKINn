@@ -14,6 +14,19 @@ export declare class WarehouseService {
             requestedQty: number;
             unitPrice: number;
         }[];
+        supplier: {
+            id: string;
+            email: string | null;
+            phone: string | null;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            address: string | null;
+            gstin: string | null;
+            contactPerson: string | null;
+            paymentTerms: string | null;
+        } | null;
     } & {
         id: string;
         createdAt: Date;
@@ -40,6 +53,19 @@ export declare class WarehouseService {
             requestedQty: number;
             unitPrice: number;
         }[];
+        supplier: {
+            id: string;
+            email: string | null;
+            phone: string | null;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            address: string | null;
+            gstin: string | null;
+            contactPerson: string | null;
+            paymentTerms: string | null;
+        } | null;
     } & {
         id: string;
         createdAt: Date;
@@ -124,4 +150,5 @@ export declare class WarehouseService {
         success: boolean;
         message: string;
     }>;
+    getThroughputAnalytics(days?: number): Promise<any[]>;
 }

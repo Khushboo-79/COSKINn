@@ -56,5 +56,19 @@ export const financeApi = {
   createTaxRate: async (name: string, cgst: number, sgst: number, igst: number) => {
     const res = await client.post('/admin/tax/rates', { name, cgst, sgst, igst });
     return res.data;
+  },
+  
+  // Credit & Debit Notes
+  getNotes: async () => {
+    const res = await client.get('/admin/finance/notes');
+    return res.data;
+  },
+  createNote: async (type: string, referenceType: string, referenceId: string, amount: number, reason: string) => {
+    const res = await client.post('/admin/finance/notes', { type, referenceType, referenceId, amount, reason });
+    return res.data;
+  },
+  updateNoteStatus: async (id: string, status: string) => {
+    const res = await client.post(`/admin/finance/notes/${id}/status`, { status });
+    return res.data;
   }
 };
