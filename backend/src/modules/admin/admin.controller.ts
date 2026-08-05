@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, UseGuards, Query, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, UseGuards, Query, Param, Req } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -44,6 +44,11 @@ export class AdminController {
     return this.adminService.getUsers();
   }
 
+  @Delete('users/:id')
+  deleteUser(@Param('id') id: string) {
+    return this.adminService.deleteUser(id);
+  }
+
   @Post('users')
   createStaffUser(@Body() body: { firstName: string, lastName: string, email: string, phone: string, roleId: string }) {
     return this.adminService.createStaffUser(body);
@@ -51,12 +56,22 @@ export class AdminController {
 
   @Put('users/:id/role')
   updateUserRole(@Param('id') id: string, @Body() body: { roleId: string }) {
-    return this.adminService.updateUserRole(id, body.roleId);
+    return this.adminService.updateUserRole(id, body);
   }
 
   @Post('users/assign-role')
   assignRole(@Body() body: { userId: string, roleName: string }) {
     return this.adminService.assignRole(body.userId, body.roleName);
+  }
+
+  @Get('staff/2fa')
+  getStaff2FAStatus() {
+    return this.adminService.getStaff2FAStatus();
+  }
+
+  @Post('staff/:userId/2fa/reset')
+  resetStaff2FA(@Param('userId') userId: string) {
+    return this.adminService.resetStaff2FA(userId);
   }
 
   @Get('settings')

@@ -26,7 +26,17 @@ export class AdminService implements OnModuleInit {
           returnWindowDays: 7,
           autoCancelHours: 24,
           codEnabled: true,
-          maxCodAmount: 5000,
+          maxCodAmount: 10000,
+          maintenanceMode: false,
+          debugMode: false,
+          walletExpiryDays: 365,
+          minOrderForCod: 500,
+          membershipMemberThreshold: 1500,
+          membershipGoldThreshold: 4000,
+          membershipPlatinumThreshold: 8000,
+          signUpBonusAmount: 200,
+          maxRewardPointRedemptionPercent: 10,
+          rewardPointEarningRate: 1
         }
       });
     }
@@ -212,8 +222,15 @@ export class AdminService implements OnModuleInit {
   async getUsers() {
     return this.prisma.user.findMany({
       where: {
+        isDeleted: false,
         roles: {
-          some: {} // Any user with a role is considered an internal user/admin
+          some: {
+            role: {
+              name: {
+                not: 'CUSTOMER'
+              }
+            }
+          }
         }
       },
       include: {
@@ -221,7 +238,36 @@ export class AdminService implements OnModuleInit {
           include: {
             role: true
           }
+        },
+        customerProfile: true,
+        addresses: {
+          where: { isDefault: true },
+          take: 1
+        },
+        orders: true,
+        wishlist: {
+          include: { items: true }
+        },
+        cart: {
+          include: { items: true }
+        },
+        rewardPoints: true,
+        membershipTier: true,
+        sessions: {
+          orderBy: { createdAt: 'desc' },
+          take: 1
         }
+      }
+    });
+  }
+
+  async deleteUser(id: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+        isActive: false,
+        deletedAt: new Date()
       }
     });
   }
@@ -253,7 +299,7 @@ export class AdminService implements OnModuleInit {
       });
     }
 
-    const passwordHash = await bcrypt.hash('password123', 10);
+    const passwordHash = await require('bcrypt').hash('password123', 10);
     return this.prisma.user.create({
       data: {
         firstName: data.firstName,
@@ -270,7 +316,48 @@ export class AdminService implements OnModuleInit {
     });
   }
 
-  async updateUserRole(userId: string, roleId: string) {
+  async getStaff2FAStatus() {
+    const staff = await this.prisma.user.findMany({
+      where: {
+        isDeleted: false,
+        roles: {
+          some: {
+            role: {
+              name: {
+                not: 'CUSTOMER'
+              }
+            }
+          }
+        }
+      },
+      include: {
+        staff2fa: true,
+        sessions: {
+          orderBy: { createdAt: 'desc' },
+          take: 1
+        }
+      }
+    });
+
+    return staff.map(u => ({
+      id: u.id,
+      name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'No Name',
+      email: u.email,
+      is2FAEnabled: u.staff2fa ? u.staff2fa.isVerified : false,
+      lastLogin: u.sessions[0]?.createdAt 
+        ? new Date(u.sessions[0].createdAt).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : 'Never'
+    }));
+  }
+
+  async resetStaff2FA(userId: string) {
+    await this.prisma.staff2fa.deleteMany({
+      where: { userId }
+    });
+    return { success: true, message: '2FA has been reset for this user.' };
+  }
+
+  async updateUserRole(userId: string, data: { roleId: string }) {
     // Delete existing roles for this user
     await this.prisma.userRole.deleteMany({
       where: { userId }
@@ -280,7 +367,7 @@ export class AdminService implements OnModuleInit {
     return this.prisma.userRole.create({
       data: {
         userId,
-        roleId
+        roleId: data.roleId
       }
     });
   }

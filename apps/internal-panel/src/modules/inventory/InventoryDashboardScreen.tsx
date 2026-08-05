@@ -103,17 +103,17 @@ export const InventoryDashboardScreen = () => {
             </div>
           </Link>
 
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+          <Link to="/warehouse/grn" className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-purple-300 hover:shadow-md transition-all group cursor-pointer block">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-sm font-medium text-slate-500 mb-1">Pending GRN</p>
+                <p className="text-sm font-medium text-slate-500 mb-1 group-hover:text-purple-700 transition-colors">Pending GRN</p>
                 <h3 className="text-2xl font-bold text-slate-900">{stats?.pendingGrn || 0}</h3>
               </div>
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+              <div className="p-2 bg-purple-50 text-purple-600 rounded-lg group-hover:bg-purple-100 transition-colors">
                 <ArrowDownToLine className="h-5 w-5" />
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       )}
 
