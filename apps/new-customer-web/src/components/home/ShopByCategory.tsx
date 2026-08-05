@@ -63,7 +63,7 @@ const ShopByCategory: React.FC<ShopByCategoryProps> = ({ categories: apiCategori
   const categories = apiCategories.length > 0 ? apiCategories : defaultCategories;
 
   return (
-    <section id="shop-by-category" className={`pt-12 pb-32 md:pb-48 relative overflow-hidden scroll-mt-32 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
+    <section id="shop-by-category" className={`pt-20 md:pt-28 pb-32 md:pb-48 relative overflow-hidden scroll-mt-32 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
       {!isGlam && (
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div 
@@ -107,12 +107,11 @@ const ShopByCategory: React.FC<ShopByCategoryProps> = ({ categories: apiCategori
         ) : (
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 px-2">
             <div>
-              <span className="text-[10px] md:text-[11px] font-bold tracking-[0.25em] text-[#a1999b] uppercase mb-4 block">
+              <span className="text-[clamp(0.65rem,1.5vw,0.85rem)] font-bold tracking-[0.25em] text-[#FF7F50] uppercase mb-4 block">
                 SHOP BY CATEGORY
               </span>
               <h2 
-                className="text-4xl md:text-[3.5rem] leading-none font-display font-black tracking-tight text-[#2a2022]"
-                style={{ WebkitTextStroke: '1.5px #2a2022' }}
+                className="text-4xl md:text-5xl font-display font-extrabold text-[#2a2022]"
               >
                 Pick your flavour
               </h2>
@@ -144,6 +143,7 @@ const ShopByCategory: React.FC<ShopByCategoryProps> = ({ categories: apiCategori
                     <img 
                       src={category.image} 
                       alt={category.name} 
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                     />
                   </motion.div>
@@ -155,6 +155,7 @@ const ShopByCategory: React.FC<ShopByCategoryProps> = ({ categories: apiCategori
                     <img 
                       src={category.image} 
                       alt={category.name} 
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                     />
                   </motion.div>
