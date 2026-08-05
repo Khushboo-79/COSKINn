@@ -24,9 +24,9 @@ const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) 
 export const RoleManagementScreen = () => {
   const [selectedRole, setSelectedRole] = useState<any>(null);
   const [roleToDelete, setRoleToDelete] = useState<any>(null);
-  const [statusToChange, setStatusToChange] = useState<{ role: any, newStatus: string } | null>(null);
+  const [statusToChange, setStatusToChange] = useState<{ role: any, newIsActive: boolean } | null>(null);
   const [viewRole, setViewRole] = useState<any>(null);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'Active' | 'Inactive'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -36,14 +36,15 @@ export const RoleManagementScreen = () => {
     retry: false,
   });
 
-  // Counts
-  const activeCount = useMemo(() => roles.filter((r: any) => (r.status || 'Active') === 'Active').length, [roles]);
-  const inactiveCount = useMemo(() => roles.filter((r: any) => r.status === 'Inactive').length, [roles]);
+  // Counts based on backend isActive field
+  const activeCount = useMemo(() => roles.filter((r: any) => r.isActive !== false).length, [roles]);
+  const inactiveCount = useMemo(() => roles.filter((r: any) => r.isActive === false).length, [roles]);
 
   // Filtered data
   const filteredRoles = useMemo(() => {
     if (statusFilter === 'all') return roles;
-    return roles.filter((r: any) => (r.status || 'Active') === statusFilter);
+    if (statusFilter === 'active') return roles.filter((r: any) => r.isActive !== false);
+    return roles.filter((r: any) => r.isActive === false);
   }, [roles, statusFilter]);
 
   const createMutation = useMutation({
@@ -74,7 +75,8 @@ export const RoleManagementScreen = () => {
   };
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string, status: string }) => rbacApi.updateRole(id, { status }),
+    mutationFn: ({ id, isActive }: { id: string, isActive: boolean }) =>
+      rbacApi.updateRole(id, { isActive }),
     onSuccess: () => {
       toast.success('Role status updated successfully.');
       queryClient.invalidateQueries({ queryKey: ['roles'] });
@@ -88,7 +90,7 @@ export const RoleManagementScreen = () => {
 
   const handleStatusConfirm = () => {
     if (statusToChange) {
-      updateStatusMutation.mutate({ id: statusToChange.role.id, status: statusToChange.newStatus });
+      updateStatusMutation.mutate({ id: statusToChange.role.id, isActive: statusToChange.newIsActive });
     }
   };
 
@@ -122,19 +124,18 @@ export const RoleManagementScreen = () => {
       header: 'Status',
       render: (role: any) => {
         const isSuperAdmin = role.name === 'SUPER_ADMIN';
-        const currentStatus = role.status || 'Active';
-        const isCurrentlyActive = currentStatus === 'Active';
+        const isCurrentlyActive = role.isActive !== false; // default true
 
         return (
           <button
-            onClick={() => !isSuperAdmin && setStatusToChange({ role, newStatus: isCurrentlyActive ? 'Inactive' : 'Active' })}
+            onClick={() => !isSuperAdmin && setStatusToChange({ role, newIsActive: !isCurrentlyActive })}
             disabled={isSuperAdmin}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-200 ${isSuperAdmin ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:shadow-sm hover:-translate-y-0.5'
               } ${isCurrentlyActive
                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                 : 'bg-rose-50 text-rose-700 border-rose-200'
               }`}
-            title={isSuperAdmin ? "Super Admin role cannot be disabled." : `Click to change status to ${isCurrentlyActive ? 'Inactive' : 'Active'}`}
+            title={isSuperAdmin ? "Super Admin role cannot be disabled." : `Click to ${isCurrentlyActive ? 'deactivate' : 'activate'}`}
           >
             <div className={`w-2 h-2 rounded-full shadow-sm ${isCurrentlyActive ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-rose-500 shadow-rose-500/50'}`} />
             <span className="text-xs font-bold uppercase tracking-wider">{isCurrentlyActive ? 'Active' : 'Inactive'}</span>
@@ -216,10 +217,10 @@ export const RoleManagementScreen = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
             </svg>
             <span className="text-slate-600">
-              {statusFilter === 'all' ? 'All Roles' : statusFilter}
+              {statusFilter === 'all' ? 'All Roles' : statusFilter === 'active' ? 'Active' : 'Inactive'}
             </span>
             <span className="ml-1 text-xs font-bold px-1.5 py-0.5 rounded-full bg-[#FF7F50]/10 text-[#FF7F50]">
-              {statusFilter === 'all' ? roles.length : statusFilter === 'Active' ? activeCount : inactiveCount}
+              {statusFilter === 'all' ? roles.length : statusFilter === 'active' ? activeCount : inactiveCount}
             </span>
           </div>
           <svg
@@ -238,8 +239,8 @@ export const RoleManagementScreen = () => {
             <div className="absolute left-0 top-full mt-1.5 w-full bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden">
               {([
                 { key: 'all', label: 'All Roles', count: roles.length },
-                { key: 'Active', label: 'Active', count: activeCount },
-                { key: 'Inactive', label: 'Inactive', count: inactiveCount },
+                { key: 'active', label: 'Active', count: activeCount },
+                { key: 'inactive', label: 'Inactive', count: inactiveCount },
               ] as const).map(({ key, label, count }) => (
                 <button
                   key={key}
@@ -252,7 +253,7 @@ export const RoleManagementScreen = () => {
                 >
                   <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${
-                      key === 'all' ? 'bg-slate-400' : key === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'
+                      key === 'all' ? 'bg-slate-400' : key === 'active' ? 'bg-emerald-500' : 'bg-rose-500'
                     }`} />
                     {label}
                   </div>
@@ -288,17 +289,17 @@ export const RoleManagementScreen = () => {
               <div className="flex justify-between items-start">
                 <div className="font-bold text-slate-900 uppercase">{role.name}</div>
                 <button
-                  onClick={() => !isSuperAdmin && setStatusToChange({ role, newStatus: (role.status || 'Active') === 'Active' ? 'Inactive' : 'Active' })}
+                  onClick={() => !isSuperAdmin && setStatusToChange({ role, newIsActive: role.isActive === false })}
                   disabled={isSuperAdmin}
                   className={`flex items-center gap-2 px-3 py-1 rounded-full border transition-all ${isSuperAdmin ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-                    } ${(role.status || 'Active') === 'Active'
+                    } ${role.isActive !== false
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       : 'bg-rose-50 text-rose-700 border-rose-200'
                     }`}
                   title={isSuperAdmin ? "Super Admin role cannot be disabled." : "Click to change status"}
                 >
-                  <div className={`w-1.5 h-1.5 rounded-full ${((role.status || 'Active') === 'Active') ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                  <span className="text-[10px] font-bold uppercase tracking-wider">{role.status || 'Active'}</span>
+                  <div className={`w-1.5 h-1.5 rounded-full ${role.isActive !== false ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">{role.isActive !== false ? 'Active' : 'Inactive'}</span>
                 </button>
               </div>
               <div className="flex flex-wrap gap-1">
@@ -482,14 +483,14 @@ export const RoleManagementScreen = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-slate-500">Current Status:</span>
-                  <span className={`text-sm font-bold ${statusToChange.role.status === 'Inactive' ? 'text-red-600' : 'text-emerald-600'}`}>
-                    {statusToChange.role.status || 'Active'}
+                  <span className={`text-sm font-bold ${statusToChange.role.isActive === false ? 'text-rose-600' : 'text-emerald-600'}`}>
+                    {statusToChange.role.isActive !== false ? 'Active' : 'Inactive'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-slate-500">New Status:</span>
-                  <span className={`text-sm font-bold ${statusToChange.newStatus === 'Inactive' ? 'text-red-600' : 'text-emerald-600'}`}>
-                    {statusToChange.newStatus}
+                  <span className={`text-sm font-bold ${!statusToChange.newIsActive ? 'text-rose-600' : 'text-emerald-600'}`}>
+                    {statusToChange.newIsActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -545,11 +546,11 @@ export const RoleManagementScreen = () => {
               <div className="grid grid-cols-2 gap-3 mb-2">
                 <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className={`w-2 h-2 rounded-full ${(viewRole.status || 'Active') === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                    <div className={`w-2 h-2 rounded-full ${viewRole.isActive !== false ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                     <span className="text-xs font-medium text-slate-500">Status</span>
                   </div>
-                  <span className={`text-sm font-bold ${(viewRole.status || 'Active') === 'Active' ? 'text-emerald-700' : 'text-rose-700'}`}>
-                    {viewRole.status || 'Active'}
+                  <span className={`text-sm font-bold ${viewRole.isActive !== false ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    {viewRole.isActive !== false ? 'Active' : 'Inactive'}
                   </span>
                 </div>
                 <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
@@ -614,10 +615,30 @@ export const RoleManagementScreen = () => {
                       : NA
                   }
                 />
-                <DetailRow label="Last Active Date & Time" value={NA} />
-                <DetailRow label="Last Login Date & Time" value={NA} />
-                <DetailRow label="Created By" value={NA} />
-                <DetailRow label="Updated By" value={NA} />
+                <DetailRow
+                  label="Status"
+                  value={
+                    <span className={`font-bold ${viewRole.isActive !== false ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {viewRole.isActive !== false ? '🟢 Active' : '🔴 Inactive'}
+                    </span>
+                  }
+                />
+                <DetailRow
+                  label="Last Active Date & Time"
+                  value={
+                    viewRole.lastActiveAt
+                      ? <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-slate-400" />{format(new Date(viewRole.lastActiveAt), 'dd MMM yyyy, hh:mm a')}</span>
+                      : NA
+                  }
+                />
+                <DetailRow
+                  label="Last Login Date & Time"
+                  value={
+                    viewRole.lastLoginAt
+                      ? <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5 text-slate-400" />{format(new Date(viewRole.lastLoginAt), 'dd MMM yyyy, hh:mm a')}</span>
+                      : NA
+                  }
+                />
               </div>
             </div>
 

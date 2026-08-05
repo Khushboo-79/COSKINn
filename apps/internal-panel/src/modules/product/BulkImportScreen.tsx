@@ -1,22 +1,61 @@
 import { useState } from 'react';
-import { UploadCloud, FileSpreadsheet, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { UploadCloud, FileSpreadsheet, Loader2, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { productApi } from '../../core/api/product';
+import { toast } from 'sonner';
 
 export const BulkImportScreen = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [importResult, setImportResult] = useState<any>(null);
   
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDownloadTemplate = () => {
+    const headers = [
+      'slug', 'name', 'categoryId', 'status', 'description', 'manufacturerName',
+      'manufacturerAddress', 'countryOfOrigin', 'testReportRef', 'mrp', 'discountPrice',
+      'variantSku', 'variantName', 'variantMrp', 'variantPrice'
+    ].join(',');
+    
+    const blob = new Blob([headers + '\n'], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'coskinn-product-import-template.csv');
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     setIsUploading(true);
     setUploadStatus('idle');
+    setImportResult(null);
 
-    // Mock processing delay
-    setTimeout(() => {
+    try {
+      const result = await productApi.importCsv(files[0]);
+      setImportResult(result);
+      if (result.errors && result.errors.length > 0) {
+         setUploadStatus('error');
+         if (result.success > 0) {
+           toast.warning(`Imported ${result.success} products, but with ${result.failed} failures.`);
+         } else {
+           toast.error('Import failed completely. Check the error logs.');
+         }
+      } else {
+         setUploadStatus('success');
+         toast.success(`Successfully imported ${result.success} products!`);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to upload file');
+      setUploadStatus('error');
+      setImportResult({ errors: ['Network or Server Error occurred during upload.'] });
+    } finally {
       setIsUploading(false);
-      setUploadStatus('success');
-    }, 2000);
+      if (e.target) e.target.value = ''; // Reset input
+    }
   };
 
   return (
@@ -34,7 +73,10 @@ export const BulkImportScreen = () => {
             <p className="text-sm text-primary-700 mb-3">
               Ensure you use the exact column headers provided in the template. All Cosmetics Rules 2020 mandatory fields (HSN, GST, Manufacturer, Origin) are required for a successful import.
             </p>
-            <button className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors shadow-sm">
+            <button 
+              onClick={handleDownloadTemplate}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors shadow-sm"
+            >
               Download Template (.csv)
             </button>
           </div>
@@ -53,7 +95,7 @@ export const BulkImportScreen = () => {
             <div className="flex flex-col items-center justify-center">
               <Loader2 className="h-10 w-10 text-primary-500 animate-spin mb-3" />
               <p className="text-sm font-medium text-slate-900">Validating & Importing...</p>
-              <p className="text-xs text-slate-500 mt-1">Checking compliance fields</p>
+              <p className="text-xs text-slate-500 mt-1">Please do not close this page</p>
             </div>
           ) : uploadStatus === 'success' ? (
             <div className="flex flex-col items-center justify-center text-green-600">
@@ -61,8 +103,8 @@ export const BulkImportScreen = () => {
                 <CheckCircle2 className="h-8 w-8" />
               </div>
               <p className="text-base font-semibold">Import Successful!</p>
-              <p className="text-sm text-green-700 mt-1">24 products added to Drafts.</p>
-              <p className="text-xs text-slate-500 mt-4 underline">Upload another file</p>
+              <p className="text-sm text-green-700 mt-1">{importResult?.success || 0} products successfully added/updated.</p>
+              <p className="text-xs text-slate-500 mt-4 underline flex items-center justify-center"><RefreshCw className="h-3 w-3 mr-1" />Upload another file</p>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center">
@@ -75,15 +117,20 @@ export const BulkImportScreen = () => {
           )}
         </div>
         
-        {uploadStatus === 'error' && (
+        {uploadStatus === 'error' && importResult?.errors && (
           <div className="mt-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-red-800 mb-1">Import Failed: Validation Errors</p>
-              <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
-                <li>Row 4: Missing HSN Code</li>
-                <li>Row 12: Invalid GST Rate</li>
-              </ul>
+            <div className="w-full">
+              <p className="text-sm font-medium text-red-800 mb-1">
+                Import Finished with Errors ({importResult.success} Succeeded, {importResult.failed || importResult.errors.length} Failed)
+              </p>
+              <div className="max-h-40 overflow-y-auto mt-2">
+                <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
+                  {importResult.errors.map((err: string, i: number) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         )}

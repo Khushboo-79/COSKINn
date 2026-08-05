@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
 import { Search, Filter, ShoppingBag, Eye, Calendar, CreditCard, RefreshCcw, CheckSquare, ListPlus, Loader2 } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-
+import { PickListModal } from './components/PickListModal';
 export const OrderListScreen = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -26,6 +26,7 @@ export const OrderListScreen = () => {
 
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+  const [pickListData, setPickListData] = useState<any>(null);
 
   const { data: orders, isLoading, refetch } = useQuery({
     queryKey: ['admin', 'orders', filters],
@@ -56,11 +57,12 @@ export const OrderListScreen = () => {
       warehouseId: 'default-warehouse'
     }),
     onSuccess: (data) => {
-      toast.success('Action successful');
+      setPickListData(data);
+      toast.success('Pick list generated successfully!');
       setSelectedOrderIds([]); // Clear selection
     },
     onError: (err: any) => {
-      toast.error('An error occurred');
+      toast.error(err.response?.data?.message || 'An error occurred. Make sure all selected orders are PLACED.');
     }
   });
 
@@ -323,6 +325,11 @@ export const OrderListScreen = () => {
           </table>
         </div>
       </div>
+
+      {/* Modals */}
+      {pickListData && (
+        <PickListModal data={pickListData} onClose={() => setPickListData(null)} />
+      )}
     </div>
   );
 };

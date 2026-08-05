@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Put, Body, UseGuards, Query, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, UseGuards, Query, Param, Req } from '@nestjs/common';
 import { AdminService } from './admin.service';
+import { UpdateRoleDto } from './dto/update-role.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -21,18 +22,21 @@ export class AdminController {
   }
 
   @Post('roles')
-  createRole(@Body() body: { name: string, description?: string, panelAccess: string[] }) {
-    return this.adminService.createRole(body);
+  createRole(@Req() req: any, @Body() body: { name: string, description?: string, panelAccess: string[] }) {
+    const userId = req.user?.userId || req.user?.id || req.user?.sub;
+    return this.adminService.createRole(body, userId);
   }
 
   @Put('roles/:id')
-  updateRole(@Param('id') id: string, @Body() body: { name?: string, description?: string, panelAccess?: string[], isActive?: boolean }) {
-    return this.adminService.updateRole(id, body);
+  updateRole(@Param('id') id: string, @Req() req: any, @Body() body: UpdateRoleDto) {
+    const userId = req.user?.userId || req.user?.id || req.user?.sub;
+    return this.adminService.updateRole(id, body, userId);
   }
 
   @Put('roles/:id/panels')
-  updateRolePanelAccess(@Param('id') id: string, @Body() body: { panelAccess: string[] }) {
-    return this.adminService.updateRolePanelAccess(id, body.panelAccess);
+  updateRolePanelAccess(@Param('id') id: string, @Req() req: any, @Body() body: { panelAccess: string[] }) {
+    const userId = req.user?.userId || req.user?.id || req.user?.sub;
+    return this.adminService.updateRolePanelAccess(id, body.panelAccess, userId);
   }
 
   @Get('users')
