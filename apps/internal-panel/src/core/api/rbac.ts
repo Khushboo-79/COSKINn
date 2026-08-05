@@ -25,4 +25,12 @@ export const rbacApi = {
     const response = await apiClient.put(`/admin/config/users/${userId}/role`, data);
     return response.data;
   },
+  deleteUser: async (userId: string) => {
+    const response = await apiClient.delete(`/admin/config/users/${userId}`);
+    return response.data;
+  },
+  triggerUpgrade: async () => {
+    const response = await apiClient.post('/admin/membership/trigger-computation');
+    return response.data;
+  },
 };

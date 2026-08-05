@@ -48,6 +48,10 @@ const Bestsellers: React.FC = () => {
               className="absolute top-[20%] right-[-5%] w-[40%] h-[400px] bg-[#ffefb3] blur-[80px] rounded-full transform-gpu" 
               style={{ animation: 'float 12s ease-in-out infinite' }}
             ></div>
+
+            {/* Fade out edges to prevent rigid lines where blobs hit the container bounds */}
+            <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-[#ffe4eb] to-transparent z-[1]"></div>
+            <div className="absolute bottom-0 left-0 w-full h-[150px] bg-gradient-to-t from-[#ffe4eb] to-transparent z-[1]"></div>
           </div>
         </>
       )}
@@ -75,7 +79,7 @@ const Bestsellers: React.FC = () => {
         ) : (
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest mb-2 text-[#ff9aa8]">
+              <p className="text-[clamp(0.65rem,1.5vw,0.85rem)] font-bold uppercase tracking-[0.25em] mb-2 text-[#FF7F50]">
                 The juicy hits
               </p>
               <h2 className="text-4xl md:text-5xl font-extrabold text-[#2a2a2a] font-display">
@@ -116,6 +120,7 @@ const Bestsellers: React.FC = () => {
                   <img 
                     src={product.image} 
                     alt={product.name}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />

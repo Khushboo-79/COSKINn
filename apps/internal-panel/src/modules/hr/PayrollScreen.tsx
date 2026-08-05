@@ -44,7 +44,7 @@ Total Gross: ₹${emp.salary.toLocaleString()}
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Payroll Processing</h1>
           <p className="text-slate-500 text-sm mt-1">Review department budgets and generate employee salary slips.</p>
@@ -53,7 +53,7 @@ Total Gross: ₹${emp.salary.toLocaleString()}
           type="month" 
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(e.target.value)}
-          className="border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+          className="border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto"
         />
       </div>
 
@@ -91,7 +91,7 @@ Total Gross: ₹${emp.salary.toLocaleString()}
 
         {/* Employee Slips */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
               <h2 className="font-bold text-slate-800">Salary Slips</h2>
               <span className="text-xs font-medium text-slate-500 px-2 py-1 bg-white border border-slate-200 rounded">
@@ -109,7 +109,7 @@ Total Gross: ₹${emp.salary.toLocaleString()}
                 No employees to process payroll for.
               </div>
             ) : (
-              <table className="w-full text-left">
+              <table className="w-full text-left min-w-[600px]">
                 <thead className="bg-white border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase">
                   <tr>
                     <th className="py-3 px-6">Employee</th>

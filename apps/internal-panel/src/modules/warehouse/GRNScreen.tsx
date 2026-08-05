@@ -17,6 +17,7 @@ export const GRNScreen = () => {
   });
 
   const pendingPOs = pos?.filter((po: any) => ['ISSUED', 'PARTIAL'].includes(po.status)) || [];
+  const pendingPOs = pos?.filter((po: any) => ['DRAFT', 'ISSUED', 'PARTIAL'].includes(po.status)) || [];
 
   const handleSelectPO = (po: any) => {
     setSelectedPO(po);

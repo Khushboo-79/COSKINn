@@ -60,14 +60,14 @@ export const BannerManagementScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Banners</h1>
           <p className="text-slate-500 text-sm mt-1">Manage storefront banners and hero images.</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#FF3E7F] transition-colors"
+          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#FF3E7F] transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> Upload Banner
         </button>
@@ -168,17 +168,17 @@ export const BannerManagementScreen = () => {
 
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-[#FF3E7F]/10 pt-4">
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-[#FF3E7F]/10 pt-4">
             <button 
               onClick={() => setIsAdding(false)}
-              className="px-4 py-2 text-sm font-medium text-[#FF3E7F] bg-white border border-[#FF3E7F]/20 rounded-lg hover:bg-[#FF3E7F]/5"
+              className="px-4 py-2 text-sm font-medium text-[#FF3E7F] bg-white border border-[#FF3E7F]/20 rounded-lg hover:bg-[#FF3E7F]/5 w-full sm:w-auto"
             >
               Cancel
             </button>
             <button 
               onClick={() => addMutation.mutate()}
               disabled={!title || !imageUrl || addMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#FF3E7F] disabled:opacity-50 flex items-center"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#FF3E7F] disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
             >
               {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Publish Banner

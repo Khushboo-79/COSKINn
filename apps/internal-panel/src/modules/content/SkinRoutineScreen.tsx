@@ -56,14 +56,14 @@ export const SkinRoutineScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Skin Routine Articles</h1>
           <p className="text-slate-500 text-sm mt-1">Author multi-step skin routine guides.</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-indigo-700 transition-colors"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> Write Routine
         </button>
@@ -71,11 +71,11 @@ export const SkinRoutineScreen = () => {
 
       {isAdding && (
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
-          <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-100 pb-4 gap-4">
             <h3 className="text-lg font-bold text-slate-900 flex items-center">
               <Droplets className="h-5 w-5 mr-2 text-indigo-500" /> New Routine Guide
             </h3>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input 
                   type="checkbox" 
@@ -88,7 +88,7 @@ export const SkinRoutineScreen = () => {
               <button 
                 onClick={() => addMutation.mutate()}
                 disabled={!title || !contentJson || addMutation.isPending}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-indigo-700 disabled:opacity-50"
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 disabled:opacity-50 w-full sm:w-auto"
               >
                 {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Save Routine
@@ -165,8 +165,8 @@ export const SkinRoutineScreen = () => {
           <p className="font-medium text-slate-900">No skin routine articles found.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <table className="w-full text-left">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
+          <table className="w-full text-left min-w-[600px]">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="py-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Routine Title</th>

@@ -15,9 +15,12 @@ export const SystemSettingsScreen = () => {
     walletExpiryDays: 365,
     minOrderForCod: 500,
     maxCodAmount: 10000,
-    membershipBronzeThreshold: 0,
-    membershipSilverThreshold: 5000,
-    membershipGoldThreshold: 15000
+    membershipMemberThreshold: 1500,
+    membershipGoldThreshold: 4000,
+    membershipPlatinumThreshold: 8000,
+    signUpBonusAmount: 200,
+    maxRewardPointRedemptionPercent: 10,
+    rewardPointEarningRate: 1
   });
 
   const { data: remoteSettings, isLoading } = useQuery({
@@ -30,7 +33,7 @@ export const SystemSettingsScreen = () => {
     if (remoteSettings) {
       setSettings(prev => ({
         ...prev,
-        maxCodAmount: remoteSettings.maxCodAmount || prev.maxCodAmount
+        ...remoteSettings
       }));
     }
   }, [remoteSettings]);
@@ -70,7 +73,7 @@ export const SystemSettingsScreen = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="w-full mx-auto space-y-6 pb-12">
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 flex items-center">
@@ -82,7 +85,7 @@ export const SystemSettingsScreen = () => {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="flex items-center px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50"
+          className="flex items-center px-6 py-2.5 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-50"
         >
           {isSaving ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : <Save className="h-5 w-5 mr-2" />}
           Save Changes
@@ -168,15 +171,11 @@ export const SystemSettingsScreen = () => {
         <div className="md:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="bg-slate-50 border-b border-slate-200 px-6 py-4 flex items-center">
             <Wallet className="h-5 w-5 text-emerald-500 mr-2" />
-            <h2 className="font-bold text-slate-800">Wallet & Membership Tiers</h2>
+            <h2 className="font-bold text-slate-800">Loyalty Ecosystem (PRD Rules)</h2>
           </div>
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="space-y-4">
-              <div className="flex items-start bg-indigo-50 text-indigo-800 p-4 rounded-xl border border-indigo-100 mb-4">
-                <Info className="h-5 w-5 mr-3 shrink-0 mt-0.5" />
-                <p className="text-sm">These rules automatically evaluate customer spending and assign tiers via a scheduled background job.</p>
-              </div>
-              
+              <h3 className="text-sm uppercase tracking-wider font-bold text-slate-400 mb-2">Wallet & Bonus</h3>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Wallet Expiry (Days)</label>
                 <input 
@@ -187,38 +186,75 @@ export const SystemSettingsScreen = () => {
                   className="w-full p-2 border-2 border-slate-200 rounded-lg focus:border-indigo-500 font-mono" 
                 />
               </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Sign-up Bonus (₹)</label>
+                <input 
+                  type="number" 
+                  name="signUpBonusAmount"
+                  value={settings.signUpBonusAmount}
+                  onChange={handleChange}
+                  className="w-full p-2 border-2 border-slate-200 rounded-lg focus:border-indigo-500 font-mono" 
+                />
+              </div>
             </div>
 
             <div className="space-y-4">
+              <h3 className="text-sm uppercase tracking-wider font-bold text-slate-400 mb-2">Membership Tiers</h3>
               <div>
-                <label className="block text-sm font-bold text-amber-700 mb-1">Bronze Tier Minimum Spend (₹)</label>
+                <label className="block text-sm font-bold text-slate-600 mb-1">Member Tier Min Spend (₹)</label>
                 <input 
                   type="number" 
-                  name="membershipBronzeThreshold"
-                  value={settings.membershipBronzeThreshold}
+                  name="membershipMemberThreshold"
+                  value={settings.membershipMemberThreshold}
                   onChange={handleChange}
-                  className="w-full p-2 border-2 border-amber-200 rounded-lg focus:border-amber-500 bg-amber-50 font-mono" 
+                  className="w-full p-2 border-2 border-slate-200 rounded-lg focus:border-slate-400 bg-slate-50 font-mono" 
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-500 mb-1">Silver Tier Minimum Spend (₹)</label>
-                <input 
-                  type="number" 
-                  name="membershipSilverThreshold"
-                  value={settings.membershipSilverThreshold}
-                  onChange={handleChange}
-                  className="w-full p-2 border-2 border-slate-300 rounded-lg focus:border-slate-500 bg-slate-50 font-mono" 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-amber-500 mb-1">Gold Tier Minimum Spend (₹)</label>
+                <label className="block text-sm font-bold text-amber-600 mb-1">Gold Tier Min Spend (₹)</label>
                 <input 
                   type="number" 
                   name="membershipGoldThreshold"
                   value={settings.membershipGoldThreshold}
                   onChange={handleChange}
-                  className="w-full p-2 border-2 border-amber-300 rounded-lg focus:border-amber-500 bg-yellow-50 font-mono" 
+                  className="w-full p-2 border-2 border-amber-200 rounded-lg focus:border-amber-500 bg-amber-50 font-mono" 
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-indigo-600 mb-1">Platinum Tier Min Spend (₹)</label>
+                <input 
+                  type="number" 
+                  name="membershipPlatinumThreshold"
+                  value={settings.membershipPlatinumThreshold}
+                  onChange={handleChange}
+                  className="w-full p-2 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 bg-indigo-50 font-mono" 
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm uppercase tracking-wider font-bold text-slate-400 mb-2">Reward Points</h3>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Max Point Redemption Cap (%)</label>
+                <input 
+                  type="number" 
+                  name="maxRewardPointRedemptionPercent"
+                  value={settings.maxRewardPointRedemptionPercent}
+                  onChange={handleChange}
+                  className="w-full p-2 border-2 border-slate-200 rounded-lg focus:border-indigo-500 font-mono" 
+                  placeholder="e.g. 10 for 10% of order value"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Point Earning Rate (Points/₹)</label>
+                <input 
+                  type="number" 
+                  name="rewardPointEarningRate"
+                  value={settings.rewardPointEarningRate}
+                  onChange={handleChange}
+                  className="w-full p-2 border-2 border-slate-200 rounded-lg focus:border-indigo-500 font-mono" 
+                />
+                <p className="text-xs text-slate-500 mt-1">Multipliers (1.5x, 2x, 3x) apply automatically based on tiers during birthday month.</p>
               </div>
             </div>
           </div>
