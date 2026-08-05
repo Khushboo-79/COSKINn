@@ -2,7 +2,7 @@ import { Megaphone, TrendingUp, Users, DollarSign, Activity } from 'lucide-react
 
 export const MarketingDashboardScreen = () => {
   const metrics = [
-    { label: 'Active Campaigns', value: '12', change: '+2 this week', icon: Megaphone, color: 'text-indigo-600', bg: 'bg-indigo-100' },
+    { label: 'Active Campaigns', value: '12', change: '+2 this week', icon: Megaphone, color: 'text-[#FF3E7F]', bg: 'bg-[#FF3E7F]/10' },
     { label: 'Total Reach', value: '1.2M', change: '+15%', icon: Users, color: 'text-blue-600', bg: 'bg-blue-100' },
     { label: 'ROI (30 Days)', value: '324%', change: '+12%', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-100' },
     { label: 'Ad Spend', value: '$45,230', change: '-5%', icon: DollarSign, color: 'text-rose-600', bg: 'bg-rose-100' },
@@ -10,7 +10,7 @@ export const MarketingDashboardScreen = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
             <Activity className="h-6 w-6 text-indigo-500" />

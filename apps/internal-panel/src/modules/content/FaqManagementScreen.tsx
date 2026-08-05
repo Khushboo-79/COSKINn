@@ -67,14 +67,14 @@ export const FaqManagementScreen = () => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">FAQ Management</h1>
           <p className="text-slate-500 text-sm mt-1">Manage Frequently Asked Questions for the storefront.</p>
         </div>
         <button 
           onClick={() => { resetForm(); setIsAdding(true); }}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-indigo-700 transition-colors"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> Add FAQ
         </button>
@@ -140,17 +140,17 @@ export const FaqManagementScreen = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-indigo-100 pt-4">
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-indigo-100 pt-4">
             <button 
               onClick={resetForm}
-              className="px-4 py-2 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50"
+              className="px-4 py-2 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50 w-full sm:w-auto"
             >
               Cancel
             </button>
             <button 
               onClick={() => editingId ? updateMutation.mutate() : addMutation.mutate()}
               disabled={!question || !answer || addMutation.isPending || updateMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center"
+              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
             >
               {addMutation.isPending || updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               {editingId ? 'Update FAQ' : 'Save FAQ'}
@@ -189,7 +189,7 @@ export const FaqManagementScreen = () => {
                         <h4 className="font-bold text-slate-900 text-base">{faq.question}</h4>
                         <p className="text-slate-600 text-sm mt-2">{faq.answer}</p>
                       </div>
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => handleEdit(faq)}
                           className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"

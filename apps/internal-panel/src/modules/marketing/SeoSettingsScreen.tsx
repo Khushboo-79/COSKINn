@@ -71,7 +71,7 @@ export const SeoSettingsScreen = () => {
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 maxLength={60}
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F] bg-white"
               />
               <div className="text-right text-xs text-slate-400 mt-1">{title.length}/60 chars</div>
             </div>
@@ -83,7 +83,7 @@ export const SeoSettingsScreen = () => {
                 onChange={e => setDescription(e.target.value)}
                 rows={3}
                 maxLength={160}
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F] bg-white"
               />
               <div className="text-right text-xs text-slate-400 mt-1">{description.length}/160 chars</div>
             </div>
@@ -95,15 +95,15 @@ export const SeoSettingsScreen = () => {
                 value={keywords}
                 onChange={e => setKeywords(e.target.value)}
                 placeholder="skincare, cosmetics, fruit infused"
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F] bg-white"
               />
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex justify-end">
+            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-end">
               <button 
                 onClick={() => updateMutation.mutate()}
                 disabled={updateMutation.isPending}
-                className="px-6 py-2 font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center shadow-sm"
+                className="px-6 py-2 font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#FF3E7F] disabled:opacity-50 flex items-center justify-center shadow-sm w-full sm:w-auto"
               >
                 {updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Save SEO Settings

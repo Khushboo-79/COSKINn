@@ -20,7 +20,7 @@ export class CategoryService {
     return this.prisma.category.findMany({
       where: whereClause,
       include: { subcategories: true },
-      orderBy: { name: 'asc' },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

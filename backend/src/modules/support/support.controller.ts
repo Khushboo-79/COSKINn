@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { SupportService } from './support.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -67,6 +67,20 @@ export class SupportController {
   @Get('admin/tickets/stats/sla')
   getSlaStats() {
     return this.supportService.getSlaStats();
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN', 'SUPPORT')
+  @Get('admin/settings')
+  getSettings() {
+    return this.supportService.getSettings();
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN', 'SUPPORT')
+  @Put('admin/settings')
+  updateSettings(@Body() body: any) {
+    return this.supportService.updateSettings(body);
   }
 }
 

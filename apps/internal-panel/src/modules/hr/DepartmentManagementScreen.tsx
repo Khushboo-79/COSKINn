@@ -10,7 +10,7 @@ export const DepartmentManagementScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Departments</h1>
           <p className="text-slate-500 text-sm mt-1">Overview of organizational structure and department-level headcount.</p>

@@ -10,8 +10,9 @@ import { Step4Media } from './Step4Media';
 import { Step5SeoContent } from './Step5SeoContent';
 import { Step6ReviewSubmit } from './Step6ReviewSubmit';
 import { Check, ChevronRight, Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { productApi } from '../../../core/api/product';
 
 // Comprehensive schema for all wizard steps
@@ -47,6 +48,7 @@ const STEPS = [
 
 export const ProductWizardShell = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [currentStep, setCurrentStep] = useState(1);
 
   const methods = useForm<any>({
@@ -58,6 +60,35 @@ export const ProductWizardShell = () => {
   });
 
   const { handleSubmit, trigger } = methods;
+
+  const { data: productData, isLoading } = useQuery({
+    queryKey: ['product', id],
+    queryFn: () => productApi.getProduct(id!),
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (productData) {
+      methods.reset({
+        name: productData.name,
+        categoryId: productData.categoryId,
+        brandId: productData.brandId || '',
+        description: productData.description || '',
+        hsnCode: productData.hsnCode || '',
+        gstRate: productData.gstRate || 18,
+        claims: productData.claims || '',
+        warnings: productData.warnings || '',
+        variants: productData.variants?.map((v: any) => ({
+          sku: v.sku,
+          size: v.size || '',
+          mrp: v.mrp,
+          price: v.price,
+          shadeName: v.shadeName || '',
+          shadeHex: v.shadeHex || '',
+        })) || []
+      });
+    }
+  }, [productData, methods]);
 
   const nextStep = async () => {
     // Validate current step fields before moving on
@@ -99,6 +130,17 @@ export const ProductWizardShell = () => {
     }
   });
 
+  const updateMutation = useMutation({
+    mutationFn: productApi.updateProduct,
+    onSuccess: () => {
+      toast.success('Product updated successfully!');
+      navigate('/product');
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Failed to update product. Please try again.');
+    }
+  });
+
   const onSubmit = (data: any) => {
     console.log("Submitting Product:", data);
     
@@ -119,13 +161,19 @@ export const ProductWizardShell = () => {
       productLine: 'BOTH'
     };
 
-    createMutation.mutate(dto);
+    if (id) {
+      updateMutation.mutate({ id, data: dto });
+    } else {
+      createMutation.mutate(dto);
+    }
   };
 
   return (
     <FormProvider {...methods}>
       <div className="max-w-4xl mx-auto py-6">
         {/* Stepper UI */}
+        {isLoading && <div className="flex items-center justify-center p-12"><Loader2 className="h-8 w-8 animate-spin text-primary-500" /></div>}
+        <div className={isLoading ? 'hidden' : ''}>
         <div className="mb-8">
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full z-0"></div>
@@ -191,6 +239,7 @@ export const ProductWizardShell = () => {
             {currentStep === STEPS.length ? 'Submit Product' : 'Continue'}
             {currentStep < STEPS.length && <ChevronRight className="h-4 w-4 ml-2" />}
           </button>
+        </div>
         </div>
       </div>
     </FormProvider>

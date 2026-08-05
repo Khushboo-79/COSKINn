@@ -40,43 +40,62 @@ export class InventoryService {
     });
   }
 
+
   async getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE') {
-    let skuList: string[] | undefined = undefined;
-
-    if (platform) {
-      const variants = await this.prisma.productVariant.findMany({
-        where: { product: { category: { platform } } },
-        select: { sku: true }
-      });
-      skuList = variants.map(v => v.sku);
-    }
-
-    const stocks = await this.prisma.inventoryStock.findMany({
-      where: skuList ? { sku: { in: skuList } } : undefined,
-      include: {
-        warehouse: true,
-      },
+    // 1. Fetch all real product variants to serve as the source of truth for the ledger
+    const variants = await this.prisma.productVariant.findMany({
+      where: platform ? { product: { category: { platform } } } : undefined,
+      include: { product: true }
     });
 
-    // Grouping by SKU for the global stock view
-    const globalStockMap = new Map();
+    const skuList = variants.map(v => v.sku);
+
+    // 2. Fetch stock only for these real SKUs
+    const stocks = await this.prisma.inventoryStock.findMany({
+      where: { sku: { in: skuList } },
+      include: { warehouse: true },
+    });
+
+    // Fetch damaged totals
+    const damagedTotals = await this.prisma.damagedStock.groupBy({
+      by: ['sku'],
+      _sum: { quantity: true },
+    });
+    const damagedMap = new Map(damagedTotals.map(d => [d.sku, d._sum.quantity || 0]));
+
+    // Fetch expired totals
+    const expiredTotals = await this.prisma.expiredStock.groupBy({
+      by: ['sku'],
+      _sum: { quantity: true },
+    });
+    const expiredMap = new Map(expiredTotals.map(e => [e.sku, e._sum.quantity || 0]));
+
+    // 3. Group stock by SKU
+    const stockBySku = new Map();
     for (const stock of stocks) {
-      if (!globalStockMap.has(stock.sku)) {
-        globalStockMap.set(stock.sku, {
-          sku: stock.sku,
-          totalQuantity: 0,
-          totalReservedQty: 0,
-          warehouses: []
-        });
+      if (!stockBySku.has(stock.sku)) {
+        stockBySku.set(stock.sku, { totalQuantity: 0, totalReservedQty: 0, warehouses: [] });
       }
-      
-      const gStock = globalStockMap.get(stock.sku);
+      const gStock = stockBySku.get(stock.sku);
       gStock.totalQuantity += stock.quantity;
       gStock.totalReservedQty += stock.reservedQty;
       gStock.warehouses.push(stock.warehouse.name);
     }
 
-    return Array.from(globalStockMap.values());
+    // 4. Map variants to global stock view
+    // This ensures all products appear in the ledger, even if they have 0 stock
+    return variants.map(v => {
+      const stock = stockBySku.get(v.sku) || { totalQuantity: 0, totalReservedQty: 0, warehouses: [] };
+      return {
+        sku: v.sku,
+        name: v.product?.name || 'Unknown Product',
+        totalQuantity: stock.totalQuantity,
+        totalReservedQty: stock.totalReservedQty,
+        damaged: damagedMap.get(v.sku) || 0,
+        expired: expiredMap.get(v.sku) || 0,
+        warehouses: stock.warehouses
+      };
+    });
   }
 
   async getStockForSku(sku: string) {
@@ -334,22 +353,60 @@ export class InventoryService {
   }
 
   async reportDamaged(dto: import('./dto/inventory.dto').DamagedStockDto) {
-    return this.prisma.damagedStock.create({
-      data: {
-        sku: dto.sku,
-        quantity: dto.quantity,
-        reason: dto.reason,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const damaged = await tx.damagedStock.create({
+        data: {
+          sku: dto.sku,
+          quantity: dto.quantity,
+          reason: dto.reason,
+        },
+      });
+
+      await tx.inventoryStock.update({
+        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
+        data: { quantity: { decrement: dto.quantity } }
+      });
+
+      await tx.stockMovement.create({
+        data: {
+          warehouseId: dto.warehouseId,
+          sku: dto.sku,
+          type: 'OUT',
+          quantity: dto.quantity,
+          reference: `DAMAGED-${damaged.id}`
+        }
+      });
+
+      return damaged;
     });
   }
 
   async reportExpired(dto: import('./dto/inventory.dto').ExpiredStockDto) {
-    return this.prisma.expiredStock.create({
-      data: {
-        sku: dto.sku,
-        quantity: dto.quantity,
-        batchNo: dto.batchNo,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const expired = await tx.expiredStock.create({
+        data: {
+          sku: dto.sku,
+          quantity: dto.quantity,
+          batchNo: dto.batchNo,
+        },
+      });
+
+      await tx.inventoryStock.update({
+        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
+        data: { quantity: { decrement: dto.quantity } }
+      });
+
+      await tx.stockMovement.create({
+        data: {
+          warehouseId: dto.warehouseId,
+          sku: dto.sku,
+          type: 'OUT',
+          quantity: dto.quantity,
+          reference: `EXPIRED-${expired.id}`
+        }
+      });
+
+      return expired;
     });
   }
 
@@ -576,4 +633,24 @@ export class InventoryService {
       orderBy: { createdAt: 'desc' }
     });
   }
+  async getDetailedStock() {
+    const variants = await this.prisma.productVariant.findMany({
+      include: { product: true }
+    });
+    const skuNameMap = new Map(variants.map(v => [v.sku, v.product?.name || 'Unknown Product']));
+
+    const stocks = await this.prisma.inventoryStock.findMany({
+      where: { sku: { in: variants.map(v => v.sku) } },
+      include: { warehouse: true }
+    });
+
+    return stocks.map(s => ({
+      sku: s.sku,
+      name: skuNameMap.get(s.sku),
+      warehouseName: s.warehouse.name,
+      available: s.quantity,
+      reserved: s.reservedQty
+    }));
+  }
+
 }
