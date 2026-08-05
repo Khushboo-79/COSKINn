@@ -90,7 +90,7 @@ export const BlogEditorScreen = () => {
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 transition-colors w-full sm:w-auto"
+          className="bg-[#FF7F50] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#FF7F50]/90 transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> Write New Post
         </button>
@@ -106,14 +106,14 @@ export const BlogEditorScreen = () => {
                   type="checkbox" 
                   checked={published}
                   onChange={(e) => setPublished(e.target.checked)}
-                  className="rounded text-indigo-600 focus:ring-indigo-500" 
+                  className="rounded text-[#FF7F50] focus:ring-[#FF7F50]" 
                 />
                 <span className="text-sm font-medium text-slate-700">Publish immediately</span>
               </label>
               <button 
                 onClick={() => addMutation.mutate()}
                 disabled={!title || !contentJson || addMutation.isPending}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 disabled:opacity-50 w-full sm:w-auto"
+                className="bg-[#FF7F50] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#FF7F50]/90 disabled:opacity-50 w-full sm:w-auto"
               >
                 {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Save Post
@@ -130,7 +130,7 @@ export const BlogEditorScreen = () => {
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="e.g. 5 Benefits of Vitamin C"
-                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 text-lg font-medium"
+                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] text-lg font-medium"
                 />
               </div>
 
@@ -141,7 +141,7 @@ export const BlogEditorScreen = () => {
                   onChange={e => setContentJson(e.target.value)}
                   placeholder="Write your article content here... (Supports Markdown)"
                   rows={15}
-                  className="w-full border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 font-mono text-sm"
+                  className="w-full border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-[#FF7F50] font-mono text-sm"
                 />
               </div>
             </div>
@@ -153,7 +153,7 @@ export const BlogEditorScreen = () => {
                   type="text" 
                   value={slug || generateSlug(title)}
                   onChange={e => setSlug(e.target.value)}
-                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
                 />
               </div>
 
@@ -162,7 +162,7 @@ export const BlogEditorScreen = () => {
                 <select 
                   value={segment}
                   onChange={e => setSegment(e.target.value)}
-                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
                 >
                   <option value="BOTH">All / Both</option>
                   <option value="COSMETICS">Cosmetics Only</option>
@@ -190,7 +190,7 @@ export const BlogEditorScreen = () => {
                   />
                   {uploading && (
                     <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                      <Loader2 className="h-5 w-5 text-indigo-600 animate-spin" />
+                      <Loader2 className="h-5 w-5 text-[#FF7F50] animate-spin" />
                     </div>
                   )}
                 </div>
@@ -205,7 +205,7 @@ export const BlogEditorScreen = () => {
                     value={seoTitle}
                     onChange={e => setSeoTitle(e.target.value)}
                     placeholder={title}
-                    className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
                   />
                 </div>
                 <div>
@@ -214,7 +214,7 @@ export const BlogEditorScreen = () => {
                     value={seoDesc}
                     onChange={e => setSeoDesc(e.target.value)}
                     rows={2}
-                    className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
                   />
                 </div>
               </div>
@@ -263,7 +263,7 @@ export const BlogEditorScreen = () => {
                     {blog.segment}
                   </td>
                   <td className="py-4 px-6 text-right">
-                    <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
+                    <button className="p-2 text-slate-400 hover:text-[#FF7F50] transition-colors">
                       <Edit className="h-4 w-4" />
                     </button>
                     <button 

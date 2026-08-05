@@ -4,81 +4,83 @@ export declare class MarketingController {
     constructor(marketingService: MarketingService);
     getPublicBanners(): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        imageUrl: string;
-        sortOrder: number;
-        startDate: Date | null;
-        endDate: Date | null;
         title: string;
+        imageUrl: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
+        isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
+        sortOrder: number;
+        createdAt: Date;
+        updatedAt: Date;
     }[]>;
     getBanners(): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        imageUrl: string;
-        sortOrder: number;
-        startDate: Date | null;
-        endDate: Date | null;
         title: string;
+        imageUrl: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
+        isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
+        sortOrder: number;
+        createdAt: Date;
+        updatedAt: Date;
     }[]>;
     createBanner(data: any): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        imageUrl: string;
-        sortOrder: number;
-        startDate: Date | null;
-        endDate: Date | null;
         title: string;
+        imageUrl: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
+        isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
+        sortOrder: number;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     updateBanner(id: string, data: any): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        imageUrl: string;
-        sortOrder: number;
-        startDate: Date | null;
-        endDate: Date | null;
         title: string;
+        imageUrl: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
+        isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
+        sortOrder: number;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     deleteBanner(id: string): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        imageUrl: string;
-        sortOrder: number;
-        startDate: Date | null;
-        endDate: Date | null;
         title: string;
+        imageUrl: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
+        isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
+        sortOrder: number;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     getCoupons(): Promise<{
         id: string;
         isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         code: string;
+        description: string | null;
         discountType: string;
         discountValue: number;
         minPurchase: number | null;
@@ -86,16 +88,16 @@ export declare class MarketingController {
         usageLimit: number | null;
         usedCount: number;
         perUserLimit: number | null;
-        startDate: Date | null;
-        endDate: Date | null;
     }[]>;
     createCoupon(data: any): Promise<{
         id: string;
         isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         code: string;
+        description: string | null;
         discountType: string;
         discountValue: number;
         minPurchase: number | null;
@@ -103,16 +105,16 @@ export declare class MarketingController {
         usageLimit: number | null;
         usedCount: number;
         perUserLimit: number | null;
-        startDate: Date | null;
-        endDate: Date | null;
     }>;
     updateCoupon(id: string, data: any): Promise<{
         id: string;
         isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         code: string;
+        description: string | null;
         discountType: string;
         discountValue: number;
         minPurchase: number | null;
@@ -120,16 +122,16 @@ export declare class MarketingController {
         usageLimit: number | null;
         usedCount: number;
         perUserLimit: number | null;
-        startDate: Date | null;
-        endDate: Date | null;
     }>;
     deleteCoupon(id: string): Promise<{
         id: string;
         isActive: boolean;
+        startDate: Date | null;
+        endDate: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
         code: string;
+        description: string | null;
         discountType: string;
         discountValue: number;
         minPurchase: number | null;
@@ -137,17 +139,15 @@ export declare class MarketingController {
         usageLimit: number | null;
         usedCount: number;
         perUserLimit: number | null;
-        startDate: Date | null;
-        endDate: Date | null;
     }>;
     getCampaigns(): Promise<{
         id: string;
+        targetSegment: import("@prisma/client").$Enums.ProductLine;
         createdAt: Date;
         name: string;
-        status: string;
         type: string;
+        status: string;
         audience: string | null;
-        targetSegment: import("@prisma/client").$Enums.ProductLine;
         scheduledAt: Date | null;
     }[]>;
     createCampaign(data: {
@@ -157,35 +157,49 @@ export declare class MarketingController {
         scheduledAt?: Date;
     }): Promise<{
         id: string;
+        targetSegment: import("@prisma/client").$Enums.ProductLine;
         createdAt: Date;
         name: string;
-        status: string;
         type: string;
+        status: string;
         audience: string | null;
-        targetSegment: import("@prisma/client").$Enums.ProductLine;
         scheduledAt: Date | null;
     }>;
     getAbandonedCarts(recovered?: string): Promise<({
         user: {
             id: string;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
             email: string | null;
             phone: string | null;
             passwordHash: string | null;
             firstName: string | null;
             lastName: string | null;
-            isActive: boolean;
             isDeleted: boolean;
             deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
             membershipTierId: string | null;
         };
     } & {
         id: string;
         createdAt: Date;
-        cartId: string;
-        userId: string;
         recovered: boolean;
         emailSentAt: Date | null;
+        userId: string;
+        cartId: string;
     })[]>;
+    getDashboard(): Promise<{
+        metrics: {
+            label: string;
+            value: string;
+            change: string;
+            icon: string;
+            color: string;
+            bg: string;
+        }[];
+        topCampaigns: {
+            name: string;
+            performance: number;
+        }[];
+    }>;
 }

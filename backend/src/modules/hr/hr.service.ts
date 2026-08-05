@@ -11,6 +11,7 @@ export class HrService {
   // --- Employees ---
   async getEmployees() {
     return this.prisma.employee.findMany({
+      include: { attendance: true },
       orderBy: { createdAt: 'desc' }
     });
   }
@@ -47,24 +48,37 @@ export class HrService {
     const onLeave = await this.prisma.employee.count({ where: { status: 'On Leave' } });
     const pendingLeaveRequests = await this.prisma.leaveRequest.count({ where: { status: 'Pending' } });
     
-    // Monthly payroll roughly from salary sum
-    const allEmps = await this.prisma.employee.findMany({ select: { salary: true } });
-    const totalPayroll = allEmps.reduce((acc, e) => acc + e.salary, 0) / 12; // Assuming 'salary' is annual CTC, or monthly. We'll treat it as monthly for the UI. Let's say salary is CTC, then /12. Or just use salary as monthly. Let's use it as monthly.
-    const totalMonthlyPayroll = allEmps.reduce((acc, e) => acc + e.salary, 0);
+    // Monthly payroll
+    const allEmps = await this.prisma.employee.findMany({ select: { salary: true, joinDate: true } });
+    const totalMonthlyPayroll = allEmps.reduce((acc, e) => acc + (e.salary || 0), 0);
 
     const departments = await this.prisma.employee.groupBy({ by: ['department'] });
 
+    // New Hires this month
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const newHiresThisMonth = allEmps.filter(e => new Date(e.joinDate) >= thirtyDaysAgo).length;
+
+    // Avg Tenure
+    let totalTenureMs = 0;
+    const now = new Date().getTime();
+    allEmps.forEach(e => {
+      totalTenureMs += (now - new Date(e.joinDate).getTime());
+    });
+    const avgTenureYears = allEmps.length > 0 ? (totalTenureMs / allEmps.length) / (1000 * 60 * 60 * 24 * 365.25) : 0;
+
     return {
       totalEmployees,
-      activeToday: totalEmployees > 0 && activeToday === 0 ? totalEmployees - onLeave : activeToday, // fake it if no attendance taken
+      activeToday,
       onLeave,
       pendingLeaveRequests,
-      newHiresThisMonth: 3, // mock
-      totalPayroll: totalMonthlyPayroll || 1850000,
+      newHiresThisMonth,
+      totalPayroll: totalMonthlyPayroll,
       departments: departments.length,
-      avgTenure: '2.4 years'
+      avgTenure: avgTenureYears.toFixed(1) + ' years'
     };
   }
+
 
   // --- Leaves ---
   async getLeaveRequests() {

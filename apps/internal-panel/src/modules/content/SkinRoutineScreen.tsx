@@ -63,7 +63,7 @@ export const SkinRoutineScreen = () => {
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 transition-colors w-full sm:w-auto"
+          className="bg-[#FF7F50] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#FF7F50]/90 transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> Write Routine
         </button>
@@ -73,7 +73,7 @@ export const SkinRoutineScreen = () => {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-100 pb-4 gap-4">
             <h3 className="text-lg font-bold text-slate-900 flex items-center">
-              <Droplets className="h-5 w-5 mr-2 text-indigo-500" /> New Routine Guide
+              <Droplets className="h-5 w-5 mr-2 text-[#FF7F50]" /> New Routine Guide
             </h3>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -81,14 +81,14 @@ export const SkinRoutineScreen = () => {
                   type="checkbox" 
                   checked={published}
                   onChange={(e) => setPublished(e.target.checked)}
-                  className="rounded text-indigo-600 focus:ring-indigo-500" 
+                  className="rounded text-[#FF7F50] focus:ring-[#FF7F50]" 
                 />
                 <span className="text-sm font-medium text-slate-700">Publish immediately</span>
               </label>
               <button 
                 onClick={() => addMutation.mutate()}
                 disabled={!title || !contentJson || addMutation.isPending}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 disabled:opacity-50 w-full sm:w-auto"
+                className="bg-[#FF7F50] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#FF7F50]/90 disabled:opacity-50 w-full sm:w-auto"
               >
                 {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Save Routine
@@ -105,7 +105,7 @@ export const SkinRoutineScreen = () => {
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="e.g. The 3-Step Morning Glow Routine"
-                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 text-lg font-medium"
+                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] text-lg font-medium"
                 />
               </div>
 
@@ -116,7 +116,7 @@ export const SkinRoutineScreen = () => {
                   onChange={e => setContentJson(e.target.value)}
                   placeholder="Step 1: Cleanse with... &#10;Step 2: Apply serum... &#10;Step 3: Moisturize with..."
                   rows={15}
-                  className="w-full border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 font-mono text-sm"
+                  className="w-full border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-[#FF7F50] font-mono text-sm"
                 />
               </div>
             </div>
@@ -128,7 +128,7 @@ export const SkinRoutineScreen = () => {
                   type="text" 
                   value={slug || generateSlug(title)}
                   onChange={e => setSlug(e.target.value)}
-                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
                 />
               </div>
 
@@ -137,7 +137,7 @@ export const SkinRoutineScreen = () => {
                 <select 
                   value={segment}
                   onChange={e => setSegment(e.target.value)}
-                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
                 >
                   <option value="BOTH">All / Both</option>
                   <option value="COSMETICS">Cosmetics</option>
@@ -147,7 +147,7 @@ export const SkinRoutineScreen = () => {
               <div className="pt-4 flex justify-end">
                   <button 
                   onClick={() => setIsAdding(false)}
-                  className="px-4 py-2 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50"
+                  className="px-4 py-2 text-sm font-medium text-[#FF7F50] bg-white border border-[#FF7F50]/30 rounded-lg hover:bg-[#FF7F50]/10"
                   >
                   Cancel
                   </button>
@@ -180,7 +180,7 @@ export const SkinRoutineScreen = () => {
                 <tr key={routine.id} className="hover:bg-slate-50">
                   <td className="py-4 px-6">
                     <div className="font-medium text-slate-900 flex items-center">
-                       <Droplets className="h-4 w-4 text-indigo-400 mr-2" /> {routine.title}
+                       <Droplets className="h-4 w-4 text-[#FF7F50]/70 mr-2" /> {routine.title}
                     </div>
                     <div className="text-xs text-slate-500 mt-0.5 ml-6">/{routine.slug}</div>
                   </td>
@@ -199,7 +199,7 @@ export const SkinRoutineScreen = () => {
                     {routine.segment}
                   </td>
                   <td className="py-4 px-6 text-right">
-                    <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
+                    <button className="p-2 text-slate-400 hover:text-[#FF7F50] transition-colors">
                       <Edit className="h-4 w-4" />
                     </button>
                     <button 

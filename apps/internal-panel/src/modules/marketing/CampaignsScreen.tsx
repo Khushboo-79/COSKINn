@@ -157,7 +157,7 @@ export const CampaignsScreen = () => {
                     <span className={`text-xs font-bold px-2 py-1 rounded tracking-wide ${
                       camp.status === 'SENT' ? 'bg-emerald-100 text-emerald-800' :
                       camp.status === 'DRAFT' ? 'bg-slate-100 text-slate-600' :
-                      'bg-blue-100 text-blue-800'
+                      'bg-[#FF7F50]/20 text-[#FF7F50]'
                     }`}>
                       {camp.status}
                     </span>

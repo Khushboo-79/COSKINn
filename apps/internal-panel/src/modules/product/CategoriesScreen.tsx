@@ -59,7 +59,7 @@ export const CategoriesScreen = () => {
   };
 
   const filteredCategories = categories.filter((cat: any) => 
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    cat.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const columns = [
