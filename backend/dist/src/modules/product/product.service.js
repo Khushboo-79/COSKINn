@@ -54,13 +54,23 @@ let ProductService = class ProductService {
         const lowStockSkus = await this.prisma.inventoryStock.count({ where: { quantity: { lte: 10, gt: 0 } } });
         const outOfStockCount = await this.prisma.inventoryStock.count({ where: { quantity: { equals: 0 } } });
         const draftCount = await this.prisma.product.count({ where: { isDeleted: true } });
+        const missingSeoCount = await this.prisma.product.count({
+            where: {
+                isDeleted: false,
+                OR: [
+                    { seoDesc: null },
+                    { seoDesc: '' }
+                ]
+            }
+        });
         return {
             totalProducts,
             activeVariants,
             lowStockSkus,
             outOfStockCount,
             draftCount,
-            totalCategories
+            totalCategories,
+            missingSeoCount
         };
     }
     async findAllPublic(page, limit, filters) {

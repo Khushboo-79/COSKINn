@@ -7,52 +7,52 @@ export declare class WarehouseService {
     constructor(prisma: PrismaService, inventoryService: InventoryService);
     createPurchaseOrder(dto: CreatePurchaseOrderDto): Promise<{
         items: {
+            sku: string;
             id: string;
             createdAt: Date;
-            sku: string;
-            purchaseOrderId: string;
             requestedQty: number;
             unitPrice: number;
+            purchaseOrderId: string;
         }[];
     } & {
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         warehouseId: string;
         supplierId: string | null;
     }>;
     getPurchaseOrders(): Promise<({
         warehouse: {
+            name: string;
             id: string;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
+            isActive: boolean;
             code: string;
             address: string | null;
         };
         items: {
+            sku: string;
             id: string;
             createdAt: Date;
-            sku: string;
-            purchaseOrderId: string;
             requestedQty: number;
             unitPrice: number;
+            purchaseOrderId: string;
         }[];
     } & {
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         warehouseId: string;
         supplierId: string | null;
     })[]>;
     createGrn(dto: CreateGrnDto): Promise<{
         items: {
+            sku: string;
             id: string;
             createdAt: Date;
-            sku: string;
             reason: string | null;
             receivedQty: number;
             acceptedQty: number;
@@ -62,8 +62,8 @@ export declare class WarehouseService {
     } & {
         id: string;
         createdAt: Date;
-        purchaseOrderId: string;
         receivedDate: Date;
+        purchaseOrderId: string;
     }>;
     generatePickList(dto: GeneratePickListDto): Promise<{
         orderIds: string[];
@@ -74,28 +74,28 @@ export declare class WarehouseService {
     }>;
     getBins(warehouseId?: string): Promise<({
         warehouse: {
+            name: string;
             id: string;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
+            isActive: boolean;
             code: string;
             address: string | null;
         };
         stocks: {
+            sku: string;
             id: string;
+            quantity: number;
             createdAt: Date;
             updatedAt: Date;
-            quantity: number;
-            sku: string;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
         }[];
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
-        description: string | null;
         code: string;
         warehouseId: string;
     })[]>;
@@ -105,18 +105,18 @@ export declare class WarehouseService {
         description?: string;
     }): Promise<{
         warehouse: {
+            name: string;
             id: string;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
+            isActive: boolean;
             code: string;
             address: string | null;
         };
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
-        description: string | null;
         code: string;
         warehouseId: string;
     }>;

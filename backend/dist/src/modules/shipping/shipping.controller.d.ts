@@ -17,10 +17,10 @@ export declare class ShippingController {
         labelUrl: string;
     }>;
     getOrderShipments(orderId: string): Promise<{
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         orderId: string;
         awbNumber: string | null;
         courierPartner: string | null;
@@ -31,8 +31,9 @@ export declare class ShippingController {
         order: {
             address: {
                 id: string;
-                phone: string;
                 createdAt: Date;
+                orderId: string;
+                phone: string;
                 fullName: string;
                 addressLine1: string;
                 addressLine2: string | null;
@@ -40,16 +41,15 @@ export declare class ShippingController {
                 state: string;
                 pincode: string;
                 country: string;
-                orderId: string;
                 sourceAddressId: string | null;
             } | null;
         } & {
+            status: string;
             id: string;
             isDeleted: boolean;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            status: string;
             platform: import("@prisma/client").$Enums.PlatformType;
             userId: string;
             totalAmount: number;
@@ -61,10 +61,10 @@ export declare class ShippingController {
             couponId: string | null;
         };
     } & {
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         orderId: string;
         awbNumber: string | null;
         courierPartner: string | null;

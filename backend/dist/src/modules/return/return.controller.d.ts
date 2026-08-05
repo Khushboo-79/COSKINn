@@ -4,22 +4,15 @@ export declare class ReturnController {
     private readonly returnService;
     constructor(returnService: ReturnService);
     requestReturn(dto: RequestReturnDto, req: any): Promise<{
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
     findAll(status?: string): Promise<({
-        items: {
-            id: string;
-            createdAt: Date;
-            quantity: number;
-            sku: string;
-            returnId: string;
-        }[];
         order: {
             id: string;
             user: {
@@ -27,31 +20,38 @@ export declare class ReturnController {
                 firstName: string | null;
             };
         };
+        items: {
+            sku: string;
+            id: string;
+            quantity: number;
+            createdAt: Date;
+            returnId: string;
+        }[];
     } & {
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     })[]>;
     processReturn(id: string, dto: ProcessReturnDto): Promise<{
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
     processQC(id: string, dto: ReturnQcDto): Promise<{
+        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
 }

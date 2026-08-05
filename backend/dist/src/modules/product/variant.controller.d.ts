@@ -4,36 +4,36 @@ export declare class VariantController {
     private readonly productService;
     constructor(productService: ProductService);
     createVariant(productId: string, createVariantDto: CreateVariantDto): Promise<{
+        name: string;
+        sku: string;
+        mrp: number;
+        price: number;
         id: string;
+        netQuantity: string | null;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        mrp: number;
         productId: string;
-        sku: string;
-        netQuantity: string | null;
-        price: number;
     }>;
     updateVariant(variantId: string, updateVariantDto: UpdateVariantDto): Promise<{
+        name: string;
+        sku: string;
+        mrp: number;
+        price: number;
         id: string;
+        netQuantity: string | null;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        mrp: number;
         productId: string;
-        sku: string;
-        netQuantity: string | null;
-        price: number;
     }>;
     removeVariant(variantId: string): Promise<{
+        name: string;
+        sku: string;
+        mrp: number;
+        price: number;
         id: string;
+        netQuantity: string | null;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        mrp: number;
         productId: string;
-        sku: string;
-        netQuantity: string | null;
-        price: number;
     }>;
 }
