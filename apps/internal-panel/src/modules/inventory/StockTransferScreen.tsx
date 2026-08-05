@@ -43,7 +43,8 @@ export const StockTransferScreen = () => {
       navigate('/inventory');
     },
     onError: (err: any) => {
-      toast.error('An error occurred');
+      const errorMsg = err?.response?.data?.message || 'An error occurred';
+      toast.error(typeof errorMsg === 'string' ? errorMsg : (errorMsg[0] || 'Validation error'));
     }
   });
 
