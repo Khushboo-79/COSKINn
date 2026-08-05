@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
 import { Settings2, Loader2, Save, History } from 'lucide-react';
 
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
+
 export const StockAdjustmentScreen = () => {
   const queryClient = useQueryClient();
   const [sku, setSku] = useState('');
@@ -11,6 +13,7 @@ export const StockAdjustmentScreen = () => {
   const [quantity, setQuantity] = useState(0);
   const [reason, setReason] = useState('');
   const [warehouseId] = useState('default-warehouse');
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const adjustMutation = useMutation({
     mutationFn: () => inventoryApi.adjustStock({ sku, warehouseId, type, quantity, reason }),
@@ -28,17 +31,23 @@ export const StockAdjustmentScreen = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const actionText = type === 'ABSOLUTE' 
-      ? `set the stock of ${sku} to exactly ${quantity}` 
-      : `adjust the stock of ${sku} by ${quantity > 0 ? '+' : ''}${quantity}`;
-      
-    if (window.confirm(`Are you sure you want to ${actionText}?`)) {
-      adjustMutation.mutate();
-    }
+    setIsConfirmOpen(true);
   };
+
+  const actionText = type === 'ABSOLUTE' 
+    ? `set the stock of ${sku} to exactly ${quantity}` 
+    : `adjust the stock of ${sku} by ${quantity > 0 ? '+' : ''}${quantity}`;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <ConfirmModal 
+        isOpen={isConfirmOpen}
+        title="Confirm Stock Adjustment"
+        message={`Are you sure you want to ${actionText}?`}
+        confirmText="Confirm Adjustment"
+        onConfirm={() => adjustMutation.mutate()}
+        onCancel={() => setIsConfirmOpen(false)}
+      />
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Stock Adjustments</h1>
         <p className="text-slate-500 text-sm mt-1">Manual overrides for physical cycle counts and discrepancies.</p>

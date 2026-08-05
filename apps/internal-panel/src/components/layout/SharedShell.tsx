@@ -46,7 +46,7 @@ export const SharedShell = () => {
       {/* Mobile Overlay */}
       {!isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/50 z-20 md:hidden"
+          className="fixed inset-0 bg-slate-900/50 z-20 md:hidden print:hidden"
           onClick={() => setSidebarOpen(true)}
         />
       )}
@@ -54,7 +54,7 @@ export const SharedShell = () => {
       {/* Sidebar */}
       <aside
         className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-          } fixed md:relative z-30 inset-y-0 left-0 bg-gradient-to-b from-[#fff0f2] to-[#FFDAB9]/20 border-r border-primary-200 text-slate-700 transition-all duration-300 ease-in-out flex flex-col shadow-sm`}
+          } fixed md:relative z-30 inset-y-0 left-0 bg-gradient-to-b from-[#fff0f2] to-[#FFDAB9]/20 border-r border-primary-200 text-slate-700 transition-all duration-300 ease-in-out flex flex-col shadow-sm print:hidden`}
       >
         <div className="h-20 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative w-full overflow-visible">
           {isSidebarOpen && <img src="/logo-icon.png" alt="Fairenne Icon" className="h-12 w-auto object-contain scale-[1.3] origin-center" />}
@@ -98,10 +98,10 @@ export const SharedShell = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible">
 
         {/* Topbar */}
-        <header className="h-16 bg-gradient-to-r from-[#fff0f2]/90 to-[#FFDAB9]/40 backdrop-blur-md border-b border-primary-200/50 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
+        <header className="h-16 bg-gradient-to-r from-[#fff0f2]/90 to-[#FFDAB9]/40 backdrop-blur-md border-b border-primary-200/50 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative print:hidden">
           <div className="flex items-center flex-1">
             <button
               onClick={toggleSidebar}
@@ -250,9 +250,11 @@ export const SharedShell = () => {
           </div>
         </header>
 
-        {/* Content Frame */}
-        <main className="flex-1 overflow-auto p-4 lg:p-8">
-          <Outlet />
+        {/* Page Content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-transparent relative z-0 print:overflow-visible print:h-auto">
+          <div className="container mx-auto px-4 py-8 max-w-[1400px] print:p-0 print:m-0 print:max-w-none">
+            <Outlet />
+          </div>
         </main>
         <GlobalSearch />
       </div>

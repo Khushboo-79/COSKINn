@@ -28,8 +28,8 @@ export declare class ReviewController {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     })[]>;
     approveReview(id: string): Promise<{
         id: string;
@@ -39,8 +39,8 @@ export declare class ReviewController {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     }>;
     deleteReview(id: string): Promise<{
         id: string;
@@ -50,7 +50,7 @@ export declare class ReviewController {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     }>;
 }

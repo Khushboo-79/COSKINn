@@ -44,6 +44,9 @@ let InventoryController = class InventoryController {
     getTransfers() {
         return this.inventoryService.getTransfers();
     }
+    getDetailedStock() {
+        return this.inventoryService.getDetailedStock();
+    }
     stockIn(dto) {
         return this.inventoryService.stockIn(dto);
     }
@@ -142,6 +145,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], InventoryController.prototype, "getTransfers", null);
+__decorate([
+    (0, common_1.Get)('detailed'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], InventoryController.prototype, "getDetailedStock", null);
 __decorate([
     (0, common_1.Post)('stock-in'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

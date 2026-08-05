@@ -307,8 +307,8 @@ export declare class PublicCatalogController {
             userId: string;
             title: string | null;
             isApproved: boolean;
-            rating: number;
             content: string | null;
+            rating: number;
         }[];
         questions: {
             id: string;

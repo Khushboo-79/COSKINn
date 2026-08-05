@@ -3,17 +3,20 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { warehouseApi } from '../../core/api/warehouse';
 import { ClipboardCheck, Loader2, Save, X, Search, AlertTriangle } from 'lucide-react';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 
 export const GRNScreen = () => {
   const queryClient = useQueryClient();
   const [selectedPO, setSelectedPO] = useState<any>(null);
   const [grnItems, setGrnItems] = useState<any[]>([]);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const { data: pos, isLoading: loadingPOs } = useQuery({
     queryKey: ['admin', 'warehouse', 'pos'],
     queryFn: () => warehouseApi.getPurchaseOrders(),
   });
 
+  const pendingPOs = pos?.filter((po: any) => ['ISSUED', 'PARTIAL'].includes(po.status)) || [];
   const pendingPOs = pos?.filter((po: any) => ['DRAFT', 'ISSUED', 'PARTIAL'].includes(po.status)) || [];
 
   const handleSelectPO = (po: any) => {
@@ -46,7 +49,7 @@ export const GRNScreen = () => {
       setGrnItems([]);
     },
     onError: (err: any) => {
-      toast.error('An error occurred');
+      toast.error(err.response?.data?.message || 'An error occurred while creating GRN');
     }
   });
 
@@ -63,9 +66,7 @@ export const GRNScreen = () => {
       return;
     }
 
-    if (window.confirm("Confirm GRN submission? This will permanently update inventory levels.")) {
-      grnMutation.mutate();
-    }
+    setIsConfirmOpen(true);
   };
 
   return (
@@ -216,6 +217,17 @@ export const GRNScreen = () => {
           </div>
         </div>
       )}
+      <ConfirmModal 
+        isOpen={isConfirmOpen}
+        onCancel={() => setIsConfirmOpen(false)}
+        onConfirm={() => {
+          setIsConfirmOpen(false);
+          grnMutation.mutate();
+        }}
+        title="Confirm GRN submission"
+        message="Are you sure you want to submit this GRN? This will permanently update inventory levels and cannot be undone."
+        confirmText="Submit GRN"
+      />
     </div>
   );
 };

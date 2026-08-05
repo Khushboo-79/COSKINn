@@ -98,7 +98,15 @@ export declare class InventoryController {
             goodsInTransit: number;
         };
     }>;
-    getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE'): Promise<any[]>;
+    getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE'): Promise<{
+        sku: string;
+        name: string;
+        totalQuantity: any;
+        totalReservedQty: any;
+        damaged: number;
+        expired: number;
+        warehouses: any;
+    }[]>;
     getStockForSku(sku: string): Promise<({
         warehouse: {
             id: string;
@@ -171,6 +179,13 @@ export declare class InventoryController {
         toWarehouseId: string;
         requestedBy: string | null;
     })[]>;
+    getDetailedStock(): Promise<{
+        sku: string;
+        name: string | undefined;
+        warehouseName: string;
+        available: number;
+        reserved: number;
+    }[]>;
     stockIn(dto: import('./dto/inventory.dto').StockMovementDto): Promise<{
         movement: any;
         stock: any;
@@ -322,8 +337,8 @@ export declare class InventoryController {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }[]>;
 }

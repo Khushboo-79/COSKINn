@@ -41,8 +41,8 @@ export declare class HrController {
             createdAt: Date;
             year: number;
             pdfUrl: string | null;
-            employeeId: string;
             month: number;
+            employeeId: string;
             basic: number;
             deductions: number;
             netPay: number;

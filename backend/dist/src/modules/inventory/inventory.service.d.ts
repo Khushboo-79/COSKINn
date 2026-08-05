@@ -50,7 +50,15 @@ export declare class InventoryService {
         type: string;
         reference: string | null;
     })[]>;
-    getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE'): Promise<any[]>;
+    getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE'): Promise<{
+        sku: string;
+        name: string;
+        totalQuantity: any;
+        totalReservedQty: any;
+        damaged: number;
+        expired: number;
+        warehouses: any;
+    }[]>;
     getStockForSku(sku: string): Promise<({
         warehouse: {
             id: string;
@@ -328,8 +336,15 @@ export declare class InventoryService {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
+    }[]>;
+    getDetailedStock(): Promise<{
+        sku: string;
+        name: string | undefined;
+        warehouseName: string;
+        available: number;
+        reserved: number;
     }[]>;
 }

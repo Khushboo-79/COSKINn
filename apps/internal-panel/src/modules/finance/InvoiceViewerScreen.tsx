@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
 import { FileText, Search, Download, FileJson } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const InvoiceViewerScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,6 +24,28 @@ export const InvoiceViewerScreen = () => {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
   };
 
+  const handleBulkExport = () => {
+    if (filteredInvoices.length === 0) {
+      toast.error('No invoices to export.');
+      return;
+    }
+    
+    let csv = 'Invoice ID,Order ID,Date,Subtotal,GST,Total\n';
+    filteredInvoices.forEach((o: any) => {
+      const subtotal = o.totalAmount / 1.18;
+      const gstAmount = o.totalAmount - subtotal;
+      csv += `INV-${o.id.slice(0,8).toUpperCase()},${o.id.slice(0,8).toUpperCase()},${new Date(o.updatedAt).toLocaleDateString()},${subtotal.toFixed(2)},${gstAmount.toFixed(2)},${o.totalAmount}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tax_invoices_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-end">
@@ -30,7 +53,10 @@ export const InvoiceViewerScreen = () => {
           <h1 className="text-2xl font-bold text-slate-900">Tax Invoices</h1>
           <p className="text-slate-500 text-sm mt-1">View B2C/B2B GST invoices generated from delivered orders.</p>
         </div>
-        <button className="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-800 transition-colors">
+        <button 
+          onClick={handleBulkExport}
+          className="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-800 transition-colors"
+        >
           <Download className="h-4 w-4 mr-2" /> Bulk Export
         </button>
       </div>

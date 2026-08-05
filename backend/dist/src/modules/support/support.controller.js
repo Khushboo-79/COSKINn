@@ -50,6 +50,12 @@ let SupportController = class SupportController {
     getSlaStats() {
         return this.supportService.getSlaStats();
     }
+    getSettings() {
+        return this.supportService.getSettings();
+    }
+    updateSettings(body) {
+        return this.supportService.updateSettings(body);
+    }
 };
 exports.SupportController = SupportController;
 __decorate([
@@ -130,6 +136,23 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], SupportController.prototype, "getSlaStats", null);
+__decorate([
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN', 'SUPER_ADMIN', 'SUPPORT'),
+    (0, common_1.Get)('admin/settings'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SupportController.prototype, "getSettings", null);
+__decorate([
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN', 'SUPER_ADMIN', 'SUPPORT'),
+    (0, common_1.Put)('admin/settings'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], SupportController.prototype, "updateSettings", null);
 exports.SupportController = SupportController = __decorate([
     (0, common_1.Controller)('support'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

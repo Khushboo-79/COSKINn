@@ -150,4 +150,28 @@ export declare class SupportService {
         escalated: number;
         complianceRate: number;
     }>;
+    getSettings(): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        enableAutoReply: boolean;
+        autoReplyMessage: string;
+        workingHoursStart: string;
+        workingHoursEnd: string;
+    }>;
+    updateSettings(data: {
+        timezone?: string;
+        firstResponseSlaHours?: number;
+        pauseSlaOnWeekends?: boolean;
+        autoAssign?: boolean;
+        sendCsat?: boolean;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        enableAutoReply: boolean;
+        autoReplyMessage: string;
+        workingHoursStart: string;
+        workingHoursEnd: string;
+    }>;
 }
