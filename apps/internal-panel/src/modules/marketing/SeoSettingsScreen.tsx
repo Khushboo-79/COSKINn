@@ -99,11 +99,11 @@ export const SeoSettingsScreen = () => {
               />
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex justify-end">
+            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-end">
               <button 
                 onClick={() => updateMutation.mutate()}
                 disabled={updateMutation.isPending}
-                className="px-6 py-2 font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#FF3E7F] disabled:opacity-50 flex items-center shadow-sm"
+                className="px-6 py-2 font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#FF3E7F] disabled:opacity-50 flex items-center justify-center shadow-sm w-full sm:w-auto"
               >
                 {updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Save SEO Settings

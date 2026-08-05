@@ -11,20 +11,20 @@ export const AbandonedCartScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Abandoned Carts</h1>
           <p className="text-slate-500 text-sm mt-1">Monitor and recover dropped checkout sessions.</p>
         </div>
         <Link 
           to="/marketing/campaigns"
-          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#E0356F] transition-colors"
+          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#E0356F] transition-colors w-full sm:w-auto"
         >
           <Mail className="h-4 w-4 mr-2" /> Create Recovery Campaign
         </Link>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
         {isLoading ? (
           <div className="p-12 text-center text-slate-500">Loading abandoned carts...</div>
         ) : !carts || carts.length === 0 ? (
@@ -33,7 +33,7 @@ export const AbandonedCartScreen = () => {
             <p className="font-medium text-slate-900">No abandoned carts right now.</p>
           </div>
         ) : (
-          <table className="w-full text-left">
+          <table className="w-full text-left min-w-[600px]">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="py-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date Logged</th>
