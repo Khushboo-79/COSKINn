@@ -1431,6 +1431,19 @@ model OrderSettings {
   autoCancelHours  Int      @default(24)
   codEnabled       Boolean  @default(true)
   maxCodAmount     Float    @default(5000)
+  
+  // PRD Loyalty & Settings fields
+  maintenanceMode                 Boolean @default(false)
+  debugMode                       Boolean @default(false)
+  walletExpiryDays                Int     @default(365)
+  minOrderForCod                  Float   @default(500)
+  membershipMemberThreshold       Float   @default(1500)
+  membershipGoldThreshold         Float   @default(4000)
+  membershipPlatinumThreshold     Float   @default(8000)
+  signUpBonusAmount               Float   @default(200)
+  maxRewardPointRedemptionPercent Float   @default(10)
+  rewardPointEarningRate          Float   @default(1)
+
   updatedAt        DateTime @updatedAt
   createdAt        DateTime @default(now())
 

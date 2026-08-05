@@ -7,10 +7,7 @@ import { ShieldAlert, RefreshCcw } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const StaffTwoFactorScreen = () => {
-  const { data: staff2fa = [
-    { id: '1', name: 'John Doe', email: 'john@fairenne.com', is2FAEnabled: true, lastLogin: '2026-07-18 10:30 AM' },
-    { id: '2', name: 'Jane Smith', email: 'jane@fairenne.com', is2FAEnabled: false, lastLogin: '2026-07-17 04:15 PM' },
-  ], refetch } = useQuery({
+  const { data: staff2fa = [], refetch, isLoading } = useQuery({
     queryKey: ['staff2fa'],
     queryFn: adminApi.getStaff2FAStatus,
     retry: false,

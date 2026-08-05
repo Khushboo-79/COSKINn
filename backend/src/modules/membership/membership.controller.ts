@@ -46,4 +46,12 @@ export class MembershipController {
   deleteTier(@Param('id') id: string) {
     return this.membershipService.deleteTier(id);
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('admin/membership/trigger-computation')
+  @Roles('SUPER_ADMIN', 'MARKETING_MANAGER')
+  triggerNightlyComputation() {
+    this.membershipService.computeTiersNightly();
+    return { message: 'Membership tier computation started.' };
+  }
 }

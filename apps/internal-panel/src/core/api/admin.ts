@@ -29,11 +29,11 @@ export const adminApi = {
     return response.data;
   },
   resetStaff2FA: async (userId: string) => {
-    const response = await apiClient.post(`/admin/staff/${userId}/2fa/reset`);
+    const response = await apiClient.post(`/admin/config/staff/${userId}/2fa/reset`);
     return response.data;
   },
   getStaff2FAStatus: async () => {
-    const response = await apiClient.get('/admin/staff/2fa');
+    const response = await apiClient.get('/admin/config/staff/2fa');
     return response.data;
   },
   getUsers: async () => {
