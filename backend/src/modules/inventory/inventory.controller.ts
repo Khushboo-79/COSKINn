@@ -58,6 +58,13 @@ export class InventoryController {
     return this.inventoryService.getTransfers();
   }
 
+  @Get('detailed')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER')
+  getDetailedStock() {
+    return this.inventoryService.getDetailedStock();
+  }
+
   @Post('stock-in')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF')

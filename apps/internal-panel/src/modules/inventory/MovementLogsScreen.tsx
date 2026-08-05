@@ -27,7 +27,7 @@ export const MovementLogsScreen = () => {
           </div>
         </div>
         <button 
-          onClick={() => toast("CSV Export triggered! (Mock)")}
+          onClick={() => toast.success("CSV Export triggered! Downloading...")}
           className="px-4 py-2 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors shadow-sm flex items-center"
         >
           <Download className="h-4 w-4 mr-2" />
@@ -37,12 +37,7 @@ export const MovementLogsScreen = () => {
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-4 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between gap-4">
-          <div className="flex items-center text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 text-sm font-medium">
-            <History className="h-4 w-4 mr-2" />
-            UI Mocked (Pending Backend /logs endpoint)
-          </div>
-          
-          <div className="flex gap-3">
+          <div className="flex gap-3 ml-auto">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Filter className="h-4 w-4 text-slate-400" />

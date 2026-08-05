@@ -9,10 +9,15 @@ export const InventoryDashboardScreen = () => {
     queryFn: inventoryApi.getDashboardStats,
   });
 
+  const { data: expiryAlerts } = useQuery({
+    queryKey: ['inventory', 'alerts', 'near-expiry'],
+    queryFn: inventoryApi.getNearExpiryAlerts,
+  });
+
   const stats = rawStats ? {
     totalSkus: rawStats.kpis?.totalSkus?.value || 0,
     lowStockCount: rawStats.kpis?.lowStock?.value || 0,
-    nearExpiryCount: 0, // Backend doesn't return nearExpiry count yet
+    nearExpiryCount: expiryAlerts?.length || 0,
     pendingGrn: rawStats.kpis?.pendingPos?.value || 0,
   } : null;
 
@@ -23,11 +28,11 @@ export const InventoryDashboardScreen = () => {
 
   const stockList = rawStockList?.map((item: any) => ({
     sku: item.sku,
-    name: 'Product Name', // Backend currently doesn't return the name in getGlobalStock
+    name: item.name || 'Unknown Product',
     available: item.totalQuantity || 0,
     reserved: item.totalReservedQty || 0,
-    damaged: item.damaged || 0, // Backend might not have this yet
-    expired: item.expired || 0  // Backend might not have this yet
+    damaged: item.damaged || 0,
+    expired: item.expired || 0
   }));
 
   return (
