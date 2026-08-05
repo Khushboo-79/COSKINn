@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { financeApi } from '../../core/api/finance';
+import { PromptModal } from '../../components/ui/PromptModal';
 import { Plus, BookOpen, FileMinus, FilePlus, Loader2, Save } from 'lucide-react';
 
 export const LedgerScreen = () => {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [selectedLedgerId, setSelectedLedgerId] = useState('');
   const [entryType, setEntryType] = useState<'CREDIT' | 'DEBIT'>('CREDIT');
   const [amount, setAmount] = useState<number>(0);
@@ -26,6 +28,22 @@ export const LedgerScreen = () => {
     }
   });
 
+  const createLedgerMutation = useMutation({
+    mutationFn: (accountName: string) => financeApi.createLedger(accountName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['finance', 'ledgers'] });
+    }
+  });
+
+  const handleCreateLedger = () => {
+    setIsPromptOpen(true);
+  };
+
+  const onConfirmCreate = (name: string) => {
+    createLedgerMutation.mutate(name);
+    setIsPromptOpen(false);
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
   };
@@ -37,12 +55,22 @@ export const LedgerScreen = () => {
           <h1 className="text-2xl font-bold text-slate-900">General Ledger</h1>
           <p className="text-slate-500 text-sm mt-1">Track financial accounts and post manual journal entries.</p>
         </div>
-        <button 
-          onClick={() => setIsAdding(true)}
-          className="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-800 transition-colors"
-        >
-          <Plus className="h-4 w-4 mr-2" /> Post Journal Entry
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={handleCreateLedger}
+            disabled={createLedgerMutation.isPending}
+            className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-50 transition-colors"
+          >
+            {createLedgerMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <BookOpen className="h-4 w-4 mr-2" />}
+            Create Ledger
+          </button>
+          <button 
+            onClick={() => setIsAdding(true)}
+            className="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-slate-800 transition-colors"
+          >
+            <Plus className="h-4 w-4 mr-2" /> Post Journal Entry
+          </button>
+        </div>
       </div>
 
       {isAdding && (
@@ -181,6 +209,16 @@ export const LedgerScreen = () => {
           ))}
         </div>
       )}
+
+      <PromptModal
+        isOpen={isPromptOpen}
+        title="Create New Ledger"
+        message="Enter a name for the new Ledger (e.g. 'Bank Account', 'Supplier Payables'):"
+        placeholder="Ledger Name..."
+        confirmText="Create Ledger"
+        onConfirm={onConfirmCreate}
+        onCancel={() => setIsPromptOpen(false)}
+      />
     </div>
   );
 };

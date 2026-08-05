@@ -11,9 +11,19 @@ export class WarehouseService {
   ) {}
 
   async createPurchaseOrder(dto: CreatePurchaseOrderDto) {
+    if (dto.vendorId) {
+      // Ensure the supplier exists before linking, to prevent foreign key errors
+      await this.prisma.supplier.upsert({
+        where: { id: dto.vendorId },
+        update: {},
+        create: { id: dto.vendorId, name: dto.vendorId }
+      });
+    }
+
     return this.prisma.purchaseOrder.create({
       data: {
         warehouseId: dto.warehouseId,
+        supplierId: dto.vendorId, // Map vendorId to supplierId
         status: 'ISSUED',
         items: {
           create: dto.items.map(item => ({
@@ -23,13 +33,13 @@ export class WarehouseService {
           }))
         }
       },
-      include: { items: true }
+      include: { items: true, supplier: true }
     });
   }
 
   async getPurchaseOrders() {
     return this.prisma.purchaseOrder.findMany({
-      include: { items: true, warehouse: true },
+      include: { items: true, warehouse: true, supplier: true },
       orderBy: { createdAt: 'desc' }
     });
   }
@@ -137,6 +147,18 @@ export class WarehouseService {
   }
 
   async createBin(dto: { warehouseId: string, code: string, description?: string }) {
+    // Ensure warehouse exists for MVP
+    await this.prisma.warehouse.upsert({
+      where: { id: dto.warehouseId },
+      create: {
+        id: dto.warehouseId,
+        name: 'Main Fulfillment Center',
+        code: 'MAIN',
+        isActive: true,
+      },
+      update: {},
+    });
+
     return this.prisma.warehouseBin.create({
       data: {
         warehouseId: dto.warehouseId,
@@ -161,5 +183,61 @@ export class WarehouseService {
     }
 
     return { success: true, message: `SKU ${dto.barcode} verified for Order ${dto.orderId}` };
+  }
+
+  async getThroughputAnalytics(days: number = 30) {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const allIn = await this.prisma.stockMovement.findMany({
+      where: { type: 'IN', createdAt: { gte: startDate } },
+      select: { createdAt: true, quantity: true }
+    });
+
+    const allOut = await this.prisma.stockMovement.findMany({
+      where: { type: 'OUT', createdAt: { gte: startDate } },
+      select: { createdAt: true, quantity: true }
+    });
+
+    const allShipped = await this.prisma.order.findMany({
+      where: { status: 'SHIPPED', updatedAt: { gte: startDate } },
+      select: { updatedAt: true, items: { select: { quantity: true } } }
+    });
+
+    const dataMap = new Map<string, any>();
+
+    // Initialize the last N days with 0
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      // Format as MM-DD for x-axis display
+      const displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      dataMap.set(dateStr, { name: displayDate, received: 0, picked: 0, shipped: 0, rawDate: dateStr });
+    }
+
+    for (const mov of allIn) {
+      const dateStr = mov.createdAt.toISOString().split('T')[0];
+      if (dataMap.has(dateStr)) {
+        dataMap.get(dateStr).received += mov.quantity;
+      }
+    }
+
+    for (const mov of allOut) {
+      const dateStr = mov.createdAt.toISOString().split('T')[0];
+      if (dataMap.has(dateStr)) {
+        dataMap.get(dateStr).picked += mov.quantity;
+      }
+    }
+
+    for (const order of allShipped) {
+      const dateStr = order.updatedAt.toISOString().split('T')[0];
+      if (dataMap.has(dateStr)) {
+        const qty = order.items.reduce((acc, item) => acc + item.quantity, 0);
+        dataMap.get(dateStr).shipped += qty;
+      }
+    }
+
+    return Array.from(dataMap.values()).sort((a, b) => a.rawDate.localeCompare(b.rawDate));
   }
 }

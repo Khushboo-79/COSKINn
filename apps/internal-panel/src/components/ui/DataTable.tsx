@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronDown, ChevronUp, Download, Filter, Search } from 'lucide-react';
 
 export interface Column<T> {
@@ -16,7 +16,9 @@ interface DataTableProps<T> {
   sortDirection?: 'asc' | 'desc';
   searchPlaceholder?: string;
   onSearch?: (term: string) => void;
+  onFilterClick?: () => void;
   onExport?: () => void;
+  itemsPerPage?: number;
 }
 
 export function DataTable<T>({ 
@@ -27,8 +29,24 @@ export function DataTable<T>({
   sortDirection,
   searchPlaceholder = 'Search...',
   onSearch,
-  onExport
+  onFilterClick,
+  onExport,
+  itemsPerPage = 15
 }: DataTableProps<T>) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return data.slice(start, start + itemsPerPage);
+  }, [data, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       {/* Toolbar */}
@@ -47,10 +65,15 @@ export function DataTable<T>({
           </div>
         )}
         <div className="flex items-center space-x-2">
-          <button className="flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-            <Filter className="h-4 w-4 mr-2 text-slate-400" />
-            Filter
-          </button>
+          {onFilterClick && (
+            <button 
+              onClick={onFilterClick}
+              className="flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              <Filter className="h-4 w-4 mr-2 text-slate-400" />
+              Filter
+            </button>
+          )}
           {onExport && (
             <button 
               onClick={onExport}
@@ -86,7 +109,7 @@ export function DataTable<T>({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-slate-200">
-            {data.map((item, rowIndex) => (
+            {paginatedData.map((item, rowIndex) => (
               <tr key={rowIndex} className="hover:bg-slate-50 transition-colors">
                 {columns.map((col, colIndex) => (
                   <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
@@ -106,29 +129,39 @@ export function DataTable<T>({
         </table>
       </div>
       
-      {/* Pagination Footer (Placeholder) */}
-      <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between sm:px-6">
-        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-slate-700">
-              Showing <span className="font-medium">1</span> to <span className="font-medium">{Math.max(1, data.length)}</span> of <span className="font-medium">{data.length}</span> results
-            </p>
-          </div>
-          <div>
-            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-              <button className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50">
-                Previous
-              </button>
-              <button className="relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">
-                1
-              </button>
-              <button className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50">
-                Next
-              </button>
-            </nav>
+      {/* Pagination Footer */}
+      {data.length > 0 && (
+        <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 flex items-center justify-between sm:px-6">
+          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-slate-700">
+                Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium">{Math.min(currentPage * itemsPerPage, data.length)}</span> of <span className="font-medium">{data.length}</span> results
+              </p>
+            </div>
+            <div>
+              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button 
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <span className="relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium text-slate-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button 
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </nav>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -27,8 +27,10 @@ model User {
 
   roles    UserRole[]
   otpLogs  OtpLog[]
-  sessions LoginSession[]
-  devices  Device[]
+  sessions         LoginSession[]
+  devices          Device[]
+  rolesCreated     Role[]             @relation("RoleCreatedBy")
+  rolesUpdated     Role[]             @relation("RoleUpdatedBy")
 
   customerProfile CustomerProfile?
   addresses       CustomerAddress[]
@@ -62,11 +64,16 @@ model Role {
   name        String   @unique // e.g., 'customer', 'admin', 'product-manager'
   description String?
   panelAccess String[] @default([]) // Which of the 11 panels this role can access
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  createdById String?
+  updatedById String?
 
   users       UserRole[]
   permissions RolePermission[]
+  createdBy   User?      @relation("RoleCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?      @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("roles")
 }
@@ -1424,6 +1431,19 @@ model OrderSettings {
   autoCancelHours  Int      @default(24)
   codEnabled       Boolean  @default(true)
   maxCodAmount     Float    @default(5000)
+  
+  // PRD Loyalty & Settings fields
+  maintenanceMode                 Boolean @default(false)
+  debugMode                       Boolean @default(false)
+  walletExpiryDays                Int     @default(365)
+  minOrderForCod                  Float   @default(500)
+  membershipMemberThreshold       Float   @default(1500)
+  membershipGoldThreshold         Float   @default(4000)
+  membershipPlatinumThreshold     Float   @default(8000)
+  signUpBonusAmount               Float   @default(200)
+  maxRewardPointRedemptionPercent Float   @default(10)
+  rewardPointEarningRate          Float   @default(1)
+
   updatedAt        DateTime @updatedAt
   createdAt        DateTime @default(now())
 
@@ -1535,3 +1555,29 @@ model Staff2fa {
   @@map("staff_2fa")
 }
 
+
+model FinancialNote {
+  id String @id @default(uuid())
+  type String
+  referenceType String
+  referenceId String
+  amount Float
+  reason String
+  status String @default("DRAFT")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("financial_notes")
+}
+
+model SupportSettings {
+  id String @id @default(uuid())
+  enableAutoReply Boolean @default(true)
+  autoReplyMessage String @default("We have received your message and will get back to you shortly.")
+  workingHoursStart String @default("09:00")
+  workingHoursEnd String @default("18:00")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("support_settings")
+}

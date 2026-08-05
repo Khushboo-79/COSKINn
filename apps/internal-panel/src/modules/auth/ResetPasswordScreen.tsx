@@ -3,7 +3,7 @@ import { useForm as useRHForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { KeyRound, Shield, ArrowLeft } from 'lucide-react';
+import { KeyRound, Shield, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { authApi } from '../../core/api/auth';
 
@@ -23,6 +23,8 @@ export const ResetPasswordScreen = () => {
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') || '';
   const [isLoading, setIsLoading] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useRHForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
@@ -87,11 +89,18 @@ export const ResetPasswordScreen = () => {
                 <KeyRound className="h-5 w-5 text-slate-400" />
               </div>
               <input
-                type="password"
+                type={showNewPassword ? 'text' : 'password'}
                 {...register('newPassword')}
-                className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                className="block w-full pl-10 pr-10 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 placeholder="••••••••"
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+              >
+                {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
             {errors.newPassword && <p className="mt-1 text-sm text-red-600">{errors.newPassword.message}</p>}
           </div>
@@ -103,11 +112,18 @@ export const ResetPasswordScreen = () => {
                 <KeyRound className="h-5 w-5 text-slate-400" />
               </div>
               <input
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 {...register('confirmPassword')}
-                className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                className="block w-full pl-10 pr-10 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                 placeholder="••••••••"
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
             {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>}
           </div>

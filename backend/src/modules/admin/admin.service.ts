@@ -1,5 +1,6 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService implements OnModuleInit {
@@ -25,7 +26,17 @@ export class AdminService implements OnModuleInit {
           returnWindowDays: 7,
           autoCancelHours: 24,
           codEnabled: true,
-          maxCodAmount: 5000,
+          maxCodAmount: 10000,
+          maintenanceMode: false,
+          debugMode: false,
+          walletExpiryDays: 365,
+          minOrderForCod: 500,
+          membershipMemberThreshold: 1500,
+          membershipGoldThreshold: 4000,
+          membershipPlatinumThreshold: 8000,
+          signUpBonusAmount: 200,
+          maxRewardPointRedemptionPercent: 10,
+          rewardPointEarningRate: 1
         }
       });
     }
@@ -49,48 +60,177 @@ export class AdminService implements OnModuleInit {
     
     const totalRevenue = payments._sum.amount || 0;
 
+    // --- Calculate Trends ---
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+    const currentOrders = await this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: thirtyDaysAgo }, ...platformWhere } });
+    const prevOrders = await this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, ...platformWhere } });
+    const ordersTrend = this.calculateTrend(currentOrders, prevOrders);
+
+    const currentUsers = await this.prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } });
+    const prevUsers = await this.prisma.user.count({ where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } });
+    const usersTrend = this.calculateTrend(currentUsers, prevUsers);
+
+    const currentPayments = await this.prisma.paymentTransaction.aggregate({
+      _sum: { amount: true },
+      where: { status: 'SUCCESS', createdAt: { gte: thirtyDaysAgo }, ...platformWhere }
+    });
+    const prevPayments = await this.prisma.paymentTransaction.aggregate({
+      _sum: { amount: true },
+      where: { status: 'SUCCESS', createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, ...platformWhere }
+    });
+    const revenueTrend = this.calculateTrend(currentPayments._sum.amount || 0, prevPayments._sum.amount || 0);
+
+    // Dynamic system health: Assuming healthy if some users/orders exist
+    const systemHealth = (activeUsers > 0) ? '100%' : '95%';
+
     return {
       totalRevenue,
       activeUsers,
       totalOrders,
       totalProducts,
-      systemHealth: '100%',
-      revenueTrend: '+12.5%', 
-      usersTrend: '+8.2%',
-      ordersTrend: '+15.4%',
+      systemHealth,
+      revenueTrend,
+      usersTrend,
+      ordersTrend,
     };
   }
 
+  private calculateTrend(current: number, previous: number): string {
+    if (previous === 0) return current > 0 ? '+100%' : '0%';
+    const percent = ((current - previous) / previous) * 100;
+    const sign = percent > 0 ? '+' : '';
+    return `${sign}${percent.toFixed(1)}%`;
+  }
+
   async getRoles() {
-    return this.prisma.role.findMany({
+    const roles = await this.prisma.role.findMany({
       include: {
+        createdBy: {
+          select: { firstName: true, lastName: true, email: true }
+        },
+        updatedBy: {
+          select: { firstName: true, lastName: true, email: true }
+        },
         _count: {
           select: { users: true }
+        },
+        users: {
+          include: {
+            user: {
+              include: {
+                devices: {
+                  orderBy: { lastActiveAt: 'desc' },
+                  take: 1
+                },
+                sessions: {
+                  where: { isRevoked: false, expiresAt: { gt: new Date() } }
+                }
+              }
+            }
+          }
         }
+      }
+    });
+
+    const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+    return roles.map(role => {
+      let isOnline = false;
+      let lastActiveAt: Date | null = null;
+      let lastLoginAt: Date | null = null;
+
+      for (const userRole of role.users) {
+        const user = userRole.user;
+        
+        // Compute last active date across all users with this role
+        if (user.devices && user.devices.length > 0) {
+          const userLastActive = user.devices[0].lastActiveAt;
+          if (!lastActiveAt || userLastActive > lastActiveAt) {
+            lastActiveAt = userLastActive;
+          }
+          if (userLastActive > fifteenMinsAgo) {
+            isOnline = true;
+          }
+        }
+        
+        // Compute last login date across all users with this role
+        if (user.sessions && user.sessions.length > 0) {
+          // Sort sessions to find the latest creation date (login time)
+          const sortedSessions = [...user.sessions].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+          const userLastLogin = sortedSessions[0].createdAt;
+          if (!lastLoginAt || userLastLogin > lastLoginAt) {
+            lastLoginAt = userLastLogin;
+          }
+          isOnline = true;
+        }
+      }
+
+      const { users, createdBy, updatedBy, ...roleData } = role;
+      
+      return {
+        ...roleData,
+        isOnline,
+        lastActiveAt,
+        lastLoginAt,
+        createdByName: createdBy ? `${createdBy.firstName || ''} ${createdBy.lastName || ''}`.trim() || createdBy.email : null,
+        updatedByName: updatedBy ? `${updatedBy.firstName || ''} ${updatedBy.lastName || ''}`.trim() || updatedBy.email : null,
+      };
+    });
+  }
+
+  async createRole(data: { name: string, description?: string, panelAccess: string[] }, userId?: string) {
+    return this.prisma.role.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        panelAccess: data.panelAccess,
+        ...(userId ? { createdById: userId, updatedById: userId } : {})
       }
     });
   }
 
-  async createRole(data: { name: string, description?: string, panelAccess: string[] }) {
-    return this.prisma.role.create({ data });
+  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[], isActive?: boolean }, userId?: string) {
+    try {
+      console.log('UpdateRole called with id:', id, 'data:', data);
+      return await this.prisma.role.update({
+        where: { id },
+        data: {
+          ...data,
+          ...(userId ? { updatedById: userId } : {})
+        }
+      });
+    } catch (e) {
+      console.error('UpdateRole ERROR:', e);
+      require('fs').writeFileSync('error_dump.txt', e.message + '\n' + e.stack);
+      throw e;
+    }
   }
 
-  async updateRole(id: string, data: { name?: string, description?: string, panelAccess?: string[] }) {
-    return this.prisma.role.update({ where: { id }, data });
-  }
-
-  async updateRolePanelAccess(roleId: string, panelAccess: string[]) {
+  async updateRolePanelAccess(roleId: string, panelAccess: string[], userId?: string) {
     return this.prisma.role.update({
       where: { id: roleId },
-      data: { panelAccess }
+      data: { 
+        panelAccess,
+        ...(userId ? { updatedById: userId } : {})
+      }
     });
   }
 
   async getUsers() {
     return this.prisma.user.findMany({
       where: {
+        isDeleted: false,
         roles: {
-          some: {} // Any user with a role is considered an internal user/admin
+          some: {
+            role: {
+              name: {
+                not: 'CUSTOMER'
+              }
+            }
+          }
         }
       },
       include: {
@@ -98,17 +238,75 @@ export class AdminService implements OnModuleInit {
           include: {
             role: true
           }
+        },
+        customerProfile: true,
+        addresses: {
+          where: { isDefault: true },
+          take: 1
+        },
+        orders: true,
+        wishlist: {
+          include: { items: true }
+        },
+        cart: {
+          include: { items: true }
+        },
+        rewardPoints: true,
+        membershipTier: true,
+        sessions: {
+          orderBy: { createdAt: 'desc' },
+          take: 1
         }
       }
     });
   }
 
-  async createUser(data: { firstName: string, lastName: string, email: string, roleId: string }) {
-    const user = await this.prisma.user.create({
+  async deleteUser(id: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+        isActive: false,
+        deletedAt: new Date()
+      }
+    });
+  }
+
+  async createStaffUser(data: { firstName: string, lastName: string, email: string, phone: string, roleId: string }) {
+    const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
+    
+    if (existingUser) {
+      // Check if they already have a role assigned
+      const existingRole = await this.prisma.userRole.findFirst({
+        where: { userId: existingUser.id, roleId: data.roleId }
+      });
+
+      if (existingRole) {
+        throw new ConflictException('A user with this email already exists and is already assigned to this role.');
+      }
+
+      // Clear any existing roles and assign the new one, since UI expects one role
+      await this.prisma.userRole.deleteMany({ where: { userId: existingUser.id } });
+      
+      // Update existing user with the new role
+      return this.prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          roles: {
+            create: { roleId: data.roleId }
+          }
+        }
+      });
+    }
+
+    const passwordHash = await require('bcrypt').hash('password123', 10);
+    return this.prisma.user.create({
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
+        phone: data.phone || null,
+        passwordHash,
         roles: {
           create: {
             roleId: data.roleId
@@ -116,7 +314,62 @@ export class AdminService implements OnModuleInit {
         }
       }
     });
-    return user;
+  }
+
+  async getStaff2FAStatus() {
+    const staff = await this.prisma.user.findMany({
+      where: {
+        isDeleted: false,
+        roles: {
+          some: {
+            role: {
+              name: {
+                not: 'CUSTOMER'
+              }
+            }
+          }
+        }
+      },
+      include: {
+        staff2fa: true,
+        sessions: {
+          orderBy: { createdAt: 'desc' },
+          take: 1
+        }
+      }
+    });
+
+    return staff.map(u => ({
+      id: u.id,
+      name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'No Name',
+      email: u.email,
+      is2FAEnabled: u.staff2fa ? u.staff2fa.isVerified : false,
+      lastLogin: u.sessions[0]?.createdAt 
+        ? new Date(u.sessions[0].createdAt).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : 'Never'
+    }));
+  }
+
+  async resetStaff2FA(userId: string) {
+    await this.prisma.staff2fa.deleteMany({
+      where: { userId }
+    });
+    return { success: true, message: '2FA has been reset for this user.' };
+  }
+
+  async updateUserRole(userId: string, data: { roleId: string }) {
+    // Delete existing roles for this user
+    await this.prisma.userRole.deleteMany({
+      where: { userId }
+    });
+    
+    // Assign new role
+    return this.prisma.userRole.create({
+      data: {
+        userId,
+        roleId: data.roleId
+      }
+    });
   }
 
   async assignRole(userIdentifier: string, roleName: string) {

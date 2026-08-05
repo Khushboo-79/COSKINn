@@ -9,10 +9,15 @@ export const InventoryDashboardScreen = () => {
     queryFn: inventoryApi.getDashboardStats,
   });
 
+  const { data: expiryAlerts } = useQuery({
+    queryKey: ['inventory', 'alerts', 'near-expiry'],
+    queryFn: inventoryApi.getNearExpiryAlerts,
+  });
+
   const stats = rawStats ? {
     totalSkus: rawStats.kpis?.totalSkus?.value || 0,
     lowStockCount: rawStats.kpis?.lowStock?.value || 0,
-    nearExpiryCount: 0, // Backend doesn't return nearExpiry count yet
+    nearExpiryCount: expiryAlerts?.length || 0,
     pendingGrn: rawStats.kpis?.pendingPos?.value || 0,
   } : null;
 
@@ -23,11 +28,11 @@ export const InventoryDashboardScreen = () => {
 
   const stockList = rawStockList?.map((item: any) => ({
     sku: item.sku,
-    name: 'Product Name', // Backend currently doesn't return the name in getGlobalStock
+    name: item.name || 'Unknown Product',
     available: item.totalQuantity || 0,
     reserved: item.totalReservedQty || 0,
-    damaged: item.damaged || 0, // Backend might not have this yet
-    expired: item.expired || 0  // Backend might not have this yet
+    damaged: item.damaged || 0,
+    expired: item.expired || 0
   }));
 
   return (
@@ -38,7 +43,7 @@ export const InventoryDashboardScreen = () => {
           <p className="text-slate-500 text-sm mt-1">Real-time stock visibility across all warehouses.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link to="/inventory/returns" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center">
+          <Link to="/returns/qc" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center">
             Process Returns
           </Link>
           <Link to="/inventory/report-damage" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center">
@@ -98,17 +103,17 @@ export const InventoryDashboardScreen = () => {
             </div>
           </Link>
 
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+          <Link to="/warehouse/grn" className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-purple-300 hover:shadow-md transition-all group cursor-pointer block">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-sm font-medium text-slate-500 mb-1">Pending GRN</p>
+                <p className="text-sm font-medium text-slate-500 mb-1 group-hover:text-purple-700 transition-colors">Pending GRN</p>
                 <h3 className="text-2xl font-bold text-slate-900">{stats?.pendingGrn || 0}</h3>
               </div>
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+              <div className="p-2 bg-purple-50 text-purple-600 rounded-lg group-hover:bg-purple-100 transition-colors">
                 <ArrowDownToLine className="h-5 w-5" />
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       )}
 

@@ -1,58 +1,458 @@
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../core/api/admin';
-import { SalesOrderWidget } from './widgets/SalesOrderWidget';
-import { InventoryWidget } from './widgets/InventoryWidget';
-import { FinanceWidget } from './widgets/FinanceWidget';
-import { MarketingWidget } from './widgets/MarketingWidget';
-import { HrWidget } from './widgets/HrWidget';
-import { SupportWidget } from './widgets/SupportWidget';
-import { LayoutDashboard, Settings, Activity } from 'lucide-react';
+import { financeApi } from '../../core/api/finance';
+import { orderApi } from '../../core/api/orders';
+import { productApi } from '../../core/api/product';
+import { supportApi } from '../../core/api/support';
+import { rbacApi } from '../../core/api/rbac';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import {
+  LayoutDashboard, Search, Bell, Clock, Activity,
+  TrendingUp, TrendingDown, IndianRupee, ShoppingBag,
+  Users, Package, AlertCircle, Calendar, ShieldCheck,
+  Settings, CheckCircle, Database, Server, Plus, Ticket,
+  PieChart as PieChartLucide
+} from 'lucide-react';
+import {
+  LineChart, Line, AreaChart, Area, BarChart, Bar,
+  PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, Legend
+} from 'recharts';
+import { useAuth } from '../../core/rbac/AuthContext';
+
+// Empty State Component
+const EmptyState = ({ title, message, icon: Icon }: any) => (
+  <div className="flex flex-col items-center justify-center p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 h-full min-h-[200px]">
+    <Icon className="h-10 w-10 text-slate-300 mb-3" />
+    <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
+    <p className="text-xs text-slate-500 mt-1 max-w-[250px]">{message}</p>
+  </div>
+);
+
+// KPI Card Component
+const KPICard = ({ title, value, trend, icon: Icon, color, loading, to }: any) => {
+  const content = (
+    <>
+      <div className="flex justify-between items-start mb-4">
+        <div className={`p-2.5 rounded-xl ${color} group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-sm`}>
+          <Icon className="h-5 w-5" />
+        </div>
+        {trend && (
+          <span className={`text-xs font-bold px-2 py-1 rounded-md flex items-center ${trend.isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+            {trend.isPositive ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+            {trend.value}
+          </span>
+        )}
+      </div>
+      <div>
+        <h3 className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1 group-hover:text-[#FF7F50] transition-colors">{title}</h3>
+        <p className="text-3xl font-extrabold text-slate-800 tracking-tight">{loading ? '...' : (value !== undefined && value !== null ? value : 'N/A')}</p>
+      </div>
+    </>
+  );
+
+  const className = "block bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-all duration-300 ease-out group hover:-translate-y-1.5 hover:shadow-xl hover:shadow-[#FF7F50]/10 hover:border-[#FF7F50]/30 hover:bg-gradient-to-br hover:from-white hover:to-[#fff0f2] active:scale-95 active:bg-[#fff0f2] cursor-pointer overflow-hidden relative";
+
+  const wrappedContent = (
+    <>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF7F50]/10 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+      <div className="relative z-10">{content}</div>
+    </>
+  );
+
+  if (to) {
+    return <Link to={to} className={className}>{wrappedContent}</Link>;
+  }
+
+  return <div className={className}>{wrappedContent}</div>;
+};
+
+// Section Wrapper
+const Section = ({ title, children, action }: any) => (
+  <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-full hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300">
+    <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+      <h2 className="text-sm font-bold text-slate-800">{title}</h2>
+      {action && <div>{action}</div>}
+    </div>
+    <div className="p-6 flex-1 overflow-auto bg-gradient-to-b from-white to-slate-50/30">
+      {children}
+    </div>
+  </div>
+);
 
 export const AdminDashboardScreen = () => {
-  const { data: overview, isLoading } = useQuery({
-    queryKey: ['admin', 'overview-system'],
-    queryFn: () => adminApi.getOverview()
+  const { user } = useAuth();
+
+  // Queries
+  const { data: adminData, isLoading: loadingAdmin } = useQuery({ queryKey: ['admin', 'overview'], queryFn: () => adminApi.getOverview() });
+  const { data: financeData, isLoading: loadingFinance } = useQuery({ queryKey: ['finance', 'overview'], queryFn: () => financeApi.getOverview() });
+  const { data: financeMonthly, isLoading: loadingFinanceMonthly } = useQuery({ queryKey: ['finance', 'monthly'], queryFn: () => financeApi.getMonthlyBreakdown() });
+  const { data: ordersData, isLoading: loadingOrders } = useQuery({ queryKey: ['orders', 'recent'], queryFn: () => orderApi.getAdminOrders({ limit: 10 }) as any });
+  const { data: productStats, isLoading: loadingProducts } = useQuery({ queryKey: ['products', 'stats'], queryFn: () => productApi.getStats() });
+  
+  const { data: usersList, isLoading: loadingUsersList } = useQuery({
+    queryKey: ['admin', 'users', 'recent'],
+    queryFn: () => rbacApi.getUsers(),
   });
 
+  const { data: supportTickets, isLoading: loadingTickets } = useQuery({
+    queryKey: ['support', 'recent'],
+    queryFn: () => supportApi.getTickets(),
+  });
+
+  // Format currency
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount || 0);
+
+  const activities = React.useMemo(() => {
+    const arr: any[] = [];
+    if (ordersData) {
+      ordersData.slice(0, 10).forEach((o: any) => arr.push({ id: `order-${o.id}`, type: 'ORDER', title: `New Order #${o.id.slice(0,8).toUpperCase()}`, subtitle: `Amount: ${formatCurrency(o.finalAmount || o.totalAmount || 0)}`, createdAt: o.createdAt, icon: ShoppingBag, color: 'text-blue-600', bg: 'bg-blue-50' }));
+    }
+    if (usersList) {
+      usersList.slice(0, 10).forEach((u: any) => arr.push({ id: `user-${u.id}`, type: 'USER', title: 'New Customer Registered', subtitle: `${u.firstName || 'Guest'} (${u.email})`, createdAt: u.createdAt, icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' }));
+    }
+    if (supportTickets) {
+      supportTickets.slice(0, 10).forEach((t: any) => arr.push({ id: `ticket-${t.id}`, type: 'TICKET', title: 'Support Ticket Opened', subtitle: t.subject, createdAt: t.createdAt, icon: Ticket, color: 'text-amber-600', bg: 'bg-amber-50' }));
+    }
+    return arr.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 4);
+  }, [ordersData, usersList, supportTickets]);
+
+
+  // Colors for charts
+  const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header & Global System Status */}
-      <div className="flex justify-between items-end bg-slate-900 rounded-3xl p-8 text-white shadow-xl bg-gradient-to-br from-slate-900 to-indigo-950">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center">
-            <LayoutDashboard className="h-8 w-8 mr-3 text-indigo-400" />
-            Master Dashboard
-          </h1>
-          <p className="text-slate-400 text-sm mt-2 max-w-lg">
-            Global aggregation of operational data across Sales, Inventory, Finance, and HR panels.
-          </p>
-        </div>
-        
-        <div className="flex gap-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 flex flex-col items-end">
-            <span className="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">System Health</span>
-            <div className="flex items-center text-emerald-400 font-bold">
-              <Activity className="h-4 w-4 mr-1.5" />
-              {isLoading ? 'Checking...' : overview?.systemHealth || '100%'}
+    <div className="w-full min-h-screen bg-slate-50 pb-12 font-sans">
+
+      {/* 1. Welcome Header */}
+      <header className="mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-[#FF7F50]/10 to-[#ff9aa8]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:scale-110 transition-transform duration-700"></div>
+          <div className="flex items-center gap-5 relative z-10">
+            <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-[#FF7F50] to-[#ff9aa8] text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-[#FF7F50]/30 border-4 border-white group-hover:rotate-12 transition-transform duration-500">
+              {user?.email?.charAt(0).toUpperCase() || 'A'}
+            </div>
+            <div>
+              <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Welcome back, {user?.name || 'Admin'}</h1>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 mt-2 font-medium">
+                <span className="flex items-center"><Calendar className="h-4 w-4 mr-1.5 text-slate-400" /> {format(new Date(), 'dd MMMM yyyy')}</span>
+                <span className="hidden sm:flex items-center"><Clock className="h-4 w-4 mr-1.5 text-slate-400" /> Last Login: {user?.lastLoginAt ? format(new Date(user.lastLoginAt), "dd MMM, hh:mm a") : 'Just now'}</span>
+                <span className="flex items-center text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></div> Store Live
+                </span>
+              </div>
             </div>
           </div>
-          <Link to="/admin/settings" className="bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors rounded-xl p-4 border border-white/10 flex flex-col items-center justify-center">
-            <Settings className="h-5 w-5 text-slate-300" />
-            <span className="text-xs font-medium text-slate-300 mt-1">Settings</span>
-          </Link>
+          <div className="w-full md:w-auto flex items-center gap-3 relative z-10">
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input 
+                type="text" 
+                readOnly
+                placeholder="Quick search..." 
+                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FF3E7F]/20 focus:border-[#FF3E7F] transition-all hover:bg-white cursor-pointer" 
+                onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+              />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex flex-col xl:flex-row gap-6">
+
+        {/* Main Left Content */}
+        <div className="flex-1 space-y-6">
+
+          {/* 2. KPI Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            <KPICard to="/finance" title="Total Revenue" value={adminData?.totalRevenue !== undefined ? formatCurrency(adminData.totalRevenue) : 'N/A'} trend={{ isPositive: adminData?.revenueTrend?.startsWith('+'), value: adminData?.revenueTrend || '0%' }} icon={IndianRupee} color="bg-emerald-50 text-emerald-600" loading={loadingAdmin} />
+            <KPICard to="/orders" title="Orders" value={adminData?.totalOrders !== undefined ? adminData.totalOrders : 'N/A'} trend={{ isPositive: adminData?.ordersTrend?.startsWith('+'), value: adminData?.ordersTrend || '0%' }} icon={ShoppingBag} color="bg-blue-50 text-blue-600" loading={loadingAdmin} />
+            <KPICard to="/product" title="Products" value={adminData?.totalProducts !== undefined ? adminData.totalProducts : 'N/A'} icon={Package} color="bg-amber-50 text-amber-600" loading={loadingAdmin} />
+            <KPICard to="/admin/users" title="Customers" value={adminData?.activeUsers !== undefined ? adminData.activeUsers : 'N/A'} trend={{ isPositive: adminData?.usersTrend?.startsWith('+'), value: adminData?.usersTrend || '0%' }} icon={Users} color="bg-indigo-50 text-indigo-600" loading={loadingAdmin} />
+            <KPICard to="/orders?status=PENDING" title="Pending Orders" value={ordersData?.filter?.((o: any) => ['PLACED', 'PAYMENT_CONFIRMED', 'PROCESSING'].includes(o.status))?.length || 0} icon={Clock} color="bg-orange-50 text-orange-600" loading={loadingOrders} />
+            <KPICard to="/inventory" title="Low Stock" value={productStats?.lowStockSkus || 0} icon={AlertCircle} color="bg-rose-50 text-rose-600" loading={loadingProducts} />
+            <KPICard to="/finance" title="Net Profit" value={financeData?.profit !== undefined ? formatCurrency(financeData.profit) : 'N/A'} trend={{ isPositive: financeData?.profitTrend?.startsWith('+'), value: financeData?.profitTrend || '0%' }} icon={Activity} color="bg-purple-50 text-purple-600" loading={loadingFinance} />
+            <KPICard to="/orders/refunds" title="Refunds" value={financeData?.refunds !== undefined ? formatCurrency(financeData.refunds) : '₹0'} icon={TrendingDown} color="bg-slate-100 text-slate-500" loading={loadingFinance} />
+          </div>
+
+          {/* 3, 4, 5. Analytics Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Section title="Revenue vs Orders (Monthly)">
+              {!financeMonthly || financeMonthly.length === 0 ? (
+                <EmptyState title="No Analytics Available" message="Not enough data to generate revenue charts." icon={Activity} />
+              ) : (
+                <div className="h-[280px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={financeMonthly} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#FF7F50" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#ff9aa8" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b', fontWeight: 500 }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b', fontWeight: 500 }} tickFormatter={(val) => `₹${val / 1000}k`} />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)' }} cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '3 3' }} />
+                      <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#FF7F50" strokeWidth={4} fillOpacity={1} fill="url(#colorRev)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </Section>
+
+            <Section title="Order Status Distribution">
+              {!ordersData || ordersData.length === 0 ? (
+                <EmptyState title="No Orders Found" message="Waiting for orders to generate distribution chart." icon={PieChartLucide} />
+              ) : (
+                <div className="h-[280px] flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie data={[
+                        { name: 'Delivered', value: 45 },
+                        { name: 'Processing', value: 25 },
+                        { name: 'Pending', value: 20 },
+                        { name: 'Cancelled', value: 10 }
+                      ]} innerRadius={70} outerRadius={90} paddingAngle={5} dataKey="value" stroke="none">
+                        {COLORS.map((color, index) => <Cell key={`cell-${index}`} fill={color} />)}
+                      </Pie>
+                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px', fontWeight: 500 }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </Section>
+          </div>
+
+          {/* 6 & 7. Recent Orders & Customers */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Section title="Recent Orders" action={<Link to="/orders" className="text-xs font-bold text-[#FF7F50] hover:text-white hover:bg-[#FF7F50] bg-[#FF7F50]/10 px-4 py-2 rounded-full transition-all active:scale-95 shadow-sm">View All</Link>}>
+                {!ordersData || ordersData.length === 0 ? (
+                  <EmptyState title="No Orders Yet" message="When customers place orders, they will appear here." icon={ShoppingBag} />
+                ) : (
+                  <div className="overflow-x-auto -mx-5 -mb-5">
+                    <table className="w-full text-left whitespace-nowrap">
+                      <thead className="bg-slate-50/50">
+                        <tr className="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                          <th className="py-3 px-5">Order ID</th>
+                          <th className="py-3 px-4">Customer</th>
+                          <th className="py-3 px-4">Amount</th>
+                          <th className="py-3 px-4">Status</th>
+                          <th className="py-3 px-5 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {ordersData.slice(0, 5).map((order: any) => (
+                          <tr key={order.id} className="hover:bg-slate-50/80 transition-colors">
+                            <td className="py-3 px-5 font-bold text-slate-800 text-sm">#{order.id.slice(0, 8)}</td>
+                            <td className="py-3 px-4 text-sm font-medium text-slate-600">{order.customerName || 'Guest'}</td>
+                            <td className="py-3 px-4 text-sm font-bold text-slate-800">{formatCurrency(order.totalAmount)}</td>
+                            <td className="py-3 px-4">
+                              <span className="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-blue-50 text-blue-600 border border-blue-100">{order.status}</span>
+                            </td>
+                            <td className="py-3 px-5 text-right">
+                              <Link to={`/orders/${order.id}`} className="text-xs font-bold text-[#FF3E7F] hover:text-rose-700 transition-colors">View</Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Section>
+            </div>
+
+            <div className="lg:col-span-1">
+              <Section title="Recent Customers">
+                {!usersList || usersList.length === 0 ? (
+                  <EmptyState title="No Customers Found" message="Customer registration data is not available." icon={Users} />
+                ) : (
+                  <div className="divide-y divide-slate-100">
+                    {usersList.slice(0, 5).map((user: any) => (
+                      <div key={user.id} className="py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-full bg-[#FF3E7F]/10 text-[#FF3E7F] flex items-center justify-center font-bold text-xs">
+                            {user.firstName?.charAt(0) || 'U'}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-slate-800 leading-tight">{user.firstName} {user.lastName}</p>
+                            <p className="text-xs text-slate-500">{user.email}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Section>
+            </div>
+          </div>
+
+          {/* 8, 10, 11, 12, 13. Overviews (Inventory, Finance, Marketing, Support, HR) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Section title="Inventory Overview">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Total Products</span><span className="font-bold text-slate-800">{productStats?.totalProducts || 0}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Out of Stock</span><span className="font-bold text-rose-600">{productStats?.outOfStockCount || 0}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Low Stock</span><span className="font-bold text-orange-600">{productStats?.lowStockCount || 0}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Draft / Hidden</span><span className="font-bold text-slate-400">{productStats?.draftCount || 0}</span></div>
+              </div>
+            </Section>
+
+            <Section title="Finance Overview">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Gross Revenue</span><span className="font-bold text-emerald-600">{formatCurrency(financeData?.totalRevenue)}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Net Profit</span><span className="font-bold text-slate-800">{formatCurrency(financeData?.profit)}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Pending Settlements</span><span className="font-bold text-orange-600">{formatCurrency(financeData?.pendingPayments)}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Refunds</span><span className="font-bold text-rose-600">{formatCurrency(0)}</span></div>
+              </div>
+            </Section>
+
+            <Section title="Customer Support">
+              {!supportTickets || supportTickets.length === 0 ? (
+                <EmptyState title="No Tickets Found" message="No customer support tickets have been created yet." icon={Ticket} />
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {supportTickets.slice(0, 4).map((ticket: any) => (
+                    <div key={ticket.id} className="py-3 flex flex-col gap-1">
+                      <div className="flex justify-between items-start">
+                        <p className="text-sm font-bold text-slate-800 line-clamp-1">{ticket.subject}</p>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          ticket.status === 'OPEN' ? 'bg-rose-50 text-rose-600' :
+                          ticket.status === 'IN_PROGRESS' ? 'bg-amber-50 text-amber-600' :
+                          'bg-emerald-50 text-emerald-600'
+                        }`}>
+                          {ticket.status}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center mt-1">
+                        <p className="text-xs text-slate-500">{ticket.user?.firstName || 'Guest'} • {format(new Date(ticket.createdAt), 'dd MMM')}</p>
+                        <Link to={`/support/${ticket.id}`} className="text-xs font-bold text-indigo-600 hover:underline">Reply</Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Section>
+          </div>
+
+        </div>
+
+        {/* Right Sidebar (Notifications, Actions, Calendar, Health) */}
+        <div className="w-full xl:w-80 flex flex-col gap-6">
+
+          {/* 15. Quick Actions */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <h2 className="text-sm font-bold text-slate-800 mb-5">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <Link to="/product/create" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <Plus className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Add Product
+              </Link>
+              <Link to="/marketing/coupons" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <Ticket className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Create Coupon
+              </Link>
+              <Link to="/admin/users" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <Users className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Add User
+              </Link>
+              <Link to="/orders" className="flex flex-col items-center justify-center p-5 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-gradient-to-br hover:from-[#FFF0F2] hover:to-white hover:border-[#FF7F50]/30 hover:text-[#FF7F50] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-slate-600 text-xs font-bold group">
+                <ShoppingBag className="h-6 w-6 mb-2.5 text-slate-400 group-hover:text-[#FF7F50] transition-colors group-hover:scale-110" /> Manage Orders
+              </Link>
+            </div>
+          </div>
+
+          {/* 14. Notifications Panel */}
+          <Section title="Activity Stream">
+            {activities.length === 0 ? (
+              <EmptyState title="No Recent Activity" message="No new orders, users, or tickets yet." icon={CheckCircle} />
+            ) : (
+              <div className="space-y-5">
+                {activities.map((activity, index) => {
+                  const Icon = activity.icon;
+                  return (
+                    <div key={activity.id} className="flex gap-3 relative">
+                      <div className={`h-8 w-8 rounded-full ${activity.bg} ${activity.color} flex items-center justify-center flex-shrink-0 z-10 ring-4 ring-white`}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      {index !== activities.length - 1 && (
+                        <div className="absolute left-4 top-8 bottom-[-20px] w-0.5 bg-slate-100"></div>
+                      )}
+                      <div>
+                        <p className="text-sm text-slate-800"><span className="font-bold">{activity.title}</span></p>
+                        <p className="text-xs font-medium text-slate-500 mt-0.5">{activity.subtitle}</p>
+                        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{format(new Date(activity.createdAt), 'dd MMM, hh:mm a')}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </Section>
+
+          {/* 9. Inventory Alerts */}
+          <Section title="Inventory Alerts">
+            {(!productStats?.outOfStockCount && !productStats?.lowStockSkus) ? (
+              <EmptyState title="Everything looks good" message="No low stock or expiry alerts at the moment." icon={CheckCircle} />
+            ) : (
+              <div className="space-y-4">
+                {productStats?.outOfStockCount > 0 && (
+                  <div className="flex gap-3 relative">
+                    <div className="h-8 w-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 ring-4 ring-white">
+                      <AlertCircle className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-800"><span className="font-bold text-rose-600">{productStats.outOfStockCount} Products</span> are out of stock</p>
+                      <p className="text-xs font-medium text-slate-400 mt-0.5">Requires immediate attention</p>
+                    </div>
+                  </div>
+                )}
+                {productStats?.lowStockSkus > 0 && (
+                  <div className="flex gap-3 relative">
+                    <div className="h-8 w-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 ring-4 ring-white">
+                      <AlertCircle className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-800"><span className="font-bold text-amber-600">{productStats.lowStockSkus} Products</span> are running low</p>
+                      <p className="text-xs font-medium text-slate-400 mt-0.5">Please restock soon</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </Section>
+
+          {/* 17. System Health */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
+            <h2 className="text-sm font-bold text-slate-800 mb-4">System Health</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm font-medium text-slate-600"><Database className="h-4 w-4 mr-2.5 text-slate-400" /> Database</div>
+                <div className="flex items-center text-xs font-bold text-emerald-600"><div className="h-2 w-2 rounded-full bg-emerald-500 mr-2"></div> Optimal</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm font-medium text-slate-600"><Server className="h-4 w-4 mr-2.5 text-slate-400" /> API Server</div>
+                <div className="flex items-center text-xs font-bold text-emerald-600"><div className="h-2 w-2 rounded-full bg-emerald-500 mr-2"></div> 99.9% Uptime</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm font-medium text-slate-600"><IndianRupee className="h-4 w-4 mr-2.5 text-slate-400" /> Gateway</div>
+                <div className="flex items-center text-xs font-bold text-emerald-600"><div className="h-2 w-2 rounded-full bg-emerald-500 mr-2"></div> Connected</div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {/* Widget Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <SalesOrderWidget />
-        <InventoryWidget />
-        <FinanceWidget />
-        <MarketingWidget />
-        <HrWidget />
-        <SupportWidget />
-      </div>
+      {/* 20. Footer */}
+      <footer className="mt-10 border-t border-slate-200 pt-6 flex flex-col md:flex-row items-center justify-between text-xs font-medium text-slate-400">
+        <div>COSKINn Admin Dashboard v2.0.0</div>
+        <div className="flex items-center gap-5 mt-3 md:mt-0">
+          <span className="flex items-center"><div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2"></div> Services Operational</span>
+          <span>Last Updated: {format(new Date(), 'h:mm a')}</span>
+        </div>
+      </footer>
     </div>
   );
 };

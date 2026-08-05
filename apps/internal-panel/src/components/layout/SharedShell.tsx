@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../core/rbac/AuthContext';
-import { 
+import {
   Menu, X, Search, Bell, Mail, LogOut, User,
-  LayoutDashboard, ShoppingBag, Package, ShoppingCart, 
+  LayoutDashboard, ShoppingBag, Package, ShoppingCart,
   Truck, HeadphonesIcon, FileText, Megaphone,
   Briefcase, ShieldCheck, DollarSign, ShieldAlert, Boxes, Box,
   RefreshCw, MessageSquare
@@ -30,36 +30,36 @@ export const SharedShell = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
+  const [isMailOpen, setMailOpen] = useState(false);
   const location = useLocation();
 
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
   // Filter available routes based on panel_access
-  const availableRoutes = PANEL_ROUTES.filter(route => 
+  const availableRoutes = PANEL_ROUTES.filter(route =>
     user?.panel_access.includes('admin') || user?.panel_access.includes(route.id)
   );
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans">
-      
+    <div className="min-h-screen bg-[#fafafa] flex flex-col md:flex-row font-sans">
+
       {/* Mobile Overlay */}
       {!isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-slate-900/50 z-20 md:hidden" 
+        <div
+          className="fixed inset-0 bg-slate-900/50 z-20 md:hidden print:hidden"
           onClick={() => setSidebarOpen(true)}
         />
       )}
 
       {/* Sidebar */}
-      <aside 
-        className={`${
-          isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-        } fixed md:relative z-30 inset-y-0 left-0 bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out flex flex-col shadow-xl`}
+      <aside
+        className={`${isSidebarOpen ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
+          } fixed md:relative z-30 inset-y-0 left-0 bg-gradient-to-b from-[#fff0f2] to-[#FFDAB9]/20 border-r border-primary-200 text-slate-700 transition-all duration-300 ease-in-out flex flex-col shadow-sm print:hidden`}
       >
-        <div className="h-16 flex items-center justify-between px-4 bg-slate-950 border-b border-slate-800">
-          {!isSidebarOpen && <img src="/logo.png" alt="Fairenne Logo" className="h-8 w-auto" />}
-          {isSidebarOpen && <span className="font-bold text-white text-lg mx-auto">FA</span>}
-          <button onClick={toggleSidebar} className="text-slate-400 hover:text-white md:hidden">
+        <div className="h-20 flex items-center justify-center px-4 bg-transparent border-b border-primary-200/50 relative w-full overflow-visible">
+          {isSidebarOpen && <img src="/logo-icon.png" alt="Fairenne Icon" className="h-12 w-auto object-contain scale-[1.3] origin-center" />}
+          {!isSidebarOpen && <img src="/logo-full.png" alt="Fairenne Logo" className="w-[180px] h-auto max-h-[70px] object-contain scale-[1.8] origin-center" />}
+          <button onClick={toggleSidebar} className="text-slate-400 hover:text-primary-500 md:hidden absolute right-4 z-10 bg-white/50 rounded-full p-1">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -68,16 +68,15 @@ export const SharedShell = () => {
           {availableRoutes.map((route) => {
             const Icon = route.icon;
             const isActive = location.pathname.startsWith(route.path);
-            
+
             return (
               <Link
                 key={route.id}
                 to={route.path}
-                className={`flex items-center px-4 py-3 mx-2 rounded-lg transition-colors ${
-                  isActive 
-                    ? 'bg-primary-600 text-white' 
-                    : 'hover:bg-slate-800 hover:text-white'
-                } ${isSidebarOpen ? 'justify-center' : ''}`}
+                className={`flex items-center px-4 py-3 mx-2 rounded-xl transition-all ${isActive
+                    ? 'bg-gradient-to-r from-[#FF7F50] to-[#ff9aa8] text-white shadow-lg shadow-[#FF7F50]/30 font-semibold scale-[1.02]'
+                    : 'hover:bg-white hover:text-[#FF7F50] hover:shadow-sm'
+                  } ${isSidebarOpen ? 'justify-center' : ''}`}
                 title={isSidebarOpen ? route.label : ''}
               >
                 <Icon className={`h-5 w-5 flex-shrink-0 ${isSidebarOpen ? '' : 'mr-3'}`} />
@@ -87,10 +86,10 @@ export const SharedShell = () => {
           })}
         </nav>
 
-        <div className="p-4 bg-slate-950 border-t border-slate-800">
-          <button 
+        <div className="p-4 bg-white/50 border-t border-primary-100">
+          <button
             onClick={logout}
-            className={`flex items-center text-slate-400 hover:text-white transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
+            className={`flex items-center text-slate-500 hover:text-rose-500 transition-colors w-full ${isSidebarOpen ? 'justify-center' : ''}`}
           >
             <LogOut className="h-5 w-5" />
             {!isSidebarOpen && <span className="ml-3 font-medium">Logout</span>}
@@ -99,18 +98,18 @@ export const SharedShell = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible">
+
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative">
+        <header className="h-16 bg-gradient-to-r from-[#fff0f2]/90 to-[#FFDAB9]/40 backdrop-blur-md border-b border-primary-200/50 flex items-center justify-between px-4 lg:px-8 z-10 shadow-sm relative print:hidden">
           <div className="flex items-center flex-1">
-            <button 
-              onClick={toggleSidebar} 
+            <button
+              onClick={toggleSidebar}
               className="text-slate-500 hover:text-slate-700 focus:outline-none p-2 -ml-2 mr-2 rounded-md"
             >
               <Menu className="h-5 w-5" />
             </button>
-            
+
             <div className="hidden sm:flex max-w-md w-full ml-4">
               <div className="relative w-full">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -131,17 +130,42 @@ export const SharedShell = () => {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <button className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative group">
-              <Mail className="h-5 w-5" />
-              {/* Tooltip for Mail */}
-              <div className="absolute top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity">
-                No new messages
-              </div>
-            </button>
             <div className="relative">
               <button 
                 onClick={() => {
+                  setMailOpen(!isMailOpen);
+                  setNotificationOpen(false);
+                  setProfileOpen(false);
+                }}
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative"
+              >
+                <Mail className="h-5 w-5" />
+              </button>
+
+              {/* Messages Dropdown */}
+              {isMailOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setMailOpen(false)}></div>
+                  <div className="absolute right-0 top-12 w-72 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
+                    <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
+                      <h3 className="font-bold text-sm text-slate-800">Messages</h3>
+                      <span className="text-xs text-primary-600 cursor-pointer hover:underline">Mark all read</span>
+                    </div>
+                    <div className="p-6 text-center">
+                      <Mail className="h-8 w-8 text-slate-200 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-slate-600">No new messages</p>
+                      <p className="text-xs text-slate-400 mt-1">You're all caught up!</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            
+            <div className="relative">
+              <button
+                onClick={() => {
                   setNotificationOpen(!isNotificationOpen);
+                  setMailOpen(false);
                   setProfileOpen(false);
                 }}
                 className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative"
@@ -149,7 +173,7 @@ export const SharedShell = () => {
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
               </button>
-              
+
               {/* Notifications Dropdown */}
               {isNotificationOpen && (
                 <>
@@ -173,15 +197,16 @@ export const SharedShell = () => {
                 </>
               )}
             </div>
-            
+
             <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block"></div>
-            
+
             {/* Profile Dropdown */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => {
                   setProfileOpen(!isProfileOpen);
                   setNotificationOpen(false);
+                  setMailOpen(false);
                 }}
                 className="flex items-center cursor-pointer p-1 pr-2 rounded-full hover:bg-slate-50 transition-colors focus:outline-none"
               >
@@ -193,14 +218,14 @@ export const SharedShell = () => {
                   <span className="block text-slate-500 text-xs capitalize">{user?.role}</span>
                 </div>
               </button>
-              
+
               {/* Dropdown Menu */}
               {isProfileOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)}></div>
                   <div className="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
-                    <Link 
-                      to="/admin/profile" 
+                    <Link
+                      to="/admin/profile"
                       onClick={() => setProfileOpen(false)}
                       className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center"
                     >
@@ -208,7 +233,7 @@ export const SharedShell = () => {
                       My Profile
                     </Link>
                     <div className="border-t border-slate-100 my-1"></div>
-                    <button 
+                    <button
                       onClick={() => {
                         setProfileOpen(false);
                         logout();
@@ -225,9 +250,11 @@ export const SharedShell = () => {
           </div>
         </header>
 
-        {/* Content Frame */}
-        <main className="flex-1 overflow-auto bg-background p-4 lg:p-8">
-          <Outlet />
+        {/* Page Content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-transparent relative z-0 print:overflow-visible print:h-auto">
+          <div className="container mx-auto px-4 py-8 max-w-[1400px] print:p-0 print:m-0 print:max-w-none">
+            <Outlet />
+          </div>
         </main>
         <GlobalSearch />
       </div>

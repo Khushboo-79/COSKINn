@@ -3,6 +3,7 @@ import { orderApi } from '../../core/api/orders';
 import { financeApi } from '../../core/api/finance';
 import { CheckCircle2, ShieldCheck, Truck, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export const SettlementScreen = () => {
   const [isSyncing, setIsSyncing] = useState(false);
@@ -14,7 +15,14 @@ export const SettlementScreen = () => {
   });
 
   const syncMutation = useMutation({
-    mutationFn: () => financeApi.syncSettlements([{ id: 'mock-settlement' }]),
+    mutationFn: () => financeApi.syncSettlements([{ 
+      id: 'mock-settlement-' + Date.now(), 
+      amount: 1000, 
+      fees: 20, 
+      tax: 3.6, 
+      status: 'processed', 
+      utr: 'MOCK_UTR_' + Date.now() 
+    }]),
     onMutate: () => {
       setIsSyncing(true);
       setSuccessMessage('');
@@ -25,6 +33,11 @@ export const SettlementScreen = () => {
         setSuccessMessage('Settlements synced successfully!');
         setTimeout(() => setSuccessMessage(''), 3000);
       }, 1500); // Faking network delay for UX
+    },
+    onError: (err) => {
+      setIsSyncing(false);
+      console.error(err);
+      toast?.error('Failed to sync settlements.');
     }
   });
 
@@ -32,8 +45,8 @@ export const SettlementScreen = () => {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
   };
 
-  const razorpayOrders = orders?.filter((o: any) => o.paymentMethod === 'PREPAID') || [];
-  const codOrders = orders?.filter((o: any) => o.paymentMethod === 'COD') || [];
+  const razorpayOrders = orders?.filter((o: any) => o.paymentMode === 'ONLINE') || [];
+  const codOrders = orders?.filter((o: any) => o.paymentMode === 'COD') || [];
 
   const calculateTotal = (orderList: any[]) => {
     return orderList.reduce((sum, order) => sum + order.totalAmount, 0);

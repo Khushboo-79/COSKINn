@@ -54,7 +54,7 @@ export const EmployeeDocumentsScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Employee Documents</h1>
           <p className="text-slate-500 text-sm mt-1">Securely upload and manage employee contracts, IDs, and certifications.</p>
@@ -126,7 +126,7 @@ export const EmployeeDocumentsScreen = () => {
 
         {/* Document List */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[400px]">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[400px] overflow-x-auto">
             {uploadedDocs.length === 0 ? (
               <div className="p-12 text-center h-full flex flex-col justify-center items-center">
                 <FileText className="h-12 w-12 text-slate-300 mx-auto mb-4" />
@@ -136,7 +136,7 @@ export const EmployeeDocumentsScreen = () => {
                 </p>
               </div>
             ) : (
-              <table className="w-full text-left">
+              <table className="w-full text-left min-w-[600px]">
                 <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase">
                   <tr>
                     <th className="py-3 px-6">Document</th>

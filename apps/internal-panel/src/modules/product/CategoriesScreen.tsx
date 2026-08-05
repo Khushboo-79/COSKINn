@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productApi } from '../../core/api/product';
+import { resolveImageUrl } from '../../core/api/client';
 import { DataTable } from '../../components/ui/DataTable';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { Edit2, Tag, Plus, X } from 'lucide-react';
@@ -68,12 +69,18 @@ export const CategoriesScreen = () => {
       sortable: true,
       render: (cat: any) => (
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0 text-slate-400 overflow-hidden relative">
             {cat.imageUrl ? (
-              <img src={cat.imageUrl} alt="" className="h-full w-full object-cover rounded-lg" />
-            ) : (
-              <Tag className="h-5 w-5 text-slate-400" />
-            )}
+              <img 
+                src={resolveImageUrl(cat.imageUrl)} 
+                alt="" 
+                className="h-full w-full object-cover z-10" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : null}
+            <Tag className="h-5 w-5 absolute z-0" />
           </div>
           <div>
             <p className="font-medium text-slate-900">{cat.name}</p>

@@ -2,6 +2,15 @@ import axios, { type AxiosInstance } from 'axios';
 
 // Base URL for API
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+// The host URL (remove /api) to serve uploaded static files correctly
+const hostURL = baseURL.replace(/\/api$/, '');
+
+export const resolveImageUrl = (url?: string | null) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('blob:')) return url;
+  return `${hostURL}${url.startsWith('/') ? '' : '/'}${url}`;
+};
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL,

@@ -2,8 +2,23 @@ import { apiClient } from './client';
 
 export const adminApi = {
   getPendingApprovals: async () => {
-    const response = await apiClient.get('/admin/approvals/pending');
-    return response.data;
+    const response = await apiClient.get('/product?status=PENDING_APPROVAL');
+    return response.data.map((p: any) => ({
+      id: p.id,
+      type: 'Product',
+      title: p.name,
+      status: 'pending', // map from PENDING_APPROVAL
+      requestedBy: 'System User', // In the future, track the submitter ID
+      cosmeticsRules: {
+        manufacturerName: p.manufacturerName || 'N/A',
+        manufacturerAddress: p.manufacturerAddress || 'N/A',
+        countryOfOrigin: p.countryOfOrigin || 'N/A',
+        netQuantity: p.variants?.[0]?.netQuantity || 'N/A',
+        mfgDate: 'N/A', 
+        expiryDate: 'N/A',
+        batchNumber: 'N/A'
+      }
+    }));
   },
   approveProduct: async (productId: string, data?: any) => {
     const response = await apiClient.post(`/product/${productId}/approve`, data);
@@ -14,11 +29,11 @@ export const adminApi = {
     return response.data;
   },
   resetStaff2FA: async (userId: string) => {
-    const response = await apiClient.post(`/admin/staff/${userId}/2fa/reset`);
+    const response = await apiClient.post(`/admin/config/staff/${userId}/2fa/reset`);
     return response.data;
   },
   getStaff2FAStatus: async () => {
-    const response = await apiClient.get('/admin/staff/2fa');
+    const response = await apiClient.get('/admin/config/staff/2fa');
     return response.data;
   },
   getUsers: async () => {
@@ -47,6 +62,10 @@ export const adminApi = {
   },
   getOverview: async (platform?: string) => {
     const response = await apiClient.get('/admin/config/overview', { params: { platform } });
+    return response.data;
+  },
+  getNotifications: async () => {
+    const response = await apiClient.get('/admin/config/notifications');
     return response.data;
   }
 };

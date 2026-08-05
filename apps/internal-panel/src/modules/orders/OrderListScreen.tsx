@@ -1,63 +1,95 @@
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
 import { Search, Filter, ShoppingBag, Eye, Calendar, CreditCard, RefreshCcw, CheckSquare, ListPlus, Loader2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { PromptModal } from '../../components/ui/PromptModal';
+import { PickListModal } from './components/PickListModal';
 export const OrderListScreen = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
+
   const [filters, setFilters] = useState({
-    status: '',
+    status: searchParams.get('status') || '',
     paymentMode: '',
     search: '',
   });
 
+  // Sync when URL changes
+  useEffect(() => {
+    const statusParam = searchParams.get('status');
+    if (statusParam && statusParam !== filters.status) {
+      setFilters(prev => ({ ...prev, status: statusParam }));
+    }
+  }, [searchParams]);
+
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+  const [pickListData, setPickListData] = useState<any>(null);
+  
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<string>('');
 
   const { data: orders, isLoading, refetch } = useQuery({
     queryKey: ['admin', 'orders', filters],
-    queryFn: () => orderApi.getAdminOrders({
-      status: filters.status || undefined,
-      paymentMode: filters.paymentMode || undefined,
-      email: filters.search.includes('@') ? filters.search : undefined,
-      mobile: filters.search && !filters.search.includes('@') && /^\d+$/.test(filters.search) ? filters.search : undefined
-    }),
+    queryFn: async () => {
+      // If status is PENDING, we fetch all orders and filter locally 
+      // to ensure it works regardless of backend support for PENDING.
+      if (filters.status === 'PENDING') {
+        const allOrders = await orderApi.getAdminOrders({
+          paymentMode: filters.paymentMode || undefined,
+          email: filters.search.includes('@') ? filters.search : undefined,
+          mobile: filters.search && !filters.search.includes('@') && /^\d+$/.test(filters.search) ? filters.search : undefined
+        });
+        return allOrders.filter((o: any) => ['PLACED', 'PAYMENT_CONFIRMED', 'PROCESSING'].includes(o.status));
+      }
+
+      return orderApi.getAdminOrders({
+        status: filters.status || undefined,
+        paymentMode: filters.paymentMode || undefined,
+        email: filters.search.includes('@') ? filters.search : undefined,
+        mobile: filters.search && !filters.search.includes('@') && /^\d+$/.test(filters.search) ? filters.search : undefined
+      });
+    },
   });
 
   const generatePickListMutation = useMutation({
-    mutationFn: () => orderApi.generatePickList({ 
-      orderIds: selectedOrderIds, 
-      warehouseId: 'default-warehouse' 
+    mutationFn: () => orderApi.generatePickList({
+      orderIds: selectedOrderIds,
+      warehouseId: 'default-warehouse'
     }),
     onSuccess: (data) => {
-      toast.success('Action successful');
+      setPickListData(data);
+      toast.success('Pick list generated successfully!');
       setSelectedOrderIds([]); // Clear selection
     },
     onError: (err: any) => {
-      toast.error('An error occurred');
+      toast.error(err.response?.data?.message || 'An error occurred. Make sure all selected orders are PLACED.');
     }
   });
 
   // Bulk status update (using individual API calls for MVP, but a real bulk endpoint is better)
-  const handleBulkStatusUpdate = async (newStatus: string) => {
-    const notes = prompt(`Enter notes for marking ${selectedOrderIds.length} orders as ${newStatus}:`);
-    if (!notes) return;
+  const handleBulkStatusUpdate = (newStatus: string) => {
+    setPendingStatus(newStatus);
+    setIsPromptOpen(true);
+  };
 
+  const executeBulkStatusUpdate = async (notes: string) => {
+    setIsPromptOpen(false);
     setIsBulkUpdating(true);
     let successCount = 0;
-    
+
     for (const id of selectedOrderIds) {
       try {
-        await orderApi.updateOrderStatus(id, newStatus, notes);
+        await orderApi.updateOrderStatus(id, pendingStatus, notes);
         successCount++;
       } catch (err) {
         console.error(`Failed to update ${id}`, err);
       }
     }
-    
+
     setIsBulkUpdating(false);
     queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
     setSelectedOrderIds([]);
@@ -65,7 +97,7 @@ export const OrderListScreen = () => {
   };
 
   const toggleSelection = (id: string) => {
-    setSelectedOrderIds(prev => 
+    setSelectedOrderIds(prev =>
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
@@ -80,7 +112,7 @@ export const OrderListScreen = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'PLACED': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'PAYMENT_CONFIRMED': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'PROCESSING': return 'bg-amber-100 text-amber-800 border-amber-200';
@@ -96,13 +128,23 @@ export const OrderListScreen = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <PromptModal
+        isOpen={isPromptOpen}
+        onCancel={() => setIsPromptOpen(false)}
+        onConfirm={(notes) => executeBulkStatusUpdate(notes)}
+        title="Status Update Notes"
+        message={`Please enter a reason or internal note for marking ${selectedOrderIds.length} order(s) as ${pendingStatus}.`}
+        confirmText="Update Status"
+        placeholder="e.g. Verified by QC team..."
+      />
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Order Management</h1>
           <p className="text-slate-500 text-sm mt-1">Search, filter, and manage customer orders.</p>
         </div>
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={() => refetch()}
             className="flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50 px-4 py-2 rounded-xl transition-colors shadow-sm"
           >
@@ -120,7 +162,7 @@ export const OrderListScreen = () => {
             {selectedOrderIds.length} Order(s) Selected
           </div>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={() => handleBulkStatusUpdate('PACKED')}
               disabled={isBulkUpdating}
               className="px-3 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center"
@@ -128,7 +170,7 @@ export const OrderListScreen = () => {
               {isBulkUpdating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
               Mark Packed
             </button>
-            <button 
+            <button
               onClick={() => generatePickListMutation.mutate()}
               disabled={generatePickListMutation.isPending}
               className="px-4 py-1.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors shadow-sm flex items-center disabled:opacity-50"
@@ -158,7 +200,7 @@ export const OrderListScreen = () => {
             className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
           />
         </div>
-        
+
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Filter className="h-4 w-4 text-slate-400" />
@@ -169,6 +211,7 @@ export const OrderListScreen = () => {
             className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white appearance-none"
           >
             <option value="">All Statuses</option>
+            <option value="PENDING">Pending (Placed/Processing)</option>
             <option value="PLACED">Placed</option>
             <option value="PAYMENT_CONFIRMED">Payment Confirmed</option>
             <option value="PROCESSING">Processing</option>
@@ -202,8 +245,8 @@ export const OrderListScreen = () => {
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-6 py-4 text-left">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer"
                     onChange={toggleSelectAll}
                     checked={orders && orders.length > 0 && selectedOrderIds.length === orders.length}
@@ -214,6 +257,7 @@ export const OrderListScreen = () => {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment</th>
                 <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total</th>
+                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-100">
@@ -238,13 +282,13 @@ export const OrderListScreen = () => {
                 orders.map((order: any) => {
                   const isSelected = selectedOrderIds.includes(order.id);
                   return (
-                    <tr 
-                      key={order.id} 
+                    <tr
+                      key={order.id}
                       className={`hover:bg-slate-50 transition-colors group ${isSelected ? 'bg-primary-50/50' : ''}`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer"
                           checked={isSelected}
                           onChange={() => toggleSelection(order.id)}
@@ -281,8 +325,14 @@ export const OrderListScreen = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right cursor-pointer" onClick={() => navigate(`/orders/${order.id}`)}>
-                        <div className="text-sm font-bold text-slate-900">₹{(order.finalTotal || 0).toFixed(2)}</div>
+                        <div className="text-sm font-bold text-slate-900">₹{(order.finalAmount || order.totalAmount || 0).toFixed(2)}</div>
                         <div className="text-xs text-slate-500 mt-1">{order.items?.length || 0} items</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <Link to={`/orders/${order.id}`} className="inline-flex items-center text-xs font-bold text-[#FF3E7F] hover:text-rose-700 hover:bg-[#FF3E7F]/10 px-3 py-1.5 rounded-full transition-colors">
+                          <Eye className="h-3.5 w-3.5 mr-1" />
+                          View
+                        </Link>
                       </td>
                     </tr>
                   );
@@ -292,6 +342,11 @@ export const OrderListScreen = () => {
           </table>
         </div>
       </div>
+
+      {/* Modals */}
+      {pickListData && (
+        <PickListModal data={pickListData} onClose={() => setPickListData(null)} />
+      )}
     </div>
   );
 };
