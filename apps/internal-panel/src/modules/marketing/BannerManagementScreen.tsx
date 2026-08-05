@@ -51,7 +51,7 @@ export const BannerManagementScreen = () => {
         setImageUrl(url);
       } catch (err) {
         console.error("Upload failed", err);
-        toast.error();
+        toast.error('An error occurred');
       } finally {
         setUploading(false);
       }
@@ -60,43 +60,43 @@ export const BannerManagementScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Banners</h1>
           <p className="text-slate-500 text-sm mt-1">Manage storefront banners and hero images.</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-indigo-700 transition-colors"
+          className="bg-[#FF3E7F] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#FF3E7F] transition-colors"
         >
           <Plus className="h-4 w-4 mr-2" /> Upload Banner
         </button>
       </div>
 
       {isAdding && (
-        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-indigo-900 mb-4">New Banner</h3>
+        <div className="bg-[#FF3E7F]/5 border border-[#FF3E7F]/10 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold text-slate-900 mb-4">New Banner</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-indigo-900 mb-1">Banner Title</label>
+                <label className="block text-sm font-medium text-slate-900 mb-1">Banner Title</label>
                 <input 
                   type="text" 
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="e.g. Summer Skincare Sale"
-                  className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="w-full border-[#FF3E7F]/20 rounded-lg p-2 focus:ring-2 focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F] bg-white"
                 />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-indigo-900 mb-1">Position</label>
+                  <label className="block text-sm font-medium text-slate-900 mb-1">Position</label>
                   <select 
                     value={position}
                     onChange={e => setPosition(e.target.value)}
-                    className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                    className="w-full border-[#FF3E7F]/20 rounded-lg p-2 focus:ring-2 focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F] bg-white"
                   >
                     <option value="hero">Hero Carousel</option>
                     <option value="mid-page">Mid-Page Banner</option>
@@ -104,11 +104,11 @@ export const BannerManagementScreen = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-indigo-900 mb-1">Segment</label>
+                  <label className="block text-sm font-medium text-slate-900 mb-1">Segment</label>
                   <select 
                     value={targetSegment}
                     onChange={e => setTargetSegment(e.target.value)}
-                    className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                    className="w-full border-[#FF3E7F]/20 rounded-lg p-2 focus:ring-2 focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F] bg-white"
                   >
                     <option value="BOTH">All / Both</option>
                     <option value="COSMETICS">Cosmetics Only</option>
@@ -118,13 +118,13 @@ export const BannerManagementScreen = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-indigo-900 mb-1">Link URL (Optional)</label>
+                <label className="block text-sm font-medium text-slate-900 mb-1">Link URL (Optional)</label>
                 <input 
                   type="text" 
                   value={linkUrl}
                   onChange={e => setLinkUrl(e.target.value)}
                   placeholder="/products?category=skincare"
-                  className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="w-full border-[#FF3E7F]/20 rounded-lg p-2 focus:ring-2 focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F] bg-white"
                 />
               </div>
 
@@ -134,15 +134,15 @@ export const BannerManagementScreen = () => {
                   id="isActive"
                   checked={isActive}
                   onChange={e => setIsActive(e.target.checked)}
-                  className="rounded text-indigo-600 focus:ring-indigo-500"
+                  className="rounded text-[#FF3E7F] focus:ring-[#FF3E7F]/30 focus:border-[#FF3E7F]"
                 />
-                <label htmlFor="isActive" className="text-sm font-medium text-indigo-900">Active (Visible immediately)</label>
+                <label htmlFor="isActive" className="text-sm font-medium text-slate-900">Active (Visible immediately)</label>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-indigo-900 mb-1">Banner Image</label>
-              <div className="border-2 border-dashed border-indigo-200 rounded-xl p-4 bg-white h-48 flex flex-col items-center justify-center relative overflow-hidden group">
+              <label className="block text-sm font-medium text-slate-900 mb-1">Banner Image</label>
+              <div className="border-2 border-dashed border-[#FF3E7F]/20 rounded-xl p-4 bg-white h-48 flex flex-col items-center justify-center relative overflow-hidden group">
                 {imageUrl ? (
                   <img src={imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
@@ -160,7 +160,7 @@ export const BannerManagementScreen = () => {
                 />
                 {uploading && (
                   <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                    <Loader2 className="h-6 w-6 text-indigo-600 animate-spin" />
+                    <Loader2 className="h-6 w-6 text-[#FF3E7F] animate-spin" />
                   </div>
                 )}
               </div>
@@ -168,17 +168,17 @@ export const BannerManagementScreen = () => {
 
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-indigo-100 pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#FF3E7F]/10 pt-4">
             <button 
               onClick={() => setIsAdding(false)}
-              className="px-4 py-2 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50"
+              className="px-4 py-2 text-sm font-medium text-[#FF3E7F] bg-white border border-[#FF3E7F]/20 rounded-lg hover:bg-[#FF3E7F]/5"
             >
               Cancel
             </button>
             <button 
               onClick={() => addMutation.mutate()}
               disabled={!title || !imageUrl || addMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#FF3E7F] rounded-lg hover:bg-[#FF3E7F] disabled:opacity-50 flex items-center"
             >
               {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Publish Banner
@@ -225,7 +225,7 @@ export const BannerManagementScreen = () => {
                   <span className="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded capitalize">
                     {banner.position}
                   </span>
-                  <span className="text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-1 rounded">
+                  <span className="text-xs font-medium bg-[#FF3E7F]/5 text-[#FF3E7F] px-2 py-1 rounded">
                     Segment: {banner.targetSegment}
                   </span>
                 </div>

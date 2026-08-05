@@ -1,11 +1,6 @@
 import { apiClient } from './client';
 
-export interface DashboardStats {
-  totalSkus: number;
-  lowStockCount: number;
-  nearExpiryCount: number;
-  pendingGrn: number;
-}
+export type DashboardStats = any;
 
 export interface StockData {
   sku: string;
@@ -33,6 +28,11 @@ export const inventoryApi = {
     return data;
   },
 
+  getDetailedStock: async () => {
+    const { data } = await apiClient.get('/inventory/detailed');
+    return data;
+  },
+
   getGlobalStock: async (platform?: string): Promise<StockData[]> => {
     const { data } = await apiClient.get('/inventory/stock', {
       params: { platform }
@@ -42,6 +42,11 @@ export const inventoryApi = {
 
   getStockForSku: async (sku: string): Promise<any> => {
     const { data } = await apiClient.get(`/inventory/stock/${sku}`);
+    return data;
+  },
+
+  getMovementLogs: async (sku?: string) => {
+    const { data } = await apiClient.get('/inventory/logs', { params: { sku } });
     return data;
   },
 
@@ -65,15 +70,7 @@ export const inventoryApi = {
     return data;
   },
 
-  reportDamaged: async (payload: { sku: string; warehouseId: string; quantity: number; reason: string }): Promise<any> => {
-    const { data } = await apiClient.post('/inventory/damaged', payload);
-    return data;
-  },
 
-  reportExpired: async (payload: { sku: string; warehouseId: string; quantity: number; reason: string }): Promise<any> => {
-    const { data } = await apiClient.post('/inventory/expired', payload);
-    return data;
-  },
 
   adjustStock: async (payload: { sku: string; warehouseId: string; type: 'ABSOLUTE' | 'OFFSET'; quantity: number; reason: string }): Promise<any> => {
     const { data } = await apiClient.post('/inventory/adjustment', payload);

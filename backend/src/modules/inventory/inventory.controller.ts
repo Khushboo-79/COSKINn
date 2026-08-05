@@ -23,6 +23,13 @@ export class InventoryController {
     return this.inventoryService.createWarehouse(dto);
   }
 
+  @Get('logs')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF')
+  getMovementLogs(@Query('sku') sku?: string) {
+    return this.inventoryService.getMovementLogs(sku);
+  }
+
   @Get('dashboard-stats')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
@@ -49,6 +56,13 @@ export class InventoryController {
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER')
   getTransfers() {
     return this.inventoryService.getTransfers();
+  }
+
+  @Get('detailed')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF', 'PRODUCT_MANAGER')
+  getDetailedStock() {
+    return this.inventoryService.getDetailedStock();
   }
 
   @Post('stock-in')

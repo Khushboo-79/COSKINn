@@ -40,7 +40,7 @@ export class InvoiceService {
       const stream = fs.createWriteStream(filePath);
       
       doc.pipe(stream);
-      doc.fontSize(20).text('COSKINn', { align: 'center' });
+      doc.fontSize(20).text('Fairenne', { align: 'center' });
       doc.fontSize(10).text('GST TAX INVOICE', { align: 'center' }).moveDown();
       doc.fontSize(12).text(`Invoice No: ${invoiceNumber}`);
       doc.text(`Order ID: ${order.id}`);

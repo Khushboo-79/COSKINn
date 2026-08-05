@@ -8,8 +8,8 @@ import { StatusBadge } from '../../components/ui/StatusBadge';
 
 export const StaffTwoFactorScreen = () => {
   const { data: staff2fa = [
-    { id: '1', name: 'John Doe', email: 'john@coskinn.com', is2FAEnabled: true, lastLogin: '2026-07-18 10:30 AM' },
-    { id: '2', name: 'Jane Smith', email: 'jane@coskinn.com', is2FAEnabled: false, lastLogin: '2026-07-17 04:15 PM' },
+    { id: '1', name: 'John Doe', email: 'john@fairenne.com', is2FAEnabled: true, lastLogin: '2026-07-18 10:30 AM' },
+    { id: '2', name: 'Jane Smith', email: 'jane@fairenne.com', is2FAEnabled: false, lastLogin: '2026-07-17 04:15 PM' },
   ], refetch } = useQuery({
     queryKey: ['staff2fa'],
     queryFn: adminApi.getStaff2FAStatus,
@@ -19,11 +19,11 @@ export const StaffTwoFactorScreen = () => {
   const resetMutation = useMutation({
     mutationFn: adminApi.resetStaff2FA,
     onSuccess: () => {
-      toast.success();
+      toast.success('Action successful');
       refetch();
     },
     onError: () => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

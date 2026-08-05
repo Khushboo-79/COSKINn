@@ -1,4 +1,4 @@
-# Complete API Testing Guide: COSKINn Backend
+# Complete API Testing Guide: Fairenne Backend
 
 > **Base URL:** `http://localhost:3000/api`
 > **Prerequisites:** Backend running (`npm run start:dev`), Database connected (Docker PostgreSQL).
@@ -56,7 +56,7 @@
 
 ### Step 1: Create Environment Variables
 
-Create a Postman environment named `COSKINn Local` with these variables:
+Create a Postman environment named `Fairenne Local` with these variables:
 
 | Variable | Initial Value |
 |----------|---------------|
@@ -94,7 +94,7 @@ Authorization: Bearer {{customer_token}}
 - **Body (JSON):**
 ```json
 {
-  "email": "admin@coskinn.com",
+  "email": "admin@fairenne.com",
   "password": "admin123"
 }
 ```
@@ -338,7 +338,7 @@ Authorization: Bearer {{customer_token}}
 **Expected Output:**
 ```json
 {
-  "title": "Nourishing Hair Oil | COSKINn",
+  "title": "Nourishing Hair Oil | Fairenne",
   "description": "For strong, shiny hair.",
   "keywords": "hair oil, nourishing, skincare"
 }
@@ -522,7 +522,7 @@ Authorization: Bearer {{customer_token}}
 - **Body (JSON):**
 ```json
 {
-  "manufacturer": "COSKINn Labs",
+  "manufacturer": "Fairenne Labs",
   "countryOfOrigin": "India",
   "fssaiLicense": "12345678901234"
 }
@@ -832,7 +832,7 @@ Authorization: Bearer {{customer_token}}
 {
   "fullName": "Jane Doe",
   "phone": "+919876543210",
-  "addressLine1": "123 Coskinn Avenue",
+  "addressLine1": "123 Fairenne Avenue",
   "city": "Mumbai",
   "state": "Maharashtra",
   "pincode": "400001",
@@ -1963,7 +1963,7 @@ Authorization: Bearer {{customer_token}}
 ```json
 {
   "name": "John Doe",
-  "email": "john@coskinn.com",
+  "email": "john@fairenne.com",
   "role": "MANAGER",
   "department": "SALES",
   "salary": 50000,
@@ -2291,9 +2291,9 @@ Authorization: Bearer {{customer_token}}
 - **Body (JSON):**
 ```json
 {
-  "siteTitle": "COSKINn - Premium Skincare",
+  "siteTitle": "Fairenne - Premium Skincare",
   "siteDescription": "India's leading natural skincare brand",
-  "defaultOgImage": "https://coskinn.com/og-image.jpg"
+  "defaultOgImage": "https://fairenne.com/og-image.jpg"
 }
 ```
 
@@ -2367,8 +2367,8 @@ Authorization: Bearer {{customer_token}}
 - **Body (JSON):**
 ```json
 {
-  "storeName": "COSKINn",
-  "storeEmail": "support@coskinn.com",
+  "storeName": "Fairenne",
+  "storeEmail": "support@fairenne.com",
   "currency": "INR",
   "signupBonus": 100
 }
@@ -2457,7 +2457,7 @@ Authorization: Bearer {{customer_token}}
 ```json
 {
   "uploadUrl": "https://s3.amazonaws.com/bucket/...",
-  "publicUrl": "https://cdn.coskinn.com/products/product-image.jpg"
+  "publicUrl": "https://cdn.fairenne.com/products/product-image.jpg"
 }
 ```
 

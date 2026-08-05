@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Fredoka+One&display=swap');
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    /* Skincare (Skin) Mode - Default */
+    --color-primary: #FF7F50; 
+    --color-secondary: #FFDAB9; 
+    --color-background: #FAFAFA;
+    --color-surface: #FFFFFF;
+    --color-text: #2D3748;
+    --color-text-muted: #718096;
+    --color-accent: #ED8936;
+    
+    --color-scrollbar: #ffb3c6;
+    --color-scrollbar-hover: #ff8f9f;
+    
+    --font-sans: 'Inter', sans-serif;
+    --font-serif: 'Playfair Display', serif;
+    --font-display: 'Fredoka One', cursive;
+  }
+
+  .theme-glam {
+    /* Cosmetics (Glam) Mode */
+    --color-primary: #701A22; 
+    --color-secondary: #FDE8E9; 
+    --color-background: #FDF9F1; 
+    --color-surface: #FFFFFF;
+    --color-text: #2D3748;
+    --color-text-muted: #4A5568;
+    --color-accent: #9B2C2C;
+    
+    --color-scrollbar: #9B2C2C;
+    --color-scrollbar-hover: #701A22;
+    
+    --font-sans: 'Inter', sans-serif;
+    --font-serif: 'Playfair Display', serif;
+    --font-display: 'Playfair Display', serif;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-text font-sans transition-colors duration-500 ease-in-out;
+}
+
+/* Custom Navbar Hover Effects to bypass Tailwind JIT issues */
+@keyframes jelly {
+  0% { transform: scale3d(1, 1, 1); }
+  30% { transform: scale3d(1.08, 0.92, 1); }
+  45% { transform: scale3d(0.95, 1.05, 1); }
+  60% { transform: scale3d(1.02, 0.98, 1); }
+  75% { transform: scale3d(0.99, 1.01, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+.nav-link-hover-skin {
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.nav-link-hover-skin:hover {
+  background-color: #fff0f2 !important;
+  color: #ff8f9f !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.nav-link-hover-glam {
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+.nav-link-hover-glam:hover {
+  background-color: #f9ece0 !important;
+  color: #7a1b26 !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Icon-specific Hover Effects (No Background Pill) */
+.icon-hover-skin {
+  transition: color 0.3s ease;
+}
+.icon-hover-skin:hover {
+  color: #ff8f9f !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.icon-hover-glam {
+  transition: color 0.3s ease;
+}
+.icon-hover-glam:hover {
+  color: #7a1b26 !important;
+  animation: jelly 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee {
+  animation: marquee 120s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.7);
+}
+
+/* === Scroll Reveal Animations === */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-36px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(36px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Base state — hidden before intersecting */
+.scroll-reveal {
+  opacity: 0;
+  transition: none;
+}
+
+/* Triggered when element enters viewport */
+.scroll-reveal.is-visible {
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 0.75s;
+}
+
+.scroll-reveal-up.is-visible         { animation-name: fadeInUp; }
+.scroll-reveal-left.is-visible       { animation-name: fadeInLeft; }
+.scroll-reveal-right.is-visible      { animation-name: fadeInRight; }
+.scroll-reveal-fade.is-visible       { animation-name: fadeIn; animation-duration: 0.9s; }
+.scroll-reveal-scale.is-visible      { animation-name: scaleIn; }
+
+/* Stagger delays */
+.delay-100.is-visible { animation-delay: 0.10s; }
+.delay-200.is-visible { animation-delay: 0.20s; }
+.delay-300.is-visible { animation-delay: 0.30s; }
+.delay-400.is-visible { animation-delay: 0.40s; }
+.delay-500.is-visible { animation-delay: 0.50s; }
+.delay-600.is-visible { animation-delay: 0.60s; }
+
+/* Glam Mode Custom Scrollbar */
+.theme-glam ::-webkit-scrollbar-thumb {
+  background-color: rgba(210, 178, 123, 0.8); /* Gold */
+  border-radius: 4px;
+}
+
+.theme-glam ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(122, 27, 38, 0.9); /* Burgundy */
+}
+
+/* Glam Mode Typography Override */
+.glam-typography,
+.glam-typography *:not(.font-sans) {
+  font-family: 'Playfair Display', serif !important;
+  font-style: italic !important;
+}
+
+.glam-typography .font-sans {
+  font-style: normal !important;
+}

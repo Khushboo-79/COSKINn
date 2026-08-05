@@ -32,7 +32,7 @@ export const EscalationModal = ({ ticketId, adminId, isOpen, onClose }: Escalati
       setHandoffNote('');
     },
     onError: (err: any) => {
-      toast.error();
+      toast.error('An error occurred');
     }
   });
 

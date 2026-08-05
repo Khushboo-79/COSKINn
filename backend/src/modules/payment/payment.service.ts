@@ -29,13 +29,17 @@ export class PaymentService {
 
     let razorpayOrderId = '';
     try {
-      const options = {
-        amount: Math.round(order.finalAmount * 100), // amount in smallest currency unit (paise)
-        currency: 'INR',
-        receipt: order.id
-      };
-      const rzpOrder = await this.razorpay.orders.create(options);
-      razorpayOrderId = rzpOrder.id;
+      if (process.env.USE_MOCK_PAYMENT === 'true') {
+        razorpayOrderId = `mock_order_${crypto.randomBytes(8).toString('hex')}`;
+      } else {
+        const options = {
+          amount: Math.round(order.finalAmount * 100), // amount in smallest currency unit (paise)
+          currency: 'INR',
+          receipt: order.id
+        };
+        const rzpOrder = await this.razorpay.orders.create(options);
+        razorpayOrderId = rzpOrder.id;
+      }
     } catch (error) {
       console.error('Razorpay order creation failed:', error);
       throw new BadRequestException('Failed to create payment gateway order');
@@ -60,6 +64,15 @@ export class PaymentService {
   }
 
   async triggerRefund(razorpayOrderId: string, amount: number) {
+    if (process.env.USE_MOCK_PAYMENT === 'true') {
+      return {
+        success: true,
+        refundId: `mock_refund_${crypto.randomBytes(8).toString('hex')}`,
+        paymentId: `mock_payment_${crypto.randomBytes(8).toString('hex')}`,
+        amount: amount
+      };
+    }
+
     try {
       // Fetch all payments for this order
       const payments = await this.razorpay.orders.fetchPayments(razorpayOrderId);
@@ -103,7 +116,9 @@ export class PaymentService {
         throw new BadRequestException('Invalid webhook signature');
       }
     } else {
-      throw new BadRequestException('Webhook signature missing');
+      if (process.env.USE_MOCK_PAYMENT !== 'true') {
+        throw new BadRequestException('Webhook signature missing');
+      }
     }
 
     const event = payload.event;

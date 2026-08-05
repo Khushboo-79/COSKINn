@@ -10,8 +10,9 @@ import { Step4Media } from './Step4Media';
 import { Step5SeoContent } from './Step5SeoContent';
 import { Step6ReviewSubmit } from './Step6ReviewSubmit';
 import { Check, ChevronRight, Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { productApi } from '../../../core/api/product';
 
 // Comprehensive schema for all wizard steps
@@ -24,6 +25,14 @@ const productWizardSchema = z.object({
   gstRate: z.coerce.number().min(0, "GST rate is required"),
   claims: z.string().optional(),
   warnings: z.string().optional(),
+  variants: z.array(z.object({
+    sku: z.string().min(1, "SKU is required"),
+    size: z.string().optional(),
+    mrp: z.coerce.number().min(0),
+    price: z.coerce.number().min(0),
+    shadeName: z.string().optional(),
+    shadeHex: z.string().optional(),
+  })).optional(),
 });
 
 type ProductFormValues = z.infer<typeof productWizardSchema>;
@@ -39,6 +48,7 @@ const STEPS = [
 
 export const ProductWizardShell = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [currentStep, setCurrentStep] = useState(1);
 
   const methods = useForm<any>({
@@ -50,6 +60,35 @@ export const ProductWizardShell = () => {
   });
 
   const { handleSubmit, trigger } = methods;
+
+  const { data: productData, isLoading } = useQuery({
+    queryKey: ['product', id],
+    queryFn: () => productApi.getProduct(id!),
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (productData) {
+      methods.reset({
+        name: productData.name,
+        categoryId: productData.categoryId,
+        brandId: productData.brandId || '',
+        description: productData.description || '',
+        hsnCode: productData.hsnCode || '',
+        gstRate: productData.gstRate || 18,
+        claims: productData.claims || '',
+        warnings: productData.warnings || '',
+        variants: productData.variants?.map((v: any) => ({
+          sku: v.sku,
+          size: v.size || '',
+          mrp: v.mrp,
+          price: v.price,
+          shadeName: v.shadeName || '',
+          shadeHex: v.shadeHex || '',
+        })) || []
+      });
+    }
+  }, [productData, methods]);
 
   const nextStep = async () => {
     // Validate current step fields before moving on
@@ -64,8 +103,13 @@ export const ProductWizardShell = () => {
         setCurrentStep(prev => prev + 1);
       } else {
         // If it's the last step, submit
-        handleSubmit(onSubmit)();
+        handleSubmit(onSubmit, (errors) => {
+          console.error("Validation errors:", errors);
+          toast.error("Please fill in all required fields correctly.");
+        })();
       }
+    } else {
+      toast.error("Please fix the validation errors before continuing.");
     }
   };
 
@@ -78,36 +122,58 @@ export const ProductWizardShell = () => {
   const createMutation = useMutation({
     mutationFn: productApi.createProduct,
     onSuccess: () => {
-      toast.success();
+      toast.success('Product created successfully!');
       navigate('/product');
     },
     onError: (error: any) => {
-      toast.error();
+      toast.error(error?.response?.data?.message || 'Failed to create product. Please try again.');
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: productApi.updateProduct,
+    onSuccess: () => {
+      toast.success('Product updated successfully!');
+      navigate('/product');
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Failed to update product. Please try again.');
     }
   });
 
   const onSubmit = (data: any) => {
     console.log("Submitting Product:", data);
     
+    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const primaryVariant = data.variants?.[0];
+
     // Map form data to DTO expected by backend
     const dto = {
       name: data.name,
+      slug: slug,
+      sku: primaryVariant?.sku || `SKU-${Date.now()}`,
       categoryId: data.categoryId,
       description: data.description,
-      mrp: data.price || 0,
-      discountPrice: data.price || 0,
+      mrp: primaryVariant?.mrp || 0,
+      discountPrice: primaryVariant?.price || 0,
       gstRate: data.gstRate,
       status: 'LIVE',
       productLine: 'BOTH'
     };
 
-    createMutation.mutate(dto);
+    if (id) {
+      updateMutation.mutate({ id, data: dto });
+    } else {
+      createMutation.mutate(dto);
+    }
   };
 
   return (
     <FormProvider {...methods}>
       <div className="max-w-4xl mx-auto py-6">
         {/* Stepper UI */}
+        {isLoading && <div className="flex items-center justify-center p-12"><Loader2 className="h-8 w-8 animate-spin text-primary-500" /></div>}
+        <div className={isLoading ? 'hidden' : ''}>
         <div className="mb-8">
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full z-0"></div>
@@ -173,6 +239,7 @@ export const ProductWizardShell = () => {
             {currentStep === STEPS.length ? 'Submit Product' : 'Continue'}
             {currentStep < STEPS.length && <ChevronRight className="h-4 w-4 ml-2" />}
           </button>
+        </div>
         </div>
       </div>
     </FormProvider>

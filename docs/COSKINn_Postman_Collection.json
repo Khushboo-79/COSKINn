@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "COSKINn Platform API",
-    "description": "Complete collection for testing the COSKINn APIs from Auth to Product Creation.",
+    "name": "Fairenne Platform API",
+    "description": "Complete collection for testing the Fairenne APIs from Auth to Product Creation.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -20,7 +20,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@coskinn.com\",\n  \"password\": \"your_secure_password\"\n}"
+              "raw": "{\n  \"email\": \"admin@fairenne.com\",\n  \"password\": \"your_secure_password\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/auth/login",

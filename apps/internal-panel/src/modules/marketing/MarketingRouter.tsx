@@ -6,6 +6,7 @@ import { CampaignsScreen } from './CampaignsScreen';
 import { LoyaltyScreen } from './LoyaltyScreen';
 import { AbandonedCartScreen } from './AbandonedCartScreen';
 import { SeoSettingsScreen } from './SeoSettingsScreen';
+import { MarketingDashboardScreen } from './MarketingDashboardScreen';
 
 const MarketingNav = () => {
   const location = useLocation();
@@ -26,17 +27,17 @@ const MarketingNav = () => {
         const Icon = tab.icon;
         return (
           <Link
-            key={tab.path}
-            to={tab.path}
-            className={`flex items-center whitespace-nowrap px-4 py-4 text-sm font-medium border-b-2 transition-colors ${
-              isActive
-                ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
-                : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50/50'
-            }`}
-          >
-            <Icon className="h-4 w-4 mr-2" />
-            {tab.name}
-          </Link>
+              key={tab.name || tab.path}
+              to={tab.path}
+              className={`flex items-center whitespace-nowrap px-5 py-4 text-sm font-bold border-b-2 transition-all duration-300 ease-out active:scale-95 ${
+                isActive
+                  ? 'border-[#FF7F50] text-[#FF7F50] bg-gradient-to-t from-[#FF7F50]/10 to-transparent shadow-[inset_0_-2px_4px_rgba(255,127,80,0.1)]'
+                  : 'border-transparent text-slate-500 hover:text-[#FF7F50] hover:bg-gradient-to-t hover:from-[#FF7F50]/5 hover:to-transparent'
+              }`}
+            >
+              <Icon className={`h-4 w-4 mr-2.5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:rotate-6'}`} />
+              {tab.name}
+            </Link>
         );
       })}
     </div>
@@ -49,13 +50,7 @@ export const MarketingRouter = () => {
       <MarketingNav />
       <Routes>
         <Route path="/" element={<Navigate to="/marketing/dashboard" replace />} />
-        <Route path="/dashboard" element={
-          <div className="p-12 text-center text-slate-500">
-            <Megaphone className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-xl font-medium text-slate-900 mb-2">Marketing Dashboard Coming Soon</h2>
-            <p>Phase 2 will introduce campaign analytics and ROI metrics.</p>
-          </div>
-        } />
+        <Route path="/dashboard" element={<MarketingDashboardScreen />} />
         <Route path="/banners" element={<BannerManagementScreen />} />
         <Route path="/coupons" element={<CouponManagementScreen />} />
         <Route path="/campaigns" element={<CampaignsScreen />} />

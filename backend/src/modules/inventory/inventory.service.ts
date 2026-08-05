@@ -29,43 +29,59 @@ export class InventoryService {
     });
   }
 
-  async getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE') {
-    let skuList: string[] | undefined = undefined;
-
-    if (platform) {
-      const variants = await this.prisma.productVariant.findMany({
-        where: { product: { category: { platform } } },
-        select: { sku: true }
-      });
-      skuList = variants.map(v => v.sku);
-    }
-
-    const stocks = await this.prisma.inventoryStock.findMany({
-      where: skuList ? { sku: { in: skuList } } : undefined,
+  async getMovementLogs(sku?: string) {
+    const where = sku ? { sku: { contains: sku, mode: 'insensitive' as any } } : {};
+    return this.prisma.stockMovement.findMany({
+      where,
       include: {
-        warehouse: true,
+        warehouse: true
       },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+
+  async getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE') {
+    // 1. Fetch all real product variants to serve as the source of truth for the ledger
+    const variants = await this.prisma.productVariant.findMany({
+      where: platform ? { product: { category: { platform } } } : undefined,
+      include: { product: true }
     });
 
-    // Grouping by SKU for the global stock view
-    const globalStockMap = new Map();
+    const skuList = variants.map(v => v.sku);
+
+    // 2. Fetch stock only for these real SKUs
+    const stocks = await this.prisma.inventoryStock.findMany({
+      where: { sku: { in: skuList } },
+      include: { warehouse: true },
+    });
+
+    // 3. Group stock by SKU
+    const stockBySku = new Map();
     for (const stock of stocks) {
-      if (!globalStockMap.has(stock.sku)) {
-        globalStockMap.set(stock.sku, {
-          sku: stock.sku,
-          totalQuantity: 0,
-          totalReservedQty: 0,
-          warehouses: []
-        });
+      if (!stockBySku.has(stock.sku)) {
+        stockBySku.set(stock.sku, { totalQuantity: 0, totalReservedQty: 0, warehouses: [] });
       }
-      
-      const gStock = globalStockMap.get(stock.sku);
+      const gStock = stockBySku.get(stock.sku);
       gStock.totalQuantity += stock.quantity;
       gStock.totalReservedQty += stock.reservedQty;
       gStock.warehouses.push(stock.warehouse.name);
     }
 
-    return Array.from(globalStockMap.values());
+    // 4. Map variants to global stock view
+    // This ensures all products appear in the ledger, even if they have 0 stock
+    return variants.map(v => {
+      const stock = stockBySku.get(v.sku) || { totalQuantity: 0, totalReservedQty: 0, warehouses: [] };
+      return {
+        sku: v.sku,
+        name: v.product?.name || 'Unknown Product',
+        totalQuantity: stock.totalQuantity,
+        totalReservedQty: stock.totalReservedQty,
+        damaged: 0,
+        expired: 0,
+        warehouses: stock.warehouses
+      };
+    });
   }
 
   async getStockForSku(sku: string) {
@@ -565,4 +581,24 @@ export class InventoryService {
       orderBy: { createdAt: 'desc' }
     });
   }
+  async getDetailedStock() {
+    const variants = await this.prisma.productVariant.findMany({
+      include: { product: true }
+    });
+    const skuNameMap = new Map(variants.map(v => [v.sku, v.product?.name || 'Unknown Product']));
+
+    const stocks = await this.prisma.inventoryStock.findMany({
+      where: { sku: { in: variants.map(v => v.sku) } },
+      include: { warehouse: true }
+    });
+
+    return stocks.map(s => ({
+      sku: s.sku,
+      name: skuNameMap.get(s.sku),
+      warehouseName: s.warehouse.name,
+      available: s.quantity,
+      reserved: s.reservedQty
+    }));
+  }
+
 }

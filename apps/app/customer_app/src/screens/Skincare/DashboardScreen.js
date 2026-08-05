@@ -219,7 +219,7 @@ const DashboardScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
       <SafeAreaView style={styles.safeArea}>
 
         {/* Shared Top Header and Search */}
@@ -897,10 +897,11 @@ const styles = StyleSheet.create({
   featuresScroll: {
     paddingHorizontal: scaleh(20),
     marginBottom: scalev(40),
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   featureItem: {
     alignItems: 'center',
-    marginRight: scaleh(25),
   },
   featureCircle: {
     width: scaleh(60),

@@ -3,29 +3,13 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { adminApi } from '../../core/api/admin';
 import { ApprovalGate } from '../../components/ui/ApprovalGate';
 import { CheckCircle, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const ProductApprovalScreen = () => {
   const [rejectReason, setRejectReason] = useState('');
   const [rejectingId, setRejectingId] = useState<string | null>(null);
 
-  const { data: pendingApprovals = [
-    { 
-      id: 'prod_1', 
-      type: 'Product',
-      title: 'Vitamin C Face Wash', 
-      status: 'pending', 
-      requestedBy: 'Jane (Product Manager)',
-      cosmeticsRules: {
-        manufacturerName: 'SkinCrafters Ltd',
-        manufacturerAddress: '123 Beauty Park, Mumbai, India',
-        countryOfOrigin: 'India',
-        netQuantity: '100ml',
-        mfgDate: '10/2025',
-        expiryDate: '10/2027',
-        batchNumber: 'BT-1002A'
-      }
-    },
-  ], refetch } = useQuery({
+  const { data: pendingApprovals = [], refetch } = useQuery({
     queryKey: ['pendingApprovals'],
     queryFn: adminApi.getPendingApprovals,
     retry: false,
