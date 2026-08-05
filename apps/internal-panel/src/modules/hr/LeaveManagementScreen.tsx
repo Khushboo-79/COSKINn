@@ -56,7 +56,7 @@ export const LeaveManagementScreen = () => {
                 <tr key={leave.id} className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center">
-                      <div className="h-10 w-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-[#FF7F50]/20 text-[#FF7F50] flex items-center justify-center font-bold text-sm shrink-0">
                         {leave.employee?.avatar || leave.employee?.name.substring(0,2).toUpperCase() || 'NA'}
                       </div>
                       <div className="ml-4">

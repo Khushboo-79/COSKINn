@@ -41,7 +41,7 @@ export const SharedShell = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#fafafa] flex flex-col md:flex-row font-sans">
+    <div className="h-screen overflow-hidden bg-[#fafafa] flex flex-col md:flex-row font-sans">
 
       {/* Mobile Overlay */}
       {!isSidebarOpen && (
@@ -64,7 +64,7 @@ export const SharedShell = () => {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto py-4 space-y-1 sidebar-scroll">
           {availableRoutes.map((route) => {
             const Icon = route.icon;
             const isActive = location.pathname.startsWith(route.path);

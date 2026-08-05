@@ -77,7 +77,7 @@ export const HomepageContentScreen = () => {
             
             <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
               <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
-                <LayoutTemplate className="h-5 w-5 mr-2 text-indigo-500" /> Hero Section Copy
+                <LayoutTemplate className="h-5 w-5 mr-2 text-[#FF7F50]" /> Hero Section Copy
               </h3>
               <div className="space-y-4">
                 <div>
@@ -87,7 +87,7 @@ export const HomepageContentScreen = () => {
                     value={heroHeading}
                     onChange={e => setHeroHeading(e.target.value)}
                     placeholder="e.g. Pure Fruit. Pure You."
-                    className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 font-medium text-lg"
+                    className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] font-medium text-lg"
                   />
                   <p className="text-xs text-slate-500 mt-1">Appears overlaid on the primary hero banner.</p>
                 </div>
@@ -98,7 +98,7 @@ export const HomepageContentScreen = () => {
                     onChange={e => setHeroSubheading(e.target.value)}
                     rows={2}
                     placeholder="e.g. Discover our new summer collection infused with natural extracts."
-                    className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 text-sm"
+                    className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] text-sm"
                   />
                 </div>
               </div>
@@ -113,7 +113,7 @@ export const HomepageContentScreen = () => {
                   value={seasonalMessage}
                   onChange={e => setSeasonalMessage(e.target.value)}
                   placeholder="e.g. 🌸 Spring Sale: Get 20% off all Citrus products with code SPRING20"
-                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50]"
                 />
                 <p className="text-xs text-slate-500 mt-1">Appears at the very top of every page site-wide.</p>
               </div>
@@ -127,7 +127,7 @@ export const HomepageContentScreen = () => {
                   value={footerAbout}
                   onChange={e => setFooterAbout(e.target.value)}
                   rows={4}
-                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 text-sm"
+                  className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] text-sm"
                 />
               </div>
             </div>
@@ -136,7 +136,7 @@ export const HomepageContentScreen = () => {
               <button 
                 onClick={() => saveMutation.mutate()}
                 disabled={saveMutation.isPending}
-                className="px-6 py-2.5 font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center shadow-sm w-full sm:w-auto"
+                className="px-6 py-2.5 font-medium text-white bg-[#FF7F50] rounded-lg hover:bg-[#FF7F50]/90 disabled:opacity-50 flex items-center justify-center shadow-sm w-full sm:w-auto"
               >
                 {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Publish Live to Storefront

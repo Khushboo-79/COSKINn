@@ -1555,3 +1555,16 @@ model Staff2fa {
   @@map("staff_2fa")
 }
 
+// ==========================================
+// CONTENT CMS MEDIA
+// ==========================================
+
+model TutorialVideo {
+  id        String   @id @default(uuid())
+  title     String
+  url       String
+  size      String?
+  createdAt DateTime @default(now())
+
+  @@map("tutorial_videos")
+}

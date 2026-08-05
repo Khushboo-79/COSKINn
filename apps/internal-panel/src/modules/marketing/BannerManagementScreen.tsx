@@ -147,8 +147,8 @@ export const BannerManagementScreen = () => {
                   <img src={imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
                   <>
-                    <ImageIcon className="h-8 w-8 text-indigo-300 mb-2" />
-                    <span className="text-sm text-indigo-500">Click to upload 16:9 image</span>
+                    <ImageIcon className="h-8 w-8 text-[#FF7F50]/50 mb-2" />
+                    <span className="text-sm text-[#FF7F50]">Click to upload 16:9 image</span>
                   </>
                 )}
                 <input 
@@ -206,7 +206,7 @@ export const BannerManagementScreen = () => {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <button className="p-2 bg-white text-slate-700 rounded-full hover:text-blue-600 transition-colors">
+                  <button className="p-2 bg-white text-slate-700 rounded-full hover:text-[#FF7F50] transition-colors">
                     <Edit className="h-4 w-4" />
                   </button>
                   <button 

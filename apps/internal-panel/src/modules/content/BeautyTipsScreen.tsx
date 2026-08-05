@@ -51,49 +51,49 @@ export const BeautyTipsScreen = () => {
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-indigo-700 transition-colors w-full sm:w-auto"
+          className="bg-[#FF7F50] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center hover:bg-[#FF7F50]/90 transition-colors w-full sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" /> Add Tip
         </button>
       </div>
 
       {isAdding && (
-        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-indigo-900 mb-4 flex items-center">
-            <Sparkles className="h-5 w-5 mr-2 text-indigo-500" /> New Beauty Tip
+        <div className="bg-[#FF7F50]/10 border border-[#FF7F50]/20 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold text-[#FF7F50] mb-4 flex items-center">
+            <Sparkles className="h-5 w-5 mr-2 text-[#FF7F50]" /> New Beauty Tip
           </h3>
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-indigo-900 mb-1">Tip Title / Headline <span className="text-rose-500">*</span></label>
+              <label className="block text-sm font-medium text-[#FF7F50] mb-1">Tip Title / Headline <span className="text-rose-500">*</span></label>
               <input 
                 type="text" 
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="e.g. Always Double Cleanse"
-                className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full border-[#FF7F50]/30 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] bg-white"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-indigo-900 mb-1">Tip Content <span className="text-rose-500">*</span></label>
+              <label className="block text-sm font-medium text-[#FF7F50] mb-1">Tip Content <span className="text-rose-500">*</span></label>
               <textarea 
                 value={contentJson}
                 onChange={e => setContentJson(e.target.value)}
                 placeholder="Write your tip here (max 280 chars)..."
                 rows={3}
                 maxLength={280}
-                className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                className="w-full border-[#FF7F50]/30 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] bg-white"
               />
-              <div className="text-right text-xs text-indigo-400 mt-1">{contentJson.length}/280</div>
+              <div className="text-right text-xs text-[#FF7F50]/70 mt-1">{contentJson.length}/280</div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-indigo-900 mb-1">Target Segment</label>
+                <label className="block text-sm font-medium text-[#FF7F50] mb-1">Target Segment</label>
                 <select 
                   value={segment}
                   onChange={e => setSegment(e.target.value)}
-                  className="w-full border-indigo-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="w-full border-[#FF7F50]/30 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] bg-white"
                 >
                   <option value="BOTH">All</option>
                   <option value="COSMETICS">Cosmetics</option>
@@ -106,25 +106,25 @@ export const BeautyTipsScreen = () => {
                     type="checkbox" 
                     checked={published}
                     onChange={(e) => setPublished(e.target.checked)}
-                    className="rounded text-indigo-600 focus:ring-indigo-500" 
+                    className="rounded text-[#FF7F50] focus:ring-[#FF7F50]" 
                   />
-                  <span className="text-sm font-medium text-indigo-900">Publish immediately</span>
+                  <span className="text-sm font-medium text-[#FF7F50]">Publish immediately</span>
                 </label>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-indigo-100 pt-4">
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-[#FF7F50]/20 pt-4">
             <button 
               onClick={() => setIsAdding(false)}
-              className="px-4 py-2 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50 w-full sm:w-auto"
+              className="px-4 py-2 text-sm font-medium text-[#FF7F50] bg-white border border-[#FF7F50]/30 rounded-lg hover:bg-[#FF7F50]/10 w-full sm:w-auto"
             >
               Cancel
             </button>
             <button 
               onClick={() => addMutation.mutate()}
               disabled={!title || !contentJson || addMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#FF7F50] rounded-lg hover:bg-[#FF7F50]/90 disabled:opacity-50 flex items-center justify-center w-full sm:w-auto"
             >
               {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Save Tip
@@ -144,8 +144,8 @@ export const BeautyTipsScreen = () => {
         <div className="grid grid-cols-1 gap-4">
           {tips.map((tip: any) => (
             <div key={tip.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex gap-4 group">
-              <div className="bg-indigo-50 p-3 rounded-xl h-fit">
-                <Sparkles className="h-6 w-6 text-indigo-500" />
+              <div className="bg-[#FF7F50]/10 p-3 rounded-xl h-fit">
+                <Sparkles className="h-6 w-6 text-[#FF7F50]" />
               </div>
               <div className="flex-1">
                 <div className="flex justify-between items-start">

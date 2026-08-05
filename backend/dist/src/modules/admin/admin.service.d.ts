@@ -92,9 +92,106 @@ export declare class AdminService implements OnModuleInit {
         } & {
             id: string;
             createdAt: Date;
-            roleId: string;
             userId: string;
+            roleId: string;
         })[];
+        sessions: {
+            id: string;
+            createdAt: Date;
+            isRevoked: boolean;
+            userId: string;
+            refreshToken: string;
+            deviceInfo: string | null;
+            ipAddress: string | null;
+            expiresAt: Date;
+        }[];
+        customerProfile: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+            dateOfBirth: Date | null;
+            gender: string | null;
+            avatar: string | null;
+        } | null;
+        addresses: {
+            id: string;
+            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+            isDefault: boolean;
+            type: string;
+            fullName: string;
+            addressLine1: string;
+            addressLine2: string | null;
+            city: string;
+            state: string;
+            pincode: string;
+            country: string;
+        }[];
+        orders: {
+            id: string;
+            isDeleted: boolean;
+            deletedAt: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            platform: import("@prisma/client").$Enums.PlatformType;
+            userId: string;
+            totalAmount: number;
+            discountAmt: number;
+            taxAmount: number;
+            shippingFee: number;
+            finalAmount: number;
+            paymentMode: string;
+            couponId: string | null;
+        }[];
+        wishlist: ({
+            items: {
+                id: string;
+                createdAt: Date;
+                wishlistId: string;
+                productId: string;
+            }[];
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+        }) | null;
+        cart: ({
+            items: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                productId: string;
+                cartId: string;
+                variantId: string | null;
+                quantity: number;
+            }[];
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string | null;
+            sessionId: string | null;
+        }) | null;
+        rewardPoints: {
+            id: string;
+            createdAt: Date;
+            userId: string;
+            type: string;
+            points: number;
+            reference: string | null;
+        }[];
+        membershipTier: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            minSpend: number;
+            multiplier: number;
+        } | null;
     } & {
         id: string;
         email: string | null;
@@ -109,6 +206,20 @@ export declare class AdminService implements OnModuleInit {
         updatedAt: Date;
         membershipTierId: string | null;
     })[]>;
+    deleteUser(id: string): Promise<{
+        id: string;
+        email: string | null;
+        phone: string | null;
+        passwordHash: string | null;
+        firstName: string | null;
+        lastName: string | null;
+        isActive: boolean;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        membershipTierId: string | null;
+    }>;
     createStaffUser(data: {
         firstName: string;
         lastName: string;
@@ -129,17 +240,30 @@ export declare class AdminService implements OnModuleInit {
         updatedAt: Date;
         membershipTierId: string | null;
     }>;
-    updateUserRole(userId: string, roleId: string): Promise<{
+    getStaff2FAStatus(): Promise<{
+        id: string;
+        name: string;
+        email: string | null;
+        is2FAEnabled: boolean;
+        lastLogin: string;
+    }[]>;
+    resetStaff2FA(userId: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    updateUserRole(userId: string, data: {
+        roleId: string;
+    }): Promise<{
         id: string;
         createdAt: Date;
-        roleId: string;
         userId: string;
+        roleId: string;
     }>;
     assignRole(userIdentifier: string, roleName: string): Promise<{
         id: string;
         createdAt: Date;
-        roleId: string;
         userId: string;
+        roleId: string;
     }>;
     getSettings(): Promise<{
         id: string;

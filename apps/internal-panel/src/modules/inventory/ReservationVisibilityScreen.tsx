@@ -15,8 +15,9 @@ export const ReservationVisibilityScreen = () => {
   // Filter for items that actually have reserved stock, then by search term
   const reservedStock = stockList?.filter(item => item.reserved > 0)
     .filter(item => 
-      item.sku.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      !searchTerm ||
+      item.sku?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      item.name?.toLowerCase().includes(searchTerm.toLowerCase())
     ) || [];
 
   return (

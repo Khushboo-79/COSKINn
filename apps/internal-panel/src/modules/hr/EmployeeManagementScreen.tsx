@@ -47,7 +47,7 @@ export const EmployeeManagementScreen = () => {
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-indigo-700 transition-colors"
+          className="bg-[#FF7F50] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center hover:bg-[#FF7F50]/90 transition-colors"
         >
           <UserPlus className="h-4 w-4 mr-2" /> Add Employee
         </button>
@@ -64,7 +64,7 @@ export const EmployeeManagementScreen = () => {
                 type="text" 
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50]"
               />
             </div>
             <div>
@@ -73,7 +73,7 @@ export const EmployeeManagementScreen = () => {
                 type="email" 
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50]"
               />
             </div>
             <div>
@@ -82,7 +82,7 @@ export const EmployeeManagementScreen = () => {
                 type="text" 
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50]"
               />
             </div>
             <div>
@@ -91,7 +91,7 @@ export const EmployeeManagementScreen = () => {
                 type="text" 
                 value={department}
                 onChange={e => setDepartment(e.target.value)}
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50]"
               />
             </div>
             <div>
@@ -100,7 +100,7 @@ export const EmployeeManagementScreen = () => {
                 type="text" 
                 value={role}
                 onChange={e => setRole(e.target.value)}
-                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+                className="w-full border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50]"
               />
             </div>
             <div>
@@ -113,7 +113,7 @@ export const EmployeeManagementScreen = () => {
                   type="number" 
                   value={salary}
                   onChange={e => setSalary(Number(e.target.value))}
-                  className="w-full border-slate-300 rounded-lg py-2 pl-8 pr-3 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border-slate-300 rounded-lg py-2 pl-8 pr-3 focus:ring-2 focus:ring-[#FF7F50]"
                 />
               </div>
             </div>
@@ -129,7 +129,7 @@ export const EmployeeManagementScreen = () => {
             <button 
               onClick={() => addMutation.mutate()}
               disabled={!name || !email || addMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#FF7F50] rounded-lg hover:bg-[#FF7F50]/90 disabled:opacity-50 flex items-center"
             >
               {addMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Save Employee
@@ -165,8 +165,8 @@ export const EmployeeManagementScreen = () => {
                 <tr key={emp.id} className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center">
-                      <div className="h-10 w-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
-                        {emp.avatar || emp.name.substring(0,2).toUpperCase()}
+                      <div className="h-10 w-10 rounded-full bg-[#FF7F50]/20 text-[#FF7F50] flex items-center justify-center font-bold text-sm shrink-0">
+                        {emp.avatar || emp.name?.substring(0,2)?.toUpperCase() || 'UN'}
                       </div>
                       <div className="ml-4">
                         <div className="font-bold text-slate-900">{emp.name}</div>
@@ -198,7 +198,7 @@ export const EmployeeManagementScreen = () => {
                     )}
                   </td>
                   <td className="py-4 px-6 text-right">
-                    <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
+                    <button className="p-2 text-slate-400 hover:text-[#FF7F50] transition-colors">
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   </td>

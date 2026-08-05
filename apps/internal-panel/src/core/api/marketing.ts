@@ -96,5 +96,11 @@ export const marketingApi = {
   updateGlobalSeo: async (data: any) => {
     const res = await client.put('/seo/admin/global', data);
     return res.data;
+  },
+
+  // Dashboard
+  getDashboard: async () => {
+    const res = await client.get('/marketing/dashboard');
+    return res.data;
   }
 };
