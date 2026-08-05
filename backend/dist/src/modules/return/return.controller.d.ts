@@ -8,8 +8,8 @@ export declare class ReturnController {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
     findAll(status?: string): Promise<({
@@ -32,8 +32,8 @@ export declare class ReturnController {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     })[]>;
     processReturn(id: string, dto: ProcessReturnDto): Promise<{
@@ -41,8 +41,8 @@ export declare class ReturnController {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
     processQC(id: string, dto: ReturnQcDto): Promise<{
@@ -50,8 +50,8 @@ export declare class ReturnController {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
 }

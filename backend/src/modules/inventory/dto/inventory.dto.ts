@@ -56,6 +56,10 @@ export class StockTransferDto {
 export class DamagedStockDto {
   @IsString()
   @IsNotEmpty()
+  warehouseId: string;
+
+  @IsString()
+  @IsNotEmpty()
   sku: string;
 
   @IsNumber()
@@ -68,6 +72,10 @@ export class DamagedStockDto {
 }
 
 export class ExpiredStockDto {
+  @IsString()
+  @IsNotEmpty()
+  warehouseId: string;
+
   @IsString()
   @IsNotEmpty()
   sku: string;

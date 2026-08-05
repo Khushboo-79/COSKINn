@@ -45,6 +45,9 @@ let WarehouseController = class WarehouseController {
     verifyBarcodeScan(dto) {
         return this.warehouseService.verifyBarcodeScan(dto);
     }
+    getThroughputAnalytics() {
+        return this.warehouseService.getThroughputAnalytics(30);
+    }
 };
 exports.WarehouseController = WarehouseController;
 __decorate([
@@ -71,7 +74,7 @@ __decorate([
 ], WarehouseController.prototype, "getBins", null);
 __decorate([
     (0, common_1.Post)('bins'),
-    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'WAREHOUSE_MANAGER'),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_STAFF', 'INVENTORY_MANAGER'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -101,6 +104,13 @@ __decorate([
     __metadata("design:paramtypes", [warehouse_dto_1.BarcodeScanDto]),
     __metadata("design:returntype", void 0)
 ], WarehouseController.prototype, "verifyBarcodeScan", null);
+__decorate([
+    (0, common_1.Get)('analytics/throughput'),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_STAFF'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], WarehouseController.prototype, "getThroughputAnalytics", null);
 exports.WarehouseController = WarehouseController = __decorate([
     (0, common_1.Controller)('warehouse'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

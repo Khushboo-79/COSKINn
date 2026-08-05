@@ -162,4 +162,22 @@ export declare class SupportController {
         escalated: number;
         complianceRate: number;
     }>;
+    getSettings(): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        enableAutoReply: boolean;
+        autoReplyMessage: string;
+        workingHoursStart: string;
+        workingHoursEnd: string;
+    }>;
+    updateSettings(body: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        enableAutoReply: boolean;
+        autoReplyMessage: string;
+        workingHoursStart: string;
+        workingHoursEnd: string;
+    }>;
 }

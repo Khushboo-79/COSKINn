@@ -13,8 +13,8 @@ export const OutboundScreen = () => {
   const [scannedItems, setScannedItems] = useState<Record<string, number>>({});
 
   const { data: orders, isLoading } = useQuery({
-    queryKey: ['admin', 'orders', { status: 'PROCESSING' }],
-    queryFn: () => orderApi.getAdminOrders({ status: 'PROCESSING' }),
+    queryKey: ['admin', 'orders', { status: 'PLACED' }],
+    queryFn: () => orderApi.getAdminOrders({ status: 'PLACED' }),
   });
 
   const scanMutation = useMutation({
@@ -34,7 +34,7 @@ export const OutboundScreen = () => {
       }
     },
     onError: (err: any) => {
-      toast.error('An error occurred');
+      toast.error(err.response?.data?.message || 'An error occurred during scan');
     }
   });
 
@@ -47,7 +47,7 @@ export const OutboundScreen = () => {
       setScannedItems({});
     },
     onError: (err: any) => {
-      toast.error('An error occurred');
+      toast.error(err.response?.data?.message || 'An error occurred updating status');
     }
   });
 
@@ -76,7 +76,7 @@ export const OutboundScreen = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Outbound Queue (Pack)</h1>
-          <p className="text-slate-500 text-sm mt-1">Pick and pack orders that are currently PROCESSING.</p>
+          <p className="text-slate-500 text-sm mt-1">Pick and pack orders that are currently PLACED.</p>
         </div>
       </div>
 

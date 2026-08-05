@@ -44,6 +44,15 @@ let FinanceReportController = class FinanceReportController {
     syncSettlements(settlements) {
         return this.financeReportService.syncSettlements(settlements);
     }
+    getNotes() {
+        return this.financeReportService.getNotes();
+    }
+    createNote(type, referenceType, referenceId, amount, reason) {
+        return this.financeReportService.createNote(type, referenceType, referenceId, amount, reason);
+    }
+    updateNoteStatus(id, status) {
+        return this.financeReportService.updateNoteStatus(id, status);
+    }
 };
 exports.FinanceReportController = FinanceReportController;
 __decorate([
@@ -94,6 +103,31 @@ __decorate([
     __metadata("design:paramtypes", [Array]),
     __metadata("design:returntype", void 0)
 ], FinanceReportController.prototype, "syncSettlements", null);
+__decorate([
+    (0, common_1.Get)('notes'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], FinanceReportController.prototype, "getNotes", null);
+__decorate([
+    (0, common_1.Post)('notes'),
+    __param(0, (0, common_1.Body)('type')),
+    __param(1, (0, common_1.Body)('referenceType')),
+    __param(2, (0, common_1.Body)('referenceId')),
+    __param(3, (0, common_1.Body)('amount')),
+    __param(4, (0, common_1.Body)('reason')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Number, String]),
+    __metadata("design:returntype", void 0)
+], FinanceReportController.prototype, "createNote", null);
+__decorate([
+    (0, common_1.Post)('notes/:id/status'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], FinanceReportController.prototype, "updateNoteStatus", null);
 exports.FinanceReportController = FinanceReportController = __decorate([
     (0, common_1.Controller)('admin/finance'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

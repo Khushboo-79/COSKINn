@@ -16,8 +16,8 @@ export declare class RefundController {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         amount: number;
+        orderId: string;
         method: string | null;
     })[]>;
     processWalletRefund(dto: ProcessRefundDto): Promise<{

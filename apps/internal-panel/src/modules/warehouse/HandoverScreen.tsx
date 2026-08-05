@@ -4,12 +4,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../core/api/orders';
 import { Search, Loader2, Truck, CheckSquare, FileOutput } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 
 export const HandoverScreen = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [isShipping, setIsShipping] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   // We fetch packed orders to hand them over to the courier
   const { data: orders, isLoading } = useQuery({
@@ -23,7 +25,11 @@ export const HandoverScreen = () => {
   });
 
   const handleShipOrders = async () => {
-    if (!window.confirm(`Mark ${selectedOrderIds.length} orders as SHIPPED? This will notify customers.`)) return;
+    setIsConfirmOpen(true);
+  };
+
+  const executeShipment = async () => {
+    setIsConfirmOpen(false);
 
     setIsShipping(true);
     let successCount = 0;
@@ -72,13 +78,14 @@ export const HandoverScreen = () => {
       </div>
 
       {selectedOrderIds.length > 0 && (
-        <div className="bg-primary-50 border border-primary-100 p-4 rounded-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-4">
+        <div className="bg-primary-50 border border-primary-100 p-4 rounded-2xl flex items-center justify-between animate-in fade-in slide-in-from-top-4 print:hidden">
           <div className="flex items-center text-primary-900 font-medium">
             <CheckSquare className="h-5 w-5 mr-3 text-primary-600" />
             {selectedOrderIds.length} Order(s) Selected for Handover
           </div>
           <div className="flex gap-2">
             <button 
+              onClick={() => window.print()}
               className="px-4 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center"
             >
               <FileOutput className="h-4 w-4 mr-2" />
@@ -96,7 +103,7 @@ export const HandoverScreen = () => {
         </div>
       )}
 
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 print:hidden">
         <div className="relative flex-1 max-w-md">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-slate-400" />
@@ -114,9 +121,9 @@ export const HandoverScreen = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+            <thead className="bg-slate-50 print:bg-transparent">
               <tr>
-                <th className="px-6 py-4 text-left">
+                <th className="px-6 py-4 text-left print:hidden">
                   <input 
                     type="checkbox" 
                     className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer"
@@ -147,7 +154,7 @@ export const HandoverScreen = () => {
                   
                   return (
                     <tr key={order.id} className={`hover:bg-slate-50 transition-colors ${isSelected ? 'bg-primary-50/50' : ''}`}>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap print:hidden">
                         <input 
                           type="checkbox" 
                           className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer"
@@ -184,6 +191,14 @@ export const HandoverScreen = () => {
           </table>
         </div>
       </div>
+      <ConfirmModal 
+        isOpen={isConfirmOpen}
+        onCancel={() => setIsConfirmOpen(false)}
+        onConfirm={executeShipment}
+        title="Confirm Dispatch"
+        message={`Mark ${selectedOrderIds.length} order(s) as SHIPPED? This will notify the customers and update their tracking status.`}
+        actionText="Dispatch & Mark Shipped"
+      />
     </div>
   );
 };

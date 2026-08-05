@@ -10,8 +10,8 @@ export declare class EngagementService {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     }[]>;
     addReview(userId: string, productId: string, data: {
         rating: number;
@@ -25,8 +25,8 @@ export declare class EngagementService {
         userId: string;
         title: string | null;
         isApproved: boolean;
-        rating: number;
         content: string | null;
+        rating: number;
     }>;
     getProductQuestions(productId: string): Promise<({
         answers: {

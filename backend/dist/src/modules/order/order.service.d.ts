@@ -474,8 +474,8 @@ export declare class OrderService {
             createdAt: Date;
             updatedAt: Date;
             status: string;
-            orderId: string;
             amount: number;
+            orderId: string;
             method: string | null;
         }[];
         shipments: {
@@ -492,8 +492,8 @@ export declare class OrderService {
         cancellations: {
             id: string;
             createdAt: Date;
-            orderId: string;
             reason: string;
+            orderId: string;
         }[];
     } & {
         id: string;

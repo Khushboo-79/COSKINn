@@ -27,8 +27,8 @@ export declare class ReturnService {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     })[]>;
     requestReturn(dto: RequestReturnDto, userId: string): Promise<{
@@ -36,8 +36,8 @@ export declare class ReturnService {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
     processReturn(id: string, dto: ProcessReturnDto): Promise<{
@@ -45,8 +45,8 @@ export declare class ReturnService {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
     processQC(id: string, dto: ReturnQcDto): Promise<{
@@ -54,8 +54,8 @@ export declare class ReturnService {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         reason: string;
+        orderId: string;
         refundType: string;
     }>;
 }

@@ -20,8 +20,8 @@ export declare class RefundService {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        orderId: string;
         amount: number;
+        orderId: string;
         method: string | null;
     })[]>;
     processRefund(dto: ProcessRefundDto, type: 'WALLET' | 'ORIGINAL_SOURCE'): Promise<{

@@ -158,6 +158,7 @@ export declare class ProductController {
         outOfStockCount: number;
         draftCount: number;
         totalCategories: number;
+        missingSeoCount: number;
     }>;
     findOne(id: string): Promise<any>;
     update(id: string, updateProductDto: UpdateProductDto): Promise<any>;

@@ -21,6 +21,7 @@ import { MarketingRouter } from './modules/marketing/MarketingRouter';
 import { ContentRouter } from './modules/content/ContentRouter';
 import { HrRouter } from './modules/hr/HrRouter';
 import { AuditRouter } from './modules/audit/AuditRouter';
+import { ReturnsRouter } from './modules/returns/ReturnsRouter';
 
 // Initialize React Query Client
 const queryClient = new QueryClient({
@@ -73,6 +74,12 @@ const App = () => {
               <Route path="/orders/*" element={
                 <RequirePanel panelId="orders">
                   <OrderRouter />
+                </RequirePanel>
+              } />
+
+              <Route path="/returns/*" element={
+                <RequirePanel panelId="returns">
+                  <ReturnsRouter />
                 </RequirePanel>
               } />
 

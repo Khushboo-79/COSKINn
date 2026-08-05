@@ -107,4 +107,22 @@ export class SupportService {
       complianceRate: total > 0 ? Math.round(((total - breached) / total) * 100) : 100
     };
   }
+
+  async getSettings() {
+    let settings = await this.prisma.supportSettings.findFirst();
+    if (!settings) {
+      settings = await this.prisma.supportSettings.create({
+        data: {} // Uses default values defined in schema
+      });
+    }
+    return settings;
+  }
+
+  async updateSettings(data: { timezone?: string, firstResponseSlaHours?: number, pauseSlaOnWeekends?: boolean, autoAssign?: boolean, sendCsat?: boolean }) {
+    const settings = await this.getSettings();
+    return this.prisma.supportSettings.update({
+      where: { id: settings.id },
+      data
+    });
+  }
 }

@@ -1568,3 +1568,30 @@ model TutorialVideo {
 
   @@map("tutorial_videos")
 }
+
+model FinancialNote {
+  id String @id @default(uuid())
+  type String
+  referenceType String
+  referenceId String
+  amount Float
+  reason String
+  status String @default("DRAFT")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("financial_notes")
+}
+
+model SupportSettings {
+  id String @id @default(uuid())
+  enableAutoReply Boolean @default(true)
+  autoReplyMessage String @default("We have received your message and will get back to you shortly.")
+  workingHoursStart String @default("09:00")
+  workingHoursEnd String @default("18:00")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("support_settings")
+}
+

@@ -43,7 +43,7 @@ export const InventoryDashboardScreen = () => {
           <p className="text-slate-500 text-sm mt-1">Real-time stock visibility across all warehouses.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link to="/inventory/returns" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center">
+          <Link to="/returns/qc" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center">
             Process Returns
           </Link>
           <Link to="/inventory/report-damage" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors shadow-sm flex items-center">

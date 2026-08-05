@@ -3,23 +3,25 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { inventoryApi } from '../../core/api/inventory';
 import { AlertTriangle, Clock, Loader2, Save } from 'lucide-react';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 
 export const ExceptionsScreen = () => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'damaged' | 'expired'>('damaged');
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   
   const [sku, setSku] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [reason, setReason] = useState('');
+  const [batchNumber, setBatchNumber] = useState('');
   const [warehouseId, setWarehouseId] = useState('default-warehouse');
 
   const reportMutation = useMutation({
     mutationFn: () => {
-      const payload = { sku, warehouseId, quantity, reason };
       if (activeTab === 'damaged') {
-        return inventoryApi.reportDamaged(payload);
+        return inventoryApi.reportDamaged({ sku, warehouseId, quantity, reason });
       } else {
-        return inventoryApi.reportExpired(payload);
+        return inventoryApi.reportExpired({ sku, warehouseId, quantity, batchNumber, reason });
       }
     },
     onSuccess: () => {
@@ -28,6 +30,7 @@ export const ExceptionsScreen = () => {
       setSku('');
       setQuantity(1);
       setReason('');
+      setBatchNumber('');
     },
     onError: (err: any) => {
       toast.error(`Error reporting exception: ${err.response?.data?.message || err.message}`);
@@ -36,13 +39,23 @@ export const ExceptionsScreen = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (window.confirm(`Are you sure you want to deduct ${quantity} unit(s) of ${sku} from available inventory?`)) {
-      reportMutation.mutate();
-    }
+    setIsConfirmOpen(true);
   };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <ConfirmModal 
+        isOpen={isConfirmOpen}
+        onCancel={() => setIsConfirmOpen(false)}
+        onConfirm={() => {
+          setIsConfirmOpen(false);
+          reportMutation.mutate();
+        }}
+        title="Confirm Stock Deduction"
+        message={`Are you sure you want to deduct ${quantity} unit(s) of ${sku} from available inventory?`}
+        confirmText="Confirm & Deduct"
+        isDestructive={true}
+      />
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Defect & Exception Reporting</h1>
         <p className="text-slate-500 text-sm mt-1">Proactively flag damaged or expired stock found on the floor.</p>
@@ -117,6 +130,20 @@ export const ExceptionsScreen = () => {
                 />
               </div>
             </div>
+
+            {activeTab === 'expired' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Batch Number</label>
+                <input
+                  type="text"
+                  required
+                  value={batchNumber}
+                  onChange={e => setBatchNumber(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none"
+                  placeholder="Enter batch number..."
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Reason / Details</label>
