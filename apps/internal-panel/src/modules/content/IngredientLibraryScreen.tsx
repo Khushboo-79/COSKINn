@@ -17,7 +17,7 @@ export const IngredientLibraryScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Ingredient Library</h1>
           <p className="text-slate-500 text-sm mt-1">Directory of all fruit ingredients used in our products.</p>
@@ -25,8 +25,8 @@ export const IngredientLibraryScreen = () => {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[600px]">
-        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-          <div className="relative w-96">
+        <div className="p-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="relative w-full sm:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
               type="text" 
@@ -36,7 +36,7 @@ export const IngredientLibraryScreen = () => {
               className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
             />
           </div>
-          <div className="text-sm font-medium text-slate-500">
+          <div className="text-sm font-medium text-slate-500 shrink-0">
             Total Unique Ingredients: {ingredients?.length || 0}
           </div>
         </div>

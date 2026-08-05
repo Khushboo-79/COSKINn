@@ -59,7 +59,7 @@ export const HomepageContentScreen = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Homepage Content</h1>
           <p className="text-slate-500 text-sm mt-1">Manage editorial copy blocks for the main storefront landing page.</p>
@@ -132,11 +132,11 @@ export const HomepageContentScreen = () => {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-slate-200 flex justify-end">
+            <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row sm:justify-end">
               <button 
                 onClick={() => saveMutation.mutate()}
                 disabled={saveMutation.isPending}
-                className="px-6 py-2.5 font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center shadow-sm"
+                className="px-6 py-2.5 font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center shadow-sm w-full sm:w-auto"
               >
                 {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                 Publish Live to Storefront

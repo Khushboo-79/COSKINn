@@ -37,15 +37,15 @@ export const ContentCalendarScreen = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Content Calendar</h1>
           <p className="text-slate-500 text-sm mt-1">Unified view of all content drafts, publications, and updates.</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
+        <div className="p-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="font-medium text-slate-700 flex items-center">
             <Calendar className="h-5 w-5 mr-2 text-indigo-500" /> Publishing Pipeline
           </div>
@@ -62,7 +62,7 @@ export const ContentCalendarScreen = () => {
             <p className="font-medium text-slate-900">No content found.</p>
           </div>
         ) : (
-          <table className="w-full text-left">
+          <table className="w-full text-left min-w-[800px]">
             <thead>
               <tr className="bg-white border-b border-slate-100">
                 <th className="py-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
