@@ -154,9 +154,10 @@ export function CartProvider({ children }) {
             backendProductId = String(searchList[0].id);
           } else {
             const fallbackRes = await apiClient.get('/catalog/products?limit=1');
-            const fallbackList = fallbackRes.data?.data || fallbackRes.data || [];
-            if (fallbackList.length > 0 && fallbackList[0].id) {
-              backendProductId = String(fallbackList[0].id);
+            const fallbackList = fallbackRes.data?.items || fallbackRes.data?.data || fallbackRes.data || [];
+            const list = Array.isArray(fallbackList) ? fallbackList : [];
+            if (list.length > 0 && list[0].id) {
+              backendProductId = String(list[0].id);
             }
           }
         } catch (e) {

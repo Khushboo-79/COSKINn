@@ -12,7 +12,7 @@ import { skincareProducts } from '../constants/skincareProducts';
 import { cosmeticsProducts } from '../constants/cosmeticsProducts';
 
 // Eagerly import all images from assets/images/ via Vite's import.meta.glob
-const imageModules = import.meta.glob('../assets/images/*', { eager: true, as: 'url' });
+const imageModules = import.meta.glob('../assets/images/*', { eager: true, query: '?url', import: 'default' });
 
 // Build a lookup map: filename (e.g. "daily_moisturiser.webp") -> resolved URL
 const imageMap = {};

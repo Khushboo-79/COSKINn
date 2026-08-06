@@ -299,7 +299,7 @@ export class ProductService {
     });
 
     if (!product) {
-      throw new NotFoundException(`Published product #${id} not found`);
+      throw new NotFoundException(`Published product #${identifier} not found`);
     }
 
     return product;

@@ -20,7 +20,7 @@ exports.BonusModule = BonusModule = __decorate([
         imports: [prisma_module_1.PrismaModule, wallet_module_1.WalletModule],
         controllers: [bonus_controller_1.BonusController],
         providers: [bonus_service_1.BonusService],
-        exports: [bonus_service_1.BonusService]
+        exports: [bonus_service_1.BonusService],
     })
 ], BonusModule);
 //# sourceMappingURL=bonus.module.js.map

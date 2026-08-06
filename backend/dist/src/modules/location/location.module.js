@@ -20,7 +20,7 @@ exports.LocationModule = LocationModule = __decorate([
         imports: [axios_1.HttpModule, prisma_module_1.PrismaModule],
         controllers: [location_controller_1.LocationController],
         providers: [location_service_1.LocationService],
-        exports: [location_service_1.LocationService]
+        exports: [location_service_1.LocationService],
     })
 ], LocationModule);
 //# sourceMappingURL=location.module.js.map

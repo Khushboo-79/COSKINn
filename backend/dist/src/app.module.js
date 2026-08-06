@@ -101,7 +101,7 @@ exports.AppModule = AppModule = __decorate([
             serviceable_pincode_module_1.ServiceablePincodeModule,
             compliance_module_1.ComplianceModule,
             app_version_module_1.AppVersionModule,
-            location_module_1.LocationModule
+            location_module_1.LocationModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

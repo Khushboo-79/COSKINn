@@ -29,13 +29,13 @@ let CouponService = class CouponService {
             throw new common_1.BadRequestException('Coupon limit reached');
         const cart = await this.prisma.cart.findUnique({
             where: { userId },
-            include: { items: { include: { product: true } } }
+            include: { items: { include: { product: true } } },
         });
         if (!cart || cart.items.length === 0)
             throw new common_1.BadRequestException('Cart is empty');
         const cartTotal = cart.items.reduce((acc, item) => {
             const price = Number(item.product.discountPrice || item.product.mrp);
-            return acc + (price * item.quantity);
+            return acc + price * item.quantity;
         }, 0);
         if (coupon.minPurchase && cartTotal < coupon.minPurchase) {
             throw new common_1.BadRequestException(`Minimum purchase of ${coupon.minPurchase} required`);
@@ -54,7 +54,7 @@ let CouponService = class CouponService {
             message: 'Coupon applied successfully',
             code: coupon.code,
             discountAmount,
-            newTotal: cartTotal - discountAmount
+            newTotal: cartTotal - discountAmount,
         };
     }
     async getAvailableCoupons(userId) {
@@ -62,12 +62,9 @@ let CouponService = class CouponService {
         return this.prisma.coupon.findMany({
             where: {
                 isActive: true,
-                OR: [
-                    { endDate: null },
-                    { endDate: { gt: now } }
-                ]
+                OR: [{ endDate: null }, { endDate: { gt: now } }],
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async createCoupon(data) {
@@ -75,7 +72,7 @@ let CouponService = class CouponService {
     }
     async getAdminCoupons() {
         return this.prisma.coupon.findMany({
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async updateCoupon(id, data) {
@@ -84,7 +81,7 @@ let CouponService = class CouponService {
             throw new common_1.NotFoundException('Coupon not found');
         return this.prisma.coupon.update({
             where: { id },
-            data
+            data,
         });
     }
 };

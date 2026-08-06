@@ -34,18 +34,20 @@ let CartService = class CartService {
                     include: {
                         product: {
                             include: {
-                                images: { where: { isPrimary: true }, take: 1 }
-                            }
-                        }
+                                images: { where: { isPrimary: true }, take: 1 },
+                            },
+                        },
                     },
-                    orderBy: { createdAt: 'asc' }
-                }
-            }
+                    orderBy: { createdAt: 'asc' },
+                },
+            },
         });
         if (!cart) {
             cart = await this.prisma.cart.create({
                 data: { userId },
-                include: { items: { include: { product: { include: { images: true } } } } }
+                include: {
+                    items: { include: { product: { include: { images: true } } } },
+                },
             });
         }
         let totalMrp = 0;
@@ -65,7 +67,7 @@ let CartService = class CartService {
                     name: tier.offer?.title || 'Surprise Free Gift',
                     price: 0,
                     quantity: 1,
-                    isAutoAdded: true
+                    isAutoAdded: true,
                 });
             }
         }
@@ -84,8 +86,8 @@ let CartService = class CartService {
                 tieredOffers,
                 finalTotal: finalPayable,
                 walletBalance: wallet.balance,
-                rewardPointsBalance: rewardPoints
-            }
+                rewardPointsBalance: rewardPoints,
+            },
         };
     }
     async addToCart(userId, productId, variantId, quantity = 1) {
@@ -93,7 +95,9 @@ let CartService = class CartService {
         if (!cart) {
             cart = await this.prisma.cart.create({ data: { userId } });
         }
-        const product = await this.prisma.product.findUnique({ where: { id: productId } });
+        const product = await this.prisma.product.findUnique({
+            where: { id: productId },
+        });
         if (!product || product.status !== 'LIVE') {
             throw new common_1.NotFoundException('Product not found or not available');
         }
@@ -101,13 +105,13 @@ let CartService = class CartService {
             where: {
                 cartId: cart.id,
                 productId,
-                variantId: variantId || null
-            }
+                variantId: variantId || null,
+            },
         });
         if (existingItem) {
             await this.prisma.cartItem.update({
                 where: { id: existingItem.id },
-                data: { quantity: existingItem.quantity + quantity }
+                data: { quantity: existingItem.quantity + quantity },
             });
         }
         else {
@@ -116,8 +120,8 @@ let CartService = class CartService {
                     cartId: cart.id,
                     productId,
                     variantId: variantId || null,
-                    quantity
-                }
+                    quantity,
+                },
             });
         }
         return this.getCart(userId);
@@ -129,13 +133,13 @@ let CartService = class CartService {
         if (!cart)
             throw new common_1.NotFoundException('Cart not found');
         const item = await this.prisma.cartItem.findFirst({
-            where: { id: itemId, cartId: cart.id }
+            where: { id: itemId, cartId: cart.id },
         });
         if (!item)
             throw new common_1.NotFoundException('Item not found in cart');
         await this.prisma.cartItem.update({
             where: { id: itemId },
-            data: { quantity }
+            data: { quantity },
         });
         return this.getCart(userId);
     }
@@ -147,8 +151,8 @@ let CartService = class CartService {
             await this.prisma.cartItem.delete({
                 where: {
                     id: itemId,
-                    cartId: cart.id
-                }
+                    cartId: cart.id,
+                },
             });
         }
         catch (e) {
@@ -160,7 +164,7 @@ let CartService = class CartService {
         if (!cart)
             return this.getCart(userId);
         await this.prisma.cartItem.deleteMany({
-            where: { cartId: cart.id }
+            where: { cartId: cart.id },
         });
         return this.getCart(userId);
     }

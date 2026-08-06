@@ -18,7 +18,10 @@ let PrismaClientExceptionFilter = class PrismaClientExceptionFilter extends core
         switch (exception.code) {
             case 'P2002': {
                 const status = common_1.HttpStatus.CONFLICT;
-                const target = exception.meta?.target || (exception.meta?.modelName ? [exception.meta.modelName.toString()] : ['unknown']);
+                const target = exception.meta?.target ||
+                    (exception.meta?.modelName
+                        ? [exception.meta.modelName.toString()]
+                        : ['unknown']);
                 response.status(status).json({
                     statusCode: status,
                     message: `Unique constraint failed on field(s) or model: ${target.join(', ')}. This record already exists.`,

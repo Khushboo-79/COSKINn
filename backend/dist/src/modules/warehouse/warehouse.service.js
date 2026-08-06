@@ -25,7 +25,7 @@ let WarehouseService = class WarehouseService {
             await this.prisma.supplier.upsert({
                 where: { id: dto.vendorId },
                 update: {},
-                create: { id: dto.vendorId, name: dto.vendorId }
+                create: { id: dto.vendorId, name: dto.vendorId },
             });
         }
         return this.prisma.purchaseOrder.create({
@@ -34,27 +34,27 @@ let WarehouseService = class WarehouseService {
                 supplierId: dto.vendorId,
                 status: 'ISSUED',
                 items: {
-                    create: dto.items.map(item => ({
+                    create: dto.items.map((item) => ({
                         sku: item.sku,
                         requestedQty: item.requestedQty,
-                        unitPrice: item.unitPrice
-                    }))
-                }
+                        unitPrice: item.unitPrice,
+                    })),
+                },
             },
-            include: { items: true, supplier: true }
+            include: { items: true, supplier: true },
         });
     }
     async getPurchaseOrders() {
         return this.prisma.purchaseOrder.findMany({
             include: { items: true, warehouse: true, supplier: true },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async createGrn(dto) {
         return this.prisma.$transaction(async (prisma) => {
             const po = await prisma.purchaseOrder.findUnique({
                 where: { id: dto.purchaseOrderId },
-                include: { items: true }
+                include: { items: true },
             });
             if (!po)
                 throw new common_1.NotFoundException('Purchase Order not found');
@@ -62,20 +62,20 @@ let WarehouseService = class WarehouseService {
                 data: {
                     purchaseOrderId: dto.purchaseOrderId,
                     items: {
-                        create: dto.items.map(item => ({
+                        create: dto.items.map((item) => ({
                             sku: item.sku,
                             receivedQty: item.receivedQty,
                             acceptedQty: item.acceptedQty,
                             rejectedQty: item.rejectedQty,
-                            reason: item.reason
-                        }))
-                    }
+                            reason: item.reason,
+                        })),
+                    },
                 },
-                include: { items: true }
+                include: { items: true },
             });
             await prisma.purchaseOrder.update({
                 where: { id: dto.purchaseOrderId },
-                data: { status: 'RECEIVED' }
+                data: { status: 'RECEIVED' },
             });
             for (const item of dto.items) {
                 if (item.acceptedQty > 0) {
@@ -83,17 +83,17 @@ let WarehouseService = class WarehouseService {
                         where: {
                             warehouseId_sku: {
                                 warehouseId: po.warehouseId,
-                                sku: item.sku
-                            }
+                                sku: item.sku,
+                            },
                         },
                         update: {
-                            quantity: { increment: item.acceptedQty }
+                            quantity: { increment: item.acceptedQty },
                         },
                         create: {
                             warehouseId: po.warehouseId,
                             sku: item.sku,
-                            quantity: item.acceptedQty
-                        }
+                            quantity: item.acceptedQty,
+                        },
                     });
                     await prisma.stockMovement.create({
                         data: {
@@ -101,8 +101,8 @@ let WarehouseService = class WarehouseService {
                             sku: item.sku,
                             type: 'IN',
                             quantity: item.acceptedQty,
-                            reference: `GRN-${grn.id}`
-                        }
+                            reference: `GRN-${grn.id}`,
+                        },
                     });
                 }
             }
@@ -124,7 +124,7 @@ let WarehouseService = class WarehouseService {
             }
         }
         return {
-            orderIds: orders.map(o => o.id),
+            orderIds: orders.map((o) => o.id),
             aggregatedItems: Array.from(pickList.entries()).map(([sku, quantity]) => ({ sku, quantity })),
         };
     }
@@ -132,7 +132,7 @@ let WarehouseService = class WarehouseService {
         return this.prisma.warehouseBin.findMany({
             where: warehouseId ? { warehouseId } : undefined,
             include: { warehouse: true, stocks: true },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async createBin(dto) {
@@ -150,9 +150,9 @@ let WarehouseService = class WarehouseService {
             data: {
                 warehouseId: dto.warehouseId,
                 code: dto.code,
-                description: dto.description
+                description: dto.description,
             },
-            include: { warehouse: true }
+            include: { warehouse: true },
         });
     }
     async verifyBarcodeScan(dto) {
@@ -162,34 +162,49 @@ let WarehouseService = class WarehouseService {
         });
         if (!order)
             throw new common_1.NotFoundException('Order not found');
-        const item = order.items.find(i => i.sku === dto.barcode);
+        const item = order.items.find((i) => i.sku === dto.barcode);
         if (!item) {
-            return { success: false, message: `SKU ${dto.barcode} does not belong to Order ${dto.orderId}` };
+            return {
+                success: false,
+                message: `SKU ${dto.barcode} does not belong to Order ${dto.orderId}`,
+            };
         }
-        return { success: true, message: `SKU ${dto.barcode} verified for Order ${dto.orderId}` };
+        return {
+            success: true,
+            message: `SKU ${dto.barcode} verified for Order ${dto.orderId}`,
+        };
     }
     async getThroughputAnalytics(days = 30) {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
         const allIn = await this.prisma.stockMovement.findMany({
             where: { type: 'IN', createdAt: { gte: startDate } },
-            select: { createdAt: true, quantity: true }
+            select: { createdAt: true, quantity: true },
         });
         const allOut = await this.prisma.stockMovement.findMany({
             where: { type: 'OUT', createdAt: { gte: startDate } },
-            select: { createdAt: true, quantity: true }
+            select: { createdAt: true, quantity: true },
         });
         const allShipped = await this.prisma.order.findMany({
             where: { status: 'SHIPPED', updatedAt: { gte: startDate } },
-            select: { updatedAt: true, items: { select: { quantity: true } } }
+            select: { updatedAt: true, items: { select: { quantity: true } } },
         });
         const dataMap = new Map();
         for (let i = days - 1; i >= 0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const dateStr = d.toISOString().split('T')[0];
-            const displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            dataMap.set(dateStr, { name: displayDate, received: 0, picked: 0, shipped: 0, rawDate: dateStr });
+            const displayDate = d.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+            });
+            dataMap.set(dateStr, {
+                name: displayDate,
+                received: 0,
+                picked: 0,
+                shipped: 0,
+                rawDate: dateStr,
+            });
         }
         for (const mov of allIn) {
             const dateStr = mov.createdAt.toISOString().split('T')[0];

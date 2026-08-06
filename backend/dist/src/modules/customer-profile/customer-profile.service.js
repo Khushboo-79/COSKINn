@@ -29,8 +29,8 @@ let CustomerProfileService = class CustomerProfileService {
                         phone: true,
                         firstName: true,
                         lastName: true,
-                    }
-                }
+                    },
+                },
             },
         });
         if (!profile) {
@@ -67,7 +67,7 @@ let CustomerProfileService = class CustomerProfileService {
                         ...(dto.firstName && { firstName: dto.firstName }),
                         ...(dto.lastName && { lastName: dto.lastName }),
                         ...(dto.email && { email: dto.email }),
-                    }
+                    },
                 });
             }
             const profile = await tx.customerProfile.upsert({
@@ -115,8 +115,15 @@ let CustomerProfileService = class CustomerProfileService {
                 include: {
                     skinProfile: true,
                     makeupPreference: true,
-                    user: { select: { email: true, phone: true, firstName: true, lastName: true } }
-                }
+                    user: {
+                        select: {
+                            email: true,
+                            phone: true,
+                            firstName: true,
+                            lastName: true,
+                        },
+                    },
+                },
             });
             if (!updatedProfile)
                 return null;
@@ -131,17 +138,19 @@ let CustomerProfileService = class CustomerProfileService {
     }
     async getAllCustomers(page, limit, search, platform) {
         const skip = (page - 1) * limit;
-        const whereClause = search ? {
-            OR: [
-                { email: { contains: search, mode: 'insensitive' } },
-                { phone: { contains: search, mode: 'insensitive' } },
-                { firstName: { contains: search, mode: 'insensitive' } },
-                { lastName: { contains: search, mode: 'insensitive' } }
-            ]
-        } : {};
+        const whereClause = search
+            ? {
+                OR: [
+                    { email: { contains: search, mode: 'insensitive' } },
+                    { phone: { contains: search, mode: 'insensitive' } },
+                    { firstName: { contains: search, mode: 'insensitive' } },
+                    { lastName: { contains: search, mode: 'insensitive' } },
+                ],
+            }
+            : {};
         if (platform) {
             whereClause.orders = {
-                some: { platform }
+                some: { platform },
             };
         }
         const [users, total] = await Promise.all([
@@ -150,33 +159,33 @@ let CustomerProfileService = class CustomerProfileService {
                     ...whereClause,
                     roles: {
                         some: {
-                            role: { name: 'CUSTOMER' }
-                        }
-                    }
+                            role: { name: 'CUSTOMER' },
+                        },
+                    },
                 },
                 include: {
                     customerProfile: {
-                        include: { skinProfile: true }
-                    }
+                        include: { skinProfile: true },
+                    },
                 },
                 skip,
                 take: limit,
-                orderBy: { createdAt: 'desc' }
+                orderBy: { createdAt: 'desc' },
             }),
             this.prisma.user.count({
                 where: {
                     ...whereClause,
                     roles: {
                         some: {
-                            role: { name: 'CUSTOMER' }
-                        }
-                    }
-                }
-            })
+                            role: { name: 'CUSTOMER' },
+                        },
+                    },
+                },
+            }),
         ]);
         return {
             data: users,
-            meta: { total, page, limit, totalPages: Math.ceil(total / limit) }
+            meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
         };
     }
     async getCustomer360(userId, platform) {
@@ -186,25 +195,25 @@ let CustomerProfileService = class CustomerProfileService {
                 customerProfile: {
                     include: {
                         skinProfile: true,
-                        makeupPreference: true
-                    }
+                        makeupPreference: true,
+                    },
                 },
                 wishlist: {
                     include: {
                         items: {
-                            include: { product: true }
-                        }
-                    }
+                            include: { product: true },
+                        },
+                    },
                 },
                 orders: {
                     where: platform ? { platform } : undefined,
                     orderBy: { createdAt: 'desc' },
                     take: 10,
                     include: {
-                        items: true
-                    }
-                }
-            }
+                        items: true,
+                    },
+                },
+            },
         });
         if (!user)
             throw new common_1.NotFoundException('Customer not found');
@@ -213,7 +222,7 @@ let CustomerProfileService = class CustomerProfileService {
     async updateUserStatus(userId, isActive) {
         const user = await this.prisma.user.update({
             where: { id: userId },
-            data: { isActive }
+            data: { isActive },
         });
         return { success: true, isActive: user.isActive };
     }
@@ -227,14 +236,14 @@ let CustomerProfileService = class CustomerProfileService {
     async getAddresses(userId) {
         return this.prisma.customerAddress.findMany({
             where: { userId },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async addAddress(userId, data) {
         if (data.isDefault) {
             await this.prisma.customerAddress.updateMany({
                 where: { userId },
-                data: { isDefault: false }
+                data: { isDefault: false },
             });
         }
         return this.prisma.customerAddress.create({
@@ -249,25 +258,25 @@ let CustomerProfileService = class CustomerProfileService {
                 state: data.state,
                 pincode: data.pincode,
                 country: data.country || 'India',
-                isDefault: data.isDefault || false
-            }
+                isDefault: data.isDefault || false,
+            },
         });
     }
     async updateAddress(userId, id, data) {
         if (data.isDefault) {
             await this.prisma.customerAddress.updateMany({
                 where: { userId },
-                data: { isDefault: false }
+                data: { isDefault: false },
             });
         }
         return this.prisma.customerAddress.update({
             where: { id, userId },
-            data
+            data,
         });
     }
     async deleteAddress(userId, id) {
         return this.prisma.customerAddress.delete({
-            where: { id, userId }
+            where: { id, userId },
         });
     }
     async deleteMyAccount(userId) {
@@ -277,12 +286,12 @@ let CustomerProfileService = class CustomerProfileService {
                 data: {
                     isDeleted: true,
                     deletedAt: new Date(),
-                    isActive: false
-                }
+                    isActive: false,
+                },
             });
             await tx.loginSession.updateMany({
                 where: { userId },
-                data: { isRevoked: true }
+                data: { isRevoked: true },
             });
             return { success: true, message: 'Account deleted successfully' };
         });

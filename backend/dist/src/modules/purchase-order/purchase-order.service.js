@@ -45,7 +45,7 @@ let PurchaseOrderService = class PurchaseOrderService {
     }
     async createGrn(dto) {
         const po = await this.prisma.purchaseOrder.findUnique({
-            where: { id: dto.purchaseOrderId }
+            where: { id: dto.purchaseOrderId },
         });
         if (!po)
             throw new common_1.NotFoundException('Purchase Order not found');
@@ -53,18 +53,18 @@ let PurchaseOrderService = class PurchaseOrderService {
             const grn = await prisma.goodsReceivedNote.create({
                 data: {
                     purchaseOrderId: dto.purchaseOrderId,
-                }
+                },
             });
             await prisma.purchaseOrder.update({
                 where: { id: dto.purchaseOrderId },
-                data: { status: 'RECEIVED' }
+                data: { status: 'RECEIVED' },
             });
             for (const item of dto.items) {
                 await this.inventoryService.stockIn({
                     warehouseId: po.warehouseId,
                     sku: item.sku,
                     quantity: item.quantity,
-                    reference: `GRN: ${grn.id}`
+                    reference: `GRN: ${grn.id}`,
                 });
             }
             return grn;

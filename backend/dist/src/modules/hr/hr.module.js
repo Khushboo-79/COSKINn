@@ -29,7 +29,7 @@ exports.HrModule = HrModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [hr_controller_1.HrController],
         providers: [hr_service_1.HrService],
-        exports: [hr_service_1.HrService]
+        exports: [hr_service_1.HrService],
     }),
     __metadata("design:paramtypes", [hr_service_1.HrService])
 ], HrModule);

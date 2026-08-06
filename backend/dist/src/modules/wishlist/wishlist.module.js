@@ -18,7 +18,7 @@ exports.WishlistModule = WishlistModule = __decorate([
     (0, common_1.Module)({
         imports: [prisma_module_1.PrismaModule],
         controllers: [wishlist_controller_1.WishlistController],
-        providers: [wishlist_service_1.WishlistService]
+        providers: [wishlist_service_1.WishlistService],
     })
 ], WishlistModule);
 //# sourceMappingURL=wishlist.module.js.map

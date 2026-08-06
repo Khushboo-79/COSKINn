@@ -22,7 +22,7 @@ let TaxService = class TaxService {
     }
     async createHsnCode(code, description) {
         return this.prisma.hsnCode.create({
-            data: { code, description }
+            data: { code, description },
         });
     }
     async getTaxRates() {
@@ -30,7 +30,7 @@ let TaxService = class TaxService {
     }
     async createTaxRate(name, cgst, sgst, igst) {
         return this.prisma.taxRate.create({
-            data: { name, cgst, sgst, igst }
+            data: { name, cgst, sgst, igst },
         });
     }
 };

@@ -22,7 +22,11 @@ let LocationController = class LocationController {
     }
     getIpLocation(req) {
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const clientIp = Array.isArray(ip) ? ip[0] : (typeof ip === 'string' ? ip.split(',')[0] : ip);
+        const clientIp = Array.isArray(ip)
+            ? ip[0]
+            : typeof ip === 'string'
+                ? ip.split(',')[0]
+                : ip;
         return this.locationService.getIpLocation(clientIp || '');
     }
     async reverseGeocode(lat, lng) {
