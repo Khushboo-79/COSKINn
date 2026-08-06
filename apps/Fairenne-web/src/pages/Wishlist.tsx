@@ -76,13 +76,7 @@ const Wishlist: React.FC = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          addToCart({
-                            id: product.id.toString(),
-                            name: product.name,
-                            price: typeof product.price === 'string' ? parseInt(product.price.replace(/[^\d]/g, ''), 10) : product.price,
-                            image: product.image,
-                            quantity: 1
-                          });
+                          addToCart(product.id.toString(), 1);
                         }}
                         className={`w-full py-3 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center ${
                           isGlam ? 'bg-[#7a1b26] text-white hover:bg-[#5a121b]' : 'bg-white text-gray-900 hover:bg-[#ff9aa8] hover:text-white'

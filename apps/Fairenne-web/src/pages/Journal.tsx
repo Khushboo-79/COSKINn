@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock, ChevronRight, Mail } from 'lucide-react';
@@ -6,7 +6,8 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const categories = ['All', 'Skincare Guides', 'Ingredient Spotlight', 'Wellness', 'Tutorials'];
 
-const featuredArticle = {
+// Fallback featured article just in case backend has no articles
+const fallbackFeatured = {
   id: 'featured',
   title: 'The Ultimate Guide to Glass Skin: Routine & Ingredients',
   category: 'Skincare Guides',
@@ -17,62 +18,50 @@ const featuredArticle = {
   imageSkin: 'https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg',
 };
 
-const articles = [
-  {
-    id: 1,
-    title: 'Why Vitamin C is a Must-Have in Your Morning Routine',
-    category: 'Ingredient Spotlight',
-    readTime: '4 min read',
-    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588',
-    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg'
-  },
-  {
-    id: 2,
-    title: '5 Steps to a Perfect Nighttime Recovery Routine',
-    category: 'Tutorials',
-    readTime: '5 min read',
-    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299',
-    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg'
-  },
-  {
-    id: 3,
-    title: 'Mindful Beauty: Connecting Wellness and Skincare',
-    category: 'Wellness',
-    readTime: '7 min read',
-    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951',
-    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/1-1_b4ae866f-e0a8-43d1-971f-1d143d76f01c.jpg'
-  },
-  {
-    id: 4,
-    title: 'The Truth About Hyaluronic Acid: Are You Using It Right?',
-    category: 'Ingredient Spotlight',
-    readTime: '3 min read',
-    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260420-103644.jpg?v=1776653923',
-    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg'
-  },
-  {
-    id: 5,
-    title: 'Dermatologist Secrets for Transitioning to Fall Skincare',
-    category: 'Skincare Guides',
-    readTime: '6 min read',
-    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/61605ff4361e206d245c64bb08d66c4b_41cd63f3-7c74-4c4d-853d-ef8949a10017.jpg?v=1784689317',
-    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg'
-  },
-  {
-    id: 6,
-    title: 'Gua Sha 101: Benefits and Step-by-Step Tutorial',
-    category: 'Tutorials',
-    readTime: '5 min read',
-    imageGlam: 'https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-142134.jpg?v=1784704087',
-    imageSkin: 'https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg'
-  }
-];
-
 const Journal: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const [activeCategory, setActiveCategory] = useState('All');
   const pageRef = useScrollReveal<HTMLDivElement>();
+
+  const [articles, setArticles] = useState<any[]>([]);
+  const [featuredArticle, setFeaturedArticle] = useState<any>(fallbackFeatured);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/api/content/articles?type=BLOG');
+        if (!res.ok) throw new Error('Failed to fetch articles');
+        const data = await res.json();
+        
+        if (data && data.length > 0) {
+          // Format backend articles
+          const formatted = data.map((art: any) => ({
+            id: art.id,
+            title: art.title,
+            category: 'Skincare Guides', // Could map to tags if available
+            readTime: '5 min read',
+            date: new Date(art.publishedAt || art.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            excerpt: art.content.substring(0, 150) + '...',
+            imageGlam: art.imageUrl || fallbackFeatured.imageGlam,
+            imageSkin: art.imageUrl || fallbackFeatured.imageSkin,
+          }));
+
+          setFeaturedArticle(formatted[0]);
+          setArticles(formatted.slice(1));
+        } else {
+          setArticles([]);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
 
   const filteredArticles = activeCategory === 'All' 
     ? articles 
@@ -145,58 +134,62 @@ const Journal: React.FC = () => {
 
       {/* Articles Grid */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 mb-20">
-        <motion.div 
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {filteredArticles.map((article) => (
-            <motion.div 
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4 }}
-              key={article.id} 
-              className={`group cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 ${
-                isGlam ? 'bg-white shadow-sm hover:shadow-xl' : 'bg-white shadow-sm hover:shadow-lg'
-              }`}
-            >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <img 
-                  src={isGlam ? article.imageGlam : article.imageSkin} 
-                  alt={article.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className={`inline-block px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full backdrop-blur-md ${
-                    isGlam ? 'bg-white/80 text-[#7a1b26]' : 'bg-white/80 text-[#ff9aa8]'
+        {isLoading ? (
+          <div className="py-20 text-center text-gray-500 font-bold">Loading articles...</div>
+        ) : (
+          <motion.div 
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {filteredArticles.map((article) => (
+              <motion.div 
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4 }}
+                key={article.id} 
+                className={`group cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 ${
+                  isGlam ? 'bg-white shadow-sm hover:shadow-xl' : 'bg-white shadow-sm hover:shadow-lg'
+                }`}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img 
+                    src={isGlam ? article.imageGlam : article.imageSkin} 
+                    alt={article.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className={`inline-block px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full backdrop-blur-md ${
+                      isGlam ? 'bg-white/80 text-[#7a1b26]' : 'bg-white/80 text-[#ff9aa8]'
+                    }`}>
+                      {article.category}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center text-xs text-gray-500 mb-3 font-sans">
+                    <Clock size={14} className="mr-1"/> 
+                    <span>{article.readTime}</span>
+                  </div>
+                  <h3 className={`text-xl mb-4 line-clamp-2 transition-colors ${
+                    isGlam ? 'font-serif group-hover:text-[#7a1b26]' : 'font-display group-hover:text-[#ff9aa8]'
                   }`}>
-                    {article.category}
-                  </span>
+                    {article.title}
+                  </h3>
+                  <div className={`flex items-center text-sm font-bold uppercase tracking-wider ${
+                    isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'
+                  }`}>
+                    <span>Read More</span>
+                    <ChevronRight size={16} className="ml-1 transition-transform group-hover:translate-x-1" />
+                  </div>
                 </div>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center text-xs text-gray-500 mb-3 font-sans">
-                  <Clock size={14} className="mr-1"/> 
-                  <span>{article.readTime}</span>
-                </div>
-                <h3 className={`text-xl mb-4 line-clamp-2 transition-colors ${
-                  isGlam ? 'font-serif group-hover:text-[#7a1b26]' : 'font-display group-hover:text-[#ff9aa8]'
-                }`}>
-                  {article.title}
-                </h3>
-                <div className={`flex items-center text-sm font-bold uppercase tracking-wider ${
-                  isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]'
-                }`}>
-                  <span>Read More</span>
-                  <ChevronRight size={16} className="ml-1 transition-transform group-hover:translate-x-1" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
         
-        {filteredArticles.length === 0 && (
+        {!isLoading && filteredArticles.length === 0 && (
           <div className="py-20 text-center text-gray-500">
             No articles found for this category.
           </div>

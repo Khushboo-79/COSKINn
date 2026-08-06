@@ -17,6 +17,9 @@ const OTPVerification: React.FC = () => {
 
   // Check if they are a new user signing up, or existing user signing in
   const isNewUser = location.state?.isNewUser ?? false;
+  const phone = location.state?.phone || '';
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (timer > 0) {
@@ -45,14 +48,36 @@ const OTPVerification: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    
     if (otp.join('').length === 4) {
-      if (isNewUser) {
-        navigate('/profile-setup');
-      } else {
-        login();
-        navigate('/account');
+      setIsLoading(true);
+      try {
+        const res = await fetch(`http://localhost:3000/api/auth/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, otp: otp.join('') })
+        });
+        
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || 'Invalid or expired OTP');
+        }
+        
+        const data = await res.json();
+        login(data.access_token, data.user);
+        
+        if (isNewUser) {
+          navigate('/profile-setup');
+        } else {
+          navigate('/account');
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -111,16 +136,18 @@ const OTPVerification: React.FC = () => {
               ))}
             </div>
 
+            {error && <p className="text-red-500 text-sm font-bold text-center">{error}</p>}
+
             <button 
               type="submit"
-              disabled={!isComplete}
+              disabled={!isComplete || isLoading}
               className={`w-full group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                 isGlam 
                   ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' 
                   : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091] shadow-xl shadow-[#ff9aa8]/30'
               }`}
             >
-              <span>{isNewUser ? 'Continue Setup' : 'Login Instantly'}</span>
+              <span>{isLoading ? 'Verifying...' : (isNewUser ? 'Continue Setup' : 'Login Instantly')}</span>
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>

@@ -15,6 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomeController = void 0;
 const common_1 = require("@nestjs/common");
 const home_service_1 = require("./home.service");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 let HomeController = class HomeController {
     homeService;
     constructor(homeService) {
@@ -22,6 +25,18 @@ let HomeController = class HomeController {
     }
     async getDashboard(segment) {
         return this.homeService.getHomeDashboard(segment ? segment.toUpperCase() : undefined);
+    }
+    async createBanner(data) {
+        return this.homeService.createBanner(data);
+    }
+    async deleteBanner(id) {
+        return this.homeService.deleteBanner(id);
+    }
+    async addBestseller(productId) {
+        return this.homeService.setBestseller(productId, true);
+    }
+    async removeBestseller(productId) {
+        return this.homeService.setBestseller(productId, false);
     }
 };
 exports.HomeController = HomeController;
@@ -32,6 +47,42 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], HomeController.prototype, "getDashboard", null);
+__decorate([
+    (0, common_1.Post)('admin/banners'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'MARKETING_MANAGER'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], HomeController.prototype, "createBanner", null);
+__decorate([
+    (0, common_1.Delete)('admin/banners/:id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'MARKETING_MANAGER'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], HomeController.prototype, "deleteBanner", null);
+__decorate([
+    (0, common_1.Put)('admin/bestsellers/:productId'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'MARKETING_MANAGER'),
+    __param(0, (0, common_1.Param)('productId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], HomeController.prototype, "addBestseller", null);
+__decorate([
+    (0, common_1.Delete)('admin/bestsellers/:productId'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'MARKETING_MANAGER'),
+    __param(0, (0, common_1.Param)('productId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], HomeController.prototype, "removeBestseller", null);
 exports.HomeController = HomeController = __decorate([
     (0, common_1.Controller)('home'),
     __metadata("design:paramtypes", [home_service_1.HomeService])

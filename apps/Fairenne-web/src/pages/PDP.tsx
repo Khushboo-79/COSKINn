@@ -8,8 +8,6 @@ import { ArrowLeft, Star, Heart, Check, ChevronDown, ChevronUp, Play, ShoppingBa
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProductById, getProductsByTheme } from '../data/dummyData';
 import type { Product as DummyProduct } from '../data/dummyData';
-import { getAllProducts } from '../data/products';
-import type { Product } from '../data/products';
 
 const PDP: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,65 +37,88 @@ const PDP: React.FC = () => {
   const [added, setAdded] = useState(false);
   
   // Ingredient popover state
+  // Ingredient popover state
   const [hoveredIngredient, setHoveredIngredient] = useState<string | null>(null);
+
+  const [crossSellProducts, setCrossSellProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => { window.scrollTo(0, 0); }, 100);
     if (id) {
-      // Find in our new products.ts
-      const allProducts = getAllProducts(isGlam);
-      const foundProduct = allProducts.find(p => p.id.toString() === id);
-      const p = foundProduct || allProducts[0];
-      
-      // Map to DummyProduct structure for the rich UI
-      if (p) {
-        const mappedProduct: DummyProduct = {
-          id: p.id,
-          name: p.name,
-          subtitle: isGlam ? 'Luxurious Collection' : 'Fresh Glow',
-          category: p.category,
-          price: p.price,
-          rating: p.rating,
-          reviews: p.reviews,
-          theme: isGlam ? 'glam' : 'skin',
-          badges: p.badge ? [p.badge] : [],
-          images: [p.image, p.image2 || p.image],
-          shortDescription: p.description || (isGlam 
-            ? 'Fairenne presents a decadent, velvet-finish product infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow.' 
-            : 'Fairenne brings you a juicy, fruit-forward product packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.'),
-          ingredients: [
-            { name: isGlam ? 'Gold Leaf' : 'Peach Extract', description: 'Nourishes and revitalizes.', icon: '✨' },
-            { name: 'Hyaluronic Acid', description: 'Deeply hydrates and plumps.', icon: '💧' }
-          ],
-          usage: p.howToUse ? [p.howToUse] : ['Apply 2-3 drops to clean, dry skin.', 'Massage gently until absorbed.'],
-          skinTypes: ['All', 'Dry', 'Combination'],
-          concerns: ['Dullness', 'Uneven Texture'],
-          benefits: ['Instantly plumps and hydrates', 'Leaves a non-sticky, dewy finish'],
-          textureImage: p.image2 || p.image,
-          fullIngredientsList: p.ingredients || 'Water/Aqua/Eau, Glycerin, Niacinamide, Hyaluronic Acid, Squalane, Panthenol, Fragrance (Parfum).',
-          faqs: [],
-          customerReviews: []
-        };
-        setProduct(mappedProduct);
-        setActiveMedia({ type: 'image', url: mappedProduct.images[0] });
-      }
+      setIsLoading(true);
+      // Fetch product details
+      fetch(`http://localhost:3000/api/products/${id}`)
+        .then(res => res.json())
+        .then(p => {
+          if (p) {
+            const mappedProduct: DummyProduct = {
+              id: p.id,
+              name: p.name,
+              subtitle: p.category?.name || (isGlam ? 'Luxurious Collection' : 'Fresh Glow'),
+              category: p.category?.name || 'Skincare',
+              price: p.discountPrice || p.mrp,
+              rating: 4.8,
+              reviews: 120,
+              theme: isGlam ? 'glam' : 'skin',
+              badges: p.badge ? [p.badge] : [],
+              images: p.images?.length > 0 ? p.images.map((img: any) => img.url) : [
+                isGlam ? 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80' : 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
+              ],
+              shortDescription: p.description || (isGlam 
+                ? 'Fairenne presents a decadent, velvet-finish product infused with rare botanicals. Formulated to restore elasticity and impart a candlelit glow.' 
+                : 'Fairenne brings you a juicy, fruit-forward product packed with Vitamin C and peach extract. Instantly brightens, visibly plumps, and leaves you looking perfectly dewy.'),
+              ingredients: p.ingredients?.map((i: any) => ({ name: i.name, description: 'Nourishes and revitalizes.', icon: '✨' })) || [
+                { name: isGlam ? 'Gold Leaf' : 'Peach Extract', description: 'Nourishes and revitalizes.', icon: '✨' },
+                { name: 'Hyaluronic Acid', description: 'Deeply hydrates and plumps.', icon: '💧' }
+              ],
+              usage: ['Apply 2-3 drops to clean, dry skin.', 'Massage gently until absorbed.'],
+              skinTypes: p.skinTypes?.map((s: any) => s.name) || ['All', 'Dry', 'Combination'],
+              concerns: p.concerns?.map((c: any) => c.name) || ['Dullness', 'Uneven Texture'],
+              benefits: p.benefits?.map((b: any) => b.name) || ['Instantly plumps and hydrates', 'Leaves a non-sticky, dewy finish'],
+              textureImage: p.images?.[1]?.url || p.images?.[0]?.url,
+              fullIngredientsList: p.ingredients?.map((i: any) => i.name).join(', ') || 'Water/Aqua/Eau, Glycerin, Niacinamide, Hyaluronic Acid, Squalane, Panthenol, Fragrance (Parfum).',
+              faqs: p.questions?.map((q: any) => ({ q: q.question, a: q.answer })) || [],
+              customerReviews: p.reviews?.map((r: any) => ({ author: r.reviewerName, date: new Date(r.createdAt).toLocaleDateString(), rating: r.rating, text: r.comment })) || []
+            };
+            setProduct(mappedProduct);
+            setActiveMedia({ type: 'image', url: mappedProduct.images[0] });
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+
+      // Fetch cross-sells
+      fetch(`http://localhost:3000/api/products?segment=${isGlam ? 'MAKEUP' : 'SKINCARE'}&limit=5`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.data) {
+            const crossSells = data.data
+              .filter((p: any) => p.id.toString() !== id)
+              .slice(0, 4)
+              .map((p: any) => ({
+                id: p.id,
+                name: p.name,
+                price: p.discountPrice || p.mrp,
+                image: p.images?.[0]?.url || (isGlam ? 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80' : 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800')
+              }));
+            setCrossSellProducts(crossSells);
+          }
+        })
+        .catch(console.error);
     }
   }, [id, isGlam]);
 
-  if (!product) {
-    return <div className="min-h-screen flex items-center justify-center">Product not found.</div>;
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">Loading product...</div>;
   }
 
-  const crossSellProducts = getAllProducts(isGlam).filter(p => p.id !== product.id).slice(0, 4);
+  if (!product) {
+    return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">Product not found.</div>;
+  }
 
   const handleAddToCart = () => {
-    addToCart({
-      id: product.id.toString(),
-      name: product.name,
-      price: product.price,
-      image: product.images[0],
-      quantity: quantity
-    });
+    addToCart(product.id.toString(), quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -254,7 +275,7 @@ const PDP: React.FC = () => {
                 
                 <motion.button
                   whileTap={{ scale: 0.7 }}
-                  onClick={() => isInWishlist(product.id.toString()) ? removeFromWishlist(product.id.toString()) : addToWishlist({...product, id: product.id.toString(), price: formatPrice(product.price), image: product.images[0], category: product.category})}
+                  onClick={() => isInWishlist(product.id.toString()) ? removeFromWishlist(product.id.toString()) : addToWishlist(product.id.toString())}
                   className={`p-4 rounded-full border border-gray-200 flex items-center justify-center transition-colors ${isGlam ? 'hover:border-[#7a1b26] hover:text-[#7a1b26]' : 'hover:border-[#ff9aa8] hover:text-[#ff9aa8]'}`}
                 >
                   <motion.div
@@ -584,7 +605,7 @@ const PDP: React.FC = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-40 flex items-center gap-3">
         <motion.button
           whileTap={{ scale: 0.7 }}
-          onClick={() => isInWishlist(product.id.toString()) ? removeFromWishlist(product.id.toString()) : addToWishlist({...product, id: product.id.toString(), price: formatPrice(product.price), image: product.images[0], category: product.category})}
+          onClick={() => isInWishlist(product.id.toString()) ? removeFromWishlist(product.id.toString()) : addToWishlist(product.id.toString())}
           className="p-4 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center transition-colors flex-shrink-0"
         >
           <motion.div

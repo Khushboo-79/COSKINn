@@ -47,4 +47,7 @@ export declare class MembershipController {
         minSpend: number;
         multiplier: number;
     }>;
+    triggerNightlyComputation(): {
+        message: string;
+    };
 }

@@ -64,7 +64,7 @@ const Bestsellers: React.FC = () => {
   const [products, setProducts] = useState(defaultProducts);
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/home')
+    fetch('http://localhost:3000/api/home')
       .then(res => res.json())
       .then(data => {
         if (data && data.bestSellers && data.bestSellers.length > 0) {
@@ -204,13 +204,7 @@ const Bestsellers: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        addToCart({
-                          id: product.id.toString(),
-                          name: product.name,
-                          price: product.price,
-                          image: product.image,
-                          quantity: 1
-                        });
+                        addToCart(product.id.toString(), 1);
                       }}
                       className={`w-full py-3.5 rounded-full font-bold text-sm shadow-xl flex items-center justify-center ${isGlam ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' : 'bg-white text-gray-900 hover:bg-[#ff9aa8] hover:text-white'}`}
                     >
@@ -257,13 +251,7 @@ const Bestsellers: React.FC = () => {
                   if (isInWishlist(product.id.toString())) {
                     removeFromWishlist(product.id.toString());
                   } else {
-                    addToWishlist({
-                      id: product.id.toString(),
-                      name: product.name,
-                      price: formatPrice(product.price),
-                      image: product.image,
-                      category: product.category
-                    });
+                    addToWishlist(product.id.toString());
                   }
                 }}
                 className={`absolute ${isGlam ? 'top-3 right-3 w-7 h-7 bg-white shadow-md' : 'top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-md shadow-sm hover:bg-white text-gray-500'} z-30 flex items-center justify-center rounded-full hover:text-red-500 transition-colors`}

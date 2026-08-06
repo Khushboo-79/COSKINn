@@ -106,6 +106,7 @@ export declare class OrderService {
                     status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
+                    isBestseller: boolean;
                     rejectionReason: string | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
@@ -225,6 +226,7 @@ export declare class OrderService {
                     status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
+                    isBestseller: boolean;
                     rejectionReason: string | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
@@ -336,6 +338,7 @@ export declare class OrderService {
                     status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
+                    isBestseller: boolean;
                     rejectionReason: string | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
@@ -434,6 +437,7 @@ export declare class OrderService {
                     status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
+                    isBestseller: boolean;
                     rejectionReason: string | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
@@ -571,6 +575,16 @@ export declare class OrderService {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
     getCancellations(): Promise<{
         id: string;
@@ -593,5 +607,15 @@ export declare class OrderService {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
 }

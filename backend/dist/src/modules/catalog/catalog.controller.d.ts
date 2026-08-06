@@ -55,6 +55,7 @@ export declare class CatalogController {
             status: import("@prisma/client").$Enums.ProductStatus;
             productLine: import("@prisma/client").$Enums.ProductLine;
             isCrossSegment: boolean;
+            isBestseller: boolean;
             rejectionReason: string | null;
             seoTitle: string | null;
             seoDesc: string | null;
@@ -112,6 +113,7 @@ export declare class CatalogController {
             status: import("@prisma/client").$Enums.ProductStatus;
             productLine: import("@prisma/client").$Enums.ProductLine;
             isCrossSegment: boolean;
+            isBestseller: boolean;
             rejectionReason: string | null;
             seoTitle: string | null;
             seoDesc: string | null;
@@ -183,6 +185,7 @@ export declare class CatalogController {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         seoTitle: string | null;
         seoDesc: string | null;
@@ -241,6 +244,7 @@ export declare class CatalogController {
             status: import("@prisma/client").$Enums.ProductStatus;
             productLine: import("@prisma/client").$Enums.ProductLine;
             isCrossSegment: boolean;
+            isBestseller: boolean;
             rejectionReason: string | null;
             seoTitle: string | null;
             seoDesc: string | null;
@@ -358,6 +362,7 @@ export declare class CatalogController {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         seoTitle: string | null;
         seoDesc: string | null;
@@ -446,6 +451,7 @@ export declare class CatalogController {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         seoTitle: string | null;
         seoDesc: string | null;
@@ -503,6 +509,7 @@ export declare class CatalogController {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         seoTitle: string | null;
         seoDesc: string | null;
@@ -572,6 +579,7 @@ export declare class CatalogController {
             status: import("@prisma/client").$Enums.ProductStatus;
             productLine: import("@prisma/client").$Enums.ProductLine;
             isCrossSegment: boolean;
+            isBestseller: boolean;
             rejectionReason: string | null;
             seoTitle: string | null;
             seoDesc: string | null;

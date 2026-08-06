@@ -6,6 +6,7 @@ import { Twilio } from 'twilio';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
 import { SendOtpDto } from './dto/send-otp.dto';
+import { RegisterDto } from './dto/register.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -26,6 +27,114 @@ export class AuthService {
     if (process.env.TWILIO_CUSTOMER_ACCOUNT_SID) {
       this.customerTwilioClient = new Twilio(process.env.TWILIO_CUSTOMER_ACCOUNT_SID, process.env.TWILIO_CUSTOMER_AUTH_TOKEN!);
     }
+  }
+
+
+  async register(dto: RegisterDto) {
+    const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (existing) {
+      throw new BadRequestException('Email is already registered');
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        passwordHash,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        roles: {
+          create: {
+            role: {
+              connectOrCreate: {
+                where: { name: 'CUSTOMER' },
+                create: { name: 'CUSTOMER', description: 'Default customer role' }
+              }
+            }
+          }
+        }
+      },
+      include: { roles: { include: { role: true } } }
+    });
+
+    const roles = user.roles.map(ur => ur.role.name);
+    const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+    const payload = { sub: user.id, email: user.email, roles, panelAccess };
+    
+    const refreshToken = require('crypto').randomBytes(40).toString('hex');
+    const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    await this.prisma.loginSession.create({
+      data: {
+        userId: user.id,
+        refreshToken,
+        expiresAt: refreshExpiresAt,
+      }
+    });
+
+    await this.bonusService.awardSignupBonus(user.id);
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      refresh_token: refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        roles
+      }
+    };
+  }
+
+  async customerLogin(dto: LoginDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+      include: { roles: { include: { role: true } } }
+    });
+
+    if (!user || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isCustomer = user.roles.some(ur => ur.role.name === 'CUSTOMER');
+    if (!isCustomer) {
+      throw new UnauthorizedException('This endpoint is for customers only. Use admin login.');
+    }
+
+    const roles = user.roles.map(ur => ur.role.name);
+    const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+    const payload = { sub: user.id, email: user.email, roles, panelAccess };
+    
+    const refreshToken = require('crypto').randomBytes(40).toString('hex');
+    const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    await this.prisma.loginSession.create({
+      data: {
+        userId: user.id,
+        refreshToken,
+        expiresAt: refreshExpiresAt,
+      }
+    });
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      refresh_token: refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        roles
+      }
+    };
   }
 
   async login(loginDto: LoginDto) {
@@ -119,7 +228,7 @@ export class AuthService {
     try {
       // Developer Bypass: Skip Twilio in local testing or when mocked
       if (process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') {
-        this.logger.debug(`[DEV MODE] Skipped Twilio SMS for ${phone}. Use master OTP: 123456`);
+        this.logger.debug(`[DEV MODE] Skipped Twilio SMS for ${phone}. Use master OTP: 1234`);
         return { message: 'OTP sent successfully (Dev Mode)', expires_in_minutes: 10 };
       }
 
@@ -160,7 +269,7 @@ export class AuthService {
     // Call Twilio Verify API to check the code
     try {
       // Developer Bypass: Accept master OTP in local testing or when mocked
-      if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '123456') {
+      if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '1234') {
         this.logger.debug(`[DEV MODE] Master OTP accepted for ${phone}`);
       } else {
         const verificationCheck = await client.verify.v2

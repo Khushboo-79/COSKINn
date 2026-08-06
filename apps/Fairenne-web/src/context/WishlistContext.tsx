@@ -3,54 +3,89 @@ import { useNotification } from './NotificationContext';
 import { useAuth } from './AuthContext';
 
 export interface WishlistItem {
-  id: string;
+  id: string; // Product ID
   name: string;
-  price: string;
+  price: number;
   image: string;
   category?: string;
 }
 
 interface WishlistContextType {
   wishlistItems: WishlistItem[];
-  addToWishlist: (item: WishlistItem) => void;
+  addToWishlist: (productId: string) => void;
   removeFromWishlist: (id: string) => void;
   isInWishlist: (id: string) => boolean;
   wishlistCount: number;
+  fetchWishlist: () => void;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { showToast } = useNotification();
-  const { isAuthenticated, openAuthModal } = useAuth();
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>(() => {
+  const { isAuthenticated, openAuthModal, token } = useAuth();
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
+
+  const fetchWishlist = async () => {
+    if (!isAuthenticated || !token) return;
     try {
-      const saved = localStorage.getItem('coskin_wishlist');
-      const parsed = saved ? JSON.parse(saved) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
+      const res = await fetch('http://localhost:3000/api/wishlist', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Failed to fetch wishlist');
+      const data = await res.json();
+      
+      const items: WishlistItem[] = data.items.map((item: any) => ({
+        id: item.productId,
+        name: item.product.name,
+        price: Number(item.product.discountPrice || item.product.mrp),
+        image: item.product.images?.[0]?.url || 'https://via.placeholder.com/150',
+        category: item.product.categoryId // Adjust based on how category is fetched
+      }));
+      setWishlistItems(items);
+    } catch (err) {
+      console.error(err);
     }
-  });
+  };
 
   useEffect(() => {
-    localStorage.setItem('coskin_wishlist', JSON.stringify(wishlistItems));
-  }, [wishlistItems]);
+    if (isAuthenticated) {
+      fetchWishlist();
+    } else {
+      setWishlistItems([]);
+    }
+  }, [isAuthenticated, token]);
 
-  const addToWishlist = (item: WishlistItem) => {
-    if (!isAuthenticated) {
+  const addToWishlist = async (productId: string) => {
+    if (!isAuthenticated || !token) {
       openAuthModal();
       return;
     }
-    setWishlistItems(prev => {
-      if (prev.find(i => i.id === item.id)) return prev;
-      showToast(`${item.name} added to wishlist!`);
-      return [...prev, item];
-    });
+    try {
+      const res = await fetch(`http://localhost:3000/api/wishlist/${productId}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        await fetchWishlist();
+        showToast('Item added to wishlist!');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const removeFromWishlist = (id: string) => {
-    setWishlistItems(prev => prev.filter(item => item.id !== id));
+  const removeFromWishlist = async (id: string) => {
+    if (!token) return;
+    try {
+      await fetch(`http://localhost:3000/api/wishlist/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      await fetchWishlist();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const isInWishlist = (id: string) => {
@@ -60,7 +95,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const wishlistCount = wishlistItems.length;
 
   return (
-    <WishlistContext.Provider value={{ wishlistItems, addToWishlist, removeFromWishlist, isInWishlist, wishlistCount }}>
+    <WishlistContext.Provider value={{ wishlistItems, addToWishlist, removeFromWishlist, isInWishlist, wishlistCount, fetchWishlist }}>
       {children}
     </WishlistContext.Provider>
   );

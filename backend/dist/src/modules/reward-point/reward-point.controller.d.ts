@@ -27,4 +27,9 @@ export declare class RewardPointController {
         reference: string | null;
         points: number;
     })[]>;
+    creditPoints(data: {
+        userId: string;
+        points: number;
+        description?: string;
+    }): Promise<void>;
 }

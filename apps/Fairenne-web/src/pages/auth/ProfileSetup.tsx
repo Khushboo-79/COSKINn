@@ -9,7 +9,7 @@ const ProfileSetup: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { token, user: currentUser, login } = useAuth();
   
   const [step, setStep] = useState(1);
   const totalSteps = 3;
@@ -24,12 +24,38 @@ const ProfileSetup: React.FC = () => {
   
   const [glamStyle, setGlamStyle] = useState('');
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < totalSteps) {
       setStep(s => s + 1);
     } else {
-      login();
-      navigate('/account'); // Navigate to account on successful login instead of home
+      try {
+        const res = await fetch(`http://localhost:3000/api/customer/profile`, {
+          method: 'PUT',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+          },
+          body: JSON.stringify({
+            firstName: name.split(' ')[0] || '',
+            lastName: name.split(' ').slice(1).join(' ') || '',
+            email: email,
+          })
+        });
+        
+        if (res.ok) {
+           const updatedUser = { 
+             ...currentUser!, 
+             firstName: name.split(' ')[0], 
+             lastName: name.split(' ').slice(1).join(' '), 
+             email 
+           };
+           login(token!, updatedUser);
+        }
+        navigate('/account'); 
+      } catch (err) {
+        console.error('Failed to save profile:', err);
+        navigate('/account');
+      }
     }
   };
 

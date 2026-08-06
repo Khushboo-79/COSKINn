@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { ArrowRight, UserCircle2 } from 'lucide-react';
@@ -10,13 +11,72 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  const { login } = useAuth();
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>(location.state?.authMode || 'signin');
   const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [isEmail, setIsEmail] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setIdentifier(val);
+    setIsEmail(val.includes('@'));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (identifier.length >= 5) {
-      navigate('/verify-otp', { state: { isNewUser: authMode === 'signup' } });
+      if (isEmail) {
+        if (!password) {
+          setError('Password is required for email login.');
+          return;
+        }
+        setIsLoading(true);
+        try {
+          const endpoint = authMode === 'signup' ? '/api/auth/register' : '/api/auth/customer-login';
+          const res = await fetch(`http://localhost:3000${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: identifier, password })
+          });
+          
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || 'Authentication failed');
+          }
+          
+          const data = await res.json();
+          login(data.access_token, data.user);
+          navigate('/account');
+        } catch (err: any) {
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(true);
+        try {
+          const res = await fetch(`http://localhost:3000/api/auth/send-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: identifier })
+          });
+          
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || 'Failed to send OTP');
+          }
+          
+          navigate('/verify-otp', { state: { isNewUser: authMode === 'signup', phone: identifier } });
+        } catch (err: any) {
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
     }
   };
 
@@ -100,27 +160,58 @@ const Login: React.FC = () => {
                   type="text"
                   required
                   value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
+                  onChange={handleIdentifierChange}
                   className={`w-full pl-14 pr-4 py-4 bg-gray-50/50 border-2 rounded-2xl outline-none transition-all duration-300 font-sans font-semibold text-lg text-gray-800 ${
                     isGlam 
                       ? 'border-gray-200 focus:border-[#7a1b26] focus:bg-white focus:ring-4 focus:ring-[#7a1b26]/10' 
                       : 'border-gray-100 focus:border-[#ff9aa8] focus:bg-white focus:ring-4 focus:ring-[#ff9aa8]/20'
                   }`}
-                  placeholder="name@email.com or 000 000 0000"
+                  placeholder="name@email.com or +10000000000"
                 />
               </div>
             </div>
 
+            <AnimatePresence>
+              {isEmail && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  className="overflow-hidden"
+                >
+                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 font-display">
+                    Password
+                  </label>
+                  <div className="relative flex items-center group">
+                    <input 
+                      type="password"
+                      required={isEmail}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`w-full px-4 py-4 bg-gray-50/50 border-2 rounded-2xl outline-none transition-all duration-300 font-sans font-semibold text-lg text-gray-800 ${
+                        isGlam 
+                          ? 'border-gray-200 focus:border-[#7a1b26] focus:bg-white focus:ring-4 focus:ring-[#7a1b26]/10' 
+                          : 'border-gray-100 focus:border-[#ff9aa8] focus:bg-white focus:ring-4 focus:ring-[#ff9aa8]/20'
+                      }`}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {error && <p className="text-red-500 text-sm font-bold">{error}</p>}
+
             <button 
               type="submit"
-              disabled={identifier.length < 5}
+              disabled={identifier.length < 5 || isLoading}
               className={`w-full group flex items-center justify-center px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                 isGlam 
                   ? 'bg-[#2a2a2a] text-[#e5b376] hover:bg-black' 
                   : 'bg-[#ff9aa8] text-white hover:bg-[#ff8091] shadow-xl shadow-[#ff9aa8]/30'
               }`}
             >
-              <span>Continue</span>
+              <span>{isLoading ? 'Processing...' : 'Continue'}</span>
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>

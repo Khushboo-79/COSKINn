@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
@@ -14,50 +14,35 @@ interface MegaMenuProps {
 const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, onMouseEnter, onMouseLeave }) => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
+  const [categories, setCategories] = useState<any[]>([]);
 
-  const skinCategories = [
-    {
-      title: 'Shop by Fruit',
-      links: [
-        { name: 'Watermelon Glow', path: '/collections/watermelon' },
-        { name: 'Peach Plump', path: '/collections/peach' },
-        { name: 'Avocado Calm', path: '/collections/avocado' },
-        { name: 'Berry Bounce', path: '/collections/berry' },
-      ],
-    },
-    {
-      title: 'Shop by Concern',
-      links: [
-        { name: 'Dewy & Glowing', path: '/collections/glow' },
-        { name: 'Blemish-Free', path: '/collections/blemish' },
-        { name: 'Hydration Station', path: '/collections/hydration' },
-        { name: 'Pore Minimizing', path: '/collections/pores' },
-      ],
-    },
-  ];
-
-  const glamCategories = [
-    {
-      title: 'Shop by Collection',
-      links: [
-        { name: 'The Midnight Gala', path: '/collections/midnight' },
-        { name: 'Royal Court', path: '/collections/royal' },
-        { name: 'Gilded Age', path: '/collections/gilded' },
-        { name: 'Velvet Noir', path: '/collections/velvet' },
-      ],
-    },
-    {
-      title: 'Shop by Look',
-      links: [
-        { name: 'Fairytale Bride', path: '/collections/bridal' },
-        { name: 'Dramatic Evening', path: '/collections/evening' },
-        { name: 'Candlelit Romance', path: '/collections/romance' },
-        { name: 'Everyday Royalty', path: '/collections/royalty' },
-      ],
-    },
-  ];
-
-  const categories = isGlam ? glamCategories : skinCategories;
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const platform = isGlam ? 'COSMETICS' : 'SKINCARE';
+        const res = await fetch(`http://localhost:3000/api/categories?platform=${platform}`);
+        if (!res.ok) throw new Error('Failed to fetch categories');
+        const data = await res.json();
+        
+        // Transform the backend categories into the MegaMenu layout format
+        const formatted = data.map((cat: any) => ({
+          title: cat.name,
+          links: cat.subcategories.map((sub: any) => ({
+            name: sub.name,
+            path: `/collections/${sub.slug}`
+          }))
+        }));
+        
+        setCategories(formatted);
+      } catch (err) {
+        console.error('Failed to fetch categories for MegaMenu', err);
+      }
+    };
+    
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen, isGlam]);
 
   return (
     <AnimatePresence>
@@ -83,7 +68,7 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, onMouseEnter, onMo
                         {category.title}
                       </h3>
                       <ul className="space-y-4">
-                        {category.links.map((link, linkIdx) => (
+                        {category.links.map((link: any, linkIdx: number) => (
                           <li key={linkIdx}>
                             <Link 
                               to={link.path}
@@ -99,49 +84,41 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, onMouseEnter, onMo
                           </li>
                         ))}
                       </ul>
-                      <Link 
-                        to="/collections" 
-                        onClick={onClose}
-                        className={`mt-6 inline-flex items-center text-sm font-bold group ${
-                          isGlam ? 'text-[#2a2a2a] hover:text-[#7a1b26]' : 'text-gray-900 hover:text-[#ff9aa8]'
-                        }`}
-                      >
-                        View all products 
-                        <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" />
-                      </Link>
                     </div>
                   ))}
                 </div>
 
-                {/* Featured Image Section */}
-                <div className="col-span-12 lg:col-span-5 h-[300px] relative rounded-2xl overflow-hidden group cursor-pointer">
-                  {isGlam ? (
-                    <div className="w-full h-full relative">
-                      <img 
-                        src="https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588" 
-                        alt="Midnight Gala Collection" 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
-                        <span className="text-[#e5b376] text-xs font-bold uppercase tracking-widest mb-2 font-serif">New Arrival</span>
-                        <h4 className="text-white text-2xl font-serif italic mb-2">The Midnight Gala</h4>
-                        <p className="text-gray-200 text-sm font-serif">Deep reds and shimmering golds for an unforgettable night.</p>
-                      </div>
+                {/* Featured Promo Section */}
+                <div className="col-span-12 lg:col-span-5 h-full">
+                  <div className={`relative h-full min-h-[300px] rounded-2xl overflow-hidden group ${isGlam ? 'border border-[#e5b376]/20' : ''}`}>
+                    <img 
+                      src={isGlam 
+                        ? "https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678" 
+                        : "https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg"} 
+                      alt="Featured Collection" 
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                      <span className={`text-xs font-bold tracking-[0.2em] uppercase mb-2 ${isGlam ? 'text-[#e5b376]' : 'text-white'}`}>
+                        Just Arrived
+                      </span>
+                      <h4 className={`text-2xl font-bold text-white mb-4 ${isGlam ? 'font-serif' : 'font-display'}`}>
+                        {isGlam ? 'The Velvet Noir Collection' : 'Watermelon Glow Drops'}
+                      </h4>
+                      <Link 
+                        to="/collections/new" 
+                        onClick={onClose}
+                        className={`inline-flex items-center text-sm font-bold w-fit ${
+                          isGlam 
+                            ? 'text-white hover:text-[#e5b376] uppercase tracking-widest' 
+                            : 'text-white hover:text-[#ff9aa8]'
+                        }`}
+                      >
+                        Shop Now <ArrowRight size={16} className="ml-2" />
+                      </Link>
                     </div>
-                  ) : (
-                    <div className="w-full h-full relative">
-                      <img 
-                        src="https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800" 
-                        alt="Juicy Glow Collection" 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#ff9aa8]/90 via-[#ff9aa8]/20 to-transparent flex flex-col justify-end p-8">
-                        <span className="text-white bg-[#ff9aa8] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest w-fit mb-3 shadow-md">Fresh Drop 🍑</span>
-                        <h4 className="text-white text-3xl font-display font-bold mb-2">Peachy Plump</h4>
-                        <p className="text-white/90 text-sm font-medium">Get that bouncy, juicy glow with our new Vitamin C range.</p>
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
 
               </div>

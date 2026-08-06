@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
@@ -7,10 +7,6 @@ import { useCurrency } from '../context/CurrencyContext';
 import { ArrowRight, ArrowLeft, Star, SlidersHorizontal, X, Heart, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FilterSidebar from '../components/shop/FilterSidebar';
-import { getProductsByTheme } from '../data/dummyData';
-import type { Product } from '../data/dummyData';
-
-import { getAllProducts } from '../data/products';
 
 const PLP: React.FC = () => {
   const { category } = useParams<{ category: string }>();
@@ -45,6 +41,35 @@ const PLP: React.FC = () => {
   // Filtering state
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
 
+  // Backend Integration State
+  const [fetchedProducts, setFetchedProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch(`http://localhost:3000/api/products?segment=${isGlam ? 'MAKEUP' : 'SKINCARE'}&limit=100`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.data) {
+          const transformed = data.data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            category: p.category?.name || (isGlam ? 'Makeup' : 'Skincare'),
+            price: p.discountPrice || p.mrp,
+            rating: 4.8,
+            reviews: 120,
+            image: p.images?.[0]?.url || (isGlam 
+              ? 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80'
+              : 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'),
+            badge: p.badge || null,
+          }));
+          setFetchedProducts(transformed);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, [isGlam]);
+
   const handleFilterChange = (sectionId: string, option: string) => {
     setSelectedFilters(prev => {
       const current = prev[sectionId] || [];
@@ -60,10 +85,10 @@ const PLP: React.FC = () => {
     setSelectedFilters({});
   };
 
-  const handleQuickAdd = (product: Product, e: React.MouseEvent) => {
+  const handleQuickAdd = (product: any, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart({ id: product.id.toString(), name: product.name, price: product.price, image: product.image, quantity: 1 });
+    addToCart(product.id.toString(), 1);
     
     // Show toast
     setToastMessage(`Added ${product.name} to cart`);
@@ -72,7 +97,7 @@ const PLP: React.FC = () => {
     }, 3000);
   };
 
-  let allProducts = getAllProducts(isGlam);
+  let allProducts = [...fetchedProducts];
   if (category) {
     const lowerCategory = category.toLowerCase().trim();
     if (lowerCategory === 'new') {
@@ -174,7 +199,16 @@ const PLP: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-              {filteredProducts.map((product, idx) => (
+            {isLoading ? (
+              <div className="py-20 flex justify-center w-full col-span-full text-gray-500 font-bold">
+                Loading collection...
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="py-20 flex justify-center w-full col-span-full text-gray-500 font-bold">
+                No products found.
+              </div>
+            ) : (
+              filteredProducts.map((product, idx) => (
                 <motion.div 
                   key={product.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -257,7 +291,7 @@ const PLP: React.FC = () => {
                       if (isInWishlist(product.id.toString())) {
                         removeFromWishlist(product.id.toString());
                       } else {
-                        addToWishlist({ id: product.id.toString(), name: product.name, price: formatPrice(product.price), image: product.image, category: product.category });
+                        addToWishlist(product.id.toString());
                       }
                     }}
                     className="absolute top-3 right-3 z-30 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:bg-white text-gray-500 hover:text-red-500 transition-colors"
@@ -270,7 +304,8 @@ const PLP: React.FC = () => {
                     </motion.div>
                   </motion.button>
                 </motion.div>
-              ))}
+              ))
+            )}
             </div>
             
             {/* Load More */}

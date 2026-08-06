@@ -12,14 +12,17 @@ const Account: React.FC = () => {
   const { mode } = useTheme();
   const { currency, formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('orders');
-  const [phone, setPhone] = useState(currency.code === 'INR' ? '+91 98765 43210' : '+1 (555) 123-4567');
+  const [phone, setPhone] = useState(user?.phone || '');
 
   React.useEffect(() => {
-    setPhone(currency.code === 'INR' ? '+91 98765 43210' : '+1 (555) 123-4567');
-  }, [currency.code]);
+    if (user?.phone) {
+      setPhone(user.phone);
+    }
+  }, [user]);
+  
   const navigate = useNavigate();
-  const { logout } = useAuth();
 
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,7 +65,7 @@ const Account: React.FC = () => {
           <h1 className={`text-4xl md:text-5xl font-extrabold mb-2 text-[#2a2a2a] ${isGlam ? 'font-serif' : 'font-display'}`}>
             My Account
           </h1>
-          <p className="text-gray-500 font-medium">Welcome back, Jane.</p>
+          <p className="text-gray-500 font-medium">Welcome back, {user?.firstName || 'Beautiful'}.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
@@ -209,16 +212,16 @@ const Account: React.FC = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-bold text-gray-700 mb-2">First Name</label>
-                          <input type="text" defaultValue="Jane" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <input type="text" defaultValue={user?.firstName || ''} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-gray-700 mb-2">Last Name</label>
-                          <input type="text" defaultValue="Doe" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                          <input type="text" defaultValue={user?.lastName || ''} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                         </div>
                       </div>
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
-                        <input type="email" defaultValue="jane.doe@example.com" className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
+                        <input type="email" defaultValue={user?.email || ''} className="w-full p-4 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm font-medium" />
                       </div>
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>

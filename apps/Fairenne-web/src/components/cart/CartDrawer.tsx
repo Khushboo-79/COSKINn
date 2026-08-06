@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import { useCurrency } from '../../context/CurrencyContext';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +12,7 @@ const CartDrawer: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
   const navigate = useNavigate();
+  const { isAuthenticated, openAuthModal } = useAuth();
   const { formatPrice } = useCurrency();
 
   // Prevent scrolling when drawer is open
@@ -139,6 +141,10 @@ const CartDrawer: React.FC = () => {
 
                 <button 
                   onClick={() => {
+                    if (!isAuthenticated) {
+                      openAuthModal();
+                      return;
+                    }
                     setIsCartOpen(false);
                     navigate('/checkout');
                   }}
