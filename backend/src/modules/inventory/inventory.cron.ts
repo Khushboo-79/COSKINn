@@ -12,11 +12,13 @@ export class InventoryCronService {
   async handleLowStockAlerts() {
     this.logger.log('Running daily low stock check...');
     const lowStockItems = await this.inventoryService.getLowStock();
-    
+
     if (lowStockItems.length > 0) {
       this.logger.warn(`Found ${lowStockItems.length} items with low stock.`);
       for (const item of lowStockItems) {
-        this.logger.warn(`SKU: ${item.sku} is low (Qty: ${item.quantity}) at Warehouse ID: ${item.warehouseId}`);
+        this.logger.warn(
+          `SKU: ${item.sku} is low (Qty: ${item.quantity}) at Warehouse ID: ${item.warehouseId}`,
+        );
       }
     } else {
       this.logger.log('No items are low on stock.');
@@ -27,11 +29,15 @@ export class InventoryCronService {
   async handleNearExpiryAlerts() {
     this.logger.log('Running daily near-expiry check...');
     const nearExpiryItems = await this.inventoryService.getNearExpiry();
-    
+
     if (nearExpiryItems.length > 0) {
-      this.logger.warn(`Found ${nearExpiryItems.length} batches nearing expiry.`);
+      this.logger.warn(
+        `Found ${nearExpiryItems.length} batches nearing expiry.`,
+      );
       for (const item of nearExpiryItems) {
-        this.logger.warn(`SKU: ${item.sku} Batch: ${item.batchNumber} expires on ${item.expiryDate}`);
+        this.logger.warn(
+          `SKU: ${item.sku} Batch: ${item.batchNumber} expires on ${item.expiryDate}`,
+        );
       }
     } else {
       this.logger.log('No batches are nearing expiry.');

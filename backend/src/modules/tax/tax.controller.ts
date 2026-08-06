@@ -26,8 +26,14 @@ export class TaxController {
   }
 
   @Post('rates')
-  createTaxRate(@Body() body: { name: string; cgst: number; sgst: number; igst: number }) {
-    return this.taxService.createTaxRate(body.name, body.cgst, body.sgst, body.igst);
+  createTaxRate(
+    @Body() body: { name: string; cgst: number; sgst: number; igst: number },
+  ) {
+    return this.taxService.createTaxRate(
+      body.name,
+      body.cgst,
+      body.sgst,
+      body.igst,
+    );
   }
 }
-

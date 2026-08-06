@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { NotificationService } from '../notification/notification.service';
 import * as crypto from 'crypto';
@@ -10,22 +14,24 @@ export class PaymentService {
 
   constructor(
     private prisma: PrismaService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {
     this.razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID || 'mock',
-      key_secret: process.env.RAZORPAY_KEY_SECRET || 'mock'
+      key_secret: process.env.RAZORPAY_KEY_SECRET || 'mock',
     });
   }
 
   async createRazorpayOrder(userId: string, orderId: string) {
     const order = await this.prisma.order.findUnique({
-      where: { id: orderId, userId }
+      where: { id: orderId, userId },
     });
 
     if (!order) throw new NotFoundException('Order not found');
-    if (order.status !== 'DRAFT') throw new BadRequestException('Order is already processed');
-    if (order.paymentMode !== 'ONLINE') throw new BadRequestException('Order is not marked for ONLINE payment');
+    if (order.status !== 'DRAFT')
+      throw new BadRequestException('Order is already processed');
+    if (order.paymentMode !== 'ONLINE')
+      throw new BadRequestException('Order is not marked for ONLINE payment');
 
     let razorpayOrderId = '';
     try {
@@ -35,7 +41,7 @@ export class PaymentService {
         const options = {
           amount: Math.round(order.finalAmount * 100), // amount in smallest currency unit (paise)
           currency: 'INR',
-          receipt: order.id
+          receipt: order.id,
         };
         const rzpOrder = await this.razorpay.orders.create(options);
         razorpayOrderId = rzpOrder.id;
@@ -51,15 +57,15 @@ export class PaymentService {
         rzpId: razorpayOrderId,
         amount: order.finalAmount,
         receipt: order.id,
-        status: 'created'
-      }
+        status: 'created',
+      },
     });
 
     return {
       id: razorpayOrderId,
       amount: order.finalAmount * 100, // Amount in paise
       currency: 'INR',
-      receipt: order.id
+      receipt: order.id,
     };
   }
 
@@ -69,31 +75,34 @@ export class PaymentService {
         success: true,
         refundId: `mock_refund_${crypto.randomBytes(8).toString('hex')}`,
         paymentId: `mock_payment_${crypto.randomBytes(8).toString('hex')}`,
-        amount: amount
+        amount: amount,
       };
     }
 
     try {
       // Fetch all payments for this order
-      const payments = await this.razorpay.orders.fetchPayments(razorpayOrderId);
-      
+      const payments =
+        await this.razorpay.orders.fetchPayments(razorpayOrderId);
+
       // Find the first successful captured payment to refund against
       const payment = payments.items.find((p: any) => p.status === 'captured');
-      
+
       if (!payment) {
-        throw new BadRequestException('No captured payment found for this order to refund');
+        throw new BadRequestException(
+          'No captured payment found for this order to refund',
+        );
       }
 
       // Trigger Refund
       const refund = await this.razorpay.payments.refund(payment.id, {
-        amount: Math.round(amount * 100) // Convert to paise
+        amount: Math.round(amount * 100), // Convert to paise
       });
 
       return {
         success: true,
         refundId: refund.id,
         paymentId: payment.id,
-        amount: refund.amount / 100
+        amount: refund.amount / 100,
       };
     } catch (error) {
       console.error('Razorpay refund failed:', error);
@@ -104,7 +113,7 @@ export class PaymentService {
   async handleWebhook(payload: any, signature?: string) {
     // Razorpay Signature Verification
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET || 'mockedwebhooksecret';
-    
+
     // Strict verification using crypto HMAC
     if (signature) {
       const generatedSignature = crypto
@@ -122,12 +131,13 @@ export class PaymentService {
     }
 
     const event = payload.event;
-    
+
     if (event === 'payment.captured' || event === 'mock.payment.success') {
-      const razorpayOrderId = payload.payload?.payment?.entity?.order_id || payload.order_id;
-      
+      const razorpayOrderId =
+        payload.payload?.payment?.entity?.order_id || payload.order_id;
+
       const rzpOrder = await this.prisma.razorpayOrder.findUnique({
-        where: { rzpId: razorpayOrderId }
+        where: { rzpId: razorpayOrderId },
       });
 
       if (!rzpOrder) return { status: 'ignored', reason: 'order not found' };
@@ -136,7 +146,7 @@ export class PaymentService {
         // Update RazorpayOrder status
         await tx.razorpayOrder.update({
           where: { id: rzpOrder.id },
-          data: { status: 'paid' }
+          data: { status: 'paid' },
         });
 
         // Record Transaction
@@ -144,8 +154,8 @@ export class PaymentService {
           data: {
             razorpayOrderId: rzpOrder.rzpId,
             amount: rzpOrder.amount,
-            status: 'SUCCESS'
-          }
+            status: 'SUCCESS',
+          },
         });
 
         // Mark actual Order as PLACED
@@ -153,16 +163,20 @@ export class PaymentService {
           const updatedOrder = await tx.order.update({
             where: { id: rzpOrder.receipt },
             data: { status: 'PLACED' },
-            include: { user: true }
+            include: { user: true },
           });
-          
+
           // Send Notification (Fire and forget, shouldn't block the webhook)
-          this.notificationService.sendOrderConfirmation(
-            updatedOrder.userId, 
-            updatedOrder.id, 
-            updatedOrder.user?.email || undefined, 
-            updatedOrder.user?.phone || undefined
-          ).catch(e => console.error('Failed to send order notification', e));
+          this.notificationService
+            .sendOrderConfirmation(
+              updatedOrder.userId,
+              updatedOrder.id,
+              updatedOrder.user?.email || undefined,
+              updatedOrder.user?.phone || undefined,
+            )
+            .catch((e) =>
+              console.error('Failed to send order notification', e),
+            );
         }
       });
 

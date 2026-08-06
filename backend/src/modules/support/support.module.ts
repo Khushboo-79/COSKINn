@@ -8,6 +8,6 @@ import { SupportGateway } from './support.gateway';
   imports: [PrismaModule],
   controllers: [SupportController],
   providers: [SupportService, SupportGateway],
-  exports: [SupportService]
+  exports: [SupportService],
 })
 export class SupportModule {}

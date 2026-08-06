@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, Min, IsArray, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  Min,
+  IsArray,
+  IsBoolean,
+} from 'class-validator';
 
 export class UpdateContentDto {
   @IsString()
@@ -39,7 +47,6 @@ export class UpdateContentDto {
   @IsOptional()
   benefits?: string[];
 }
-
 
 export class CreateProductDto {
   @IsString()
@@ -84,7 +91,7 @@ export class UpdateProductDto {
   @IsString()
   @IsOptional()
   description?: string;
-  
+
   @IsNumber()
   @Min(0)
   @IsOptional()

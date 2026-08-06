@@ -9,20 +9,22 @@ export class MarketingCron {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
   async recoverAbandonedCarts() {
     this.logger.log('Running Scheduled Task: Checking for abandoned carts...');
-    
+
     try {
       const twentyFourHoursAgo = new Date();
       twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
       // Find cart IDs that have already been logged
-      const existingLogs = await this.prisma.abandonedCartLog.findMany({ select: { cartId: true } });
-      const loggedCartIds = existingLogs.map(l => l.cartId);
+      const existingLogs = await this.prisma.abandonedCartLog.findMany({
+        select: { cartId: true },
+      });
+      const loggedCartIds = existingLogs.map((l) => l.cartId);
 
       // Find carts that haven't been updated in 24 hours, belong to a user, have items, and haven't been logged yet
       const abandonedCarts = await this.prisma.cart.findMany({
@@ -30,21 +32,23 @@ export class MarketingCron {
           updatedAt: { lte: twentyFourHoursAgo },
           userId: { not: null },
           items: { some: {} }, // cart is not empty
-          id: { notIn: loggedCartIds } // no AbandonedCartLog exists
+          id: { notIn: loggedCartIds }, // no AbandonedCartLog exists
         },
-        include: { user: true }
+        include: { user: true },
       });
 
       if (abandonedCarts.length > 0) {
-        this.logger.log(`Found ${abandonedCarts.length} abandoned cart(s). Sending recovery notifications.`);
-        
+        this.logger.log(
+          `Found ${abandonedCarts.length} abandoned cart(s). Sending recovery notifications.`,
+        );
+
         for (const cart of abandonedCarts) {
           // Log to database
           await this.prisma.abandonedCartLog.create({
             data: {
               userId: cart.userId!,
-              cartId: cart.id
-            }
+              cartId: cart.id,
+            },
           });
 
           // Send Push/Email Notification via NotificationService
@@ -52,18 +56,22 @@ export class MarketingCron {
             cart.userId!,
             'You left something behind!',
             'Your items are waiting for you in your cart. Checkout now before they sell out!',
-            undefined
+            undefined,
           );
         }
       }
     } catch (error) {
-      this.logger.error(`Error recovering abandoned carts: ${error.message || error}`);
+      this.logger.error(
+        `Error recovering abandoned carts: ${error.message || error}`,
+      );
     }
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
   async executeScheduledCampaigns() {
-    this.logger.debug('Running Scheduled Task: Executing marketing campaigns...');
+    this.logger.debug(
+      'Running Scheduled Task: Executing marketing campaigns...',
+    );
 
     try {
       const now = new Date();
@@ -71,31 +79,37 @@ export class MarketingCron {
       const pendingCampaigns = await this.prisma.marketingCampaign.findMany({
         where: {
           status: 'SCHEDULED',
-          scheduledAt: { lte: now }
-        }
+          scheduledAt: { lte: now },
+        },
       });
 
       if (pendingCampaigns.length > 0) {
-        this.logger.log(`Found ${pendingCampaigns.length} campaigns to execute.`);
+        this.logger.log(
+          `Found ${pendingCampaigns.length} campaigns to execute.`,
+        );
 
         for (const campaign of pendingCampaigns) {
-          this.logger.log(`Executing Campaign ID ${campaign.id}: "${campaign.name}" via ${campaign.type} to ${campaign.targetSegment}`);
+          this.logger.log(
+            `Executing Campaign ID ${campaign.id}: "${campaign.name}" via ${campaign.type} to ${campaign.targetSegment}`,
+          );
 
           await this.notificationService.sendPushNotification(
             'TARGET_SEGMENT',
             campaign.name,
             `Special offers for ${campaign.targetSegment}! Tap to see.`,
-            undefined
+            undefined,
           );
 
           await this.prisma.marketingCampaign.update({
             where: { id: campaign.id },
-            data: { status: 'SENT' }
+            data: { status: 'SENT' },
           });
         }
       }
     } catch (error) {
-      this.logger.error(`Error executing scheduled campaigns: ${error.message || error}`);
+      this.logger.error(
+        `Error executing scheduled campaigns: ${error.message || error}`,
+      );
     }
   }
 }

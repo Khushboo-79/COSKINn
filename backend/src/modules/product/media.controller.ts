@@ -1,4 +1,14 @@
-import { Controller, Post, Patch, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -39,7 +49,7 @@ export class MediaController {
     // Convert local path to a URL-like string.
     // In production, this would be an S3 URL returned from the presigned upload.
     const url = `http://localhost:3000/uploads/media/${file.filename}`;
-    
+
     return this.productService.addImage(productId, url);
   }
 

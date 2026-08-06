@@ -1,13 +1,22 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { InventoryService } from '../inventory/inventory.service';
-import { GeneratePickListDto, BarcodeScanDto, CreatePurchaseOrderDto, CreateGrnDto } from './dto/warehouse.dto';
+import {
+  GeneratePickListDto,
+  BarcodeScanDto,
+  CreatePurchaseOrderDto,
+  CreateGrnDto,
+} from './dto/warehouse.dto';
 
 @Injectable()
 export class WarehouseService {
   constructor(
     private prisma: PrismaService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
   ) {}
 
   async createPurchaseOrder(dto: CreatePurchaseOrderDto) {
@@ -16,7 +25,7 @@ export class WarehouseService {
       await this.prisma.supplier.upsert({
         where: { id: dto.vendorId },
         update: {},
-        create: { id: dto.vendorId, name: dto.vendorId }
+        create: { id: dto.vendorId, name: dto.vendorId },
       });
     }
 
@@ -26,21 +35,21 @@ export class WarehouseService {
         supplierId: dto.vendorId, // Map vendorId to supplierId
         status: 'ISSUED',
         items: {
-          create: dto.items.map(item => ({
+          create: dto.items.map((item) => ({
             sku: item.sku,
             requestedQty: item.requestedQty,
-            unitPrice: item.unitPrice
-          }))
-        }
+            unitPrice: item.unitPrice,
+          })),
+        },
       },
-      include: { items: true, supplier: true }
+      include: { items: true, supplier: true },
     });
   }
 
   async getPurchaseOrders() {
     return this.prisma.purchaseOrder.findMany({
       include: { items: true, warehouse: true, supplier: true },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -48,7 +57,7 @@ export class WarehouseService {
     return this.prisma.$transaction(async (prisma) => {
       const po = await prisma.purchaseOrder.findUnique({
         where: { id: dto.purchaseOrderId },
-        include: { items: true }
+        include: { items: true },
       });
 
       if (!po) throw new NotFoundException('Purchase Order not found');
@@ -57,22 +66,22 @@ export class WarehouseService {
         data: {
           purchaseOrderId: dto.purchaseOrderId,
           items: {
-            create: dto.items.map(item => ({
+            create: dto.items.map((item) => ({
               sku: item.sku,
               receivedQty: item.receivedQty,
               acceptedQty: item.acceptedQty,
               rejectedQty: item.rejectedQty,
-              reason: item.reason
-            }))
-          }
+              reason: item.reason,
+            })),
+          },
         },
-        include: { items: true }
+        include: { items: true },
       });
 
       // Update PO Status
       await prisma.purchaseOrder.update({
         where: { id: dto.purchaseOrderId },
-        data: { status: 'RECEIVED' }
+        data: { status: 'RECEIVED' },
       });
 
       // Add to inventory stock and stock movements for accepted quantities
@@ -83,17 +92,17 @@ export class WarehouseService {
             where: {
               warehouseId_sku: {
                 warehouseId: po.warehouseId,
-                sku: item.sku
-              }
+                sku: item.sku,
+              },
             },
             update: {
-              quantity: { increment: item.acceptedQty }
+              quantity: { increment: item.acceptedQty },
             },
             create: {
               warehouseId: po.warehouseId,
               sku: item.sku,
-              quantity: item.acceptedQty
-            }
+              quantity: item.acceptedQty,
+            },
           });
 
           // Record movement
@@ -103,8 +112,8 @@ export class WarehouseService {
               sku: item.sku,
               type: 'IN',
               quantity: item.acceptedQty,
-              reference: `GRN-${grn.id}`
-            }
+              reference: `GRN-${grn.id}`,
+            },
           });
         }
       }
@@ -120,7 +129,9 @@ export class WarehouseService {
     });
 
     if (orders.length === 0) {
-      throw new BadRequestException('No eligible orders found for pick-list generation.');
+      throw new BadRequestException(
+        'No eligible orders found for pick-list generation.',
+      );
     }
 
     // Aggregate items by SKU for warehouse staff
@@ -133,8 +144,10 @@ export class WarehouseService {
 
     // In a real system we would create a PickList entity, but for now we'll just return the aggregation
     return {
-      orderIds: orders.map(o => o.id),
-      aggregatedItems: Array.from(pickList.entries()).map(([sku, quantity]) => ({ sku, quantity })),
+      orderIds: orders.map((o) => o.id),
+      aggregatedItems: Array.from(pickList.entries()).map(
+        ([sku, quantity]) => ({ sku, quantity }),
+      ),
     };
   }
 
@@ -142,11 +155,15 @@ export class WarehouseService {
     return this.prisma.warehouseBin.findMany({
       where: warehouseId ? { warehouseId } : undefined,
       include: { warehouse: true, stocks: true },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  async createBin(dto: { warehouseId: string, code: string, description?: string }) {
+  async createBin(dto: {
+    warehouseId: string;
+    code: string;
+    description?: string;
+  }) {
     // Ensure warehouse exists for MVP
     await this.prisma.warehouse.upsert({
       where: { id: dto.warehouseId },
@@ -163,9 +180,9 @@ export class WarehouseService {
       data: {
         warehouseId: dto.warehouseId,
         code: dto.code,
-        description: dto.description
+        description: dto.description,
       },
-      include: { warehouse: true }
+      include: { warehouse: true },
     });
   }
 
@@ -177,12 +194,18 @@ export class WarehouseService {
 
     if (!order) throw new NotFoundException('Order not found');
 
-    const item = order.items.find(i => i.sku === dto.barcode);
+    const item = order.items.find((i) => i.sku === dto.barcode);
     if (!item) {
-      return { success: false, message: `SKU ${dto.barcode} does not belong to Order ${dto.orderId}` };
+      return {
+        success: false,
+        message: `SKU ${dto.barcode} does not belong to Order ${dto.orderId}`,
+      };
     }
 
-    return { success: true, message: `SKU ${dto.barcode} verified for Order ${dto.orderId}` };
+    return {
+      success: true,
+      message: `SKU ${dto.barcode} verified for Order ${dto.orderId}`,
+    };
   }
 
   async getThroughputAnalytics(days: number = 30) {
@@ -191,17 +214,17 @@ export class WarehouseService {
 
     const allIn = await this.prisma.stockMovement.findMany({
       where: { type: 'IN', createdAt: { gte: startDate } },
-      select: { createdAt: true, quantity: true }
+      select: { createdAt: true, quantity: true },
     });
 
     const allOut = await this.prisma.stockMovement.findMany({
       where: { type: 'OUT', createdAt: { gte: startDate } },
-      select: { createdAt: true, quantity: true }
+      select: { createdAt: true, quantity: true },
     });
 
     const allShipped = await this.prisma.order.findMany({
       where: { status: 'SHIPPED', updatedAt: { gte: startDate } },
-      select: { updatedAt: true, items: { select: { quantity: true } } }
+      select: { updatedAt: true, items: { select: { quantity: true } } },
     });
 
     const dataMap = new Map<string, any>();
@@ -212,8 +235,17 @@ export class WarehouseService {
       d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
       // Format as MM-DD for x-axis display
-      const displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      dataMap.set(dateStr, { name: displayDate, received: 0, picked: 0, shipped: 0, rawDate: dateStr });
+      const displayDate = d.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      });
+      dataMap.set(dateStr, {
+        name: displayDate,
+        received: 0,
+        picked: 0,
+        shipped: 0,
+        rawDate: dateStr,
+      });
     }
 
     for (const mov of allIn) {
@@ -238,6 +270,8 @@ export class WarehouseService {
       }
     }
 
-    return Array.from(dataMap.values()).sort((a, b) => a.rawDate.localeCompare(b.rawDate));
+    return Array.from(dataMap.values()).sort((a, b) =>
+      a.rawDate.localeCompare(b.rawDate),
+    );
   }
 }

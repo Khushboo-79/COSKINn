@@ -42,19 +42,27 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // Flatten roles and permissions for easy access in guards
-    const roles = user.roles.map(ur => ur.role.name);
+    const roles = user.roles.map((ur) => ur.role.name);
     // Note: our permission model has 'action' and 'subject', not 'code'
-    const permissions = user.roles.flatMap(ur => ur.role.permissions.map(rp => rp.permission.action + ':' + rp.permission.subject));
+    const permissions = user.roles.flatMap((ur) =>
+      ur.role.permissions.map(
+        (rp) => rp.permission.action + ':' + rp.permission.subject,
+      ),
+    );
 
-    return { 
-      id: user.id, 
-      name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : null,
+    return {
+      id: user.id,
+      name: user.firstName
+        ? `${user.firstName} ${user.lastName || ''}`.trim()
+        : null,
       email: user.email,
       phone: user.phone,
       lastLoginAt: payload.iat ? payload.iat * 1000 : Date.now(),
       roles,
       permissions,
-      panel_access: Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])))
+      panel_access: Array.from(
+        new Set(user.roles.flatMap((ur) => ur.role.panelAccess || [])),
+      ),
     };
   }
 }

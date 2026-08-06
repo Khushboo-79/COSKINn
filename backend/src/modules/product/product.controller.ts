@@ -1,8 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Res,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
 import { ProductService } from './product.service';
-import { CreateProductDto, UpdateProductDto, UpdateTagsDto, UpdateComplianceDto, OpeningStockDto } from './dto/product.dto';
+import {
+  CreateProductDto,
+  UpdateProductDto,
+  UpdateTagsDto,
+  UpdateComplianceDto,
+  OpeningStockDto,
+} from './dto/product.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -97,7 +116,10 @@ export class ProductController {
   @Patch(':id/compliance')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
-  updateCompliance(@Param('id') id: string, @Body() updateComplianceDto: UpdateComplianceDto) {
+  updateCompliance(
+    @Param('id') id: string,
+    @Body() updateComplianceDto: UpdateComplianceDto,
+  ) {
     return this.productService.updateCompliance(id, updateComplianceDto);
   }
 
@@ -109,7 +131,11 @@ export class ProductController {
     @Param('variantId') variantId: string,
     @Body() openingStockDto: OpeningStockDto,
   ) {
-    return this.productService.initializeOpeningStock(id, variantId, openingStockDto);
+    return this.productService.initializeOpeningStock(
+      id,
+      variantId,
+      openingStockDto,
+    );
   }
 
   @Patch(':id/content')
@@ -150,23 +176,31 @@ export class ProductController {
   @Patch(':id/seo')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER', 'MARKETING_MANAGER')
-  updateSeo(@Param('id') id: string, @Body() seoData: { seoTitle?: string, seoDesc?: string, seoKeywords?: string }) {
+  updateSeo(
+    @Param('id') id: string,
+    @Body()
+    seoData: { seoTitle?: string; seoDesc?: string; seoKeywords?: string },
+  ) {
     return this.productService.updateSeo(id, seoData);
   }
 
   @Post(':id/bundle-items')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
-  addBundleItem(@Param('id') id: string, @Body() data: { componentSku: string, quantity: number }) {
+  addBundleItem(
+    @Param('id') id: string,
+    @Body() data: { componentSku: string; quantity: number },
+  ) {
     return this.productService.addBundleItem(id, data);
   }
 
   @Delete(':id/bundle-items/:componentSku')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER')
-  removeBundleItem(@Param('id') id: string, @Param('componentSku') sku: string) {
+  removeBundleItem(
+    @Param('id') id: string,
+    @Param('componentSku') sku: string,
+  ) {
     return this.productService.removeBundleItem(id, sku);
   }
-
-
 }

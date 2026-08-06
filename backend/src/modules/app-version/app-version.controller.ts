@@ -11,12 +11,23 @@ export class AppVersionController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN')
-  create(@Body() data: { platform: string; latestVersion: string; minVersion: string; forceUpdate: boolean }) {
+  create(
+    @Body()
+    data: {
+      platform: string;
+      latestVersion: string;
+      minVersion: string;
+      forceUpdate: boolean;
+    },
+  ) {
     return this.appVersionService.create(data);
   }
 
   @Get('check')
-  checkVersion(@Query('platform') platform: string, @Query('version') version: string) {
+  checkVersion(
+    @Query('platform') platform: string,
+    @Query('version') version: string,
+  ) {
     return this.appVersionService.checkVersion(platform, version);
   }
 

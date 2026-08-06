@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { OfferService } from '../offer/offer.service';
 import { WalletService } from '../wallet/wallet.service';
@@ -10,8 +14,8 @@ export class CartService {
     private prisma: PrismaService,
     private offerService: OfferService,
     private walletService: WalletService,
-    private rewardPointService: RewardPointService
-  ) { }
+    private rewardPointService: RewardPointService,
+  ) {}
 
   async getCart(userId: string) {
     let cart = await this.prisma.cart.findUnique({
@@ -21,19 +25,21 @@ export class CartService {
           include: {
             product: {
               include: {
-                images: { where: { isPrimary: true }, take: 1 }
-              }
-            }
+                images: { where: { isPrimary: true }, take: 1 },
+              },
+            },
           },
-          orderBy: { createdAt: 'asc' }
-        }
-      }
+          orderBy: { createdAt: 'asc' },
+        },
+      },
     });
 
     if (!cart) {
       cart = await this.prisma.cart.create({
         data: { userId },
-        include: { items: { include: { product: { include: { images: true } } } } }
+        include: {
+          items: { include: { product: { include: { images: true } } } },
+        },
       });
     }
 
@@ -48,8 +54,12 @@ export class CartService {
       totalDiscountPrice += price * item.quantity;
     }
 
-    const offerData = await this.offerService.evaluateBestOffer(cart.items, totalDiscountPrice);
-    const tieredOffers = await this.offerService.getTieredOfferProgress(totalDiscountPrice);
+    const offerData = await this.offerService.evaluateBestOffer(
+      cart.items,
+      totalDiscountPrice,
+    );
+    const tieredOffers =
+      await this.offerService.getTieredOfferProgress(totalDiscountPrice);
 
     // Auto-add Free Gifts based on achieved tiers
     const autoAddedGifts: any[] = [];
@@ -59,7 +69,7 @@ export class CartService {
           name: tier.offer?.title || 'Surprise Free Gift',
           price: 0,
           quantity: 1,
-          isAutoAdded: true
+          isAutoAdded: true,
         });
       }
     }
@@ -82,19 +92,25 @@ export class CartService {
         tieredOffers,
         finalTotal: finalPayable, // Excludes shipping for now
         walletBalance: wallet.balance,
-        rewardPointsBalance: rewardPoints
-      }
+        rewardPointsBalance: rewardPoints,
+      },
     };
   }
 
-  async addToCart(userId: string, productId: string, variantId?: string, quantity: number = 1) {
+  async addToCart(
+    userId: string,
+    productId: string,
+    variantId?: string,
+    quantity: number = 1,
+  ) {
     let cart = await this.prisma.cart.findUnique({ where: { userId } });
     if (!cart) {
       cart = await this.prisma.cart.create({ data: { userId } });
     }
 
-
-    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
     if (!product || product.status !== 'LIVE') {
       throw new NotFoundException('Product not found or not available');
     }
@@ -104,14 +120,14 @@ export class CartService {
       where: {
         cartId: cart.id,
         productId,
-        variantId: variantId || null
-      }
+        variantId: variantId || null,
+      },
     });
 
     if (existingItem) {
       await this.prisma.cartItem.update({
         where: { id: existingItem.id },
-        data: { quantity: existingItem.quantity + quantity }
+        data: { quantity: existingItem.quantity + quantity },
       });
     } else {
       await this.prisma.cartItem.create({
@@ -119,8 +135,8 @@ export class CartService {
           cartId: cart.id,
           productId,
           variantId: variantId || null,
-          quantity
-        }
+          quantity,
+        },
       });
     }
 
@@ -128,20 +144,21 @@ export class CartService {
   }
 
   async updateCartItem(userId: string, itemId: string, quantity: number) {
-    if (quantity < 1) throw new BadRequestException('Quantity must be at least 1');
+    if (quantity < 1)
+      throw new BadRequestException('Quantity must be at least 1');
 
     const cart = await this.prisma.cart.findUnique({ where: { userId } });
     if (!cart) throw new NotFoundException('Cart not found');
 
     const item = await this.prisma.cartItem.findFirst({
-      where: { id: itemId, cartId: cart.id }
+      where: { id: itemId, cartId: cart.id },
     });
 
     if (!item) throw new NotFoundException('Item not found in cart');
 
     await this.prisma.cartItem.update({
       where: { id: itemId },
-      data: { quantity }
+      data: { quantity },
     });
 
     return this.getCart(userId);
@@ -155,8 +172,8 @@ export class CartService {
       await this.prisma.cartItem.delete({
         where: {
           id: itemId,
-          cartId: cart.id
-        }
+          cartId: cart.id,
+        },
       });
     } catch (e) {
       // Ignore if item not found
@@ -170,7 +187,7 @@ export class CartService {
     if (!cart) return this.getCart(userId);
 
     await this.prisma.cartItem.deleteMany({
-      where: { cartId: cart.id }
+      where: { cartId: cart.id },
     });
 
     return this.getCart(userId);

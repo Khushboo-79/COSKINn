@@ -9,6 +9,6 @@ import { PaymentModule } from '../payment/payment.module';
   imports: [PrismaModule, WalletModule, PaymentModule],
   controllers: [RefundController],
   providers: [RefundService],
-  exports: [RefundService]
+  exports: [RefundService],
 })
 export class RefundModule {}

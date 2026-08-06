@@ -48,8 +48,8 @@ import { LocationModule } from './modules/location/location.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    PrismaModule, 
-    CustomerProfileModule, 
+    PrismaModule,
+    CustomerProfileModule,
     CategoryModule,
     ProductModule,
     AuthModule,
@@ -89,7 +89,7 @@ import { LocationModule } from './modules/location/location.module';
     ServiceablePincodeModule,
     ComplianceModule,
     AppVersionModule,
-    LocationModule
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

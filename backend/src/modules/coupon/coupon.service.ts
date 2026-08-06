@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -10,25 +14,31 @@ export class CouponService {
     if (!coupon) throw new NotFoundException('Invalid coupon code');
 
     // Basic Validation
-    if (coupon.isActive === false) throw new BadRequestException('Coupon is inactive');
-    if (coupon.endDate && new Date() > coupon.endDate) throw new BadRequestException('Coupon expired');
-    if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) throw new BadRequestException('Coupon limit reached');
+    if (coupon.isActive === false)
+      throw new BadRequestException('Coupon is inactive');
+    if (coupon.endDate && new Date() > coupon.endDate)
+      throw new BadRequestException('Coupon expired');
+    if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit)
+      throw new BadRequestException('Coupon limit reached');
 
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
-      include: { items: { include: { product: true } } }
+      include: { items: { include: { product: true } } },
     });
 
-    if (!cart || cart.items.length === 0) throw new BadRequestException('Cart is empty');
+    if (!cart || cart.items.length === 0)
+      throw new BadRequestException('Cart is empty');
 
     // Calculate cart total using product price (matching cart.service.ts)
     const cartTotal = cart.items.reduce((acc, item) => {
       const price = Number(item.product.discountPrice || item.product.mrp);
-      return acc + (price * item.quantity);
+      return acc + price * item.quantity;
     }, 0);
 
     if (coupon.minPurchase && cartTotal < coupon.minPurchase) {
-      throw new BadRequestException(`Minimum purchase of ${coupon.minPurchase} required`);
+      throw new BadRequestException(
+        `Minimum purchase of ${coupon.minPurchase} required`,
+      );
     }
 
     let discountAmount = 0;
@@ -45,7 +55,7 @@ export class CouponService {
       message: 'Coupon applied successfully',
       code: coupon.code,
       discountAmount,
-      newTotal: cartTotal - discountAmount
+      newTotal: cartTotal - discountAmount,
     };
   }
 
@@ -56,12 +66,9 @@ export class CouponService {
     return this.prisma.coupon.findMany({
       where: {
         isActive: true,
-        OR: [
-          { endDate: null },
-          { endDate: { gt: now } }
-        ]
+        OR: [{ endDate: null }, { endDate: { gt: now } }],
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -71,17 +78,17 @@ export class CouponService {
 
   async getAdminCoupons() {
     return this.prisma.coupon.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
   async updateCoupon(id: string, data: any) {
     const coupon = await this.prisma.coupon.findUnique({ where: { id } });
     if (!coupon) throw new NotFoundException('Coupon not found');
-    
+
     return this.prisma.coupon.update({
       where: { id },
-      data
+      data,
     });
   }
 }

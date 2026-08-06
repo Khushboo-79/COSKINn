@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
 import {
   CreateCategoryDto,
@@ -12,7 +21,9 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  async findAllCategories(@Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+  async findAllCategories(
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE',
+  ) {
     return this.categoryService.findAllCategories(platform);
   }
 
@@ -27,7 +38,10 @@ export class CategoryController {
   }
 
   @Put(':id')
-  async updateCategory(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
+  async updateCategory(
+    @Param('id') id: string,
+    @Body() dto: UpdateCategoryDto,
+  ) {
     return this.categoryService.updateCategory(id, dto);
   }
 
@@ -42,7 +56,10 @@ export class CategoryController {
   }
 
   @Put('subcategories/:id')
-  async updateSubcategory(@Param('id') id: string, @Body() dto: UpdateSubcategoryDto) {
+  async updateSubcategory(
+    @Param('id') id: string,
+    @Body() dto: UpdateSubcategoryDto,
+  ) {
     return this.categoryService.updateSubcategory(id, dto);
   }
 
@@ -51,4 +68,3 @@ export class CategoryController {
     return this.categoryService.removeSubcategory(id);
   }
 }
-
