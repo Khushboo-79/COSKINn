@@ -57,7 +57,13 @@ let OrderController = class OrderController {
         return this.orderService.getOrderByIdForCustomer(req.user.id, id);
     }
     async getAdminOrders(status, paymentMode, email, mobile, platform) {
-        return this.orderService.getAdminOrders({ status, paymentMode, email, mobile, platform });
+        return this.orderService.getAdminOrders({
+            status,
+            paymentMode,
+            email,
+            mobile,
+            platform,
+        });
     }
     async getAdminOrderById(id) {
         return this.orderService.getAdminOrderById(id);
@@ -86,7 +92,7 @@ let OrderController = class OrderController {
             returnWindowDays: body.returnWindowDays,
             autoCancelHours: body.autoCancelHours,
             codEnabled: body.codEnabled,
-            maxCodAmount: body.maxCodAmount
+            maxCodAmount: body.maxCodAmount,
         });
     }
 };

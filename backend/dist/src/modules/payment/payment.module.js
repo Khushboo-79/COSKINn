@@ -20,7 +20,7 @@ exports.PaymentModule = PaymentModule = __decorate([
         imports: [prisma_module_1.PrismaModule, notification_module_1.NotificationModule],
         controllers: [payment_controller_1.PaymentController],
         providers: [payment_service_1.PaymentService],
-        exports: [payment_service_1.PaymentService]
+        exports: [payment_service_1.PaymentService],
     })
 ], PaymentModule);
 //# sourceMappingURL=payment.module.js.map

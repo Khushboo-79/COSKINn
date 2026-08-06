@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, Min, IsArray, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  Min,
+  IsArray,
+  IsBoolean,
+} from 'class-validator';
 
 export class UpdateContentDto {
   @IsString()
@@ -40,7 +48,6 @@ export class UpdateContentDto {
   benefits?: string[];
 }
 
-
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
@@ -74,6 +81,27 @@ export class CreateProductDto {
   @Min(0)
   @IsOptional()
   discountPrice?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  stockQuantity?: number;
+
+  @IsString()
+  @IsOptional()
+  mfgDate?: string;
+
+  @IsString()
+  @IsOptional()
+  expiryDate?: string;
+
+  @IsString()
+  @IsOptional()
+  shadeName?: string;
+
+  @IsString()
+  @IsOptional()
+  shadeHex?: string;
 }
 
 export class UpdateProductDto {
@@ -84,7 +112,7 @@ export class UpdateProductDto {
   @IsString()
   @IsOptional()
   description?: string;
-  
+
   @IsNumber()
   @Min(0)
   @IsOptional()
@@ -93,8 +121,28 @@ export class UpdateProductDto {
   @IsNumber()
   @Min(0)
   @IsOptional()
-  @IsOptional()
   discountPrice?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  stockQuantity?: number;
+
+  @IsString()
+  @IsOptional()
+  mfgDate?: string;
+
+  @IsString()
+  @IsOptional()
+  expiryDate?: string;
+
+  @IsString()
+  @IsOptional()
+  shadeName?: string;
+
+  @IsString()
+  @IsOptional()
+  shadeHex?: string;
 
   @IsString()
   @IsOptional()

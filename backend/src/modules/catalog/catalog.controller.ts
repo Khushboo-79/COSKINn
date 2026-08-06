@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Query, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { CatalogService } from './catalog.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -28,7 +37,14 @@ export class CatalogController {
     @Query('ingredient') ingredient?: string,
     @Query('sort') sort?: string,
   ) {
-    return this.catalogService.getProducts({ page, limit, minPrice, maxPrice, category, skinType });
+    return this.catalogService.getProducts({
+      page,
+      limit,
+      minPrice,
+      maxPrice,
+      category,
+      skinType,
+    });
   }
 
   @Get('products/:slug')
@@ -46,7 +62,7 @@ export class CatalogController {
   submitProductReview(
     @Request() req,
     @Param('id') id: string,
-    @Body() dto: { rating: number; title?: string; content?: string }
+    @Body() dto: { rating: number; title?: string; content?: string },
   ) {
     return this.catalogService.submitProductReview(id, req.user.id, dto);
   }

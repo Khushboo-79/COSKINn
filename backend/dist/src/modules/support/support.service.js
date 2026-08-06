@@ -22,7 +22,14 @@ let SupportService = class SupportService {
         const slaFirstResponseDeadline = new Date(now.getTime() + 2 * 60 * 60 * 1000);
         const slaResolutionDeadline = new Date(now.getTime() + (priority === 'URGENT' ? 12 : 24) * 60 * 60 * 1000);
         return this.prisma.supportTicket.create({
-            data: { userId, subject, priority, category, slaFirstResponseDeadline, slaResolutionDeadline }
+            data: {
+                userId,
+                subject,
+                priority,
+                category,
+                slaFirstResponseDeadline,
+                slaResolutionDeadline,
+            },
         });
     }
     async createContactTicket(userId, subject, message, priority = 'NORMAL') {
@@ -35,25 +42,32 @@ let SupportService = class SupportService {
         return this.prisma.supportTicket.findMany({
             where,
             include: { user: true, assignedTo: true },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async getTicketMessages(ticketId) {
         return this.prisma.ticketMessage.findMany({
             where: { ticketId },
-            orderBy: { createdAt: 'asc' }
+            orderBy: { createdAt: 'asc' },
         });
     }
     async addMessage(ticketId, senderId, senderRole, message) {
-        const ticket = await this.prisma.supportTicket.findUnique({ where: { id: ticketId } });
+        const ticket = await this.prisma.supportTicket.findUnique({
+            where: { id: ticketId },
+        });
         if (!ticket)
             throw new common_1.NotFoundException('Ticket not found');
         if (senderRole === 'ADMIN' && !ticket.firstResponseAt) {
             const firstResponseAt = new Date();
-            const slaBreached = ticket.slaFirstResponseDeadline ? firstResponseAt > ticket.slaFirstResponseDeadline : false;
+            const slaBreached = ticket.slaFirstResponseDeadline
+                ? firstResponseAt > ticket.slaFirstResponseDeadline
+                : false;
             await this.prisma.supportTicket.update({
                 where: { id: ticketId },
-                data: { firstResponseAt, slaBreached: ticket.slaBreached || slaBreached }
+                data: {
+                    firstResponseAt,
+                    slaBreached: ticket.slaBreached || slaBreached,
+                },
             });
         }
         return this.prisma.ticketMessage.create({
@@ -61,55 +75,65 @@ let SupportService = class SupportService {
                 ticketId,
                 senderId,
                 senderRole,
-                message
-            }
+                message,
+            },
         });
     }
     async closeTicket(ticketId) {
-        const ticket = await this.prisma.supportTicket.findUnique({ where: { id: ticketId } });
+        const ticket = await this.prisma.supportTicket.findUnique({
+            where: { id: ticketId },
+        });
         if (!ticket)
             throw new common_1.NotFoundException('Ticket not found');
         const resolvedAt = new Date();
-        const slaBreached = ticket.slaResolutionDeadline ? resolvedAt > ticket.slaResolutionDeadline : false;
+        const slaBreached = ticket.slaResolutionDeadline
+            ? resolvedAt > ticket.slaResolutionDeadline
+            : false;
         return this.prisma.supportTicket.update({
             where: { id: ticketId },
             data: {
                 status: 'CLOSED',
                 resolvedAt,
-                slaBreached: ticket.slaBreached || slaBreached
-            }
+                slaBreached: ticket.slaBreached || slaBreached,
+            },
         });
     }
     async assignTicket(ticketId, adminId) {
         return this.prisma.supportTicket.update({
             where: { id: ticketId },
-            data: { assignedToId: adminId }
+            data: { assignedToId: adminId },
         });
     }
     async escalateTicket(ticketId) {
         return this.prisma.supportTicket.update({
             where: { id: ticketId },
-            data: { status: 'ESCALATED', priority: 'URGENT' }
+            data: { status: 'ESCALATED', priority: 'URGENT' },
         });
     }
     async getSlaStats() {
         const total = await this.prisma.supportTicket.count();
-        const breached = await this.prisma.supportTicket.count({ where: { slaBreached: true } });
-        const resolved = await this.prisma.supportTicket.count({ where: { status: 'CLOSED' } });
-        const escalated = await this.prisma.supportTicket.count({ where: { status: 'ESCALATED' } });
+        const breached = await this.prisma.supportTicket.count({
+            where: { slaBreached: true },
+        });
+        const resolved = await this.prisma.supportTicket.count({
+            where: { status: 'CLOSED' },
+        });
+        const escalated = await this.prisma.supportTicket.count({
+            where: { status: 'ESCALATED' },
+        });
         return {
             total,
             breached,
             resolved,
             escalated,
-            complianceRate: total > 0 ? Math.round(((total - breached) / total) * 100) : 100
+            complianceRate: total > 0 ? Math.round(((total - breached) / total) * 100) : 100,
         };
     }
     async getSettings() {
         let settings = await this.prisma.supportSettings.findFirst();
         if (!settings) {
             settings = await this.prisma.supportSettings.create({
-                data: {}
+                data: {},
             });
         }
         return settings;
@@ -118,7 +142,7 @@ let SupportService = class SupportService {
         const settings = await this.getSettings();
         return this.prisma.supportSettings.update({
             where: { id: settings.id },
-            data
+            data,
         });
     }
 };

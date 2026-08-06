@@ -18,12 +18,22 @@ export declare class CreateProductDto {
     description?: string;
     mrp: number;
     discountPrice?: number;
+    stockQuantity?: number;
+    mfgDate?: string;
+    expiryDate?: string;
+    shadeName?: string;
+    shadeHex?: string;
 }
 export declare class UpdateProductDto {
     name?: string;
     description?: string;
     mrp?: number;
     discountPrice?: number;
+    stockQuantity?: number;
+    mfgDate?: string;
+    expiryDate?: string;
+    shadeName?: string;
+    shadeHex?: string;
     status?: string;
 }
 export declare class CreateVariantDto {

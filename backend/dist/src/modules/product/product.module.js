@@ -26,7 +26,7 @@ exports.ProductModule = ProductModule = __decorate([
             public_catalog_controller_1.PublicCatalogController,
             variant_controller_1.VariantController,
             media_controller_1.MediaController,
-            review_controller_1.ReviewController
+            review_controller_1.ReviewController,
         ],
         providers: [product_service_1.ProductService],
         exports: [product_service_1.ProductService],

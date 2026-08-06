@@ -5,21 +5,21 @@ export declare class WarehouseController {
     constructor(warehouseService: WarehouseService);
     getPurchaseOrders(): Promise<({
         warehouse: {
-            name: string;
             id: string;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            isActive: boolean;
+            name: string;
             code: string;
             address: string | null;
         };
         items: {
-            sku: string;
             id: string;
             createdAt: Date;
+            sku: string;
+            purchaseOrderId: string;
             requestedQty: number;
             unitPrice: number;
-            purchaseOrderId: string;
         }[];
         supplier: {
             id: string;
@@ -35,21 +35,21 @@ export declare class WarehouseController {
             paymentTerms: string | null;
         } | null;
     } & {
-        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         warehouseId: string;
         supplierId: string | null;
     })[]>;
     createPurchaseOrder(dto: CreatePurchaseOrderDto): Promise<{
         items: {
-            sku: string;
             id: string;
             createdAt: Date;
+            sku: string;
+            purchaseOrderId: string;
             requestedQty: number;
             unitPrice: number;
-            purchaseOrderId: string;
         }[];
         supplier: {
             id: string;
@@ -65,37 +65,37 @@ export declare class WarehouseController {
             paymentTerms: string | null;
         } | null;
     } & {
-        status: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         warehouseId: string;
         supplierId: string | null;
     }>;
     getBins(): Promise<({
         warehouse: {
-            name: string;
             id: string;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            isActive: boolean;
+            name: string;
             code: string;
             address: string | null;
         };
         stocks: {
-            sku: string;
             id: string;
-            quantity: number;
             createdAt: Date;
             updatedAt: Date;
+            quantity: number;
+            sku: string;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
         }[];
     } & {
-        description: string | null;
         id: string;
         createdAt: Date;
+        description: string | null;
         code: string;
         warehouseId: string;
     })[]>;
@@ -105,26 +105,26 @@ export declare class WarehouseController {
         description?: string;
     }): Promise<{
         warehouse: {
-            name: string;
             id: string;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            isActive: boolean;
+            name: string;
             code: string;
             address: string | null;
         };
     } & {
-        description: string | null;
         id: string;
         createdAt: Date;
+        description: string | null;
         code: string;
         warehouseId: string;
     }>;
     createGrn(dto: CreateGrnDto): Promise<{
         items: {
-            sku: string;
             id: string;
             createdAt: Date;
+            sku: string;
             reason: string | null;
             receivedQty: number;
             acceptedQty: number;

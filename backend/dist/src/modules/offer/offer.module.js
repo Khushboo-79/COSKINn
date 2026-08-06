@@ -19,7 +19,7 @@ exports.OfferModule = OfferModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [offer_controller_1.OfferController],
         providers: [offer_service_1.OfferService],
-        exports: [offer_service_1.OfferService]
+        exports: [offer_service_1.OfferService],
     })
 ], OfferModule);
 //# sourceMappingURL=offer.module.js.map

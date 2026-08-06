@@ -1,4 +1,16 @@
-import { Controller, Get, Put, Post, Delete, Body, BadRequestException, Query, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Post,
+  Delete,
+  Body,
+  BadRequestException,
+  Query,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CustomerProfileService } from './customer-profile.service';
 import { UpdateCustomerProfileDto } from './dto/update-customer-profile.dto';
@@ -22,16 +34,13 @@ export class CustomerProfileController {
     // This will save the answers to CustomerProfile -> CustomerSkinProfile
     return {
       message: 'Skin quiz preferences saved successfully!',
-      recommendationsUrl: '/api/customer/recommendations'
+      recommendationsUrl: '/api/customer/recommendations',
     };
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('profile')
-  async updateProfile(
-    @Request() req,
-    @Body() dto: UpdateCustomerProfileDto,
-  ) {
+  async updateProfile(@Request() req, @Body() dto: UpdateCustomerProfileDto) {
     return this.profileService.upsertProfile(req.user.id, dto);
   }
 
@@ -53,17 +62,22 @@ export class CustomerProfileController {
   async checkServiceability(@Query('pincode') pincode: string) {
     // Stub implementation for ShadowFox serviceability
     // We assume any 6-digit pincode starting with 1-8 is serviceable for prepaid and COD.
-    if (!pincode || pincode.length !== 6 || pincode.startsWith('9') || pincode.startsWith('0')) {
+    if (
+      !pincode ||
+      pincode.length !== 6 ||
+      pincode.startsWith('9') ||
+      pincode.startsWith('0')
+    ) {
       return {
         serviceable: false,
         codAvailable: false,
-        message: 'Delivery not available to this pincode'
+        message: 'Delivery not available to this pincode',
       };
     }
     return {
       serviceable: true,
       codAvailable: true,
-      message: 'Delivery is available'
+      message: 'Delivery is available',
     };
   }
 
@@ -75,7 +89,11 @@ export class CustomerProfileController {
 
   @UseGuards(JwtAuthGuard)
   @Put('addresses/:id')
-  async updateAddress(@Request() req, @Param('id') id: string, @Body() dto: any) {
+  async updateAddress(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: any,
+  ) {
     return this.profileService.updateAddress(req.user.id, id, dto);
   }
 
@@ -94,15 +112,23 @@ export class CustomerProfileController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @Query('search') search?: string,
-    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE'
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE',
   ) {
-    return this.profileService.getAllCustomers(Number(page), Number(limit), search, platform);
+    return this.profileService.getAllCustomers(
+      Number(page),
+      Number(limit),
+      search,
+      platform,
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('admin/:id/360')
   @Roles('SUPER_ADMIN', 'CRM_MANAGER', 'CUSTOMER_SUPPORT')
-  async getCustomer360(@Param('id') id: string, @Query('platform') platform?: 'COSMETICS' | 'SKINCARE') {
+  async getCustomer360(
+    @Param('id') id: string,
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE',
+  ) {
     return this.profileService.getCustomer360(id, platform);
   }
 

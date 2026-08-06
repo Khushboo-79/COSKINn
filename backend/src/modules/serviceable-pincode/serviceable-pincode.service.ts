@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateServiceablePincodeDto, UpdateServiceablePincodeDto } from './dto/serviceable-pincode.dto';
+import {
+  CreateServiceablePincodeDto,
+  UpdateServiceablePincodeDto,
+} from './dto/serviceable-pincode.dto';
 
 @Injectable()
 export class ServiceablePincodeService {
@@ -12,15 +15,17 @@ export class ServiceablePincodeService {
         pincode: data.code,
         city: data.city,
         state: data.state,
-        isActive: data.isActive
+        isActive: data.isActive,
       },
     });
   }
 
   async findAll(filters: { city?: string; state?: string }) {
     const where: any = {};
-    if (filters.city) where.city = { contains: filters.city, mode: 'insensitive' };
-    if (filters.state) where.state = { contains: filters.state, mode: 'insensitive' };
+    if (filters.city)
+      where.city = { contains: filters.city, mode: 'insensitive' };
+    if (filters.state)
+      where.state = { contains: filters.state, mode: 'insensitive' };
 
     return this.prisma.serviceablePincode.findMany({ where });
   }
@@ -36,7 +41,9 @@ export class ServiceablePincodeService {
   }
 
   async findOne(id: string) {
-    const pincode = await this.prisma.serviceablePincode.findUnique({ where: { id } });
+    const pincode = await this.prisma.serviceablePincode.findUnique({
+      where: { id },
+    });
     if (!pincode) throw new NotFoundException('Pincode not found');
     return pincode;
   }

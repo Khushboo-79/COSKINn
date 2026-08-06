@@ -16,7 +16,6 @@ export const GRNScreen = () => {
     queryFn: () => warehouseApi.getPurchaseOrders(),
   });
 
-  const pendingPOs = pos?.filter((po: any) => ['ISSUED', 'PARTIAL'].includes(po.status)) || [];
   const pendingPOs = pos?.filter((po: any) => ['DRAFT', 'ISSUED', 'PARTIAL'].includes(po.status)) || [];
 
   const handleSelectPO = (po: any) => {

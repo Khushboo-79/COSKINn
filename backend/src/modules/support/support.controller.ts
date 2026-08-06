@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Put, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { SupportService } from './support.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -12,14 +22,26 @@ export class SupportController {
   @Post('contact')
   createContactTicket(
     @Request() req,
-    @Body() body: { subject: string; message: string; priority?: string }
+    @Body() body: { subject: string; message: string; priority?: string },
   ) {
-    return this.supportService.createContactTicket(req.user.id, body.subject, body.message, body.priority);
+    return this.supportService.createContactTicket(
+      req.user.id,
+      body.subject,
+      body.message,
+      body.priority,
+    );
   }
 
   @Post('tickets')
-  createTicket(@Request() req, @Body() body: { subject: string; priority?: string }) {
-    return this.supportService.createTicket(req.user.id, body.subject, body.priority);
+  createTicket(
+    @Request() req,
+    @Body() body: { subject: string; priority?: string },
+  ) {
+    return this.supportService.createTicket(
+      req.user.id,
+      body.subject,
+      body.priority,
+    );
   }
 
   @Get('tickets/:id/messages')
@@ -44,8 +66,16 @@ export class SupportController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN', 'SUPPORT')
   @Post('admin/tickets/:id/reply')
-  replyToTicket(@Param('id') ticketId: string, @Body() body: { adminId: string; message: string }) {
-    return this.supportService.addMessage(ticketId, body.adminId, 'ADMIN', body.message);
+  replyToTicket(
+    @Param('id') ticketId: string,
+    @Body() body: { adminId: string; message: string },
+  ) {
+    return this.supportService.addMessage(
+      ticketId,
+      body.adminId,
+      'ADMIN',
+      body.message,
+    );
   }
 
   @UseGuards(RolesGuard)
@@ -58,7 +88,10 @@ export class SupportController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN', 'SUPPORT')
   @Post('admin/tickets/:id/assign')
-  assignTicket(@Param('id') ticketId: string, @Body() body: { adminId: string }) {
+  assignTicket(
+    @Param('id') ticketId: string,
+    @Body() body: { adminId: string },
+  ) {
     return this.supportService.assignTicket(ticketId, body.adminId);
   }
 
@@ -83,4 +116,3 @@ export class SupportController {
     return this.supportService.updateSettings(body);
   }
 }
-

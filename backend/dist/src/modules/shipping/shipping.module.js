@@ -20,7 +20,7 @@ exports.ShippingModule = ShippingModule = __decorate([
         imports: [prisma_module_1.PrismaModule, order_module_1.OrderModule],
         controllers: [shipping_controller_1.ShippingController],
         providers: [shipping_service_1.ShippingService],
-        exports: [shipping_service_1.ShippingService]
+        exports: [shipping_service_1.ShippingService],
     })
 ], ShippingModule);
 //# sourceMappingURL=shipping.module.js.map

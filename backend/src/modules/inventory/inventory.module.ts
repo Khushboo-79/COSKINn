@@ -6,6 +6,6 @@ import { InventoryCronService } from './inventory.cron';
 @Module({
   controllers: [InventoryController],
   providers: [InventoryService, InventoryCronService],
-  exports: [InventoryService]
+  exports: [InventoryService],
 })
 export class InventoryModule {}

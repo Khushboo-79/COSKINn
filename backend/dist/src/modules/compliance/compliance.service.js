@@ -31,10 +31,12 @@ let ComplianceService = class ComplianceService {
         });
     }
     async getConsent(userId) {
-        let consent = await this.prisma.customerConsent.findUnique({ where: { userId } });
+        let consent = await this.prisma.customerConsent.findUnique({
+            where: { userId },
+        });
         if (!consent) {
             consent = await this.prisma.customerConsent.create({
-                data: { userId }
+                data: { userId },
             });
         }
         return consent;
@@ -50,7 +52,9 @@ let ComplianceService = class ComplianceService {
     }
     async getAdminDataRequests() {
         return this.prisma.dataRequest.findMany({
-            include: { user: { select: { email: true, phone: true, firstName: true } } },
+            include: {
+                user: { select: { email: true, phone: true, firstName: true } },
+            },
             orderBy: { requestedAt: 'desc' },
         });
     }

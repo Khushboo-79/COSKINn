@@ -5,73 +5,73 @@ export declare class HrService {
     getEmployees(): Promise<({
         attendance: {
             id: string;
-            employeeId: string;
-            status: string;
             createdAt: Date;
+            status: string;
+            employeeId: string;
             date: Date;
         }[];
     } & {
         id: string;
-        employeeId: string;
-        name: string;
         email: string;
         phone: string | null;
-        role: string;
-        department: string | null;
-        salary: number;
-        status: string;
-        joinDate: Date;
-        leaveBalance: number;
-        avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        status: string;
+        role: string;
+        avatar: string | null;
+        employeeId: string;
+        department: string | null;
+        salary: number;
+        joinDate: Date;
+        leaveBalance: number;
     })[]>;
     getEmployeeById(id: string): Promise<{
         attendance: {
             id: string;
-            employeeId: string;
-            status: string;
             createdAt: Date;
+            status: string;
+            employeeId: string;
             date: Date;
         }[];
         payrolls: {
             id: string;
-            employeeId: string;
             createdAt: Date;
-            month: number;
             year: number;
+            pdfUrl: string | null;
+            month: number;
+            employeeId: string;
             basic: number;
             deductions: number;
             netPay: number;
-            pdfUrl: string | null;
         }[];
         leaveRequests: {
             id: string;
-            employeeId: string;
-            status: string;
             createdAt: Date;
             updatedAt: Date;
+            status: string;
             type: string;
+            reason: string | null;
+            days: number;
+            employeeId: string;
             fromDate: Date;
             toDate: Date;
-            days: number;
-            reason: string | null;
         }[];
     } & {
         id: string;
-        employeeId: string;
-        name: string;
         email: string;
         phone: string | null;
-        role: string;
-        department: string | null;
-        salary: number;
-        status: string;
-        joinDate: Date;
-        leaveBalance: number;
-        avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        status: string;
+        role: string;
+        avatar: string | null;
+        employeeId: string;
+        department: string | null;
+        salary: number;
+        joinDate: Date;
+        leaveBalance: number;
     }>;
     createEmployee(data: {
         name: string;
@@ -83,19 +83,19 @@ export declare class HrService {
         joinDate?: Date;
     }): Promise<{
         id: string;
-        employeeId: string;
-        name: string;
         email: string;
         phone: string | null;
-        role: string;
-        department: string | null;
-        salary: number;
-        status: string;
-        joinDate: Date;
-        leaveBalance: number;
-        avatar: string | null;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        status: string;
+        role: string;
+        avatar: string | null;
+        employeeId: string;
+        department: string | null;
+        salary: number;
+        joinDate: Date;
+        leaveBalance: number;
     }>;
     getOverview(): Promise<{
         totalEmployees: number;
@@ -110,50 +110,50 @@ export declare class HrService {
     getLeaveRequests(): Promise<({
         employee: {
             id: string;
-            employeeId: string;
-            name: string;
             email: string;
             phone: string | null;
-            role: string;
-            department: string | null;
-            salary: number;
-            status: string;
-            joinDate: Date;
-            leaveBalance: number;
-            avatar: string | null;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            status: string;
+            role: string;
+            avatar: string | null;
+            employeeId: string;
+            department: string | null;
+            salary: number;
+            joinDate: Date;
+            leaveBalance: number;
         };
     } & {
         id: string;
-        employeeId: string;
-        status: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         type: string;
+        reason: string | null;
+        days: number;
+        employeeId: string;
         fromDate: Date;
         toDate: Date;
-        days: number;
-        reason: string | null;
     })[]>;
     updateLeaveStatus(id: string, status: 'Approved' | 'Rejected'): Promise<{
         id: string;
-        employeeId: string;
-        status: string;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         type: string;
+        reason: string | null;
+        days: number;
+        employeeId: string;
         fromDate: Date;
         toDate: Date;
-        days: number;
-        reason: string | null;
     }>;
     getPayrollSummary(): Promise<any[]>;
     markAttendance(employeeId: string, status: 'PRESENT' | 'ABSENT' | 'LEAVE'): Promise<{
         id: string;
-        employeeId: string;
-        status: string;
         createdAt: Date;
+        status: string;
+        employeeId: string;
         date: Date;
     }>;
     seedHrData(): Promise<{

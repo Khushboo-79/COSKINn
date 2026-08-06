@@ -7,7 +7,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [HrController],
   providers: [HrService],
-  exports: [HrService]
+  exports: [HrService],
 })
 export class HrModule implements OnModuleInit {
   constructor(private readonly hrService: HrService) {}

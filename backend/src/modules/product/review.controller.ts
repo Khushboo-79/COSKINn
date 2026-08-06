@@ -1,4 +1,12 @@
-import { Controller, Get, Patch, Delete, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -11,12 +19,15 @@ export class ReviewController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'PRODUCT_MANAGER')
-  async findAll(@Query('search') search?: string, @Query('status') status?: string) {
+  async findAll(
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+  ) {
     const where: any = {};
-    
+
     if (status === 'PENDING') where.isApproved = false;
     if (status === 'APPROVED') where.isApproved = true;
-    
+
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },

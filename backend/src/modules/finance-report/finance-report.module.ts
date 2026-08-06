@@ -7,6 +7,6 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [FinanceReportController],
   providers: [FinanceReportService],
-  exports: [FinanceReportService]
+  exports: [FinanceReportService],
 })
 export class FinanceReportModule {}

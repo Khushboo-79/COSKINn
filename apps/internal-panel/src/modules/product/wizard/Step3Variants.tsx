@@ -2,7 +2,7 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
 
 export const Step3Variants = () => {
-  const { register, control, formState: { errors } } = useFormContext();
+  const { register, control, watch, setValue, formState: { errors } } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "variants",
@@ -92,7 +92,10 @@ export const Step3Variants = () => {
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    {...register(`variants.${index}.shadeHex` as const)}
+                    value={watch(`variants.${index}.shadeHex`) || '#ffffff'}
+                    onChange={(e) => {
+                      setValue(`variants.${index}.shadeHex`, e.target.value.toUpperCase(), { shouldValidate: true, shouldDirty: true });
+                    }}
                     className="h-9 w-9 rounded border border-slate-200 cursor-pointer p-0.5"
                   />
                   <input
@@ -102,6 +105,33 @@ export const Step3Variants = () => {
                     className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none uppercase"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Quantity <span className="text-red-500">*</span></label>
+                <input
+                  type="number"
+                  {...register(`variants.${index}.stockQuantity` as const, { valueAsNumber: true })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Mfg Date</label>
+                <input
+                  type="date"
+                  {...register(`variants.${index}.mfgDate` as const)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-slate-700"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Expiry Date</label>
+                <input
+                  type="date"
+                  {...register(`variants.${index}.expiryDate` as const)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-slate-700"
+                />
               </div>
             </div>
           </div>

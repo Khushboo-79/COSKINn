@@ -48,20 +48,29 @@ let ProductService = class ProductService {
         });
     }
     async getStats() {
-        const totalProducts = await this.prisma.product.count({ where: { isDeleted: false } });
-        const activeVariants = await this.prisma.productVariant.count({ where: { product: { isDeleted: false } } });
-        const totalCategories = await this.prisma.category.count({ where: { isDeleted: false } });
-        const lowStockSkus = await this.prisma.inventoryStock.count({ where: { quantity: { lte: 10, gt: 0 } } });
-        const outOfStockCount = await this.prisma.inventoryStock.count({ where: { quantity: { equals: 0 } } });
-        const draftCount = await this.prisma.product.count({ where: { isDeleted: true } });
+        const totalProducts = await this.prisma.product.count({
+            where: { isDeleted: false },
+        });
+        const activeVariants = await this.prisma.productVariant.count({
+            where: { product: { isDeleted: false } },
+        });
+        const totalCategories = await this.prisma.category.count({
+            where: { isDeleted: false },
+        });
+        const lowStockSkus = await this.prisma.inventoryStock.count({
+            where: { quantity: { lte: 10, gt: 0 } },
+        });
+        const outOfStockCount = await this.prisma.inventoryStock.count({
+            where: { quantity: { equals: 0 } },
+        });
+        const draftCount = await this.prisma.product.count({
+            where: { isDeleted: true },
+        });
         const missingSeoCount = await this.prisma.product.count({
             where: {
                 isDeleted: false,
-                OR: [
-                    { seoDesc: null },
-                    { seoDesc: '' }
-                ]
-            }
+                OR: [{ seoDesc: null }, { seoDesc: '' }],
+            },
         });
         return {
             totalProducts,
@@ -70,7 +79,7 @@ let ProductService = class ProductService {
             outOfStockCount,
             draftCount,
             totalCategories,
-            missingSeoCount
+            missingSeoCount,
         };
     }
     async findAllPublic(page, limit, filters) {
@@ -80,7 +89,7 @@ let ProductService = class ProductService {
             where.OR = [
                 { productLine: filters.segment },
                 { productLine: 'BOTH' },
-                { isCrossSegment: true }
+                { isCrossSegment: true },
             ];
         }
         if (filters?.platform) {
@@ -94,13 +103,19 @@ let ProductService = class ProductService {
                 where.discountPrice.lte = filters.maxPrice;
         }
         if (filters?.skinType) {
-            where.skinTypes = { some: { name: { equals: filters.skinType, mode: 'insensitive' } } };
+            where.skinTypes = {
+                some: { name: { equals: filters.skinType, mode: 'insensitive' } },
+            };
         }
         if (filters?.fruit) {
-            where.ingredients = { some: { name: { equals: filters.fruit, mode: 'insensitive' } } };
+            where.ingredients = {
+                some: { name: { equals: filters.fruit, mode: 'insensitive' } },
+            };
         }
         if (filters?.concern) {
-            where.concerns = { some: { name: { equals: filters.concern, mode: 'insensitive' } } };
+            where.concerns = {
+                some: { name: { equals: filters.concern, mode: 'insensitive' } },
+            };
         }
         let orderBy = { createdAt: 'desc' };
         if (filters?.sortBy) {
@@ -132,7 +147,7 @@ let ProductService = class ProductService {
         ]);
         return {
             data,
-            meta: { total, page, limit, totalPages: Math.ceil(total / limit) }
+            meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
         };
     }
     async search(query, segment) {
@@ -153,9 +168,9 @@ let ProductService = class ProductService {
                     OR: [
                         { productLine: segment },
                         { productLine: 'BOTH' },
-                        { isCrossSegment: true }
-                    ]
-                }
+                        { isCrossSegment: true },
+                    ],
+                },
             ];
         }
         return this.prisma.product.findMany({
@@ -163,7 +178,7 @@ let ProductService = class ProductService {
             include: {
                 variants: true,
                 images: { orderBy: { sortOrder: 'asc' }, take: 1 },
-            }
+            },
         });
     }
     async findByCategory(categoryId, segment) {
@@ -172,7 +187,7 @@ let ProductService = class ProductService {
             where.OR = [
                 { productLine: segment },
                 { productLine: 'BOTH' },
-                { isCrossSegment: true }
+                { isCrossSegment: true },
             ];
         }
         return this.prisma.product.findMany({
@@ -180,20 +195,20 @@ let ProductService = class ProductService {
             include: {
                 variants: true,
                 images: { orderBy: { sortOrder: 'asc' }, take: 1 },
-            }
+            },
         });
     }
     async findByConcern(concernId, segment) {
         const where = {
             isDeleted: false,
             status: 'LIVE',
-            concerns: { some: { id: concernId } }
+            concerns: { some: { id: concernId } },
         };
         if (segment && segment !== 'BOTH') {
             where.OR = [
                 { productLine: segment },
                 { productLine: 'BOTH' },
-                { isCrossSegment: true }
+                { isCrossSegment: true },
             ];
         }
         return this.prisma.product.findMany({
@@ -201,20 +216,22 @@ let ProductService = class ProductService {
             include: {
                 variants: true,
                 images: { orderBy: { sortOrder: 'asc' }, take: 1 },
-            }
+            },
         });
     }
     async findByFruit(fruitName, segment) {
         const where = {
             isDeleted: false,
             status: 'LIVE',
-            ingredients: { some: { name: { equals: fruitName, mode: 'insensitive' } } }
+            ingredients: {
+                some: { name: { equals: fruitName, mode: 'insensitive' } },
+            },
         };
         if (segment && segment !== 'BOTH') {
             where.OR = [
                 { productLine: segment },
                 { productLine: 'BOTH' },
-                { isCrossSegment: true }
+                { isCrossSegment: true },
             ];
         }
         return this.prisma.product.findMany({
@@ -222,12 +239,17 @@ let ProductService = class ProductService {
             include: {
                 variants: true,
                 images: { orderBy: { sortOrder: 'asc' }, take: 1 },
-            }
+            },
         });
     }
-    async findOnePublic(id) {
+    async findOnePublic(identifier) {
+        const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
         const product = await this.prisma.product.findFirst({
-            where: { id, isDeleted: false, status: 'LIVE' },
+            where: {
+                isDeleted: false,
+                status: 'LIVE',
+                OR: isUuid ? [{ id: identifier }] : [{ slug: identifier }]
+            },
             include: {
                 category: true,
                 variants: true,
@@ -242,7 +264,7 @@ let ProductService = class ProductService {
             },
         });
         if (!product) {
-            throw new common_1.NotFoundException(`Published product #${id} not found`);
+            throw new common_1.NotFoundException(`Published product #${identifier} not found`);
         }
         return product;
     }
@@ -259,10 +281,10 @@ let ProductService = class ProductService {
                         name: true,
                         netQuantity: true,
                         mrp: true,
-                        price: true
-                    }
-                }
-            }
+                        price: true,
+                    },
+                },
+            },
         });
         if (!product) {
             throw new common_1.NotFoundException(`Published product #${id} not found`);
@@ -322,32 +344,59 @@ let ProductService = class ProductService {
                     name: 'Default',
                     mrp: data.mrp,
                     price: data.discountPrice || data.mrp,
+                    stockQuantity: data.stockQuantity || 0,
+                    mfgDate: data.mfgDate ? new Date(data.mfgDate) : null,
+                    expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
+                    shadeName: data.shadeName || null,
+                    shadeHex: data.shadeHex || null,
                 },
             });
             return this.findOne(product.id, tx);
         });
     }
     async update(id, data) {
-        await this.findOne(id);
-        const updated = await this.prisma.product.update({
-            where: { id },
-            data: { ...data, status: data.status },
-        });
-        if (data.mrp !== undefined || data.discountPrice !== undefined) {
-            const firstVariant = await this.prisma.productVariant.findFirst({
-                where: { productId: id }
+        try {
+            await this.findOne(id);
+            const { stockQuantity, mfgDate, expiryDate, shadeName, shadeHex, ...productData } = data;
+            const updated = await this.prisma.product.update({
+                where: { id },
+                data: { ...productData, status: data.status },
             });
-            if (firstVariant) {
-                await this.prisma.productVariant.update({
-                    where: { id: firstVariant.id },
-                    data: {
-                        mrp: data.mrp !== undefined ? data.mrp : undefined,
-                        price: data.discountPrice !== undefined ? data.discountPrice : (data.mrp !== undefined ? data.mrp : undefined),
-                    }
+            if (data.mrp !== undefined ||
+                data.discountPrice !== undefined ||
+                stockQuantity !== undefined ||
+                mfgDate !== undefined ||
+                expiryDate !== undefined ||
+                shadeName !== undefined ||
+                shadeHex !== undefined) {
+                const firstVariant = await this.prisma.productVariant.findFirst({
+                    where: { productId: id },
                 });
+                if (firstVariant) {
+                    await this.prisma.productVariant.update({
+                        where: { id: firstVariant.id },
+                        data: {
+                            mrp: data.mrp !== undefined ? data.mrp : undefined,
+                            price: data.discountPrice !== undefined
+                                ? data.discountPrice
+                                : data.mrp !== undefined
+                                    ? data.mrp
+                                    : undefined,
+                            stockQuantity: stockQuantity !== undefined ? stockQuantity : undefined,
+                            mfgDate: mfgDate ? new Date(mfgDate) : mfgDate === null ? null : undefined,
+                            expiryDate: expiryDate ? new Date(expiryDate) : expiryDate === null ? null : undefined,
+                            shadeName: shadeName !== undefined ? shadeName : undefined,
+                            shadeHex: shadeHex !== undefined ? shadeHex : undefined,
+                        },
+                    });
+                }
             }
+            return this.findOne(id);
         }
-        return this.findOne(id);
+        catch (e) {
+            require('fs').writeFileSync('C:\\Users\\Reshma Kushwaha\\OneDrive\\Desktop\\COSKINn\\backend\\error-log.txt', String(e) + '\n\n' + e.stack + '\n\nData: ' + JSON.stringify(data));
+            throw e;
+        }
     }
     async remove(id) {
         await this.findOne(id);
@@ -372,11 +421,15 @@ let ProductService = class ProductService {
         });
     }
     async updateVariant(variantId, data) {
-        const existing = await this.prisma.productVariant.findUnique({ where: { id: variantId } });
+        const existing = await this.prisma.productVariant.findUnique({
+            where: { id: variantId },
+        });
         if (!existing)
             throw new common_1.NotFoundException('Variant not found');
         if (data.sku && data.sku !== existing.sku) {
-            const existingSku = await this.prisma.productVariant.findUnique({ where: { sku: data.sku } });
+            const existingSku = await this.prisma.productVariant.findUnique({
+                where: { sku: data.sku },
+            });
             if (existingSku)
                 throw new common_1.ConflictException('Product SKU already exists');
         }
@@ -386,7 +439,9 @@ let ProductService = class ProductService {
         });
     }
     async removeVariant(variantId) {
-        const existing = await this.prisma.productVariant.findUnique({ where: { id: variantId } });
+        const existing = await this.prisma.productVariant.findUnique({
+            where: { id: variantId },
+        });
         if (!existing)
             throw new common_1.NotFoundException('Variant not found');
         return this.prisma.productVariant.delete({
@@ -524,11 +579,13 @@ let ProductService = class ProductService {
         }
         return this.prisma.$transaction(async (tx) => {
             let batch = await tx.inventoryBatch.findUnique({
-                where: { variantId_batchNumber: { variantId, batchNumber: data.batchNumber } },
+                where: {
+                    variantId_batchNumber: { variantId, batchNumber: data.batchNumber },
+                },
             });
             if (!batch) {
                 batch = await tx.inventoryBatch.findFirst({
-                    where: { sku: variant.sku, batchNumber: data.batchNumber }
+                    where: { sku: variant.sku, batchNumber: data.batchNumber },
                 });
             }
             if (!batch) {
@@ -536,13 +593,17 @@ let ProductService = class ProductService {
                     data: {
                         sku: variant.sku,
                         batchNumber: data.batchNumber,
-                        mfgDate: data.manufacturingDate ? new Date(data.manufacturingDate) : null,
+                        mfgDate: data.manufacturingDate
+                            ? new Date(data.manufacturingDate)
+                            : null,
                         expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
                     },
                 });
             }
             const existingStock = await tx.inventoryStock.findUnique({
-                where: { warehouseId_sku: { warehouseId: warehouse.id, sku: variant.sku } },
+                where: {
+                    warehouseId_sku: { warehouseId: warehouse.id, sku: variant.sku },
+                },
             });
             if (existingStock) {
                 await tx.inventoryStock.update({
@@ -600,7 +661,7 @@ let ProductService = class ProductService {
     async submitForApproval(id) {
         const product = await this.prisma.product.findUnique({
             where: { id },
-            include: { variants: true }
+            include: { variants: true },
         });
         if (!product)
             throw new common_1.NotFoundException('Product not found');
@@ -658,13 +719,19 @@ let ProductService = class ProductService {
         if (categoryId)
             where.categoryId = categoryId;
         if (concern) {
-            where.concerns = { some: { name: { contains: concern, mode: 'insensitive' } } };
+            where.concerns = {
+                some: { name: { contains: concern, mode: 'insensitive' } },
+            };
         }
         if (ingredient) {
-            where.ingredients = { some: { name: { contains: ingredient, mode: 'insensitive' } } };
+            where.ingredients = {
+                some: { name: { contains: ingredient, mode: 'insensitive' } },
+            };
         }
         if (skinType) {
-            where.skinTypes = { some: { name: { contains: skinType, mode: 'insensitive' } } };
+            where.skinTypes = {
+                some: { name: { contains: skinType, mode: 'insensitive' } },
+            };
         }
         const products = await this.prisma.product.findMany({
             where,
@@ -672,7 +739,7 @@ let ProductService = class ProductService {
                 category: true,
                 images: {
                     where: { isPrimary: true },
-                    take: 1
+                    take: 1,
                 },
                 variants: {
                     select: {
@@ -681,14 +748,14 @@ let ProductService = class ProductService {
                         name: true,
                         mrp: true,
                         price: true,
-                    }
+                    },
                 },
                 concerns: true,
                 ingredients: true,
                 skinTypes: true,
             },
         });
-        return products.map(p => ({
+        return products.map((p) => ({
             id: p.id,
             name: p.name,
             slug: p.slug,
@@ -697,14 +764,14 @@ let ProductService = class ProductService {
             discountPrice: p.discountPrice,
             category: p.category.name,
             primaryImage: p.images[0]?.url || null,
-            variants: p.variants.map(v => ({
+            variants: p.variants.map((v) => ({
                 ...v,
                 availableQuantity: 100,
                 isOutOfStock: false,
             })),
-            concerns: p.concerns.map(c => c.name),
-            ingredients: p.ingredients.map(i => i.name),
-            skinTypes: p.skinTypes.map(s => s.name),
+            concerns: p.concerns.map((c) => c.name),
+            ingredients: p.ingredients.map((i) => i.name),
+            skinTypes: p.skinTypes.map((s) => s.name),
             seoTitle: p.seoTitle,
             seoDesc: p.seoDesc,
             seoKeywords: p['seoKeywords'],
@@ -716,24 +783,48 @@ let ProductService = class ProductService {
             include: {
                 category: true,
                 variants: {
-                    take: 1
-                }
-            }
+                    take: 1,
+                },
+            },
         });
         const header = [
-            'slug', 'name', 'categoryId', 'status', 'description', 'manufacturerName',
-            'manufacturerAddress', 'countryOfOrigin', 'testReportRef', 'mrp', 'discountPrice',
-            'variantSku', 'variantName', 'variantMrp', 'variantPrice'
+            'slug',
+            'name',
+            'categoryId',
+            'status',
+            'description',
+            'manufacturerName',
+            'manufacturerAddress',
+            'countryOfOrigin',
+            'testReportRef',
+            'mrp',
+            'discountPrice',
+            'variantSku',
+            'variantName',
+            'variantMrp',
+            'variantPrice',
         ].join(',');
-        const rows = products.map(p => {
+        const rows = products.map((p) => {
             const v = p.variants[0] || {};
             return [
-                p.slug, p.name, p.categoryId, p.status, p.description?.replace(/,/g, '') || '',
-                p.manufacturerName || '', p.manufacturerAddress?.replace(/,/g, '') || '',
-                p.countryOfOrigin || '', p.testReportRef || '',
-                p.mrp, p.discountPrice || '',
-                v.sku || '', v.name || '', v.mrp || '', v.price || ''
-            ].map(val => `"${val}"`).join(',');
+                p.slug,
+                p.name,
+                p.categoryId,
+                p.status,
+                p.description?.replace(/,/g, '') || '',
+                p.manufacturerName || '',
+                p.manufacturerAddress?.replace(/,/g, '') || '',
+                p.countryOfOrigin || '',
+                p.testReportRef || '',
+                p.mrp,
+                p.discountPrice || '',
+                v.sku || '',
+                v.name || '',
+                v.mrp || '',
+                v.price || '',
+            ]
+                .map((val) => `"${val}"`)
+                .join(',');
         });
         return [header, ...rows].join('\n');
     }
@@ -748,13 +839,19 @@ let ProductService = class ProductService {
                 .on('end', async () => {
                 for (const row of results) {
                     try {
-                        if (!row.slug || !row.name || !row.categoryId || !row.variantSku) {
+                        if (!row.slug ||
+                            !row.name ||
+                            !row.categoryId ||
+                            !row.variantSku) {
                             errors.push(`Row missing required fields: ${JSON.stringify(row)}`);
                             continue;
                         }
                         let finalStatus = row.status || 'DRAFT';
-                        if (finalStatus === 'LIVE' || finalStatus === 'PENDING_APPROVAL') {
-                            if (!row.manufacturerName || !row.manufacturerAddress || !row.countryOfOrigin) {
+                        if (finalStatus === 'LIVE' ||
+                            finalStatus === 'PENDING_APPROVAL') {
+                            if (!row.manufacturerName ||
+                                !row.manufacturerAddress ||
+                                !row.countryOfOrigin) {
                                 errors.push(`Row for ${row.slug} failed Cosmetics Rules 2020 validation. Forced to DRAFT.`);
                                 finalStatus = 'DRAFT';
                             }
@@ -785,23 +882,27 @@ let ProductService = class ProductService {
                                 testReportRef: row.testReportRef,
                                 mrp: parseFloat(row.mrp) || 0,
                                 discountPrice: parseFloat(row.discountPrice) || null,
-                            }
+                            },
                         });
                         await this.prisma.productVariant.upsert({
                             where: { sku: row.variantSku },
                             update: {
                                 name: row.variantName || 'Default',
                                 mrp: parseFloat(row.variantMrp) || parseFloat(row.mrp) || 0,
-                                price: parseFloat(row.variantPrice) || parseFloat(row.discountPrice || row.mrp) || 0,
+                                price: parseFloat(row.variantPrice) ||
+                                    parseFloat(row.discountPrice || row.mrp) ||
+                                    0,
                                 productId: product.id,
                             },
                             create: {
                                 sku: row.variantSku,
                                 name: row.variantName || 'Default',
                                 mrp: parseFloat(row.variantMrp) || parseFloat(row.mrp) || 0,
-                                price: parseFloat(row.variantPrice) || parseFloat(row.discountPrice || row.mrp) || 0,
+                                price: parseFloat(row.variantPrice) ||
+                                    parseFloat(row.discountPrice || row.mrp) ||
+                                    0,
                                 productId: product.id,
-                            }
+                            },
                         });
                         successCount++;
                     }
@@ -813,7 +914,7 @@ let ProductService = class ProductService {
                     total: results.length,
                     success: successCount,
                     failed: results.length - successCount,
-                    errors
+                    errors,
                 });
             })
                 .on('error', (error) => {
@@ -826,25 +927,25 @@ let ProductService = class ProductService {
             where: platform ? { category: { platform } } : undefined,
             include: {
                 category: true,
-                variants: true
-            }
+                variants: true,
+            },
         });
         let totalCatalogValue = 0;
         let totalSellingPrice = 0;
         let totalDiscountPercent = 0;
         let totalVariants = 0;
-        let categoryMap = {};
-        let priceTiers = {
+        const categoryMap = {};
+        const priceTiers = {
             'Under ₹500': 0,
             '₹500 - ₹1000': 0,
             '₹1000 - ₹2000': 0,
-            'Above ₹2000': 0
+            'Above ₹2000': 0,
         };
-        products.forEach(p => {
+        products.forEach((p) => {
             const price = p.discountPrice || p.mrp;
             totalSellingPrice += price;
             totalVariants += p.variants.length;
-            totalCatalogValue += (price * p.variants.length);
+            totalCatalogValue += price * p.variants.length;
             if (p.mrp > 0 && price < p.mrp) {
                 totalDiscountPercent += ((p.mrp - price) / p.mrp) * 100;
             }
@@ -866,50 +967,71 @@ let ProductService = class ProductService {
             averageDiscountPercentage: products.length > 0 ? totalDiscountPercent / products.length : 0,
             totalVariants,
             categoryDistribution: Object.entries(categoryMap).map(([name, value]) => ({ name, value })),
-            pricingTiers: Object.entries(priceTiers).map(([name, count]) => ({ name, count }))
+            pricingTiers: Object.entries(priceTiers).map(([name, count]) => ({
+                name,
+                count,
+            })),
         };
     }
     async addBundleItem(productId, data) {
         await this.findOne(productId);
         const result = await this.prisma.productBundleItem.upsert({
-            where: { bundleProductId_componentSku: { bundleProductId: productId, componentSku: data.componentSku } },
+            where: {
+                bundleProductId_componentSku: {
+                    bundleProductId: productId,
+                    componentSku: data.componentSku,
+                },
+            },
             update: { quantity: data.quantity },
-            create: { bundleProductId: productId, componentSku: data.componentSku, quantity: data.quantity }
+            create: {
+                bundleProductId: productId,
+                componentSku: data.componentSku,
+                quantity: data.quantity,
+            },
         });
         await this.recalculateBundlePrice(productId);
         return result;
     }
     async removeBundleItem(productId, componentSku) {
         const result = await this.prisma.productBundleItem.delete({
-            where: { bundleProductId_componentSku: { bundleProductId: productId, componentSku } }
+            where: {
+                bundleProductId_componentSku: {
+                    bundleProductId: productId,
+                    componentSku,
+                },
+            },
         });
         await this.recalculateBundlePrice(productId);
         return result;
     }
     async recalculateBundlePrice(productId) {
         const bundleItems = await this.prisma.productBundleItem.findMany({
-            where: { bundleProductId: productId }
+            where: { bundleProductId: productId },
         });
         if (bundleItems.length === 0)
             return;
         let totalMrp = 0;
         let totalPrice = 0;
         for (const item of bundleItems) {
-            const component = await this.prisma.productVariant.findUnique({ where: { sku: item.componentSku } });
+            const component = await this.prisma.productVariant.findUnique({
+                where: { sku: item.componentSku },
+            });
             if (component) {
-                totalMrp += (component.mrp * item.quantity);
-                totalPrice += (component.price * item.quantity);
+                totalMrp += component.mrp * item.quantity;
+                totalPrice += component.price * item.quantity;
             }
         }
         await this.prisma.product.update({
             where: { id: productId },
-            data: { mrp: totalMrp, discountPrice: totalPrice }
+            data: { mrp: totalMrp, discountPrice: totalPrice },
         });
-        const defaultVariant = await this.prisma.productVariant.findFirst({ where: { productId } });
+        const defaultVariant = await this.prisma.productVariant.findFirst({
+            where: { productId },
+        });
         if (defaultVariant) {
             await this.prisma.productVariant.update({
                 where: { id: defaultVariant.id },
-                data: { mrp: totalMrp, price: totalPrice }
+                data: { mrp: totalMrp, price: totalPrice },
             });
         }
     }

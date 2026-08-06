@@ -20,7 +20,7 @@ export class InvoiceController {
   async createCreditNote(
     @Param('id') invoiceId: string,
     @Body('amount') amount: number,
-    @Body('reason') reason: string
+    @Body('reason') reason: string,
   ) {
     return this.invoiceService.createCreditNote(invoiceId, amount, reason);
   }
@@ -31,9 +31,8 @@ export class InvoiceController {
   async createDebitNote(
     @Param('id') invoiceId: string,
     @Body('amount') amount: number,
-    @Body('reason') reason: string
+    @Body('reason') reason: string,
   ) {
     return this.invoiceService.createDebitNote(invoiceId, amount, reason);
   }
 }
-

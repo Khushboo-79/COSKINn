@@ -8,12 +8,12 @@ export class BonusService {
 
   constructor(
     private prisma: PrismaService,
-    private walletService: WalletService
+    private walletService: WalletService,
   ) {}
 
   async awardSignupBonus(userId: string) {
     const rule = await this.prisma.bonusRule.findFirst({
-      where: { type: 'SIGNUP', isActive: true }
+      where: { type: 'SIGNUP', isActive: true },
     });
 
     if (!rule || rule.amount <= 0) return;
@@ -22,8 +22,8 @@ export class BonusService {
     const existingBonus = await this.prisma.walletTransaction.findFirst({
       where: {
         wallet: { userId },
-        reference: 'Sign-up Bonus'
-      }
+        reference: 'Sign-up Bonus',
+      },
     });
 
     if (existingBonus) return; // Already awarded
@@ -34,7 +34,7 @@ export class BonusService {
 
   async awardFirstOrderBonus(userId: string) {
     const rule = await this.prisma.bonusRule.findFirst({
-      where: { type: 'FIRST_ORDER', isActive: true }
+      where: { type: 'FIRST_ORDER', isActive: true },
     });
 
     if (!rule || rule.amount <= 0) return;
@@ -42,13 +42,19 @@ export class BonusService {
     const existingBonus = await this.prisma.walletTransaction.findFirst({
       where: {
         wallet: { userId },
-        reference: 'First Order Bonus'
-      }
+        reference: 'First Order Bonus',
+      },
     });
 
     if (existingBonus) return;
 
-    await this.walletService.creditWallet(userId, rule.amount, 'First Order Bonus');
-    this.logger.log(`Awarded first order bonus of ${rule.amount} to user ${userId}`);
+    await this.walletService.creditWallet(
+      userId,
+      rule.amount,
+      'First Order Bonus',
+    );
+    this.logger.log(
+      `Awarded first order bonus of ${rule.amount} to user ${userId}`,
+    );
   }
 }

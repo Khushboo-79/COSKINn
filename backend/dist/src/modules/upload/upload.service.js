@@ -26,7 +26,8 @@ let UploadService = class UploadService {
         });
     }
     async generatePresignedUrl(fileName, contentType, folder = 'products') {
-        if (!contentType.startsWith('image/') && !contentType.startsWith('video/')) {
+        if (!contentType.startsWith('image/') &&
+            !contentType.startsWith('video/')) {
             throw new common_1.BadRequestException('Invalid file type. Only images and videos are allowed.');
         }
         const uniqueId = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -38,12 +39,14 @@ let UploadService = class UploadService {
             ContentType: contentType,
         });
         try {
-            const presignedUrl = await (0, s3_request_presigner_1.getSignedUrl)(this.s3Client, command, { expiresIn: 300 });
+            const presignedUrl = await (0, s3_request_presigner_1.getSignedUrl)(this.s3Client, command, {
+                expiresIn: 300,
+            });
             const finalUrl = `https://${this.bucketName}.s3.${process.env.AWS_REGION || 'ap-south-1'}.amazonaws.com/${key}`;
             return {
                 presignedUrl,
                 finalUrl,
-                key
+                key,
             };
         }
         catch (error) {

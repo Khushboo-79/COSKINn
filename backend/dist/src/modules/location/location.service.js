@@ -64,7 +64,7 @@ let LocationService = LocationService_1 = class LocationService {
                 isLocalhost: true,
                 country: 'IN',
                 city: 'Mumbai',
-                message: 'Localhost detected, returning mock data.'
+                message: 'Localhost detected, returning mock data.',
             };
         }
         const geo = geoip.lookup(ip);
@@ -87,7 +87,7 @@ let LocationService = LocationService_1 = class LocationService {
                 headers: {
                     'User-Agent': 'Fairenne-App/1.0',
                     'Accept-Language': 'en-US,en;q=0.9',
-                }
+                },
             }));
             if (!data || data.error) {
                 return { error: 'Could not resolve address' };
@@ -97,7 +97,7 @@ let LocationService = LocationService_1 = class LocationService {
             let serviceability = null;
             if (pincode) {
                 serviceability = await this.prisma.serviceablePincode.findUnique({
-                    where: { pincode }
+                    where: { pincode },
                 });
             }
             return {

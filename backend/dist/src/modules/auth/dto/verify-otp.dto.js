@@ -19,7 +19,9 @@ exports.VerifyOtpDto = VerifyOtpDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Matches)(/^\+?[1-9]\d{1,14}$/, { message: 'Phone number must be a valid E.164 format' }),
+    (0, class_validator_1.Matches)(/^\+?[1-9]\d{1,14}$/, {
+        message: 'Phone number must be a valid E.164 format',
+    }),
     __metadata("design:type", String)
 ], VerifyOtpDto.prototype, "phone", void 0);
 __decorate([

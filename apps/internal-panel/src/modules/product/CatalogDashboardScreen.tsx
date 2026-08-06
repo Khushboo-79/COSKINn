@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { productApi } from '../../core/api/product';
 import { resolveImageUrl } from '../../core/api/client';
 import { Package, PlusCircle, List, Tag, AlertTriangle } from 'lucide-react';
@@ -9,6 +9,7 @@ import { StatusBadge } from '../../components/ui/StatusBadge';
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount || 0);
 
 export const CatalogDashboardScreen = () => {
+  const navigate = useNavigate();
   const { data: stats, isLoading } = useQuery({
     queryKey: ['productStats'],
     queryFn: productApi.getStats,
@@ -78,22 +79,26 @@ export const CatalogDashboardScreen = () => {
           value={isLoading ? '...' : stats?.totalProducts || 0}
           icon={Package}
           trend={{ value: 12, isPositive: true }}
+          onClick={() => navigate('/product/list')}
         />
         <StatCard
           title="Active Variants"
           value={isLoading ? '...' : stats?.activeVariants || 0}
           icon={List}
+          onClick={() => navigate('/product/list')}
         />
         <StatCard
           title="Low Stock SKUs"
           value={isLoading ? '...' : stats?.lowStockSkus || 0}
           icon={AlertTriangle}
           trend={{ value: 0, isPositive: false }}
+          onClick={() => navigate('/inventory')}
         />
         <StatCard
           title="Total Categories"
           value={isLoading ? '...' : stats?.totalCategories || 0}
           icon={Tag}
+          onClick={() => navigate('/product/categories')}
         />
       </div>
 

@@ -29,17 +29,20 @@ let ReturnService = class ReturnService {
             where,
             include: {
                 order: {
-                    select: { id: true, user: { select: { email: true, firstName: true } } }
+                    select: {
+                        id: true,
+                        user: { select: { email: true, firstName: true } },
+                    },
                 },
-                items: true
+                items: true,
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async requestReturn(dto, userId) {
         const order = await this.prisma.order.findUnique({
             where: { id: dto.orderId },
-            include: { items: true }
+            include: { items: true },
         });
         if (!order)
             throw new common_1.NotFoundException('Order not found');
@@ -55,12 +58,12 @@ let ReturnService = class ReturnService {
                 reason: dto.reason,
                 refundType: dto.refundType,
                 items: {
-                    create: order.items.map(item => ({
+                    create: order.items.map((item) => ({
                         sku: item.sku,
-                        quantity: item.quantity
-                    }))
-                }
-            }
+                        quantity: item.quantity,
+                    })),
+                },
+            },
         });
     }
     async processReturn(id, dto) {
@@ -72,13 +75,13 @@ let ReturnService = class ReturnService {
         }
         return this.prisma.return.update({
             where: { id },
-            data: { status: dto.action }
+            data: { status: dto.action },
         });
     }
     async processQC(id, dto) {
         const returnReq = await this.prisma.return.findUnique({
             where: { id },
-            include: { items: true, order: true }
+            include: { items: true, order: true },
         });
         if (!returnReq)
             throw new common_1.NotFoundException('Return not found');
@@ -94,17 +97,17 @@ let ReturnService = class ReturnService {
                             warehouseId: warehouse.id,
                             sku: item.sku,
                             quantity: item.quantity,
-                            reference: `Return QC Pass: ${returnReq.id}`
+                            reference: `Return QC Pass: ${returnReq.id}`,
                         }, tx);
                     }
                 }
                 await this.refundService.processRefund({
                     orderId: returnReq.orderId,
-                    amount: returnReq.order.finalAmount
+                    amount: returnReq.order.finalAmount,
                 }, returnReq.refundType);
                 return tx.return.update({
                     where: { id },
-                    data: { status: 'REFUNDED' }
+                    data: { status: 'REFUNDED' },
                 });
             }
             else {
@@ -113,12 +116,12 @@ let ReturnService = class ReturnService {
                         warehouseId: 'MAIN',
                         sku: item.sku,
                         quantity: item.quantity,
-                        reason: `Return QC Fail: ${returnReq.id}`
+                        reason: `Return QC Fail: ${returnReq.id}`,
                     });
                 }
                 return tx.return.update({
                     where: { id },
-                    data: { status: 'REJECTED_QC' }
+                    data: { status: 'REJECTED_QC' },
                 });
             }
         });

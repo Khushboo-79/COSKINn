@@ -15,8 +15,8 @@ export class InvoiceService {
         items: { include: { variant: { include: { product: true } } } },
         address: true,
         user: true,
-        gstInvoice: true
-      }
+        gstInvoice: true,
+      },
     });
 
     if (!order) throw new NotFoundException('Order not found');
@@ -32,13 +32,13 @@ export class InvoiceService {
     const publicUrl = `/invoices/${filename}`;
 
     // Simple 18% assumption for demo, in production we would map HSN -> TaxRate
-    const totalTax = order.finalAmount * 0.18; 
+    const totalTax = order.finalAmount * 0.18;
 
     // Generate PDF using PDFKit
     await new Promise<void>((resolve, reject) => {
       const doc = new PDFDocument({ margin: 50 });
       const stream = fs.createWriteStream(filePath);
-      
+
       doc.pipe(stream);
       doc.fontSize(20).text('Fairenne', { align: 'center' });
       doc.fontSize(10).text('GST TAX INVOICE', { align: 'center' }).moveDown();
@@ -60,8 +60,8 @@ export class InvoiceService {
         invoiceNumber,
         totalTax,
         totalAmount: order.finalAmount,
-        pdfUrl: publicUrl
-      }
+        pdfUrl: publicUrl,
+      },
     });
   }
 
@@ -71,8 +71,8 @@ export class InvoiceService {
         invoiceId,
         noteNumber: `CN-${Date.now()}`,
         amount,
-        reason
-      }
+        reason,
+      },
     });
   }
 
@@ -82,8 +82,8 @@ export class InvoiceService {
         invoiceId,
         noteNumber: `DN-${Date.now()}`,
         amount,
-        reason
-      }
+        reason,
+      },
     });
   }
 }
