@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { CreatePurchaseOrderDto, CreateGrnDto } from './dto/purchase-order.dto';
@@ -7,7 +11,7 @@ import { CreatePurchaseOrderDto, CreateGrnDto } from './dto/purchase-order.dto';
 export class PurchaseOrderService {
   constructor(
     private prisma: PrismaService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
   ) {}
 
   async create(dto: CreatePurchaseOrderDto) {
@@ -37,9 +41,9 @@ export class PurchaseOrderService {
 
   async createGrn(dto: CreateGrnDto) {
     const po = await this.prisma.purchaseOrder.findUnique({
-      where: { id: dto.purchaseOrderId }
+      where: { id: dto.purchaseOrderId },
     });
-    
+
     if (!po) throw new NotFoundException('Purchase Order not found');
 
     // Create GRN and apply stock-in within a transaction
@@ -47,13 +51,13 @@ export class PurchaseOrderService {
       const grn = await prisma.goodsReceivedNote.create({
         data: {
           purchaseOrderId: dto.purchaseOrderId,
-        }
+        },
       });
 
       // Update PO Status
       await prisma.purchaseOrder.update({
         where: { id: dto.purchaseOrderId },
-        data: { status: 'RECEIVED' }
+        data: { status: 'RECEIVED' },
       });
 
       // Trigger stock-in for each item
@@ -62,7 +66,7 @@ export class PurchaseOrderService {
           warehouseId: po.warehouseId,
           sku: item.sku,
           quantity: item.quantity,
-          reference: `GRN: ${grn.id}`
+          reference: `GRN: ${grn.id}`,
         });
       }
 

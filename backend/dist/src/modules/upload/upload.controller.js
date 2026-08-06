@@ -92,7 +92,7 @@ __decorate([
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
                 cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
             },
-        })
+        }),
     })),
     __param(0, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),

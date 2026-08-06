@@ -21,25 +21,22 @@ let HomeService = class HomeService {
         const categoryWhere = { isActive: true, isDeleted: false };
         const productWhere = { isDeleted: false, status: 'LIVE' };
         if (segment && segment !== 'BOTH') {
-            categoryWhere.OR = [
-                { productLine: segment },
-                { productLine: 'BOTH' }
-            ];
+            categoryWhere.OR = [{ productLine: segment }, { productLine: 'BOTH' }];
             productWhere.AND = [
                 {
                     OR: [
                         { productLine: segment },
                         { productLine: 'BOTH' },
-                        { isCrossSegment: true }
-                    ]
-                }
+                        { isCrossSegment: true },
+                    ],
+                },
             ];
         }
         const [categories, newestProducts, bestSellerProducts, allIngredients, heroBanners] = await Promise.all([
             this.prisma.category.findMany({
                 where: categoryWhere,
                 select: { id: true, name: true, slug: true, imageUrl: true },
-                take: 8
+                take: 8,
             }),
             this.prisma.product.findMany({
                 where: productWhere,
@@ -48,7 +45,7 @@ let HomeService = class HomeService {
                     images: { orderBy: { sortOrder: 'asc' }, take: 1 },
                 },
                 orderBy: { createdAt: 'desc' },
-                take: 6
+                take: 6,
             }),
             this.prisma.product.findMany({
                 where: { ...productWhere, isBestseller: true },

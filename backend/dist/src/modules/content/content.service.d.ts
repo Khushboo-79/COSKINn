@@ -138,4 +138,29 @@ export declare class ContentService {
         title: string | null;
         keywords: string | null;
     }>;
+    getVideos(): Promise<{
+        id: string;
+        createdAt: Date;
+        url: string;
+        title: string;
+        size: string | null;
+    }[]>;
+    createVideo(data: {
+        title: string;
+        url: string;
+        size?: string;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        url: string;
+        title: string;
+        size: string | null;
+    }>;
+    deleteVideo(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        url: string;
+        title: string;
+        size: string | null;
+    }>;
 }

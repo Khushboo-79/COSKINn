@@ -11,10 +11,10 @@ export class MembershipService {
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async computeTiersNightly() {
     this.logger.log('Running nightly membership tier computation...');
-    
+
     // Fetch all tiers ordered by spend descending
     const tiers = await this.prisma.membershipTier.findMany({
-      orderBy: { minSpend: 'desc' }
+      orderBy: { minSpend: 'desc' },
     });
 
     if (tiers.length === 0) {
@@ -24,7 +24,7 @@ export class MembershipService {
 
     // Process in batches (simplified for now to process all)
     const users = await this.prisma.user.findMany({
-      select: { id: true, membershipTierId: true }
+      select: { id: true, membershipTierId: true },
     });
 
     let upgrades = 0;
@@ -35,28 +35,30 @@ export class MembershipService {
         _sum: { totalAmount: true },
         where: {
           userId: user.id,
-          status: 'DELIVERED'
-        }
+          status: 'DELIVERED',
+        },
       });
       const lifetimeSpend = agg._sum.totalAmount || 0;
 
       // Find eligible tier
-      const eligibleTier = tiers.find(t => lifetimeSpend >= t.minSpend) || tiers[tiers.length - 1];
+      const eligibleTier =
+        tiers.find((t) => lifetimeSpend >= t.minSpend) ||
+        tiers[tiers.length - 1];
 
       if (user.membershipTierId !== eligibleTier.id) {
         // Upgrade or Downgrade
         await this.prisma.$transaction(async (tx) => {
           await tx.user.update({
             where: { id: user.id },
-            data: { membershipTierId: eligibleTier.id }
+            data: { membershipTierId: eligibleTier.id },
           });
-          
+
           await tx.membershipHistory.create({
             data: {
               userId: user.id,
               tierId: eligibleTier.id,
-              reason: 'Nightly computation adjustment'
-            }
+              reason: 'Nightly computation adjustment',
+            },
           });
         });
         upgrades++;
@@ -71,39 +73,46 @@ export class MembershipService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
-        membershipTier: true
-      }
+        membershipTier: true,
+      },
     });
-    
+
     return {
       tier: user?.membershipTier || null,
-      historyUrl: '/api/membership/history' // placeholder if needed
+      historyUrl: '/api/membership/history', // placeholder if needed
     };
   }
 
   // Admin Methods
   async getTiers() {
     return this.prisma.membershipTier.findMany({
-      orderBy: { minSpend: 'asc' }
+      orderBy: { minSpend: 'asc' },
     });
   }
 
-  async createTier(data: { name: string; minSpend: number; multiplier: number }) {
+  async createTier(data: {
+    name: string;
+    minSpend: number;
+    multiplier: number;
+  }) {
     return this.prisma.membershipTier.create({
-      data
+      data,
     });
   }
 
-  async updateTier(id: string, data: { name?: string; minSpend?: number; multiplier?: number }) {
+  async updateTier(
+    id: string,
+    data: { name?: string; minSpend?: number; multiplier?: number },
+  ) {
     return this.prisma.membershipTier.update({
       where: { id },
-      data
+      data,
     });
   }
 
   async deleteTier(id: string) {
     return this.prisma.membershipTier.delete({
-      where: { id }
+      where: { id },
     });
   }
 }

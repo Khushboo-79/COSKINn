@@ -1,6 +1,11 @@
 import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
-import { GeneratePickListDto, BarcodeScanDto, CreatePurchaseOrderDto, CreateGrnDto } from './dto/warehouse.dto';
+import {
+  GeneratePickListDto,
+  BarcodeScanDto,
+  CreatePurchaseOrderDto,
+  CreateGrnDto,
+} from './dto/warehouse.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -30,8 +35,16 @@ export class WarehouseController {
   }
 
   @Post('bins')
-  @Roles('SUPER_ADMIN', 'ADMIN', 'WAREHOUSE_MANAGER', 'WAREHOUSE_STAFF', 'INVENTORY_MANAGER')
-  createBin(@Body() dto: { warehouseId: string, code: string, description?: string }) {
+  @Roles(
+    'SUPER_ADMIN',
+    'ADMIN',
+    'WAREHOUSE_MANAGER',
+    'WAREHOUSE_STAFF',
+    'INVENTORY_MANAGER',
+  )
+  createBin(
+    @Body() dto: { warehouseId: string; code: string; description?: string },
+  ) {
     return this.warehouseService.createBin(dto);
   }
 

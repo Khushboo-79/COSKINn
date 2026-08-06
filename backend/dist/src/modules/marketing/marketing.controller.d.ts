@@ -188,4 +188,18 @@ export declare class MarketingController {
         recovered: boolean;
         emailSentAt: Date | null;
     })[]>;
+    getDashboard(): Promise<{
+        metrics: {
+            label: string;
+            value: string;
+            change: string;
+            icon: string;
+            color: string;
+            bg: string;
+        }[];
+        topCampaigns: {
+            name: string;
+            performance: number;
+        }[];
+    }>;
 }

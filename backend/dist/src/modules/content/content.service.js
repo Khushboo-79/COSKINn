@@ -23,10 +23,15 @@ let ContentService = class ContentService {
             where.type = type;
         if (publishedOnly)
             where.published = true;
-        return this.prisma.contentArticle.findMany({ where, orderBy: { createdAt: 'desc' } });
+        return this.prisma.contentArticle.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+        });
     }
     async getArticleBySlug(slug) {
-        const article = await this.prisma.contentArticle.findUnique({ where: { slug } });
+        const article = await this.prisma.contentArticle.findUnique({
+            where: { slug },
+        });
         if (!article)
             throw new common_1.NotFoundException('Article not found');
         return article;
@@ -59,8 +64,8 @@ let ContentService = class ContentService {
                 data: {
                     title: 'Fairenne',
                     description: 'Premium Skincare',
-                    keywords: 'skincare, beauty'
-                }
+                    keywords: 'skincare, beauty',
+                },
             });
         }
         return seo;
@@ -72,9 +77,20 @@ let ContentService = class ContentService {
             data: {
                 title: data.title,
                 description: data.description,
-                keywords: data.keywords
-            }
+                keywords: data.keywords,
+            },
         });
+    }
+    async getVideos() {
+        return this.prisma.tutorialVideo.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+    async createVideo(data) {
+        return this.prisma.tutorialVideo.create({ data });
+    }
+    async deleteVideo(id) {
+        return this.prisma.tutorialVideo.delete({ where: { id } });
     }
 };
 exports.ContentService = ContentService;

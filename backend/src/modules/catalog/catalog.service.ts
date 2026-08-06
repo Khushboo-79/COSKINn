@@ -12,16 +12,24 @@ export class CatalogService {
         status: 'LIVE',
         category: {
           name: {
-            in: ['Sunscreen', 'Sunscreens', 'Lipbalm', 'Lip Balm', 'Lipbalms', 'Blush', 'Blushes'],
-            mode: 'insensitive'
-          }
-        }
+            in: [
+              'Sunscreen',
+              'Sunscreens',
+              'Lipbalm',
+              'Lip Balm',
+              'Lipbalms',
+              'Blush',
+              'Blushes',
+            ],
+            mode: 'insensitive',
+          },
+        },
       },
       take: 8,
       include: {
         images: { where: { isPrimary: true }, take: 1 },
-        category: true
-      }
+        category: true,
+      },
     });
 
     const newArrivals = await this.prisma.product.findMany({
@@ -30,19 +38,19 @@ export class CatalogService {
       take: 8,
       include: {
         images: { where: { isPrimary: true }, take: 1 },
-        category: true
-      }
+        category: true,
+      },
     });
 
     const categories = await this.prisma.category.findMany({
       where: { isActive: true },
-      take: 6
+      take: 6,
     });
 
     return {
       bestSellers,
       newArrivals,
-      categories
+      categories,
     };
   }
 
@@ -56,14 +64,14 @@ export class CatalogService {
         OR: [
           { name: { contains: query, mode: 'insensitive' } },
           { description: { contains: query, mode: 'insensitive' } },
-          { category: { name: { contains: query, mode: 'insensitive' } } }
-        ]
+          { category: { name: { contains: query, mode: 'insensitive' } } },
+        ],
       },
       include: {
         images: { where: { isPrimary: true }, take: 1 },
-        category: true
+        category: true,
       },
-      take: 20
+      take: 20,
     });
   }
 
@@ -82,9 +90,34 @@ export class CatalogService {
 
     if (filters.category) {
       if (filters.category === 'cosmetics') {
-        where.category = { slug: { in: ['cosmetics', 'lipsticks', 'blushes', 'eyeshadows', 'mascaras', 'concealers', 'highlighters', 'bronzers', 'hybrid-tints'] } };
+        where.category = {
+          slug: {
+            in: [
+              'cosmetics',
+              'lipsticks',
+              'blushes',
+              'eyeshadows',
+              'mascaras',
+              'concealers',
+              'highlighters',
+              'bronzers',
+              'hybrid-tints',
+            ],
+          },
+        };
       } else if (filters.category === 'skincare') {
-        where.category = { slug: { in: ['skincare', 'sunscreens', 'cleansers', 'serums', 'moisturizers', 'toners'] } };
+        where.category = {
+          slug: {
+            in: [
+              'skincare',
+              'sunscreens',
+              'cleansers',
+              'serums',
+              'moisturizers',
+              'toners',
+            ],
+          },
+        };
       } else if (filters.category.includes(',')) {
         where.category = { slug: { in: filters.category.split(',') } };
       } else {
@@ -94,19 +127,19 @@ export class CatalogService {
 
     if (filters.skinType) {
       where.skinTypes = {
-        some: { name: { equals: filters.skinType, mode: 'insensitive' } }
+        some: { name: { equals: filters.skinType, mode: 'insensitive' } },
       };
     }
 
     if (filters.skinConcern) {
       where.concerns = {
-        some: { name: { equals: filters.skinConcern, mode: 'insensitive' } }
+        some: { name: { equals: filters.skinConcern, mode: 'insensitive' } },
       };
     }
 
     if (filters.ingredient) {
       where.ingredients = {
-        some: { name: { equals: filters.ingredient, mode: 'insensitive' } }
+        some: { name: { equals: filters.ingredient, mode: 'insensitive' } },
       };
     }
 
@@ -129,10 +162,10 @@ export class CatalogService {
         orderBy,
         include: {
           images: { where: { isPrimary: true }, take: 1 },
-          category: true
-        }
+          category: true,
+        },
       }),
-      this.prisma.product.count({ where })
+      this.prisma.product.count({ where }),
     ]);
 
     return {
@@ -141,8 +174,8 @@ export class CatalogService {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
 
@@ -159,7 +192,7 @@ export class CatalogService {
         benefits: true,
         skinTypes: true,
         concerns: true,
-      }
+      },
     });
 
     if (!product || product.status !== 'LIVE') {
@@ -173,13 +206,17 @@ export class CatalogService {
     return this.prisma.productReview.findMany({
       where: { productId, isApproved: true },
       include: {
-        user: { select: { firstName: true, lastName: true } }
+        user: { select: { firstName: true, lastName: true } },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  async submitProductReview(productId: string, userId: string, dto: { rating: number; title?: string; content?: string }) {
+  async submitProductReview(
+    productId: string,
+    userId: string,
+    dto: { rating: number; title?: string; content?: string },
+  ) {
     return this.prisma.productReview.create({
       data: {
         productId,
@@ -188,7 +225,7 @@ export class CatalogService {
         title: dto.title,
         content: dto.content,
         isApproved: true, // Auto-approve for demo purposes
-      }
+      },
     });
   }
 
@@ -196,8 +233,8 @@ export class CatalogService {
     const category = await this.prisma.category.findUnique({
       where: { slug },
       include: {
-        subcategories: { where: { isActive: true } }
-      }
+        subcategories: { where: { isActive: true } },
+      },
     });
 
     if (!category || !category.isActive) {
@@ -208,9 +245,9 @@ export class CatalogService {
     const products = await this.prisma.product.findMany({
       where: { categoryId: category.id, status: 'LIVE' },
       include: {
-        images: { where: { isPrimary: true }, take: 1 }
+        images: { where: { isPrimary: true }, take: 1 },
       },
-      take: 20
+      take: 20,
     });
 
     return { category, products };
@@ -219,31 +256,31 @@ export class CatalogService {
   async getSkinTypes() {
     const skinTypes = await this.prisma.productSkinType.findMany({
       distinct: ['name'],
-      select: { name: true }
+      select: { name: true },
     });
-    return skinTypes.map(st => st.name).filter(name => name);
+    return skinTypes.map((st) => st.name).filter((name) => name);
   }
 
   async getSkinConcerns() {
     const items = await this.prisma.productConcern.findMany({
       distinct: ['name'],
-      select: { name: true }
+      select: { name: true },
     });
-    return items.map(i => i.name).filter(name => name);
+    return items.map((i) => i.name).filter((name) => name);
   }
 
   async getIngredients() {
     const items = await this.prisma.productIngredient.findMany({
       distinct: ['name'],
-      select: { name: true }
+      select: { name: true },
     });
-    return items.map(i => i.name).filter(name => name);
+    return items.map((i) => i.name).filter((name) => name);
   }
 
   async getSimilarProducts(id: string) {
     const product = await this.prisma.product.findUnique({
       where: { id },
-      include: { category: true }
+      include: { category: true },
     });
 
     if (!product) throw new NotFoundException('Product not found');
@@ -252,13 +289,13 @@ export class CatalogService {
       where: {
         id: { not: id },
         categoryId: product.categoryId,
-        status: 'LIVE'
+        status: 'LIVE',
       },
       include: {
         images: { where: { isPrimary: true }, take: 1 },
-        category: true
+        category: true,
       },
-      take: 4
+      take: 4,
     });
   }
 
@@ -271,8 +308,8 @@ export class CatalogService {
       take: 5,
       include: {
         images: { where: { isPrimary: true }, take: 1 },
-        category: true
-      }
+        category: true,
+      },
     });
   }
 }

@@ -2,7 +2,15 @@ import { PrismaService } from '../../prisma/prisma.service';
 export declare class HrService {
     private prisma;
     constructor(prisma: PrismaService);
-    getEmployees(): Promise<{
+    getEmployees(): Promise<({
+        attendance: {
+            id: string;
+            createdAt: Date;
+            status: string;
+            employeeId: string;
+            date: Date;
+        }[];
+    } & {
         id: string;
         email: string;
         phone: string | null;
@@ -17,7 +25,7 @@ export declare class HrService {
         salary: number;
         joinDate: Date;
         leaveBalance: number;
-    }[]>;
+    })[]>;
     getEmployeeById(id: string): Promise<{
         attendance: {
             id: string;

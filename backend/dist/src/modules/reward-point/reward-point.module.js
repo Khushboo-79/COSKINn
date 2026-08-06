@@ -19,7 +19,7 @@ exports.RewardPointModule = RewardPointModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [reward_point_controller_1.RewardPointController],
         providers: [reward_point_service_1.RewardPointService],
-        exports: [reward_point_service_1.RewardPointService]
+        exports: [reward_point_service_1.RewardPointService],
     })
 ], RewardPointModule);
 //# sourceMappingURL=reward-point.module.js.map

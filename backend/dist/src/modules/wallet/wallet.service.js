@@ -20,12 +20,12 @@ let WalletService = class WalletService {
     async getWallet(userId) {
         let wallet = await this.prisma.wallet.findUnique({
             where: { userId },
-            include: { transactions: true }
+            include: { transactions: true },
         });
         if (!wallet) {
             wallet = await this.prisma.wallet.create({
                 data: { userId },
-                include: { transactions: true }
+                include: { transactions: true },
             });
         }
         return wallet;
@@ -33,9 +33,13 @@ let WalletService = class WalletService {
     async getAdminTransactions() {
         return this.prisma.walletTransaction.findMany({
             include: {
-                wallet: { include: { user: { select: { id: true, firstName: true, email: true } } } }
+                wallet: {
+                    include: {
+                        user: { select: { id: true, firstName: true, email: true } },
+                    },
+                },
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async creditWallet(userId, amount, reference, txClient) {
@@ -49,7 +53,7 @@ let WalletService = class WalletService {
         return prisma.$transaction(async (tx) => {
             const updatedWallet = await tx.wallet.update({
                 where: { id: wallet.id },
-                data: { balance: { increment: amount } }
+                data: { balance: { increment: amount } },
             });
             const expiresAt = new Date();
             expiresAt.setMonth(expiresAt.getMonth() + 6);
@@ -78,15 +82,15 @@ let WalletService = class WalletService {
         return prisma.$transaction(async (tx) => {
             const updatedWallet = await tx.wallet.update({
                 where: { id: wallet.id },
-                data: { balance: { decrement: amount } }
+                data: { balance: { decrement: amount } },
             });
             await tx.walletTransaction.create({
                 data: {
                     walletId: wallet.id,
                     type: 'DEBIT',
                     amount,
-                    reference
-                }
+                    reference,
+                },
             });
             return updatedWallet;
         });

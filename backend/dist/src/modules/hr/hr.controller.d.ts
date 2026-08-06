@@ -12,7 +12,15 @@ export declare class HrController {
         departments: number;
         avgTenure: string;
     }>;
-    getEmployees(): Promise<{
+    getEmployees(): Promise<({
+        attendance: {
+            id: string;
+            createdAt: Date;
+            status: string;
+            employeeId: string;
+            date: Date;
+        }[];
+    } & {
         id: string;
         email: string;
         phone: string | null;
@@ -27,7 +35,7 @@ export declare class HrController {
         salary: number;
         joinDate: Date;
         leaveBalance: number;
-    }[]>;
+    })[]>;
     getEmployee(id: string): Promise<{
         attendance: {
             id: string;

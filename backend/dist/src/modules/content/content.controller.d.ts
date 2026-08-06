@@ -148,4 +148,25 @@ export declare class ContentController {
         title: string | null;
         keywords: string | null;
     }>;
+    getVideos(): Promise<{
+        id: string;
+        createdAt: Date;
+        url: string;
+        title: string;
+        size: string | null;
+    }[]>;
+    createVideo(data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        url: string;
+        title: string;
+        size: string | null;
+    }>;
+    deleteVideo(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        url: string;
+        title: string;
+        size: string | null;
+    }>;
 }

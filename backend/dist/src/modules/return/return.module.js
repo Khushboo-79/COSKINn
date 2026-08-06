@@ -21,7 +21,7 @@ exports.ReturnModule = ReturnModule = __decorate([
         imports: [prisma_module_1.PrismaModule, inventory_module_1.InventoryModule, refund_module_1.RefundModule],
         controllers: [return_controller_1.ReturnController],
         providers: [return_service_1.ReturnService],
-        exports: [return_service_1.ReturnService]
+        exports: [return_service_1.ReturnService],
     })
 ], ReturnModule);
 //# sourceMappingURL=return.module.js.map

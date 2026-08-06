@@ -9,6 +9,6 @@ import { RefundModule } from '../refund/refund.module';
   imports: [PrismaModule, InventoryModule, RefundModule],
   controllers: [ReturnController],
   providers: [ReturnService],
-  exports: [ReturnService]
+  exports: [ReturnService],
 })
 export class ReturnModule {}

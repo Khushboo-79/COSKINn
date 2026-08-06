@@ -19,9 +19,9 @@ export const RewardUsageScreen = () => {
   }
 
   // Calculate some basic stats
-  const coupons = usageLog?.filter((l: any) => l.type === 'COUPON_REDEMPTION') || [];
-  const pointsEarned = usageLog?.filter((l: any) => l.type === 'POINTS_EARNED') || [];
-  const pointsRedeemed = usageLog?.filter((l: any) => l.type === 'POINTS_REDEEMED') || [];
+  const coupons = usageLog?.filter((l: any) => l.eventType === 'COUPON_REDEMPTION') || [];
+  const pointsEarned = usageLog?.filter((l: any) => l.eventType === 'EARN' || l.value?.startsWith('+')) || [];
+  const pointsRedeemed = usageLog?.filter((l: any) => l.eventType === 'REDEEM' || l.value?.startsWith('-')) || [];
 
   return (
     <div className="space-y-6">
@@ -37,11 +37,11 @@ export const RewardUsageScreen = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <div className="flex items-center text-indigo-600 mb-2">
+          <div className="flex items-center text-[#FF7F50] mb-2">
             <Ticket className="h-5 w-5 mr-1" />
             <h3 className="font-semibold text-sm">Coupon Redemptions</h3>
           </div>
-          <p className="text-3xl font-black text-indigo-700">{coupons.length}</p>
+          <p className="text-3xl font-black text-[#FF7F50]">{coupons.length}</p>
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
@@ -50,7 +50,7 @@ export const RewardUsageScreen = () => {
             <h3 className="font-semibold text-sm">Reward Points Earned</h3>
           </div>
           <p className="text-3xl font-black text-emerald-700">
-            {pointsEarned.reduce((sum: number, p: any) => sum + (p.points || 0), 0)}
+            {pointsEarned.reduce((sum: number, p: any) => sum + (typeof p.value === 'string' ? parseInt(p.value.replace(/[^0-9.-]+/g,"")) : (p.points || 0)), 0)}
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export const RewardUsageScreen = () => {
             <h3 className="font-semibold text-sm">Reward Points Redeemed</h3>
           </div>
           <p className="text-3xl font-black text-rose-700">
-            {pointsRedeemed.reduce((sum: number, p: any) => sum + (p.points || 0), 0)}
+            {pointsRedeemed.reduce((sum: number, p: any) => sum + Math.abs(typeof p.value === 'string' ? parseInt(p.value.replace(/[^0-9.-]+/g,"")) : (p.points || 0)), 0)}
           </p>
         </div>
       </div>
@@ -88,22 +88,22 @@ export const RewardUsageScreen = () => {
                 {usageLog.map((log: any) => (
                   <tr key={log.id} className="hover:bg-slate-50">
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">{log.id}</td>
-                    <td className="px-6 py-4 font-mono text-xs font-bold text-slate-700">{log.userId}</td>
+                    <td className="px-6 py-4 font-mono text-xs font-bold text-slate-700">{log.user || log.userId}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-bold ${
-                        log.type === 'COUPON_REDEMPTION' ? 'bg-indigo-100 text-indigo-700' :
-                        log.type === 'POINTS_EARNED' ? 'bg-emerald-100 text-emerald-700' :
+                        (log.eventType || log.type) === 'COUPON_REDEMPTION' ? 'bg-[#FF7F50]/20 text-[#FF7F50]' :
+                        (log.eventType === 'EARN' || (log.eventType || log.type) === 'POINTS_EARNED') ? 'bg-emerald-100 text-emerald-700' :
                         'bg-rose-100 text-rose-700'
                       }`}>
-                        {log.type}
+                        {log.eventType || log.type}
                       </span>
                     </td>
                     <td className="px-6 py-4 font-bold text-slate-900">
-                      {log.type === 'COUPON_REDEMPTION' ? log.couponCode : `${log.points} pts`}
+                      {log.value || (log.type === 'COUPON_REDEMPTION' ? log.couponCode : `${log.points} pts`)}
                     </td>
-                    <td className="px-6 py-4 font-mono text-xs text-slate-600">{log.orderId || log.referenceId || 'N/A'}</td>
+                    <td className="px-6 py-4 font-mono text-xs text-slate-600">{log.referenceId || log.orderId || 'N/A'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-xs font-mono">
-                      {format(new Date(log.createdAt), 'dd MMM yyyy, HH:mm')}
+                      {log.timestamp ? format(new Date(log.timestamp), 'dd MMM yyyy, HH:mm') : (log.createdAt ? format(new Date(log.createdAt), 'dd MMM yyyy, HH:mm') : '-')}
                     </td>
                   </tr>
                 ))}

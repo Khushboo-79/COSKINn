@@ -19,10 +19,7 @@ let PanelsGuard = class PanelsGuard {
         this.reflector = reflector;
     }
     canActivate(context) {
-        const requiredPanels = this.reflector.getAllAndOverride(panels_decorator_1.PANELS_KEY, [
-            context.getHandler(),
-            context.getClass(),
-        ]);
+        const requiredPanels = this.reflector.getAllAndOverride(panels_decorator_1.PANELS_KEY, [context.getHandler(), context.getClass()]);
         if (!requiredPanels || requiredPanels.length === 0) {
             return true;
         }

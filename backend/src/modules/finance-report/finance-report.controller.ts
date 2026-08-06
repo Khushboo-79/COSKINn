@@ -40,9 +40,14 @@ export class FinanceReportController {
     @Body('ledgerId') ledgerId: string,
     @Body('type') type: 'CREDIT' | 'DEBIT',
     @Body('amount') amount: number,
-    @Body('reference') reference?: string
+    @Body('reference') reference?: string,
   ) {
-    return this.financeReportService.addJournalEntry(ledgerId, type, amount, reference);
+    return this.financeReportService.addJournalEntry(
+      ledgerId,
+      type,
+      amount,
+      reference,
+    );
   }
 
   @Post('settlements/sync')
@@ -61,17 +66,19 @@ export class FinanceReportController {
     @Body('referenceType') referenceType: string,
     @Body('referenceId') referenceId: string,
     @Body('amount') amount: number,
-    @Body('reason') reason: string
+    @Body('reason') reason: string,
   ) {
-    return this.financeReportService.createNote(type, referenceType, referenceId, amount, reason);
+    return this.financeReportService.createNote(
+      type,
+      referenceType,
+      referenceId,
+      amount,
+      reason,
+    );
   }
 
   @Post('notes/:id/status')
-  updateNoteStatus(
-    @Param('id') id: string,
-    @Body('status') status: string
-  ) {
+  updateNoteStatus(@Param('id') id: string, @Body('status') status: string) {
     return this.financeReportService.updateNoteStatus(id, status);
   }
 }
-

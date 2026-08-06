@@ -30,7 +30,8 @@ let AppVersionService = class AppVersionService {
         if (!latest) {
             return { status: 'UP_TO_DATE', updateUrl: '' };
         }
-        const isOlder = currentVersion !== latest.latestVersion && currentVersion < latest.latestVersion;
+        const isOlder = currentVersion !== latest.latestVersion &&
+            currentVersion < latest.latestVersion;
         if (isOlder) {
             if (latest.forceUpdate || currentVersion < latest.minVersion) {
                 return { status: 'FORCE_UPDATE', updateUrl: 'appstore-url' };

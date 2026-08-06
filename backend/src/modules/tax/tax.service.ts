@@ -12,7 +12,7 @@ export class TaxService {
 
   async createHsnCode(code: string, description?: string) {
     return this.prisma.hsnCode.create({
-      data: { code, description }
+      data: { code, description },
     });
   }
 
@@ -23,7 +23,7 @@ export class TaxService {
 
   async createTaxRate(name: string, cgst: number, sgst: number, igst: number) {
     return this.prisma.taxRate.create({
-      data: { name, cgst, sgst, igst }
+      data: { name, cgst, sgst, igst },
     });
   }
 }

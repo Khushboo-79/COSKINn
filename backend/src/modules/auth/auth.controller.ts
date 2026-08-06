@@ -16,7 +16,6 @@ export class AuthController {
     return req.user;
   }
 
-
   @Post('login')
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
@@ -43,7 +42,7 @@ export class AuthController {
   }
 
   @Post('verify-totp')
-  verifyTotp(@Body() body: { userId: string, totp: string }) {
+  verifyTotp(@Body() body: { userId: string; totp: string }) {
     return this.authService.verifyTotp(body.userId, body.totp);
   }
 
@@ -75,13 +74,26 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  resetPassword(@Body() body: { email: string; otp: string; newPassword: string }) {
-    return this.authService.resetPassword(body.email, body.otp, body.newPassword);
+  resetPassword(
+    @Body() body: { email: string; otp: string; newPassword: string },
+  ) {
+    return this.authService.resetPassword(
+      body.email,
+      body.otp,
+      body.newPassword,
+    );
   }
 
   @Post('change-password')
   @UseGuards(JwtAuthGuard)
-  changePassword(@Request() req, @Body() body: { currentPassword: string; newPassword: string }) {
-    return this.authService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  changePassword(
+    @Request() req,
+    @Body() body: { currentPassword: string; newPassword: string },
+  ) {
+    return this.authService.changePassword(
+      req.user.id,
+      body.currentPassword,
+      body.newPassword,
+    );
   }
 }

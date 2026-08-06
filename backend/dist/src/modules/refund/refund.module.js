@@ -21,7 +21,7 @@ exports.RefundModule = RefundModule = __decorate([
         imports: [prisma_module_1.PrismaModule, wallet_module_1.WalletModule, payment_module_1.PaymentModule],
         controllers: [refund_controller_1.RefundController],
         providers: [refund_service_1.RefundService],
-        exports: [refund_service_1.RefundService]
+        exports: [refund_service_1.RefundService],
     })
 ], RefundModule);
 //# sourceMappingURL=refund.module.js.map

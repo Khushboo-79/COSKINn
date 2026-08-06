@@ -30,7 +30,7 @@ let PublicCatalogController = class PublicCatalogController {
             fruit,
             concern,
             sortBy,
-            segment: segment ? segment.toUpperCase() : undefined
+            segment: segment ? segment.toUpperCase() : undefined,
         });
     }
     async search(query, segment) {

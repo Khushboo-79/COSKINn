@@ -48,7 +48,7 @@ export const ProductListScreen = () => {
   };
 
   const filteredProducts = products.filter((product: any) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           product.sku?.toLowerCase().includes(searchTerm.toLowerCase());
     
     let matchesStatus = true;

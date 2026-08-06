@@ -12,13 +12,19 @@ export class NotificationController {
   @Post('push')
   @Roles('SUPER_ADMIN', 'MARKETING_MANAGER')
   async sendPushNotification(
-    @Body() body: { userId: string; title: string; body: string; mobileToken?: string }
+    @Body()
+    body: {
+      userId: string;
+      title: string;
+      body: string;
+      mobileToken?: string;
+    },
   ) {
     return this.notificationService.sendPushNotification(
       body.userId,
       body.title,
       body.body,
-      body.mobileToken
+      body.mobileToken,
     );
   }
 }

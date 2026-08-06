@@ -8,6 +8,6 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [HttpModule, PrismaModule],
   controllers: [LocationController],
   providers: [LocationService],
-  exports: [LocationService]
+  exports: [LocationService],
 })
 export class LocationModule {}

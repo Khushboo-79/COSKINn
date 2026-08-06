@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { auditApi } from '../../core/api/audit';
-import { Loader2, TrendingUp, DollarSign, ArrowDownRight, CreditCard, ShoppingBag, ArrowUpRight } from 'lucide-react';
+import { Loader2, TrendingUp, DollarSign, ArrowDownRight, CreditCard, ShoppingBag, ArrowUpRight, BarChart4 } from 'lucide-react';
 import { format } from 'date-fns';
 
 export const FinancialReportsScreen = () => {
@@ -28,7 +28,7 @@ export const FinancialReportsScreen = () => {
 
   // Calculate totals from payments
   const successfulPayments = payments?.filter((p: any) => p.status === 'SUCCESS' || p.status === 'CAPTURED') || [];
-  const totalRevenue = successfulPayments.reduce((sum: number, p: any) => sum + p.amount, 0);
+  const totalRevenue = successfulPayments.reduce((sum: number, p: any) => sum + (typeof p.amount === 'string' ? parseFloat(p.amount.replace(/[^0-9.-]+/g,"")) : p.amount), 0);
 
   return (
     <div className="space-y-6">
@@ -91,13 +91,13 @@ export const FinancialReportsScreen = () => {
               {payments?.slice(0, 50).map((txn: any) => (
                 <tr key={txn.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4 font-mono text-xs text-slate-500">{txn.id}</td>
-                  <td className="px-6 py-4 font-mono text-xs font-bold text-slate-700">{txn.orderId}</td>
+                  <td className="px-6 py-4 font-mono text-xs font-bold text-slate-700">{txn.orderRef || txn.orderId}</td>
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-slate-100 text-slate-700">
                       {txn.gateway || 'RAZORPAY'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-bold text-slate-900">₹{txn.amount}</td>
+                  <td className="px-6 py-4 font-bold text-slate-900">{typeof txn.amount === 'string' ? txn.amount : `₹${txn.amount}`}</td>
                   <td className="px-6 py-4">
                     {txn.status === 'SUCCESS' || txn.status === 'CAPTURED' ? (
                       <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-emerald-100 text-emerald-700">
@@ -112,7 +112,7 @@ export const FinancialReportsScreen = () => {
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-xs font-mono">
-                    {format(new Date(txn.createdAt), 'dd MMM yyyy, HH:mm')}
+                    {txn.date ? format(new Date(txn.date), 'dd MMM yyyy, HH:mm') : (txn.createdAt ? format(new Date(txn.createdAt), 'dd MMM yyyy, HH:mm') : '-')}
                   </td>
                 </tr>
               ))}

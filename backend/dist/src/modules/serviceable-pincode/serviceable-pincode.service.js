@@ -23,7 +23,7 @@ let ServiceablePincodeService = class ServiceablePincodeService {
                 pincode: data.code,
                 city: data.city,
                 state: data.state,
-                isActive: data.isActive
+                isActive: data.isActive,
             },
         });
     }
@@ -45,7 +45,9 @@ let ServiceablePincodeService = class ServiceablePincodeService {
         };
     }
     async findOne(id) {
-        const pincode = await this.prisma.serviceablePincode.findUnique({ where: { id } });
+        const pincode = await this.prisma.serviceablePincode.findUnique({
+            where: { id },
+        });
         if (!pincode)
             throw new common_1.NotFoundException('Pincode not found');
         return pincode;

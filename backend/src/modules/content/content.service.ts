@@ -6,15 +6,23 @@ export class ContentService {
   constructor(private prisma: PrismaService) {}
 
   // --- ARTICLES (BLOG / TIPS) ---
-  async getArticles(type?: 'BLOG' | 'TIP' | 'ROUTINE' | 'LEGAL' | 'PAGE', publishedOnly: boolean = true) {
+  async getArticles(
+    type?: 'BLOG' | 'TIP' | 'ROUTINE' | 'LEGAL' | 'PAGE',
+    publishedOnly: boolean = true,
+  ) {
     const where: any = {};
     if (type) where.type = type;
     if (publishedOnly) where.published = true;
-    return this.prisma.contentArticle.findMany({ where, orderBy: { createdAt: 'desc' } });
+    return this.prisma.contentArticle.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async getArticleBySlug(slug: string) {
-    const article = await this.prisma.contentArticle.findUnique({ where: { slug } });
+    const article = await this.prisma.contentArticle.findUnique({
+      where: { slug },
+    });
     if (!article) throw new NotFoundException('Article not found');
     return article;
   }
@@ -36,7 +44,12 @@ export class ContentService {
     return this.prisma.faq.findMany({ orderBy: { orderIndex: 'asc' } });
   }
 
-  async createFaq(data: { question: string; answer: string; category?: string; orderIndex?: number }) {
+  async createFaq(data: {
+    question: string;
+    answer: string;
+    category?: string;
+    orderIndex?: number;
+  }) {
     return this.prisma.faq.create({ data });
   }
 
@@ -55,8 +68,8 @@ export class ContentService {
         data: {
           title: 'Fairenne',
           description: 'Premium Skincare',
-          keywords: 'skincare, beauty'
-        }
+          keywords: 'skincare, beauty',
+        },
       });
     }
     return seo;
@@ -69,8 +82,23 @@ export class ContentService {
       data: {
         title: data.title,
         description: data.description,
-        keywords: data.keywords
-      }
+        keywords: data.keywords,
+      },
     });
+  }
+
+  // --- VIDEOS ---
+  async getVideos() {
+    return this.prisma.tutorialVideo.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  async createVideo(data: { title: string; url: string; size?: string }) {
+    return this.prisma.tutorialVideo.create({ data });
+  }
+
+  async deleteVideo(id: string) {
+    return this.prisma.tutorialVideo.delete({ where: { id } });
   }
 }

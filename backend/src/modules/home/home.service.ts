@@ -8,21 +8,18 @@ export class HomeService {
   async getHomeDashboard(segment?: string) {
     const categoryWhere: any = { isActive: true, isDeleted: false };
     const productWhere: any = { isDeleted: false, status: 'LIVE' };
-    
+
     if (segment && segment !== 'BOTH') {
-      categoryWhere.OR = [
-        { productLine: segment },
-        { productLine: 'BOTH' }
-      ];
-      
+      categoryWhere.OR = [{ productLine: segment }, { productLine: 'BOTH' }];
+
       productWhere.AND = [
         {
           OR: [
             { productLine: segment },
             { productLine: 'BOTH' },
-            { isCrossSegment: true }
-          ]
-        }
+            { isCrossSegment: true },
+          ],
+        },
       ];
     }
 
@@ -30,7 +27,7 @@ export class HomeService {
       this.prisma.category.findMany({
         where: categoryWhere,
         select: { id: true, name: true, slug: true, imageUrl: true },
-        take: 8
+        take: 8,
       }),
       this.prisma.product.findMany({
         where: productWhere,
@@ -39,7 +36,7 @@ export class HomeService {
           images: { orderBy: { sortOrder: 'asc' }, take: 1 },
         },
         orderBy: { createdAt: 'desc' },
-        take: 6
+        take: 6,
       }),
       this.prisma.product.findMany({
         where: { ...productWhere, isBestseller: true },
@@ -62,7 +59,7 @@ export class HomeService {
     for (const ing of allIngredients) {
       ingredientCountMap[ing.name] = (ingredientCountMap[ing.name] || 0) + 1;
     }
-    
+
     const fruitIngredients = Object.entries(ingredientCountMap)
       .map(([name, count]) => ({ name, productCount: count }))
       .sort((a, b) => b.productCount - a.productCount)

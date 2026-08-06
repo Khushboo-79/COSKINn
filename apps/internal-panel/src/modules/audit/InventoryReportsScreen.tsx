@@ -19,8 +19,8 @@ export const InventoryReportsScreen = () => {
   }
 
   // Calculate some basic stats
-  const damageCount = adjustments?.filter((a: any) => a.reasonCode === 'DAMAGED').length || 0;
-  const expiryCount = adjustments?.filter((a: any) => a.reasonCode === 'EXPIRED').length || 0;
+  const damageCount = adjustments?.filter((a: any) => (a.reason || a.reasonCode) === 'DAMAGED').length || 0;
+  const expiryCount = adjustments?.filter((a: any) => (a.reason || a.reasonCode) === 'EXPIRED').length || 0;
 
   return (
     <div className="space-y-6">
@@ -89,18 +89,18 @@ export const InventoryReportsScreen = () => {
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">{adj.id}</td>
                     <td className="px-6 py-4 font-mono text-xs font-bold text-slate-700">{adj.sku}</td>
                     <td className="px-6 py-4">
-                      <span className={`font-bold ${adj.quantity < 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                        {adj.quantity > 0 ? '+' : ''}{adj.quantity}
+                      <span className={`font-bold ${(adj.change?.startsWith('-') || adj.quantity < 0) ? 'text-rose-600' : 'text-emerald-600'}`}>
+                        {adj.change || (adj.quantity > 0 ? `+${adj.quantity}` : adj.quantity)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-slate-100 text-slate-700">
-                        {adj.reasonCode}
+                        {adj.reason || adj.reasonCode}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-mono text-xs text-slate-600">{adj.adminId || 'SYSTEM'}</td>
+                    <td className="px-6 py-4 font-mono text-xs text-slate-600">{adj.adjustedBy || adj.adminId || 'SYSTEM'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-xs font-mono">
-                      {format(new Date(adj.createdAt), 'dd MMM yyyy, HH:mm')}
+                      {adj.timestamp ? format(new Date(adj.timestamp), 'dd MMM yyyy, HH:mm') : (adj.createdAt ? format(new Date(adj.createdAt), 'dd MMM yyyy, HH:mm') : '-')}
                     </td>
                   </tr>
                 ))}

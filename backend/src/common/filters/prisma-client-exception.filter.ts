@@ -1,4 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
@@ -13,7 +18,11 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
     switch (exception.code) {
       case 'P2002': {
         const status = HttpStatus.CONFLICT;
-        const target = (exception.meta?.target as string[]) || (exception.meta?.modelName ? [exception.meta.modelName.toString()] : ['unknown']);
+        const target =
+          (exception.meta?.target as string[]) ||
+          (exception.meta?.modelName
+            ? [exception.meta.modelName.toString()]
+            : ['unknown']);
         response.status(status).json({
           statusCode: status,
           message: `Unique constraint failed on field(s) or model: ${target.join(', ')}. This record already exists.`,

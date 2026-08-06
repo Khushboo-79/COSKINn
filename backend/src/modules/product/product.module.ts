@@ -10,11 +10,11 @@ import { PrismaModule } from '../../prisma/prisma.module';
 @Module({
   imports: [PrismaModule],
   controllers: [
-    ProductController, 
-    PublicCatalogController, 
-    VariantController, 
+    ProductController,
+    PublicCatalogController,
+    VariantController,
     MediaController,
-    ReviewController
+    ReviewController,
   ],
   providers: [ProductService],
   exports: [ProductService],

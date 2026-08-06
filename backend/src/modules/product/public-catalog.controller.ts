@@ -7,7 +7,7 @@ export class PublicCatalogController {
 
   @Get()
   async findAll(
-    @Query('page') page?: string, 
+    @Query('page') page?: string,
     @Query('limit') limit?: string,
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
@@ -15,7 +15,7 @@ export class PublicCatalogController {
     @Query('fruit') fruit?: string,
     @Query('concern') concern?: string,
     @Query('sortBy') sortBy?: string,
-    @Query('segment') segment?: string
+    @Query('segment') segment?: string,
   ) {
     const pageNumber = page ? parseInt(page, 10) : 1;
     const limitNumber = limit ? parseInt(limit, 10) : 20;
@@ -26,7 +26,7 @@ export class PublicCatalogController {
       fruit,
       concern,
       sortBy,
-      segment: segment ? (segment.toUpperCase() as any) : undefined
+      segment: segment ? (segment.toUpperCase() as any) : undefined,
     });
   }
 
@@ -35,22 +35,43 @@ export class PublicCatalogController {
     if (!query || query.trim() === '') {
       return [];
     }
-    return this.productService.search(query, segment ? segment.toUpperCase() : undefined);
+    return this.productService.search(
+      query,
+      segment ? segment.toUpperCase() : undefined,
+    );
   }
 
   @Get('category/:id')
-  async findByCategory(@Param('id') categoryId: string, @Query('segment') segment?: string) {
-    return this.productService.findByCategory(categoryId, segment ? segment.toUpperCase() : undefined);
+  async findByCategory(
+    @Param('id') categoryId: string,
+    @Query('segment') segment?: string,
+  ) {
+    return this.productService.findByCategory(
+      categoryId,
+      segment ? segment.toUpperCase() : undefined,
+    );
   }
 
   @Get('concern/:id')
-  async findByConcern(@Param('id') concernId: string, @Query('segment') segment?: string) {
-    return this.productService.findByConcern(concernId, segment ? segment.toUpperCase() : undefined);
+  async findByConcern(
+    @Param('id') concernId: string,
+    @Query('segment') segment?: string,
+  ) {
+    return this.productService.findByConcern(
+      concernId,
+      segment ? segment.toUpperCase() : undefined,
+    );
   }
 
   @Get('fruit/:name')
-  async findByFruit(@Param('name') fruitName: string, @Query('segment') segment?: string) {
-    return this.productService.findByFruit(fruitName, segment ? segment.toUpperCase() : undefined);
+  async findByFruit(
+    @Param('name') fruitName: string,
+    @Query('segment') segment?: string,
+  ) {
+    return this.productService.findByFruit(
+      fruitName,
+      segment ? segment.toUpperCase() : undefined,
+    );
   }
 
   @Get(':id')

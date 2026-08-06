@@ -60,8 +60,8 @@ let InvoiceService = class InvoiceService {
                 items: { include: { variant: { include: { product: true } } } },
                 address: true,
                 user: true,
-                gstInvoice: true
-            }
+                gstInvoice: true,
+            },
         });
         if (!order)
             throw new common_1.NotFoundException('Order not found');
@@ -96,8 +96,8 @@ let InvoiceService = class InvoiceService {
                 invoiceNumber,
                 totalTax,
                 totalAmount: order.finalAmount,
-                pdfUrl: publicUrl
-            }
+                pdfUrl: publicUrl,
+            },
         });
     }
     async createCreditNote(invoiceId, amount, reason) {
@@ -106,8 +106,8 @@ let InvoiceService = class InvoiceService {
                 invoiceId,
                 noteNumber: `CN-${Date.now()}`,
                 amount,
-                reason
-            }
+                reason,
+            },
         });
     }
     async createDebitNote(invoiceId, amount, reason) {
@@ -116,8 +116,8 @@ let InvoiceService = class InvoiceService {
                 invoiceId,
                 noteNumber: `DN-${Date.now()}`,
                 amount,
-                reason
-            }
+                reason,
+            },
         });
     }
 };
