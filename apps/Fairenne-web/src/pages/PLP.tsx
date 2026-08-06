@@ -47,7 +47,7 @@ const PLP: React.FC = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/products?segment=${isGlam ? 'MAKEUP' : 'SKINCARE'}&limit=100`)
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/products?segment=${isGlam ? 'MAKEUP' : 'SKINCARE'}&limit=100`)
       .then(res => res.json())
       .then(data => {
         if (data && data.data) {

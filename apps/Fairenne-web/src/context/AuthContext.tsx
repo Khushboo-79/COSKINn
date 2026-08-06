@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token) {
       localStorage.setItem('coskin_token', token);
       // Validate session on mount
-      fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/me`, {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

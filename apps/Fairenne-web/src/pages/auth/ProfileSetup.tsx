@@ -29,7 +29,7 @@ const ProfileSetup: React.FC = () => {
       setStep(s => s + 1);
     } else {
       try {
-        const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/customer/profile`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/customer/profile`, {
           method: 'PUT',
           headers: { 
             'Content-Type': 'application/json',

@@ -31,7 +31,7 @@ const Journal: React.FC = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/content/articles?type=BLOG`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/content/articles?type=BLOG`);
         if (!res.ok) throw new Error('Failed to fetch articles');
         const data = await res.json();
         
