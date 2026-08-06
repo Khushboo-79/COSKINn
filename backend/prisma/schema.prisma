@@ -331,6 +331,7 @@ model Product {
   status              ProductStatus @default(DRAFT)
   productLine         ProductLine   @default(BOTH)
   isCrossSegment      Boolean       @default(false)
+  isBestseller        Boolean       @default(false)
   rejectionReason     String?
   isDeleted           Boolean       @default(false)
   deletedAt           DateTime?
@@ -1125,10 +1126,11 @@ model Wallet {
 model WalletTransaction {
   id        String   @id @default(uuid())
   walletId  String
-  type      String // 'CREDIT', 'DEBIT'
+  type      String // 'CREDIT', 'DEBIT', 'EXPIRED'
   amount    Float
   reference String? // e.g., 'Refund for Order XYZ'
   createdAt DateTime @default(now())
+  expiresAt DateTime? // For promotional or bonus credits that expire
 
   wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
 

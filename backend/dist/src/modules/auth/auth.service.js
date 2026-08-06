@@ -68,6 +68,97 @@ let AuthService = AuthService_1 = class AuthService {
             this.customerTwilioClient = new twilio_1.Twilio(process.env.TWILIO_CUSTOMER_ACCOUNT_SID, process.env.TWILIO_CUSTOMER_AUTH_TOKEN);
         }
     }
+    async register(dto) {
+        const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+        if (existing) {
+            throw new common_1.BadRequestException('Email is already registered');
+        }
+        const passwordHash = await bcrypt.hash(dto.password, 10);
+        const user = await this.prisma.user.create({
+            data: {
+                email: dto.email,
+                passwordHash,
+                firstName: dto.firstName,
+                lastName: dto.lastName,
+                roles: {
+                    create: {
+                        role: {
+                            connectOrCreate: {
+                                where: { name: 'CUSTOMER' },
+                                create: { name: 'CUSTOMER', description: 'Default customer role' }
+                            }
+                        }
+                    }
+                }
+            },
+            include: { roles: { include: { role: true } } }
+        });
+        const roles = user.roles.map(ur => ur.role.name);
+        const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+        const payload = { sub: user.id, email: user.email, roles, panelAccess };
+        const refreshToken = require('crypto').randomBytes(40).toString('hex');
+        const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.prisma.loginSession.create({
+            data: {
+                userId: user.id,
+                refreshToken,
+                expiresAt: refreshExpiresAt,
+            }
+        });
+        await this.bonusService.awardSignupBonus(user.id);
+        return {
+            access_token: this.jwtService.sign(payload),
+            refresh_token: refreshToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                roles
+            }
+        };
+    }
+    async customerLogin(dto) {
+        const user = await this.prisma.user.findUnique({
+            where: { email: dto.email },
+            include: { roles: { include: { role: true } } }
+        });
+        if (!user || !user.passwordHash) {
+            throw new common_1.UnauthorizedException('Invalid credentials');
+        }
+        const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+        if (!isPasswordValid) {
+            throw new common_1.UnauthorizedException('Invalid credentials');
+        }
+        const isCustomer = user.roles.some(ur => ur.role.name === 'CUSTOMER');
+        if (!isCustomer) {
+            throw new common_1.UnauthorizedException('This endpoint is for customers only. Use admin login.');
+        }
+        const roles = user.roles.map(ur => ur.role.name);
+        const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+        const payload = { sub: user.id, email: user.email, roles, panelAccess };
+        const refreshToken = require('crypto').randomBytes(40).toString('hex');
+        const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.prisma.loginSession.create({
+            data: {
+                userId: user.id,
+                refreshToken,
+                expiresAt: refreshExpiresAt,
+            }
+        });
+        return {
+            access_token: this.jwtService.sign(payload),
+            refresh_token: refreshToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                phone: user.phone,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                roles
+            }
+        };
+    }
     async login(loginDto) {
         const user = await this.prisma.user.findUnique({
             where: { email: loginDto.email },
@@ -146,13 +237,9 @@ let AuthService = AuthService_1 = class AuthService {
             ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID
             : process.env.TWILIO_VERIFY_SERVICE_SID;
         try {
-            if (process.env.NODE_ENV !== 'production' ||
-                process.env.USE_MOCK_OTP === 'true') {
-                this.logger.debug(`[DEV MODE] Skipped Twilio SMS for ${phone}. Use master OTP: 123456`);
-                return {
-                    message: 'OTP sent successfully (Dev Mode)',
-                    expires_in_minutes: 10,
-                };
+            if (process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') {
+                this.logger.debug(`[DEV MODE] Skipped Twilio SMS for ${phone}. Use master OTP: 1234`);
+                return { message: 'OTP sent successfully (Dev Mode)', expires_in_minutes: 10 };
             }
             await client.verify.v2
                 .services(serviceSid)
@@ -186,9 +273,7 @@ let AuthService = AuthService_1 = class AuthService {
             ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID
             : process.env.TWILIO_VERIFY_SERVICE_SID;
         try {
-            if ((process.env.NODE_ENV !== 'production' ||
-                process.env.USE_MOCK_OTP === 'true') &&
-                otp === '123456') {
+            if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '1234') {
                 this.logger.debug(`[DEV MODE] Master OTP accepted for ${phone}`);
             }
             else {

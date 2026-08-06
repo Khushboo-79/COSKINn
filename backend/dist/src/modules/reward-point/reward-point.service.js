@@ -39,7 +39,7 @@ let RewardPointService = RewardPointService_1 = class RewardPointService {
         });
     }
     async earnPoints(userId, amountSpent, orderId) {
-        const pointsToEarn = Math.floor(amountSpent / 150);
+        const pointsToEarn = Math.floor(amountSpent / 100);
         if (pointsToEarn <= 0)
             return;
         await this.prisma.rewardPointsLedger.create({

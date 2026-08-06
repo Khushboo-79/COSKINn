@@ -35,6 +35,15 @@ export const ProductListScreen = () => {
     }
   });
 
+  const bestsellerMutation = useMutation({
+    mutationFn: ({ id, isBestseller }: { id: string, isBestseller: boolean }) => productApi.setBestseller(id, isBestseller),
+    onSuccess: (_, variables) => {
+      toast.success(`Product ${variables.isBestseller ? 'added to' : 'removed from'} bestsellers`);
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+    onError: () => toast.error('Failed to update bestseller status')
+  });
+
   const handleDelete = (id: string, name: string) => {
     setProductToDelete({ id, name });
   };
@@ -75,7 +84,12 @@ export const ProductListScreen = () => {
             )}
           </div>
           <div>
-            <p className="font-medium text-slate-900">{product.name}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-medium text-slate-900">{product.name}</p>
+              {product.isBestseller && (
+                <Star className="h-3 w-3 text-amber-500 fill-amber-500" title="Bestseller" />
+              )}
+            </div>
             <p className="text-xs text-slate-500 font-mono mt-0.5">{product.sku || 'No SKU'}</p>
           </div>
         </div>

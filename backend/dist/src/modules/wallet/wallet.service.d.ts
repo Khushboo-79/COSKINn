@@ -7,6 +7,7 @@ export declare class WalletService {
             id: string;
             createdAt: Date;
             type: string;
+            expiresAt: Date | null;
             reference: string | null;
             walletId: string;
             amount: number;
@@ -36,6 +37,7 @@ export declare class WalletService {
         id: string;
         createdAt: Date;
         type: string;
+        expiresAt: Date | null;
         reference: string | null;
         walletId: string;
         amount: number;
