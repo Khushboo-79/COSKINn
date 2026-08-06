@@ -8,7 +8,6 @@ import { Menu, Search, ShoppingBag, User, Heart, Droplets, Sparkles, X, Globe, C
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
-import MegaMenu from './MegaMenu';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -27,21 +26,6 @@ const Header: React.FC = () => {
     toggleMode();
     navigate('/');
     window.scrollTo(0, 0);
-  };
-  
-  // Mega Menu State
-  const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
-  let shopMenuTimeout: ReturnType<typeof setTimeout>;
-
-  const handleShopEnter = () => {
-    clearTimeout(shopMenuTimeout);
-    setIsShopMenuOpen(true);
-  };
-
-  const handleShopLeave = () => {
-    shopMenuTimeout = setTimeout(() => {
-      setIsShopMenuOpen(false);
-    }, 200);
   };
 
   const skinNavLinks = [
@@ -76,24 +60,17 @@ const Header: React.FC = () => {
               Home
             </Link>
             
-            {/* Shop Mega Menu Trigger */}
-            <div 
-              className="relative h-[72px] flex items-center"
-              onMouseEnter={handleShopEnter}
-              onMouseLeave={handleShopLeave}
+            {/* Simple Shop Link */}
+            <Link 
+              to="/collections" 
+              className={`flex items-center whitespace-nowrap transition-all duration-300 h-full ${
+                isGlam 
+                  ? `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#7a1b26]' : 'text-[#2a2a2a]'} icon-hover-glam` 
+                  : `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
+              }`}
             >
-              <Link 
-                to="/collections" 
-                className={`flex items-center whitespace-nowrap transition-all duration-300 h-full ${
-                  isGlam 
-                    ? `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#7a1b26]' : 'text-[#2a2a2a]'} icon-hover-glam` 
-                    : `${location.pathname.includes('/collections') || location.pathname.includes('/product') ? 'text-[#ff9aa8]' : 'text-gray-800'} icon-hover-skin`
-                } ${isShopMenuOpen ? (isGlam ? 'text-[#7a1b26]' : 'text-[#ff9aa8]') : ''}`}
-              >
-                Shop
-                {!isGlam && <ChevronDownIcon size={14} className={`ml-1 transition-transform duration-300 ${isShopMenuOpen ? 'rotate-180' : ''}`} />}
-              </Link>
-            </div>
+              Shop
+            </Link>
 
             {navLinks.map((item) => {
               const isActive = location.pathname === item.path;
@@ -369,12 +346,7 @@ const Header: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <MegaMenu 
-        isOpen={isShopMenuOpen} 
-        onClose={() => setIsShopMenuOpen(false)} 
-        onMouseEnter={handleShopEnter}
-        onMouseLeave={handleShopLeave}
-      />
+
     </header>
     <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>

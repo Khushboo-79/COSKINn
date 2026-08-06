@@ -5,7 +5,7 @@ import { productApi } from '../../core/api/product';
 import { resolveImageUrl } from '../../core/api/client';
 import { DataTable } from '../../components/ui/DataTable';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { Edit2, Package, Tag, Filter, Search, Trash2 } from 'lucide-react';
+import { Edit2, Package, Tag, Filter, Search, Trash2, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const ProductListScreen = () => {
@@ -32,6 +32,15 @@ export const ProductListScreen = () => {
       toast.error(error?.response?.data?.message || 'Failed to delete product');
       setProductToDelete(null);
     }
+  });
+
+  const bestsellerMutation = useMutation({
+    mutationFn: ({ id, isBestseller }: { id: string, isBestseller: boolean }) => productApi.setBestseller(id, isBestseller),
+    onSuccess: (_, variables) => {
+      toast.success(`Product ${variables.isBestseller ? 'added to' : 'removed from'} bestsellers`);
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+    onError: () => toast.error('Failed to update bestseller status')
   });
 
   const handleDelete = (id: string, name: string) => {
@@ -74,7 +83,12 @@ export const ProductListScreen = () => {
             )}
           </div>
           <div>
-            <p className="font-medium text-slate-900">{product.name}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-medium text-slate-900">{product.name}</p>
+              {product.isBestseller && (
+                <Star className="h-3 w-3 text-amber-500 fill-amber-500" title="Bestseller" />
+              )}
+            </div>
             <p className="text-xs text-slate-500 font-mono mt-0.5">{product.sku || 'No SKU'}</p>
           </div>
         </div>
@@ -118,6 +132,14 @@ export const ProductListScreen = () => {
       header: '',
       render: (product: any) => (
         <div className="flex items-center gap-2">
+          <button 
+            onClick={() => bestsellerMutation.mutate({ id: product.id, isBestseller: !product.isBestseller })}
+            className={`p-1.5 rounded-lg transition-colors inline-flex ${product.isBestseller ? 'text-amber-500 bg-amber-50 hover:bg-amber-100' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50'}`}
+            title={product.isBestseller ? "Remove from Bestsellers" : "Mark as Bestseller"}
+            disabled={bestsellerMutation.isPending}
+          >
+            <Star className={`h-4 w-4 ${product.isBestseller ? 'fill-current' : ''}`} />
+          </button>
           <Link 
             to={`/product/edit/${product.id}`}
             className="p-1.5 text-slate-400 hover:text-primary-600 rounded-lg hover:bg-primary-50 transition-colors inline-flex"

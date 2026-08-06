@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -6,7 +6,6 @@ import { useCurrency } from '../../context/CurrencyContext';
 import { ArrowRight, Star, Heart, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { getAllProducts } from '../../data/products';
 
 const Bestsellers: React.FC = () => {
   const { mode } = useTheme();
@@ -15,7 +14,75 @@ const Bestsellers: React.FC = () => {
   const { formatPrice } = useCurrency();
   const isGlam = mode === 'glam';
 
-  const products = getAllProducts(isGlam).slice(0, 4);
+  const defaultProducts = [
+    {
+      id: 1,
+      name: isGlam ? 'Midnight Elixir Serum' : 'Peachy Glow Vitamin C Serum',
+      category: 'Serums',
+      price: 3499,
+      rating: 4.8,
+      reviews: 1284,
+      image: isGlam 
+        ? 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80'
+        : 'https://images.pexels.com/photos/8101534/pexels-photo-8101534.jpeg?auto=compress&cs=tinysrgb&w=800'
+    },
+    {
+      id: 2,
+      name: isGlam ? 'Velvet Finish Foundation' : 'Watermelon Burst Hydrator',
+      category: isGlam ? 'Makeup' : 'Moisturizers',
+      price: 2999,
+      rating: 4.9,
+      reviews: 856,
+      image: isGlam 
+        ? 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&q=80'
+        : 'https://images.pexels.com/photos/27393236/pexels-photo-27393236.jpeg?auto=compress&cs=tinysrgb&w=800'
+    },
+    {
+      id: 3,
+      name: isGlam ? 'Scarlet Kiss Lipstick' : 'Berry Bounce Sleep Mask',
+      category: isGlam ? 'Lips' : 'Masks',
+      price: 1999,
+      rating: 4.7,
+      reviews: 2103,
+      image: isGlam 
+        ? 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80'
+        : 'https://images.pexels.com/photos/9306017/pexels-photo-9306017.jpeg?auto=compress&cs=tinysrgb&w=800'
+    },
+    {
+      id: 4,
+      name: isGlam ? 'Golden Hour Highlighter' : 'Avocado Melt Eye Cream',
+      category: isGlam ? 'Makeup' : 'Eye Care',
+      price: 2499,
+      rating: 4.6,
+      reviews: 542,
+      image: isGlam 
+        ? 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80'
+        : 'https://images.unsplash.com/photo-1615397323133-c90a2a16d557?auto=format&fit=crop&q=80'
+    }
+  ];
+
+  const [products, setProducts] = useState(defaultProducts);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/api/home')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.bestSellers && data.bestSellers.length > 0) {
+          const transformed = data.bestSellers.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            price: p.mrp,
+            category: p.category?.name || "Bestseller",
+            image: p.images?.[0]?.url || defaultProducts[0].image,
+            rating: 4.8,
+            reviews: 120,
+            isNew: false
+          }));
+          setProducts(transformed.slice(0, 4));
+        }
+      })
+      .catch(console.error);
+  }, [isGlam]);
 
   return (
     <section id="bestsellers" className={`py-16 relative scroll-mt-20 ${isGlam ? 'bg-[#f4ebe1]' : 'bg-[#ffe4eb]'}`}>

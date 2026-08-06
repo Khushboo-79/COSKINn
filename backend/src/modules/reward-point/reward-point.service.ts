@@ -30,8 +30,8 @@ export class RewardPointService {
   }
 
   async earnPoints(userId: string, amountSpent: number, orderId: string) {
-    // 1 point per ₹150 spent
-    const pointsToEarn = Math.floor(amountSpent / 150);
+    // 1 point per ₹100 spent
+    const pointsToEarn = Math.floor(amountSpent / 100);
     if (pointsToEarn <= 0) return;
 
     await this.prisma.rewardPointsLedger.create({
