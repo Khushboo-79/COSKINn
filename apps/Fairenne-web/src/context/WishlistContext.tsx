@@ -29,7 +29,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const fetchWishlist = async () => {
     if (!isAuthenticated || !token) return;
     try {
-      const res = await fetch('http://localhost:3000/api/wishlist', {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/wishlist`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Failed to fetch wishlist');
@@ -62,7 +62,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
     try {
-      const res = await fetch(`http://localhost:3000/api/wishlist/${productId}`, {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/wishlist/${productId}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -78,7 +78,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const removeFromWishlist = async (id: string) => {
     if (!token) return;
     try {
-      await fetch(`http://localhost:3000/api/wishlist/${id}`, {
+      await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/wishlist/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

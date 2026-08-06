@@ -48,7 +48,7 @@ const PDP: React.FC = () => {
     if (id) {
       setIsLoading(true);
       // Fetch product details
-      fetch(`http://localhost:3000/api/products/${id}`)
+      fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/products/${id}`)
         .then(res => res.json())
         .then(p => {
           if (p) {
@@ -89,7 +89,7 @@ const PDP: React.FC = () => {
         .finally(() => setIsLoading(false));
 
       // Fetch cross-sells
-      fetch(`http://localhost:3000/api/products?segment=${isGlam ? 'MAKEUP' : 'SKINCARE'}&limit=5`)
+      fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/products?segment=${isGlam ? 'MAKEUP' : 'SKINCARE'}&limit=5`)
         .then(res => res.json())
         .then(data => {
           if (data && data.data) {

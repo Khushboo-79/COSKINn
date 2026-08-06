@@ -48,7 +48,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const fetchCart = async () => {
     if (!isAuthenticated || !token) return;
     try {
-      const res = await fetch('http://localhost:3000/api/cart', {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/cart`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Failed to fetch cart');
@@ -85,7 +85,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     
     try {
-      const res = await fetch('http://localhost:3000/api/cart/items', {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/cart/items`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -107,7 +107,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const removeFromCart = async (id: string) => {
     if (!token) return;
     try {
-      await fetch(`http://localhost:3000/api/cart/items/${id}`, {
+      await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/cart/items/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -124,7 +124,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return;
     }
     try {
-      await fetch(`http://localhost:3000/api/cart/items/${id}`, {
+      await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/cart/items/${id}`, {
         method: 'PUT',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -141,7 +141,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const clearCart = async () => {
     if (!token) return;
     try {
-      await fetch(`http://localhost:3000/api/cart`, {
+      await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/cart`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

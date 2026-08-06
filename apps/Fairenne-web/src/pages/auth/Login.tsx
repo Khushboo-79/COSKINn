@@ -37,7 +37,7 @@ const Login: React.FC = () => {
         setIsLoading(true);
         try {
           const endpoint = authMode === 'signup' ? '/api/auth/register' : '/api/auth/customer-login';
-          const res = await fetch(`http://localhost:3000${endpoint}`, {
+          const res = await fetch(`\${(import.meta.env.VITE_API_URL || 'http://localhost:3000/api').replace('/api', '')}\${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: identifier, password })
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
       } else {
         setIsLoading(true);
         try {
-          const res = await fetch(`http://localhost:3000/api/auth/send-otp`, {
+          const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/send-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone: identifier })

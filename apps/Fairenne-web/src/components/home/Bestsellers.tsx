@@ -64,7 +64,7 @@ const Bestsellers: React.FC = () => {
   const [products, setProducts] = useState(defaultProducts);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/home')
+    fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/home`)
       .then(res => res.json())
       .then(data => {
         if (data && data.bestSellers && data.bestSellers.length > 0) {
