@@ -242,7 +242,7 @@ export class OrderService {
     return this.prisma.order.findMany({
       where: { userId },
       include: {
-        items: { include: { variant: { include: { product: true } } } },
+        items: { include: { variant: { include: { product: { include: { images: true } } } } } },
         address: true,
         statusHistory: true,
       },
