@@ -22,12 +22,12 @@ export class LocationService {
         isLocalhost: true,
         country: 'IN', // Mocking India for local testing
         city: 'Mumbai',
-        message: 'Localhost detected, returning mock data.'
+        message: 'Localhost detected, returning mock data.',
       };
     }
 
     const geo = geoip.lookup(ip);
-    
+
     if (!geo) {
       return { ip, error: 'Location not found for this IP' };
     }
@@ -47,14 +47,14 @@ export class LocationService {
     try {
       // Nominatim requires a user-agent header
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
-      
+
       const { data } = await firstValueFrom(
         this.httpService.get<any>(url, {
           headers: {
             'User-Agent': 'Fairenne-App/1.0',
             'Accept-Language': 'en-US,en;q=0.9',
-          }
-        })
+          },
+        }),
       );
 
       if (!data || data.error) {
@@ -67,7 +67,7 @@ export class LocationService {
       let serviceability: any = null;
       if (pincode) {
         serviceability = await this.prisma.serviceablePincode.findUnique({
-          where: { pincode }
+          where: { pincode },
         });
       }
 

@@ -7,6 +7,6 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [RewardPointController],
   providers: [RewardPointService],
-  exports: [RewardPointService]
+  exports: [RewardPointService],
 })
 export class RewardPointModule {}

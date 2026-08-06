@@ -10,28 +10,28 @@ export declare class WishlistController {
                     createdAt: Date;
                     productId: string;
                     url: string;
+                    sortOrder: number;
                     altText: string | null;
                     isPrimary: boolean;
-                    sortOrder: number;
                 }[];
             } & {
+                hsnCode: string | null;
                 id: string;
                 isDeleted: boolean;
                 deletedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
+                description: string | null;
                 categoryId: string;
                 subcategoryId: string | null;
                 slug: string;
-                description: string | null;
                 howToUse: string | null;
                 warnings: string | null;
                 claims: string | null;
                 mrp: number;
                 discountPrice: number | null;
                 gstRate: number;
-                hsnCode: string | null;
                 manufacturerName: string | null;
                 manufacturerAddress: string | null;
                 countryOfOrigin: string | null;
@@ -51,8 +51,8 @@ export declare class WishlistController {
         } & {
             id: string;
             createdAt: Date;
-            productId: string;
             wishlistId: string;
+            productId: string;
         })[];
     } & {
         id: string;
@@ -68,28 +68,28 @@ export declare class WishlistController {
                     createdAt: Date;
                     productId: string;
                     url: string;
+                    sortOrder: number;
                     altText: string | null;
                     isPrimary: boolean;
-                    sortOrder: number;
                 }[];
             } & {
+                hsnCode: string | null;
                 id: string;
                 isDeleted: boolean;
                 deletedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
+                description: string | null;
                 categoryId: string;
                 subcategoryId: string | null;
                 slug: string;
-                description: string | null;
                 howToUse: string | null;
                 warnings: string | null;
                 claims: string | null;
                 mrp: number;
                 discountPrice: number | null;
                 gstRate: number;
-                hsnCode: string | null;
                 manufacturerName: string | null;
                 manufacturerAddress: string | null;
                 countryOfOrigin: string | null;
@@ -109,8 +109,8 @@ export declare class WishlistController {
         } & {
             id: string;
             createdAt: Date;
-            productId: string;
             wishlistId: string;
+            productId: string;
         })[];
     } & {
         id: string;
@@ -126,28 +126,28 @@ export declare class WishlistController {
                     createdAt: Date;
                     productId: string;
                     url: string;
+                    sortOrder: number;
                     altText: string | null;
                     isPrimary: boolean;
-                    sortOrder: number;
                 }[];
             } & {
+                hsnCode: string | null;
                 id: string;
                 isDeleted: boolean;
                 deletedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
+                description: string | null;
                 categoryId: string;
                 subcategoryId: string | null;
                 slug: string;
-                description: string | null;
                 howToUse: string | null;
                 warnings: string | null;
                 claims: string | null;
                 mrp: number;
                 discountPrice: number | null;
                 gstRate: number;
-                hsnCode: string | null;
                 manufacturerName: string | null;
                 manufacturerAddress: string | null;
                 countryOfOrigin: string | null;
@@ -167,8 +167,8 @@ export declare class WishlistController {
         } & {
             id: string;
             createdAt: Date;
-            productId: string;
             wishlistId: string;
+            productId: string;
         })[];
     } & {
         id: string;

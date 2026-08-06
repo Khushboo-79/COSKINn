@@ -10,9 +10,9 @@ export declare class CategoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
             categoryId: string;
             slug: string;
-            description: string | null;
         }[];
     } & {
         id: string;
@@ -21,10 +21,10 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        slug: string;
         description: string | null;
-        productLine: import("@prisma/client").$Enums.ProductLine;
         platform: import("@prisma/client").$Enums.PlatformType;
+        slug: string;
+        productLine: import("@prisma/client").$Enums.ProductLine;
         imageUrl: string | null;
     })[]>;
     findCategory(id: string): Promise<{
@@ -34,9 +34,9 @@ export declare class CategoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
             categoryId: string;
             slug: string;
-            description: string | null;
         }[];
     } & {
         id: string;
@@ -45,10 +45,10 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        slug: string;
         description: string | null;
-        productLine: import("@prisma/client").$Enums.ProductLine;
         platform: import("@prisma/client").$Enums.PlatformType;
+        slug: string;
+        productLine: import("@prisma/client").$Enums.ProductLine;
         imageUrl: string | null;
     }>;
     createCategory(dto: CreateCategoryDto): Promise<{
@@ -58,10 +58,10 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        slug: string;
         description: string | null;
-        productLine: import("@prisma/client").$Enums.ProductLine;
         platform: import("@prisma/client").$Enums.PlatformType;
+        slug: string;
+        productLine: import("@prisma/client").$Enums.ProductLine;
         imageUrl: string | null;
     }>;
     updateCategory(id: string, dto: UpdateCategoryDto): Promise<{
@@ -71,10 +71,10 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        slug: string;
         description: string | null;
-        productLine: import("@prisma/client").$Enums.ProductLine;
         platform: import("@prisma/client").$Enums.PlatformType;
+        slug: string;
+        productLine: import("@prisma/client").$Enums.ProductLine;
         imageUrl: string | null;
     }>;
     removeCategory(id: string): Promise<{
@@ -84,10 +84,10 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        slug: string;
         description: string | null;
-        productLine: import("@prisma/client").$Enums.ProductLine;
         platform: import("@prisma/client").$Enums.PlatformType;
+        slug: string;
+        productLine: import("@prisma/client").$Enums.ProductLine;
         imageUrl: string | null;
     }>;
     createSubcategory(dto: CreateSubcategoryDto): Promise<{
@@ -96,9 +96,9 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string | null;
         categoryId: string;
         slug: string;
-        description: string | null;
     } | {
         error: any;
     }>;
@@ -108,9 +108,9 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string | null;
         categoryId: string;
         slug: string;
-        description: string | null;
     }>;
     removeSubcategory(id: string): Promise<{
         id: string;
@@ -118,8 +118,8 @@ export declare class CategoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string | null;
         categoryId: string;
         slug: string;
-        description: string | null;
     }>;
 }

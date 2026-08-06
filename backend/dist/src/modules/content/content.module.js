@@ -19,7 +19,7 @@ exports.ContentModule = ContentModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [content_controller_1.ContentController],
         providers: [content_service_1.ContentService],
-        exports: [content_service_1.ContentService]
+        exports: [content_service_1.ContentService],
     })
 ], ContentModule);
 //# sourceMappingURL=content.module.js.map

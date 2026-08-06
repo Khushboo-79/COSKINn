@@ -571,6 +571,16 @@ export declare class OrderService {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
     getCancellations(): Promise<{
         id: string;
@@ -593,5 +603,15 @@ export declare class OrderService {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
 }

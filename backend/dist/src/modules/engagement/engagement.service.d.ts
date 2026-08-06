@@ -6,12 +6,12 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     }[]>;
     addReview(userId: string, productId: string, data: {
         rating: number;
@@ -21,12 +21,12 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     }>;
     getProductQuestions(productId: string): Promise<({
         answers: {
@@ -42,8 +42,8 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         isApproved: boolean;
         content: string;
     })[]>;
@@ -51,8 +51,8 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         isApproved: boolean;
         content: string;
     }>;

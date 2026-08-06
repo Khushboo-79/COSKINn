@@ -15,42 +15,42 @@ export declare class ReviewController {
                 createdAt: Date;
                 productId: string;
                 url: string;
+                sortOrder: number;
                 altText: string | null;
                 isPrimary: boolean;
-                sortOrder: number;
             }[];
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     })[]>;
     approveReview(id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     }>;
     deleteReview(id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     }>;
 }

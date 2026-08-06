@@ -1,4 +1,15 @@
-import { Controller, Post, Body, UseGuards, Request, BadRequestException, Get, Put, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  BadRequestException,
+  Get,
+  Put,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { InvoiceService } from '../invoice/invoice.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -9,7 +20,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 export class OrderController {
   constructor(
     private readonly orderService: OrderService,
-    private readonly invoiceService: InvoiceService
+    private readonly invoiceService: InvoiceService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -20,7 +31,7 @@ export class OrderController {
     @Body('paymentMode') paymentMode: string = 'ONLINE',
     @Body('pointsToRedeem') pointsToRedeem: number = 0,
     @Body('couponCode') couponCode?: string,
-    @Body('useWalletBalance') useWalletBalance: boolean = false
+    @Body('useWalletBalance') useWalletBalance: boolean = false,
   ) {
     if (!addressId) {
       throw new BadRequestException('addressId is required to create an order');
@@ -31,12 +42,12 @@ export class OrderController {
     }
 
     return this.orderService.createOrderFromCart(
-      req.user.id, 
-      addressId, 
-      paymentMode, 
+      req.user.id,
+      addressId,
+      paymentMode,
       pointsToRedeem,
       couponCode,
-      useWalletBalance
+      useWalletBalance,
     );
   }
 
@@ -64,7 +75,7 @@ export class OrderController {
   async cancelOrder(
     @Request() req,
     @Param('id') id: string,
-    @Body('reason') reason: string
+    @Body('reason') reason: string,
   ) {
     if (!reason) {
       throw new BadRequestException('Cancellation reason is required');
@@ -94,9 +105,15 @@ export class OrderController {
     @Query('paymentMode') paymentMode?: string,
     @Query('email') email?: string,
     @Query('mobile') mobile?: string,
-    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE'
+    @Query('platform') platform?: 'COSMETICS' | 'SKINCARE',
   ) {
-    return this.orderService.getAdminOrders({ status, paymentMode, email, mobile, platform });
+    return this.orderService.getAdminOrders({
+      status,
+      paymentMode,
+      email,
+      mobile,
+      platform,
+    });
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -121,7 +138,7 @@ export class OrderController {
     @Request() req,
     @Param('id') id: string,
     @Body('status') status: string,
-    @Body('notes') notes?: string
+    @Body('notes') notes?: string,
   ) {
     return this.orderService.updateOrderStatus(id, status, req.user.id, notes);
   }
@@ -132,7 +149,7 @@ export class OrderController {
   async adminCancelOrder(
     @Request() req,
     @Param('id') id: string,
-    @Body('reason') reason: string
+    @Body('reason') reason: string,
   ) {
     if (!reason) {
       throw new BadRequestException('Cancellation reason is required');
@@ -164,7 +181,7 @@ export class OrderController {
       returnWindowDays: body.returnWindowDays,
       autoCancelHours: body.autoCancelHours,
       codEnabled: body.codEnabled,
-      maxCodAmount: body.maxCodAmount
+      maxCodAmount: body.maxCodAmount,
     });
   }
 }

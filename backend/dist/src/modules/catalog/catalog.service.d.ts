@@ -11,10 +11,10 @@ export declare class CatalogService {
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                slug: string;
                 description: string | null;
-                productLine: import("@prisma/client").$Enums.ProductLine;
                 platform: import("@prisma/client").$Enums.PlatformType;
+                slug: string;
+                productLine: import("@prisma/client").$Enums.ProductLine;
                 imageUrl: string | null;
             };
             images: {
@@ -22,28 +22,28 @@ export declare class CatalogService {
                 createdAt: Date;
                 productId: string;
                 url: string;
+                sortOrder: number;
                 altText: string | null;
                 isPrimary: boolean;
-                sortOrder: number;
             }[];
         } & {
+            hsnCode: string | null;
             id: string;
             isDeleted: boolean;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
             categoryId: string;
             subcategoryId: string | null;
             slug: string;
-            description: string | null;
             howToUse: string | null;
             warnings: string | null;
             claims: string | null;
             mrp: number;
             discountPrice: number | null;
             gstRate: number;
-            hsnCode: string | null;
             manufacturerName: string | null;
             manufacturerAddress: string | null;
             countryOfOrigin: string | null;
@@ -68,10 +68,10 @@ export declare class CatalogService {
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                slug: string;
                 description: string | null;
-                productLine: import("@prisma/client").$Enums.ProductLine;
                 platform: import("@prisma/client").$Enums.PlatformType;
+                slug: string;
+                productLine: import("@prisma/client").$Enums.ProductLine;
                 imageUrl: string | null;
             };
             images: {
@@ -79,28 +79,28 @@ export declare class CatalogService {
                 createdAt: Date;
                 productId: string;
                 url: string;
+                sortOrder: number;
                 altText: string | null;
                 isPrimary: boolean;
-                sortOrder: number;
             }[];
         } & {
+            hsnCode: string | null;
             id: string;
             isDeleted: boolean;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
             categoryId: string;
             subcategoryId: string | null;
             slug: string;
-            description: string | null;
             howToUse: string | null;
             warnings: string | null;
             claims: string | null;
             mrp: number;
             discountPrice: number | null;
             gstRate: number;
-            hsnCode: string | null;
             manufacturerName: string | null;
             manufacturerAddress: string | null;
             countryOfOrigin: string | null;
@@ -124,10 +124,10 @@ export declare class CatalogService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            slug: string;
             description: string | null;
-            productLine: import("@prisma/client").$Enums.ProductLine;
             platform: import("@prisma/client").$Enums.PlatformType;
+            slug: string;
+            productLine: import("@prisma/client").$Enums.ProductLine;
             imageUrl: string | null;
         }[];
     }>;
@@ -139,10 +139,10 @@ export declare class CatalogService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            slug: string;
             description: string | null;
-            productLine: import("@prisma/client").$Enums.ProductLine;
             platform: import("@prisma/client").$Enums.PlatformType;
+            slug: string;
+            productLine: import("@prisma/client").$Enums.ProductLine;
             imageUrl: string | null;
         };
         images: {
@@ -150,28 +150,28 @@ export declare class CatalogService {
             createdAt: Date;
             productId: string;
             url: string;
+            sortOrder: number;
             altText: string | null;
             isPrimary: boolean;
-            sortOrder: number;
         }[];
     } & {
+        hsnCode: string | null;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string | null;
         categoryId: string;
         subcategoryId: string | null;
         slug: string;
-        description: string | null;
         howToUse: string | null;
         warnings: string | null;
         claims: string | null;
         mrp: number;
         discountPrice: number | null;
         gstRate: number;
-        hsnCode: string | null;
         manufacturerName: string | null;
         manufacturerAddress: string | null;
         countryOfOrigin: string | null;
@@ -197,10 +197,10 @@ export declare class CatalogService {
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                slug: string;
                 description: string | null;
-                productLine: import("@prisma/client").$Enums.ProductLine;
                 platform: import("@prisma/client").$Enums.PlatformType;
+                slug: string;
+                productLine: import("@prisma/client").$Enums.ProductLine;
                 imageUrl: string | null;
             };
             images: {
@@ -208,28 +208,28 @@ export declare class CatalogService {
                 createdAt: Date;
                 productId: string;
                 url: string;
+                sortOrder: number;
                 altText: string | null;
                 isPrimary: boolean;
-                sortOrder: number;
             }[];
         } & {
+            hsnCode: string | null;
             id: string;
             isDeleted: boolean;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
             categoryId: string;
             subcategoryId: string | null;
             slug: string;
-            description: string | null;
             howToUse: string | null;
             warnings: string | null;
             claims: string | null;
             mrp: number;
             discountPrice: number | null;
             gstRate: number;
-            hsnCode: string | null;
             manufacturerName: string | null;
             manufacturerAddress: string | null;
             countryOfOrigin: string | null;
@@ -261,10 +261,10 @@ export declare class CatalogService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            slug: string;
             description: string | null;
-            productLine: import("@prisma/client").$Enums.ProductLine;
             platform: import("@prisma/client").$Enums.PlatformType;
+            slug: string;
+            productLine: import("@prisma/client").$Enums.ProductLine;
             imageUrl: string | null;
         };
         subcategory: {
@@ -273,37 +273,37 @@ export declare class CatalogService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
             categoryId: string;
             slug: string;
-            description: string | null;
         } | null;
         variants: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            mrp: number;
             productId: string;
+            mrp: number;
             sku: string;
-            netQuantity: string | null;
             price: number;
+            netQuantity: string | null;
         }[];
         images: {
             id: string;
             createdAt: Date;
             productId: string;
             url: string;
+            sortOrder: number;
             altText: string | null;
             isPrimary: boolean;
-            sortOrder: number;
         }[];
         videos: {
             id: string;
             createdAt: Date;
             productId: string;
             url: string;
-            sortOrder: number;
             title: string | null;
+            sortOrder: number;
         }[];
         ingredients: {
             id: string;
@@ -330,23 +330,23 @@ export declare class CatalogService {
             productId: string;
         }[];
     } & {
+        hsnCode: string | null;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string | null;
         categoryId: string;
         subcategoryId: string | null;
         slug: string;
-        description: string | null;
         howToUse: string | null;
         warnings: string | null;
         claims: string | null;
         mrp: number;
         discountPrice: number | null;
         gstRate: number;
-        hsnCode: string | null;
         manufacturerName: string | null;
         manufacturerAddress: string | null;
         countryOfOrigin: string | null;
@@ -372,12 +372,12 @@ export declare class CatalogService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     })[]>;
     submitProductReview(productId: string, userId: string, dto: {
         rating: number;
@@ -387,12 +387,12 @@ export declare class CatalogService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     }>;
     getCategoryBySlug(slug: string): Promise<{
         category: {
@@ -402,9 +402,9 @@ export declare class CatalogService {
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
+                description: string | null;
                 categoryId: string;
                 slug: string;
-                description: string | null;
             }[];
         } & {
             id: string;
@@ -413,10 +413,10 @@ export declare class CatalogService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            slug: string;
             description: string | null;
-            productLine: import("@prisma/client").$Enums.ProductLine;
             platform: import("@prisma/client").$Enums.PlatformType;
+            slug: string;
+            productLine: import("@prisma/client").$Enums.ProductLine;
             imageUrl: string | null;
         };
         products: ({
@@ -425,28 +425,28 @@ export declare class CatalogService {
                 createdAt: Date;
                 productId: string;
                 url: string;
+                sortOrder: number;
                 altText: string | null;
                 isPrimary: boolean;
-                sortOrder: number;
             }[];
         } & {
+            hsnCode: string | null;
             id: string;
             isDeleted: boolean;
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
             categoryId: string;
             subcategoryId: string | null;
             slug: string;
-            description: string | null;
             howToUse: string | null;
             warnings: string | null;
             claims: string | null;
             mrp: number;
             discountPrice: number | null;
             gstRate: number;
-            hsnCode: string | null;
             manufacturerName: string | null;
             manufacturerAddress: string | null;
             countryOfOrigin: string | null;
@@ -475,10 +475,10 @@ export declare class CatalogService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            slug: string;
             description: string | null;
-            productLine: import("@prisma/client").$Enums.ProductLine;
             platform: import("@prisma/client").$Enums.PlatformType;
+            slug: string;
+            productLine: import("@prisma/client").$Enums.ProductLine;
             imageUrl: string | null;
         };
         images: {
@@ -486,28 +486,28 @@ export declare class CatalogService {
             createdAt: Date;
             productId: string;
             url: string;
+            sortOrder: number;
             altText: string | null;
             isPrimary: boolean;
-            sortOrder: number;
         }[];
     } & {
+        hsnCode: string | null;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string | null;
         categoryId: string;
         subcategoryId: string | null;
         slug: string;
-        description: string | null;
         howToUse: string | null;
         warnings: string | null;
         claims: string | null;
         mrp: number;
         discountPrice: number | null;
         gstRate: number;
-        hsnCode: string | null;
         manufacturerName: string | null;
         manufacturerAddress: string | null;
         countryOfOrigin: string | null;
@@ -532,10 +532,10 @@ export declare class CatalogService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            slug: string;
             description: string | null;
-            productLine: import("@prisma/client").$Enums.ProductLine;
             platform: import("@prisma/client").$Enums.PlatformType;
+            slug: string;
+            productLine: import("@prisma/client").$Enums.ProductLine;
             imageUrl: string | null;
         };
         images: {
@@ -543,28 +543,28 @@ export declare class CatalogService {
             createdAt: Date;
             productId: string;
             url: string;
+            sortOrder: number;
             altText: string | null;
             isPrimary: boolean;
-            sortOrder: number;
         }[];
     } & {
+        hsnCode: string | null;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string | null;
         categoryId: string;
         subcategoryId: string | null;
         slug: string;
-        description: string | null;
         howToUse: string | null;
         warnings: string | null;
         claims: string | null;
         mrp: number;
         discountPrice: number | null;
         gstRate: number;
-        hsnCode: string | null;
         manufacturerName: string | null;
         manufacturerAddress: string | null;
         countryOfOrigin: string | null;

@@ -10,17 +10,9 @@ export declare class WarehouseController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
-        items: {
-            id: string;
-            createdAt: Date;
-            sku: string;
-            purchaseOrderId: string;
-            requestedQty: number;
-            unitPrice: number;
-        }[];
         supplier: {
             id: string;
             email: string | null;
@@ -34,6 +26,14 @@ export declare class WarehouseController {
             contactPerson: string | null;
             paymentTerms: string | null;
         } | null;
+        items: {
+            id: string;
+            createdAt: Date;
+            sku: string;
+            purchaseOrderId: string;
+            requestedQty: number;
+            unitPrice: number;
+        }[];
     } & {
         id: string;
         createdAt: Date;
@@ -43,14 +43,6 @@ export declare class WarehouseController {
         supplierId: string | null;
     })[]>;
     createPurchaseOrder(dto: CreatePurchaseOrderDto): Promise<{
-        items: {
-            id: string;
-            createdAt: Date;
-            sku: string;
-            purchaseOrderId: string;
-            requestedQty: number;
-            unitPrice: number;
-        }[];
         supplier: {
             id: string;
             email: string | null;
@@ -64,6 +56,14 @@ export declare class WarehouseController {
             contactPerson: string | null;
             paymentTerms: string | null;
         } | null;
+        items: {
+            id: string;
+            createdAt: Date;
+            sku: string;
+            purchaseOrderId: string;
+            requestedQty: number;
+            unitPrice: number;
+        }[];
     } & {
         id: string;
         createdAt: Date;
@@ -79,15 +79,15 @@ export declare class WarehouseController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
         stocks: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            quantity: number;
             sku: string;
+            quantity: number;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
@@ -110,8 +110,8 @@ export declare class WarehouseController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
     } & {
         id: string;

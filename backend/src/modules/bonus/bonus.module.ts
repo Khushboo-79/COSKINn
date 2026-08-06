@@ -8,6 +8,6 @@ import { WalletModule } from '../wallet/wallet.module';
   imports: [PrismaModule, WalletModule],
   controllers: [BonusController],
   providers: [BonusService],
-  exports: [BonusService]
+  exports: [BonusService],
 })
 export class BonusModule {}

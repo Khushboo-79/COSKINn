@@ -22,7 +22,7 @@ exports.CartModule = CartModule = __decorate([
         imports: [prisma_module_1.PrismaModule, offer_module_1.OfferModule, wallet_module_1.WalletModule, reward_point_module_1.RewardPointModule],
         controllers: [cart_controller_1.CartController],
         providers: [cart_service_1.CartService],
-        exports: [cart_service_1.CartService]
+        exports: [cart_service_1.CartService],
     })
 ], CartModule);
 //# sourceMappingURL=cart.module.js.map

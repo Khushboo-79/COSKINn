@@ -20,7 +20,7 @@ exports.ReferralModule = ReferralModule = __decorate([
         imports: [prisma_module_1.PrismaModule, wallet_module_1.WalletModule],
         controllers: [referral_controller_1.ReferralController],
         providers: [referral_service_1.ReferralService],
-        exports: [referral_service_1.ReferralService]
+        exports: [referral_service_1.ReferralService],
     })
 ], ReferralModule);
 //# sourceMappingURL=referral.module.js.map

@@ -30,7 +30,7 @@ let CustomerProfileController = class CustomerProfileController {
     async saveSkinQuiz(req, dto) {
         return {
             message: 'Skin quiz preferences saved successfully!',
-            recommendationsUrl: '/api/customer/recommendations'
+            recommendationsUrl: '/api/customer/recommendations',
         };
     }
     async updateProfile(req, dto) {
@@ -43,17 +43,20 @@ let CustomerProfileController = class CustomerProfileController {
         return this.profileService.getAddresses(req.user.id);
     }
     async checkServiceability(pincode) {
-        if (!pincode || pincode.length !== 6 || pincode.startsWith('9') || pincode.startsWith('0')) {
+        if (!pincode ||
+            pincode.length !== 6 ||
+            pincode.startsWith('9') ||
+            pincode.startsWith('0')) {
             return {
                 serviceable: false,
                 codAvailable: false,
-                message: 'Delivery not available to this pincode'
+                message: 'Delivery not available to this pincode',
             };
         }
         return {
             serviceable: true,
             codAvailable: true,
-            message: 'Delivery is available'
+            message: 'Delivery is available',
         };
     }
     async addAddress(req, dto) {

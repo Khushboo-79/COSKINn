@@ -6,12 +6,12 @@ export declare class EngagementController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     }[]>;
     addReview(id: string, body: {
         rating: number;
@@ -21,12 +21,12 @@ export declare class EngagementController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         title: string | null;
         isApproved: boolean;
-        content: string | null;
         rating: number;
+        content: string | null;
     }>;
     getQuestions(id: string): Promise<({
         answers: {
@@ -42,8 +42,8 @@ export declare class EngagementController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         isApproved: boolean;
         content: string;
     })[]>;
@@ -51,8 +51,8 @@ export declare class EngagementController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         isApproved: boolean;
         content: string;
     }>;

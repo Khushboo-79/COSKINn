@@ -7,8 +7,8 @@ export declare class ComplianceController {
         email: boolean;
         createdAt: Date;
         updatedAt: Date;
-        push: boolean;
         userId: string;
+        push: boolean;
         sms: boolean;
         whatsapp: boolean;
     }>;
@@ -17,8 +17,8 @@ export declare class ComplianceController {
         email: boolean;
         createdAt: Date;
         updatedAt: Date;
-        push: boolean;
         userId: string;
+        push: boolean;
         sms: boolean;
         whatsapp: boolean;
     }>;
@@ -26,8 +26,8 @@ export declare class ComplianceController {
         requestType: 'EXPORT' | 'DELETE';
     }): Promise<{
         id: string;
-        status: string;
         userId: string;
+        status: string;
         requestType: string;
         exceptions: string | null;
         requestedAt: Date;
@@ -41,8 +41,8 @@ export declare class ComplianceController {
         };
     } & {
         id: string;
-        status: string;
         userId: string;
+        status: string;
         requestType: string;
         exceptions: string | null;
         requestedAt: Date;
@@ -52,8 +52,8 @@ export declare class ComplianceController {
         status: string;
     }): Promise<{
         id: string;
-        status: string;
         userId: string;
+        status: string;
         requestType: string;
         exceptions: string | null;
         requestedAt: Date;

@@ -23,7 +23,7 @@ export class SupplierService {
       where: { id },
       include: {
         purchaseOrders: true,
-      }
+      },
     });
 
     if (!supplier) throw new NotFoundException('Supplier not found');

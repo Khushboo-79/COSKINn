@@ -8,32 +8,32 @@ export declare class VariantController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        mrp: number;
         productId: string;
+        mrp: number;
         sku: string;
-        netQuantity: string | null;
         price: number;
+        netQuantity: string | null;
     }>;
     updateVariant(variantId: string, updateVariantDto: UpdateVariantDto): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        mrp: number;
         productId: string;
+        mrp: number;
         sku: string;
-        netQuantity: string | null;
         price: number;
+        netQuantity: string | null;
     }>;
     removeVariant(variantId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        mrp: number;
         productId: string;
+        mrp: number;
         sku: string;
-        netQuantity: string | null;
         price: number;
+        netQuantity: string | null;
     }>;
 }

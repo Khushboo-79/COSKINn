@@ -7,6 +7,8 @@ export class HomeController {
 
   @Get()
   async getDashboard(@Query('segment') segment?: string) {
-    return this.homeService.getHomeDashboard(segment ? segment.toUpperCase() : undefined);
+    return this.homeService.getHomeDashboard(
+      segment ? segment.toUpperCase() : undefined,
+    );
   }
 }

@@ -6,7 +6,15 @@ export class ComplianceService {
   constructor(private prisma: PrismaService) {}
 
   // Consents
-  async updateConsent(userId: string, data: { push?: boolean; email?: boolean; sms?: boolean; whatsapp?: boolean }) {
+  async updateConsent(
+    userId: string,
+    data: {
+      push?: boolean;
+      email?: boolean;
+      sms?: boolean;
+      whatsapp?: boolean;
+    },
+  ) {
     return this.prisma.customerConsent.upsert({
       where: { userId },
       update: data,
@@ -21,10 +29,12 @@ export class ComplianceService {
   }
 
   async getConsent(userId: string) {
-    let consent = await this.prisma.customerConsent.findUnique({ where: { userId } });
+    let consent = await this.prisma.customerConsent.findUnique({
+      where: { userId },
+    });
     if (!consent) {
       consent = await this.prisma.customerConsent.create({
-        data: { userId }
+        data: { userId },
       });
     }
     return consent;
@@ -43,7 +53,9 @@ export class ComplianceService {
 
   async getAdminDataRequests() {
     return this.prisma.dataRequest.findMany({
-      include: { user: { select: { email: true, phone: true, firstName: true } } },
+      include: {
+        user: { select: { email: true, phone: true, firstName: true } },
+      },
       orderBy: { requestedAt: 'desc' },
     });
   }

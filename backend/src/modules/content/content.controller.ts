@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ContentService } from './content.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -28,7 +38,9 @@ export class ContentController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
   @Get('admin/articles')
-  getAdminArticles(@Query('type') type?: 'BLOG' | 'TIP' | 'ROUTINE' | 'LEGAL' | 'PAGE') {
+  getAdminArticles(
+    @Query('type') type?: 'BLOG' | 'TIP' | 'ROUTINE' | 'LEGAL' | 'PAGE',
+  ) {
     return this.contentService.getArticles(type, false); // false means get all (drafts + published)
   }
 
@@ -88,4 +100,3 @@ export class ContentController {
     return this.contentService.updateGlobalSeo(data);
   }
 }
-

@@ -12,8 +12,8 @@ export declare class ComplianceService {
         email: boolean;
         createdAt: Date;
         updatedAt: Date;
-        push: boolean;
         userId: string;
+        push: boolean;
         sms: boolean;
         whatsapp: boolean;
     }>;
@@ -22,15 +22,15 @@ export declare class ComplianceService {
         email: boolean;
         createdAt: Date;
         updatedAt: Date;
-        push: boolean;
         userId: string;
+        push: boolean;
         sms: boolean;
         whatsapp: boolean;
     }>;
     createDataRequest(userId: string, requestType: 'EXPORT' | 'DELETE'): Promise<{
         id: string;
-        status: string;
         userId: string;
+        status: string;
         requestType: string;
         exceptions: string | null;
         requestedAt: Date;
@@ -44,8 +44,8 @@ export declare class ComplianceService {
         };
     } & {
         id: string;
-        status: string;
         userId: string;
+        status: string;
         requestType: string;
         exceptions: string | null;
         requestedAt: Date;
@@ -53,8 +53,8 @@ export declare class ComplianceService {
     })[]>;
     updateDataRequestStatus(id: string, status: string): Promise<{
         id: string;
-        status: string;
         userId: string;
+        status: string;
         requestType: string;
         exceptions: string | null;
         requestedAt: Date;

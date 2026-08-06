@@ -5,7 +5,12 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class AppVersionService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: { platform: string; latestVersion: string; minVersion: string; forceUpdate: boolean }) {
+  async create(data: {
+    platform: string;
+    latestVersion: string;
+    minVersion: string;
+    forceUpdate: boolean;
+  }) {
     return this.prisma.appVersion.create({
       data,
     });
@@ -21,8 +26,10 @@ export class AppVersionService {
       return { status: 'UP_TO_DATE', updateUrl: '' };
     }
 
-    const isOlder = currentVersion !== latest.latestVersion && currentVersion < latest.latestVersion;
-    
+    const isOlder =
+      currentVersion !== latest.latestVersion &&
+      currentVersion < latest.latestVersion;
+
     if (isOlder) {
       if (latest.forceUpdate || currentVersion < latest.minVersion) {
         return { status: 'FORCE_UPDATE', updateUrl: 'appstore-url' };

@@ -16,8 +16,8 @@ export declare class InventoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        code: string;
         address: string | null;
+        code: string;
     })[]>;
     createWarehouse(dto: any): Promise<{
         id: string;
@@ -25,8 +25,8 @@ export declare class InventoryController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        code: string;
         address: string | null;
+        code: string;
     }>;
     getMovementLogs(sku?: string): Promise<({
         warehouse: {
@@ -35,16 +35,16 @@ export declare class InventoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
     } & {
         id: string;
         createdAt: Date;
-        quantity: number;
         sku: string;
-        warehouseId: string;
+        quantity: number;
         type: string;
+        warehouseId: string;
         reference: string | null;
     })[]>;
     getDashboardStats(): Promise<{
@@ -114,15 +114,15 @@ export declare class InventoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
         sku: string;
+        quantity: number;
         warehouseId: string;
         reservedQty: number;
         binLocationId: string | null;
@@ -148,8 +148,8 @@ export declare class InventoryController {
         items: {
             id: string;
             createdAt: Date;
-            quantity: number;
             sku: string;
+            quantity: number;
             transferId: string;
         }[];
         fromWarehouse: {
@@ -158,8 +158,8 @@ export declare class InventoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
         toWarehouse: {
             id: string;
@@ -167,8 +167,8 @@ export declare class InventoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
     } & {
         id: string;
@@ -194,18 +194,18 @@ export declare class InventoryController {
         movement: {
             id: string;
             createdAt: Date;
-            quantity: number;
             sku: string;
-            warehouseId: string;
+            quantity: number;
             type: string;
+            warehouseId: string;
             reference: string | null;
         };
         stock: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            quantity: number;
             sku: string;
+            quantity: number;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
@@ -215,8 +215,8 @@ export declare class InventoryController {
         adjustment: {
             id: string;
             createdAt: Date;
-            quantity: number;
             sku: string;
+            quantity: number;
             warehouseId: string;
             reason: string;
         };
@@ -224,8 +224,8 @@ export declare class InventoryController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            quantity: number;
             sku: string;
+            quantity: number;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
@@ -247,15 +247,15 @@ export declare class InventoryController {
     reportDamaged(dto: import('./dto/inventory.dto').DamagedStockDto): Promise<{
         id: string;
         createdAt: Date;
-        quantity: number;
         sku: string;
+        quantity: number;
         reason: string | null;
     }>;
     reportExpired(dto: import('./dto/inventory.dto').ExpiredStockDto): Promise<{
         id: string;
         createdAt: Date;
-        quantity: number;
         sku: string;
+        quantity: number;
         batchNo: string;
     }>;
     getLowStock(): Promise<({
@@ -265,15 +265,15 @@ export declare class InventoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
         sku: string;
+        quantity: number;
         warehouseId: string;
         reservedQty: number;
         binLocationId: string | null;
@@ -293,8 +293,8 @@ export declare class InventoryController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            code: string;
             address: string | null;
+            code: string;
         };
     } & {
         id: string;
@@ -337,8 +337,8 @@ export declare class InventoryController {
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        reason: string;
         orderId: string;
+        reason: string;
         refundType: string;
     }[]>;
 }

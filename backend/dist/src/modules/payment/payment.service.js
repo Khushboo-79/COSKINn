@@ -60,12 +60,12 @@ let PaymentService = class PaymentService {
         this.notificationService = notificationService;
         this.razorpay = new razorpay_1.default({
             key_id: process.env.RAZORPAY_KEY_ID || 'mock',
-            key_secret: process.env.RAZORPAY_KEY_SECRET || 'mock'
+            key_secret: process.env.RAZORPAY_KEY_SECRET || 'mock',
         });
     }
     async createRazorpayOrder(userId, orderId) {
         const order = await this.prisma.order.findUnique({
-            where: { id: orderId, userId }
+            where: { id: orderId, userId },
         });
         if (!order)
             throw new common_1.NotFoundException('Order not found');
@@ -82,7 +82,7 @@ let PaymentService = class PaymentService {
                 const options = {
                     amount: Math.round(order.finalAmount * 100),
                     currency: 'INR',
-                    receipt: order.id
+                    receipt: order.id,
                 };
                 const rzpOrder = await this.razorpay.orders.create(options);
                 razorpayOrderId = rzpOrder.id;
@@ -97,14 +97,14 @@ let PaymentService = class PaymentService {
                 rzpId: razorpayOrderId,
                 amount: order.finalAmount,
                 receipt: order.id,
-                status: 'created'
-            }
+                status: 'created',
+            },
         });
         return {
             id: razorpayOrderId,
             amount: order.finalAmount * 100,
             currency: 'INR',
-            receipt: order.id
+            receipt: order.id,
         };
     }
     async triggerRefund(razorpayOrderId, amount) {
@@ -113,7 +113,7 @@ let PaymentService = class PaymentService {
                 success: true,
                 refundId: `mock_refund_${crypto.randomBytes(8).toString('hex')}`,
                 paymentId: `mock_payment_${crypto.randomBytes(8).toString('hex')}`,
-                amount: amount
+                amount: amount,
             };
         }
         try {
@@ -123,13 +123,13 @@ let PaymentService = class PaymentService {
                 throw new common_1.BadRequestException('No captured payment found for this order to refund');
             }
             const refund = await this.razorpay.payments.refund(payment.id, {
-                amount: Math.round(amount * 100)
+                amount: Math.round(amount * 100),
             });
             return {
                 success: true,
                 refundId: refund.id,
                 paymentId: payment.id,
-                amount: refund.amount / 100
+                amount: refund.amount / 100,
             };
         }
         catch (error) {
@@ -157,29 +157,31 @@ let PaymentService = class PaymentService {
         if (event === 'payment.captured' || event === 'mock.payment.success') {
             const razorpayOrderId = payload.payload?.payment?.entity?.order_id || payload.order_id;
             const rzpOrder = await this.prisma.razorpayOrder.findUnique({
-                where: { rzpId: razorpayOrderId }
+                where: { rzpId: razorpayOrderId },
             });
             if (!rzpOrder)
                 return { status: 'ignored', reason: 'order not found' };
             await this.prisma.$transaction(async (tx) => {
                 await tx.razorpayOrder.update({
                     where: { id: rzpOrder.id },
-                    data: { status: 'paid' }
+                    data: { status: 'paid' },
                 });
                 await tx.paymentTransaction.create({
                     data: {
                         razorpayOrderId: rzpOrder.rzpId,
                         amount: rzpOrder.amount,
-                        status: 'SUCCESS'
-                    }
+                        status: 'SUCCESS',
+                    },
                 });
                 if (rzpOrder.receipt) {
                     const updatedOrder = await tx.order.update({
                         where: { id: rzpOrder.receipt },
                         data: { status: 'PLACED' },
-                        include: { user: true }
+                        include: { user: true },
                     });
-                    this.notificationService.sendOrderConfirmation(updatedOrder.userId, updatedOrder.id, updatedOrder.user?.email || undefined, updatedOrder.user?.phone || undefined).catch(e => console.error('Failed to send order notification', e));
+                    this.notificationService
+                        .sendOrderConfirmation(updatedOrder.userId, updatedOrder.id, updatedOrder.user?.email || undefined, updatedOrder.user?.phone || undefined)
+                        .catch((e) => console.error('Failed to send order notification', e));
                 }
             });
             return { status: 'success' };

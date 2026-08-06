@@ -22,67 +22,66 @@ let MarketingService = class MarketingService {
         return this.prisma.banner.findMany({
             where: {
                 isActive: true,
-                OR: [
-                    { startDate: null },
-                    { startDate: { lte: now } }
-                ],
-                AND: [
-                    { OR: [{ endDate: null }, { endDate: { gte: now } }] }
-                ]
+                OR: [{ startDate: null }, { startDate: { lte: now } }],
+                AND: [{ OR: [{ endDate: null }, { endDate: { gte: now } }] }],
             },
-            orderBy: { sortOrder: 'asc' }
+            orderBy: { sortOrder: 'asc' },
         });
     }
     async getBanners() {
         return this.prisma.banner.findMany({
-            orderBy: { sortOrder: 'asc' }
+            orderBy: { sortOrder: 'asc' },
         });
     }
     async createBanner(data) {
         return this.prisma.banner.create({
-            data
+            data,
         });
     }
     async updateBanner(id, data) {
         return this.prisma.banner.update({
             where: { id },
-            data
+            data,
         });
     }
     async deleteBanner(id) {
         return this.prisma.banner.delete({
-            where: { id }
+            where: { id },
         });
     }
     async getCoupons() {
         return this.prisma.coupon.findMany({
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async createCoupon(data) {
-        const existing = await this.prisma.coupon.findUnique({ where: { code: data.code } });
+        const existing = await this.prisma.coupon.findUnique({
+            where: { code: data.code },
+        });
         if (existing) {
             throw new common_1.ConflictException('Coupon code already exists');
         }
         return this.prisma.coupon.create({
-            data
+            data,
         });
     }
     async updateCoupon(id, data) {
         if (data.code) {
-            const existing = await this.prisma.coupon.findUnique({ where: { code: data.code } });
+            const existing = await this.prisma.coupon.findUnique({
+                where: { code: data.code },
+            });
             if (existing && existing.id !== id) {
                 throw new common_1.ConflictException('Coupon code already exists');
             }
         }
         return this.prisma.coupon.update({
             where: { id },
-            data
+            data,
         });
     }
     async deleteCoupon(id) {
         return this.prisma.coupon.delete({
-            where: { id }
+            where: { id },
         });
     }
     async getCampaigns() {
@@ -94,17 +93,20 @@ let MarketingService = class MarketingService {
     async scheduleCampaign(id, scheduledAt) {
         return this.prisma.marketingCampaign.update({
             where: { id },
-            data: { scheduledAt, status: 'SCHEDULED' }
+            data: { scheduledAt, status: 'SCHEDULED' },
         });
     }
     async logAbandonedCart(userId, cartId) {
         return this.prisma.abandonedCartLog.create({
-            data: { userId, cartId }
+            data: { userId, cartId },
         });
     }
     async getAbandonedCarts(recovered) {
         const where = recovered !== undefined ? { recovered } : {};
-        return this.prisma.abandonedCartLog.findMany({ where, include: { user: true } });
+        return this.prisma.abandonedCartLog.findMany({
+            where,
+            include: { user: true },
+        });
     }
 };
 exports.MarketingService = MarketingService;

@@ -20,11 +20,13 @@ let EngagementService = class EngagementService {
     async getProductReviews(productId) {
         return this.prisma.productReview.findMany({
             where: { productId, isApproved: true },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async addReview(userId, productId, data) {
-        const product = await this.prisma.product.findUnique({ where: { id: productId } });
+        const product = await this.prisma.product.findUnique({
+            where: { id: productId },
+        });
         if (!product)
             throw new common_1.NotFoundException('Product not found');
         return this.prisma.productReview.create({
@@ -34,8 +36,8 @@ let EngagementService = class EngagementService {
                 rating: data.rating,
                 title: data.title,
                 content: data.content,
-                isApproved: false
-            }
+                isApproved: false,
+            },
         });
     }
     async getProductQuestions(productId) {
@@ -43,12 +45,14 @@ let EngagementService = class EngagementService {
             where: { productId, isApproved: true },
             orderBy: { createdAt: 'desc' },
             include: {
-                answers: { where: { isApproved: true } }
-            }
+                answers: { where: { isApproved: true } },
+            },
         });
     }
     async addQuestion(userId, productId, content) {
-        const product = await this.prisma.product.findUnique({ where: { id: productId } });
+        const product = await this.prisma.product.findUnique({
+            where: { id: productId },
+        });
         if (!product)
             throw new common_1.NotFoundException('Product not found');
         return this.prisma.productQuestion.create({
@@ -56,8 +60,8 @@ let EngagementService = class EngagementService {
                 userId,
                 productId,
                 content,
-                isApproved: false
-            }
+                isApproved: false,
+            },
         });
     }
 };

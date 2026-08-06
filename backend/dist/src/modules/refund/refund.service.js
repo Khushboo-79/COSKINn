@@ -26,14 +26,21 @@ let RefundService = class RefundService {
     async getAllRefunds() {
         return this.prisma.orderPayment.findMany({
             where: { method: { in: ['WALLET_REFUND', 'ORIGINAL_SOURCE_REFUND'] } },
-            include: { order: { select: { id: true, user: { select: { email: true, firstName: true } } } } },
-            orderBy: { createdAt: 'desc' }
+            include: {
+                order: {
+                    select: {
+                        id: true,
+                        user: { select: { email: true, firstName: true } },
+                    },
+                },
+            },
+            orderBy: { createdAt: 'desc' },
         });
     }
     async processRefund(dto, type) {
         const order = await this.prisma.order.findUnique({
             where: { id: dto.orderId },
-            include: { payments: true }
+            include: { payments: true },
         });
         if (!order)
             throw new common_1.NotFoundException('Order not found');
@@ -44,8 +51,8 @@ let RefundService = class RefundService {
                     orderId: order.id,
                     status: 'SUCCESS',
                     amount: -dto.amount,
-                    method: 'WALLET_REFUND'
-                }
+                    method: 'WALLET_REFUND',
+                },
             });
             return { success: true, message: 'Refund credited to wallet' };
         }
@@ -55,7 +62,7 @@ let RefundService = class RefundService {
             }
             const rzpOrder = await this.prisma.razorpayOrder.findFirst({
                 where: { receipt: order.id, status: 'paid' },
-                orderBy: { createdAt: 'desc' }
+                orderBy: { createdAt: 'desc' },
             });
             if (!rzpOrder) {
                 throw new common_1.BadRequestException('No successful Razorpay payment found for this order to refund');
@@ -66,10 +73,13 @@ let RefundService = class RefundService {
                     orderId: order.id,
                     status: 'SUCCESS',
                     amount: -dto.amount,
-                    method: `REFUND_${refundResult.refundId}`
-                }
+                    method: `REFUND_${refundResult.refundId}`,
+                },
             });
-            return { success: true, message: `Refund processed to original source. Refund ID: ${refundResult.refundId}` };
+            return {
+                success: true,
+                message: `Refund processed to original source. Refund ID: ${refundResult.refundId}`,
+            };
         }
     }
 };

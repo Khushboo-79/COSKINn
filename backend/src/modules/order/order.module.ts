@@ -13,7 +13,7 @@ import { WalletModule } from '../wallet/wallet.module';
 
 @Module({
   imports: [
-    PrismaModule, 
+    PrismaModule,
     forwardRef(() => InventoryModule),
     RewardPointModule,
     BonusModule,
@@ -21,10 +21,10 @@ import { WalletModule } from '../wallet/wallet.module';
     OfferModule,
     InvoiceModule,
     CouponModule,
-    WalletModule
+    WalletModule,
   ],
   controllers: [OrderController],
   providers: [OrderService],
-  exports: [OrderService]
+  exports: [OrderService],
 })
 export class OrderModule {}

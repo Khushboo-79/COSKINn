@@ -33,10 +33,10 @@ export declare class ContentController {
         published: boolean;
     }>;
     getFaqs(): Promise<{
+        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        category: string | null;
         segment: import("@prisma/client").$Enums.ProductLine;
         question: string;
         answer: string;
@@ -103,30 +103,30 @@ export declare class ContentController {
         published: boolean;
     }>;
     createFaq(data: any): Promise<{
+        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        category: string | null;
         segment: import("@prisma/client").$Enums.ProductLine;
         question: string;
         answer: string;
         orderIndex: number;
     }>;
     updateFaq(id: string, data: any): Promise<{
+        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        category: string | null;
         segment: import("@prisma/client").$Enums.ProductLine;
         question: string;
         answer: string;
         orderIndex: number;
     }>;
     deleteFaq(id: string): Promise<{
+        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        category: string | null;
         segment: import("@prisma/client").$Enums.ProductLine;
         question: string;
         answer: string;

@@ -7,17 +7,17 @@ export class PanelsGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredPanels = this.reflector.getAllAndOverride<string[]>(PANELS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    
+    const requiredPanels = this.reflector.getAllAndOverride<string[]>(
+      PANELS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+
     if (!requiredPanels || requiredPanels.length === 0) {
       return true;
     }
-    
+
     const { user } = context.switchToHttp().getRequest();
-    
+
     if (!user || !user.panelAccess) {
       return false;
     }

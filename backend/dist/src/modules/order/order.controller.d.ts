@@ -677,6 +677,16 @@ export declare class OrderController {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
     updateSettings(body: any): Promise<{
         id: string;
@@ -686,5 +696,15 @@ export declare class OrderController {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
 }

@@ -28,7 +28,14 @@ let CatalogController = class CatalogController {
         return this.catalogService.searchProducts(q);
     }
     getProducts(page, limit, minPrice, maxPrice, category, skinType, skinConcern, ingredient, sort) {
-        return this.catalogService.getProducts({ page, limit, minPrice, maxPrice, category, skinType });
+        return this.catalogService.getProducts({
+            page,
+            limit,
+            minPrice,
+            maxPrice,
+            category,
+            skinType,
+        });
     }
     getProductBySlug(slug) {
         return this.catalogService.getProductBySlug(slug);

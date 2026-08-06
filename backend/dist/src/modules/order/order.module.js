@@ -33,11 +33,11 @@ exports.OrderModule = OrderModule = __decorate([
             offer_module_1.OfferModule,
             invoice_module_1.InvoiceModule,
             coupon_module_1.CouponModule,
-            wallet_module_1.WalletModule
+            wallet_module_1.WalletModule,
         ],
         controllers: [order_controller_1.OrderController],
         providers: [order_service_1.OrderService],
-        exports: [order_service_1.OrderService]
+        exports: [order_service_1.OrderService],
     })
 ], OrderModule);
 //# sourceMappingURL=order.module.js.map

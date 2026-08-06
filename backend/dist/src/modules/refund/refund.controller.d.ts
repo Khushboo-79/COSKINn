@@ -5,19 +5,19 @@ export declare class RefundController {
     constructor(refundService: RefundService);
     getAllRefunds(): Promise<({
         order: {
-            id: string;
             user: {
                 email: string | null;
                 firstName: string | null;
             };
+            id: string;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
         status: string;
-        amount: number;
         orderId: string;
+        amount: number;
         method: string | null;
     })[]>;
     processWalletRefund(dto: ProcessRefundDto): Promise<{

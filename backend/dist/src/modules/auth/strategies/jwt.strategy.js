@@ -49,17 +49,19 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         if (!user.isActive || user.isDeleted) {
             throw new common_1.UnauthorizedException('User account is deactivated');
         }
-        const roles = user.roles.map(ur => ur.role.name);
-        const permissions = user.roles.flatMap(ur => ur.role.permissions.map(rp => rp.permission.action + ':' + rp.permission.subject));
+        const roles = user.roles.map((ur) => ur.role.name);
+        const permissions = user.roles.flatMap((ur) => ur.role.permissions.map((rp) => rp.permission.action + ':' + rp.permission.subject));
         return {
             id: user.id,
-            name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : null,
+            name: user.firstName
+                ? `${user.firstName} ${user.lastName || ''}`.trim()
+                : null,
             email: user.email,
             phone: user.phone,
             lastLoginAt: payload.iat ? payload.iat * 1000 : Date.now(),
             roles,
             permissions,
-            panel_access: Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])))
+            panel_access: Array.from(new Set(user.roles.flatMap((ur) => ur.role.panelAccess || []))),
         };
     }
 };

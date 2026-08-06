@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -21,20 +29,29 @@ export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
   @Post('presigned-url')
-  getPresignedUrl(@Body() body: { fileName: string; contentType: string; folder?: string }) {
-    return this.uploadService.generatePresignedUrl(body.fileName, body.contentType, body.folder);
+  getPresignedUrl(
+    @Body() body: { fileName: string; contentType: string; folder?: string },
+  ) {
+    return this.uploadService.generatePresignedUrl(
+      body.fileName,
+      body.contentType,
+      body.folder,
+    );
   }
 
   @Post('local')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: uploadDir,
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-      },
-    })
-  }))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: uploadDir,
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
   uploadLocal(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('No file provided');
