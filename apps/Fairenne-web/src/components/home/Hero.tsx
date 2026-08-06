@@ -201,15 +201,15 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
         isGlam ? 'max-w-full pl-4 sm:pl-8 lg:pl-12 pr-0 pb-40 lg:pb-48 md:pb-0' : 'max-w-[1400px] px-4 sm:px-6 lg:px-12'
       }`}>
         
-        {/* Center: Content */}
-        <div className={`w-full h-full flex flex-col justify-center items-center text-center z-20 px-4 max-w-4xl mx-auto ${isGlam ? 'pt-16 md:pt-24' : 'pb-16'}`}>
+        {/* Left: Content */}
+        <div className={`w-full ${isGlam ? 'md:w-[50%]' : 'md:w-[55%] lg:w-[50%]'} flex flex-col justify-center z-20 px-4 sm:px-0 ${isGlam ? 'pt-16 md:pt-24' : 'pb-16'}`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-content' : 'skin-content'}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex flex-col items-center w-full"
+              className="flex flex-col items-start w-full"
             >
               {!isGlam && (
                 <motion.div 
@@ -224,19 +224,19 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
               )}
               
               {isGlam ? (
-                <h1 className="text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.9] tracking-tight mb-6 mt-2 text-center">
+                <h1 className="text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.9] tracking-tight mb-6 mt-2 text-left">
                   <span className="block font-serif text-[#2a2a2a]">Painted</span>
                   <span className="block font-serif italic text-[#8b1527]">like a</span>
                   <span className="block font-serif text-[#2a2a2a]">Fairytale.</span>
                 </h1>
               ) : (
-                <h1 className="text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] xl:text-[6rem] leading-[0.95] tracking-tight mb-8 mt-4 font-display font-black text-[#2a2022] text-center">
+                <h1 className="text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] xl:text-[6rem] leading-[0.95] tracking-tight mb-8 mt-4 font-display font-black text-[#2a2022] text-left">
                   Juicy skin,<br/>
                   <span className="text-[#ff9aa8]">ripe for</span> the picking.
                 </h1>
               )}
               
-              <p className={`text-[14px] md:text-[16px] lg:text-[18px] mb-10 max-w-[600px] leading-[1.6] text-center ${
+              <p className={`text-[14px] md:text-[16px] lg:text-[18px] mb-10 max-w-[600px] leading-[1.6] text-left ${
                 isGlam ? 'text-[#8e95a1] font-sans' : 'text-[#6b6b6b] font-sans'
               }`}>
                 {isGlam 
@@ -244,7 +244,7 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
                   : 'Fruit-forward serums, gels and masks that leave your skin dewy, bouncy and slightly obsessed with itself. Squeezed fresh, formulated cleaner.'}
               </p>
               
-              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row flex-wrap items-start gap-4 w-full sm:w-auto">
                 {isGlam ? (
                   <>
                     <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -276,16 +276,16 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
               </div>
 
               {isGlam && (
-                <div className="flex items-center justify-center gap-12 lg:gap-16 w-full max-w-[600px] mt-16 mb-4">
-                  <div className="flex flex-col items-center">
+                <div className="flex items-center gap-12 lg:gap-16 w-full max-w-[600px] mt-16 mb-4">
+                  <div className="flex flex-col items-start">
                     <span className="font-serif text-[#7a1b26] text-[20px] lg:text-[24px]">12k+</span>
                     <span className="font-sans text-[#8e95a1] uppercase text-[10px] tracking-[0.2em] mt-1">REVIEWS</span>
                   </div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-start">
                     <span className="font-serif text-[#7a1b26] text-[20px] lg:text-[24px]">Hand</span>
                     <span className="font-sans text-[#8e95a1] uppercase text-[10px] tracking-[0.2em] mt-1">POURED</span>
                   </div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-start">
                     <span className="font-serif text-[#7a1b26] text-[20px] lg:text-[24px]">Since</span>
                     <div className="flex items-center relative">
                       <span className="font-sans text-[#8e95a1] uppercase text-[10px] tracking-[0.2em] mt-1">MMXXIV</span>
@@ -296,7 +296,7 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
               )}
 
               {!isGlam && (
-                <div className="flex items-center justify-center gap-8 mt-12 opacity-70">
+                <div className="flex items-center gap-8 mt-12 opacity-70">
                   <div className="flex items-center gap-2 text-[11px] lg:text-[12px] text-[#2a2022] font-medium">
                     <Leaf size={16} strokeWidth={1.5} />
                     <span>Clean · Vegan</span>
@@ -308,6 +308,123 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
                   <div className="flex items-center gap-2 text-[11px] lg:text-[12px] text-[#2a2022] font-medium">
                     <Award size={16} strokeWidth={1.5} />
                     <span>Cruelty-free</span>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Right Side: Image Composition */}
+        <div className={`w-full ${isGlam ? 'md:w-[50%] h-[480px] mt-44' : 'md:w-[40%] h-[90%]'} relative hidden md:block self-center`}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isGlam ? 'glam-images' : 'skin-images'}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="absolute inset-0 w-full h-full"
+            >
+              {isGlam ? (
+                <div className="relative w-full h-full flex items-center justify-center pt-8">
+                  
+                  {/* Tertiary Frame (Top Left) */}
+                  <motion.div 
+                    className="absolute top-[8%] left-[5%] w-[38%] h-[34%] border border-[#e5b376] p-1.5 bg-white z-10 shadow-lg cursor-pointer"
+                    whileHover={{ scale: 1.02, zIndex: 40 }}
+                    onClick={() => navigate(`/product/${glamSlides[(imgIndex + 2) % 3].id}`)}
+                  >
+                    <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
+                    <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
+                      <AnimatePresence mode="popLayout">
+                        <motion.img 
+                          src={glamSlides[(imgIndex + 2) % 3].image}
+                          fetchpriority="high"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 1.2 }}
+                          alt="Glam Collection Detail" 
+                          className="absolute inset-0 w-full h-full object-cover sepia-[0.2]" 
+                        />
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+
+                  {/* Main Frame (Center) */}
+                  <motion.div 
+                    className="absolute top-[15%] left-[22%] w-[52%] h-[60%] border border-[#e5b376] p-2 bg-white z-20 shadow-xl cursor-pointer"
+                    whileHover={{ scale: 1.02, zIndex: 40 }}
+                    onClick={() => navigate(`/product/${glamSlides[imgIndex].id}`)}
+                  >
+                    <div className="absolute top-[-1px] left-[-1px] w-[15px] h-[15px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
+                    <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
+                      <AnimatePresence mode="popLayout">
+                        <motion.img 
+                          key={glamSlides[imgIndex].image}
+                          src={glamSlides[imgIndex].image}
+                          fetchpriority="high"
+                          initial={{ opacity: 0, scale: 1.05 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 1.2 }}
+                          alt="Glam Collection Main" 
+                          className="absolute inset-0 w-full h-full object-cover" 
+                        />
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+
+                  {/* Secondary Frame (Bottom Right) */}
+                  <motion.div 
+                    className="absolute bottom-[5%] right-[5%] w-[42%] h-[32%] border border-[#e5b376] p-1.5 bg-white z-30 shadow-2xl cursor-pointer"
+                    whileHover={{ scale: 1.02, zIndex: 40 }}
+                    onClick={() => navigate(`/product/${glamSlides[(imgIndex + 1) % 3].id}`)}
+                  >
+                    <div className="absolute top-[-1px] left-[-1px] w-[10px] h-[10px] border-t-2 border-l-2 border-[#e5b376] z-30"></div>
+                    <div className="w-full h-full relative overflow-hidden bg-[#faf9f6]">
+                      <AnimatePresence mode="popLayout">
+                        <motion.img 
+                          key={glamSlides[(imgIndex + 1) % 3].image}
+                          src={glamSlides[(imgIndex + 1) % 3].image}
+                          fetchpriority="high"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 1.2 }}
+                          alt="Glam Collection Accent" 
+                          className="absolute inset-0 w-full h-full object-cover" 
+                        />
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+
+                </div>
+              ) : (
+                <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px' }}>
+                  
+                  {/* Middle Left Image (Jar) */}
+                  <div 
+                    className="absolute top-[15%] left-[0%] w-[45%] h-[45%] rounded-[32px] overflow-hidden shadow-[0_25px_50px_rgba(0,0,0,0.18)] z-20 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                    onClick={() => navigate('/product/101')}
+                  >
+                    <img src={skinImages[imgIndex].jar} fetchpriority="high" alt="Slide 1" className="w-full h-full object-cover" />
+                  </div>
+                  
+                  {/* Top Right Image */}
+                  <div 
+                    className="absolute top-[0%] right-[0%] w-[45%] h-[48%] rounded-[32px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] z-10 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                    onClick={() => navigate('/product/102')}
+                  >
+                    <img src={skinImages[imgIndex].topRight} fetchpriority="high" alt="Slide 2" className="w-full h-full object-cover object-center" />
+                  </div>
+
+                  {/* Bottom Right Image */}
+                  <div 
+                    className="absolute bottom-[12%] right-[10%] w-[48%] h-[40%] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-30 bg-white cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                    onClick={() => navigate('/product/108')}
+                  >
+                    <img src={skinImages[imgIndex].bottomRight} fetchpriority="high" alt="Slide 3" className="w-full h-full object-cover object-center" />
                   </div>
                 </div>
               )}
