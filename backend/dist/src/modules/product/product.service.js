@@ -225,9 +225,14 @@ let ProductService = class ProductService {
             }
         });
     }
-    async findOnePublic(id) {
+    async findOnePublic(identifier) {
+        const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
         const product = await this.prisma.product.findFirst({
-            where: { id, isDeleted: false, status: 'LIVE' },
+            where: {
+                isDeleted: false,
+                status: 'LIVE',
+                OR: isUuid ? [{ id: identifier }] : [{ slug: identifier }]
+            },
             include: {
                 category: true,
                 variants: true,

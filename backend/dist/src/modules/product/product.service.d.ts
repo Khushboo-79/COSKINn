@@ -417,7 +417,11 @@ export declare class ProductService {
         createdAt: Date;
         updatedAt: Date;
     })[]>;
+<<<<<<< Updated upstream
     findOnePublic(id: string): Promise<{
+=======
+    findOnePublic(identifier: string): Promise<{
+>>>>>>> Stashed changes
         category: {
             id: string;
             name: string;
