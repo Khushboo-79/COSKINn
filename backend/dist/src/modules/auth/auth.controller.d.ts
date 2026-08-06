@@ -2,6 +2,7 @@ import { AuthService } from './auth.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -16,6 +17,29 @@ export declare class AuthController {
         nextStep: string;
         phone: string;
         userId?: undefined;
+    }>;
+    customerLogin(loginDto: LoginDto): Promise<{
+        access_token: string;
+        refresh_token: any;
+        user: {
+            id: string;
+            email: string | null;
+            phone: string | null;
+            firstName: string | null;
+            lastName: string | null;
+            roles: string[];
+        };
+    }>;
+    register(registerDto: RegisterDto): Promise<{
+        access_token: string;
+        refresh_token: any;
+        user: {
+            id: string;
+            email: string | null;
+            firstName: string | null;
+            lastName: string | null;
+            roles: string[];
+        };
     }>;
     sendOtp(sendOtpDto: SendOtpDto): Promise<{
         message: string;

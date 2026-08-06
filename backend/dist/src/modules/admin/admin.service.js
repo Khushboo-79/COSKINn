@@ -50,8 +50,8 @@ let AdminService = class AdminService {
                     membershipPlatinumThreshold: 8000,
                     signUpBonusAmount: 200,
                     maxRewardPointRedemptionPercent: 10,
-                    rewardPointEarningRate: 1,
-                },
+                    rewardPointEarningRate: 1
+                }
             });
         }
     }
@@ -246,37 +246,37 @@ let AdminService = class AdminService {
                     some: {
                         role: {
                             name: {
-                                not: 'CUSTOMER',
-                            },
-                        },
-                    },
-                },
+                                not: 'CUSTOMER'
+                            }
+                        }
+                    }
+                }
             },
             include: {
                 roles: {
                     include: {
-                        role: true,
-                    },
+                        role: true
+                    }
                 },
                 customerProfile: true,
                 addresses: {
                     where: { isDefault: true },
-                    take: 1,
+                    take: 1
                 },
                 orders: true,
                 wishlist: {
-                    include: { items: true },
+                    include: { items: true }
                 },
                 cart: {
-                    include: { items: true },
+                    include: { items: true }
                 },
                 rewardPoints: true,
                 membershipTier: true,
                 sessions: {
                     orderBy: { createdAt: 'desc' },
-                    take: 1,
-                },
-            },
+                    take: 1
+                }
+            }
         });
     }
     async deleteUser(id) {
@@ -285,8 +285,8 @@ let AdminService = class AdminService {
             data: {
                 isDeleted: true,
                 isActive: false,
-                deletedAt: new Date(),
-            },
+                deletedAt: new Date()
+            }
         });
     }
     async createStaffUser(data) {
@@ -336,39 +336,33 @@ let AdminService = class AdminService {
                     some: {
                         role: {
                             name: {
-                                not: 'CUSTOMER',
-                            },
-                        },
-                    },
-                },
+                                not: 'CUSTOMER'
+                            }
+                        }
+                    }
+                }
             },
             include: {
                 staff2fa: true,
                 sessions: {
                     orderBy: { createdAt: 'desc' },
-                    take: 1,
-                },
-            },
+                    take: 1
+                }
+            }
         });
-        return staff.map((u) => ({
+        return staff.map(u => ({
             id: u.id,
             name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'No Name',
             email: u.email,
             is2FAEnabled: u.staff2fa ? u.staff2fa.isVerified : false,
             lastLogin: u.sessions[0]?.createdAt
-                ? new Date(u.sessions[0].createdAt).toLocaleString('en-US', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                })
-                : 'Never',
+                ? new Date(u.sessions[0].createdAt).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : 'Never'
         }));
     }
     async resetStaff2FA(userId) {
         await this.prisma.staff2fa.deleteMany({
-            where: { userId },
+            where: { userId }
         });
         return { success: true, message: '2FA has been reset for this user.' };
     }
@@ -379,8 +373,8 @@ let AdminService = class AdminService {
         return this.prisma.userRole.create({
             data: {
                 userId,
-                roleId: data.roleId,
-            },
+                roleId: data.roleId
+            }
         });
     }
     async assignRole(userIdentifier, roleName) {

@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const send_otp_dto_1 = require("./dto/send-otp.dto");
 const verify_otp_dto_1 = require("./dto/verify-otp.dto");
 const login_dto_1 = require("./dto/login.dto");
+const register_dto_1 = require("./dto/register.dto");
 const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
 const common_2 = require("@nestjs/common");
 let AuthController = class AuthController {
@@ -30,6 +31,12 @@ let AuthController = class AuthController {
     }
     login(loginDto) {
         return this.authService.login(loginDto);
+    }
+    customerLogin(loginDto) {
+        return this.authService.customerLogin(loginDto);
+    }
+    register(registerDto) {
+        return this.authService.register(registerDto);
     }
     sendOtp(sendOtpDto) {
         return this.authService.sendOtp(sendOtpDto);
@@ -78,6 +85,20 @@ __decorate([
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('customer-login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_dto_1.LoginDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "customerLogin", null);
+__decorate([
+    (0, common_1.Post)('register'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('send-otp'),
     __param(0, (0, common_1.Body)()),

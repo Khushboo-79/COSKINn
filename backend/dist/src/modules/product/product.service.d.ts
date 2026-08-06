@@ -94,6 +94,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -181,6 +182,7 @@ export declare class ProductService {
             status: import("@prisma/client").$Enums.ProductStatus;
             productLine: import("@prisma/client").$Enums.ProductLine;
             isCrossSegment: boolean;
+            isBestseller: boolean;
             rejectionReason: string | null;
             isDeleted: boolean;
             deletedAt: Date | null;
@@ -243,6 +245,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -298,6 +301,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -353,6 +357,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -408,6 +413,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -528,6 +534,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -573,6 +580,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -646,6 +654,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -692,6 +701,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -726,6 +736,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -760,6 +771,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -794,6 +806,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -828,6 +841,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;
@@ -866,6 +880,7 @@ export declare class ProductService {
         status: import("@prisma/client").$Enums.ProductStatus;
         productLine: import("@prisma/client").$Enums.ProductLine;
         isCrossSegment: boolean;
+        isBestseller: boolean;
         rejectionReason: string | null;
         isDeleted: boolean;
         deletedAt: Date | null;

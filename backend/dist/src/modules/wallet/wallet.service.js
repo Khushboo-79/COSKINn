@@ -55,13 +55,16 @@ let WalletService = class WalletService {
                 where: { id: wallet.id },
                 data: { balance: { increment: amount } },
             });
+            const expiresAt = new Date();
+            expiresAt.setMonth(expiresAt.getMonth() + 6);
             await tx.walletTransaction.create({
                 data: {
                     walletId: wallet.id,
                     type: 'CREDIT',
                     amount,
                     reference,
-                },
+                    expiresAt
+                }
             });
             return updatedWallet;
         });

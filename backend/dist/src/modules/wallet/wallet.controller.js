@@ -29,6 +29,9 @@ let WalletController = class WalletController {
     getAdminTransactions() {
         return this.walletService.getAdminTransactions();
     }
+    creditWallet(data) {
+        return this.walletService.creditWallet(data.userId, data.amount, data.reference || 'ADMIN_CREDIT');
+    }
 };
 exports.WalletController = WalletController;
 __decorate([
@@ -47,6 +50,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], WalletController.prototype, "getAdminTransactions", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'FINANCE_MANAGER'),
+    (0, common_1.Post)('admin/credit'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], WalletController.prototype, "creditWallet", null);
 exports.WalletController = WalletController = __decorate([
     (0, common_1.Controller)('wallet'),
     __metadata("design:paramtypes", [wallet_service_1.WalletService])

@@ -7,6 +7,7 @@ export declare class WalletController {
             id: string;
             createdAt: Date;
             type: string;
+            expiresAt: Date | null;
             reference: string | null;
             walletId: string;
             amount: number;
@@ -36,8 +37,15 @@ export declare class WalletController {
         id: string;
         createdAt: Date;
         type: string;
+        expiresAt: Date | null;
         reference: string | null;
         walletId: string;
         amount: number;
     })[]>;
+    creditWallet(data: {
+        userId: string;
+        amount: number;
+        reference?: string;
+        remark?: string;
+    }): Promise<any>;
 }

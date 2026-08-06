@@ -31,6 +31,9 @@ let RewardPointController = class RewardPointController {
     async getAdminLedger() {
         return this.rewardPointService.getAdminLedger();
     }
+    async creditPoints(data) {
+        return this.rewardPointService.earnPoints(data.userId, data.points, data.description || 'Admin credited points');
+    }
 };
 exports.RewardPointController = RewardPointController;
 __decorate([
@@ -49,6 +52,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], RewardPointController.prototype, "getAdminLedger", null);
+__decorate([
+    (0, common_1.Post)('admin/credit'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'MARKETING_MANAGER'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], RewardPointController.prototype, "creditPoints", null);
 exports.RewardPointController = RewardPointController = __decorate([
     (0, common_1.Controller)('reward-point'),
     __metadata("design:paramtypes", [reward_point_service_1.RewardPointService])

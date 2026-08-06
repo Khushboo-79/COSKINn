@@ -65,5 +65,15 @@ export const productApi = {
   deleteProduct: async (id: string) => {
     const response = await apiClient.delete(`/product/${id}`);
     return response.data;
+  },
+
+  setBestseller: async (id: string, isBestseller: boolean) => {
+    if (isBestseller) {
+      const response = await apiClient.put(`/home/admin/bestsellers/${id}`);
+      return response.data;
+    } else {
+      const response = await apiClient.delete(`/home/admin/bestsellers/${id}`);
+      return response.data;
+    }
   }
 };

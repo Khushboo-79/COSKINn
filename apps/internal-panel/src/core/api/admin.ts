@@ -67,5 +67,13 @@ export const adminApi = {
   getNotifications: async () => {
     const response = await apiClient.get('/admin/config/notifications');
     return response.data;
+  },
+  creditWallet: async (userId: string, amount: number, reference?: string) => {
+    const response = await apiClient.post('/wallet/admin/credit', { userId, amount, reference });
+    return response.data;
+  },
+  creditRewardPoints: async (userId: string, points: number, description?: string) => {
+    const response = await apiClient.post('/reward-point/admin/credit', { userId, points, description });
+    return response.data;
   }
 };

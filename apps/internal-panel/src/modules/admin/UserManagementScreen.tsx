@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { rbacApi } from '../../core/api/rbac';
+import { adminApi } from '../../core/api/admin';
 import { DataTable } from '../../components/ui/DataTable';
 import { 
   Users, Plus, Edit2, ShieldAlert, Search, Filter, 
@@ -26,6 +27,8 @@ export const UserManagementScreen = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null); // For Edit
   const [viewUser, setViewUser] = useState<any>(null); // For View Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [creditWalletModal, setCreditWalletModal] = useState<{isOpen: boolean, userId: string, amount: string, reference: string}>({isOpen: false, userId: '', amount: '', reference: ''});
+  const [creditPointsModal, setCreditPointsModal] = useState<{isOpen: boolean, userId: string, points: string, description: string}>({isOpen: false, userId: '', points: '', description: ''});
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Users');
   const [membershipFilter, setMembershipFilter] = useState('All Memberships');
@@ -105,6 +108,27 @@ export const UserManagementScreen = () => {
       deleteUserMutation.mutate(userId);
     }
   };
+
+  const creditWalletMutation = useMutation({
+    mutationFn: ({ userId, amount, reference }: { userId: string, amount: number, reference?: string }) => adminApi.creditWallet(userId, amount, reference),
+    onSuccess: () => {
+      toast.success('Wallet credited successfully!');
+      setCreditWalletModal({ isOpen: false, userId: '', amount: '', reference: '' });
+      // Optionally invalidate user queries to refresh wallet balance if returned
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: () => toast.error('Failed to credit wallet')
+  });
+
+  const creditPointsMutation = useMutation({
+    mutationFn: ({ userId, points, description }: { userId: string, points: number, description?: string }) => adminApi.creditRewardPoints(userId, points, description),
+    onSuccess: () => {
+      toast.success('Reward points credited successfully!');
+      setCreditPointsModal({ isOpen: false, userId: '', points: '', description: '' });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: () => toast.error('Failed to credit reward points')
+  });
 
   const formattedUsers = useMemo(() => {
     if (!Array.isArray(rawUsers)) return [];
@@ -471,7 +495,14 @@ export const UserManagementScreen = () => {
                       <span className="font-medium text-slate-900">{formatDate(viewUser.createdAt)}</span>
                     </div>
 
-
+                    <div className="pt-4 border-t border-slate-100 flex justify-end">
+                      <button 
+                        onClick={() => setCreditWalletModal({ isOpen: true, userId: viewUser.id, amount: '', reference: '' })}
+                        className="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors flex items-center gap-2"
+                      >
+                        <CreditCard size={14} /> Credit Wallet
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -501,6 +532,15 @@ export const UserManagementScreen = () => {
                     <div className="flex justify-between">
                       <span className="text-slate-500">Reward Points</span>
                       <span className="font-medium text-slate-400 italic">{viewUser.rewardPoints}</span>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-100 flex justify-end">
+                      <button 
+                        onClick={() => setCreditPointsModal({ isOpen: true, userId: viewUser.id, points: '', description: '' })}
+                        className="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-sm font-medium hover:bg-amber-100 transition-colors flex items-center gap-2"
+                      >
+                        <Star size={14} /> Credit Points
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -684,6 +724,98 @@ export const UserManagementScreen = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Credit Wallet Modal */}
+      {creditWalletModal.isOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-all">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2"><CreditCard size={20} className="text-green-500" /> Credit Wallet</h3>
+              <button onClick={() => setCreditWalletModal({ isOpen: false, userId: '', amount: '', reference: '' })} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Amount to Credit (₹)</label>
+                <input 
+                  type="number" 
+                  value={creditWalletModal.amount}
+                  onChange={e => setCreditWalletModal(prev => ({ ...prev, amount: e.target.value }))}
+                  placeholder="e.g. 500"
+                  className="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 outline-none transition-all" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Reference / Remark</label>
+                <input 
+                  type="text" 
+                  value={creditWalletModal.reference}
+                  onChange={e => setCreditWalletModal(prev => ({ ...prev, reference: e.target.value }))}
+                  placeholder="e.g. Refund for Order #123"
+                  className="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 outline-none transition-all" 
+                />
+              </div>
+              <div className="pt-4 flex justify-end space-x-3">
+                <button onClick={() => setCreditWalletModal({ isOpen: false, userId: '', amount: '', reference: '' })} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium">Cancel</button>
+                <button 
+                  onClick={() => creditWalletMutation.mutate({ userId: creditWalletModal.userId, amount: Number(creditWalletModal.amount), reference: creditWalletModal.reference })}
+                  disabled={creditWalletMutation.isPending || !creditWalletModal.amount} 
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-sm flex items-center justify-center min-w-[120px]"
+                >
+                  {creditWalletMutation.isPending ? 'Crediting...' : 'Credit Wallet'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Credit Points Modal */}
+      {creditPointsModal.isOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-all">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2"><Star size={20} className="text-amber-500" /> Credit Reward Points</h3>
+              <button onClick={() => setCreditPointsModal({ isOpen: false, userId: '', points: '', description: '' })} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Points to Credit</label>
+                <input 
+                  type="number" 
+                  value={creditPointsModal.points}
+                  onChange={e => setCreditPointsModal(prev => ({ ...prev, points: e.target.value }))}
+                  placeholder="e.g. 50"
+                  className="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 outline-none transition-all" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                <input 
+                  type="text" 
+                  value={creditPointsModal.description}
+                  onChange={e => setCreditPointsModal(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="e.g. Loyalty Bonus"
+                  className="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 outline-none transition-all" 
+                />
+              </div>
+              <div className="pt-4 flex justify-end space-x-3">
+                <button onClick={() => setCreditPointsModal({ isOpen: false, userId: '', points: '', description: '' })} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium">Cancel</button>
+                <button 
+                  onClick={() => creditPointsMutation.mutate({ userId: creditPointsModal.userId, points: Number(creditPointsModal.points), description: creditPointsModal.description })}
+                  disabled={creditPointsMutation.isPending || !creditPointsModal.points} 
+                  className="px-6 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium shadow-sm flex items-center justify-center min-w-[120px]"
+                >
+                  {creditPointsMutation.isPending ? 'Crediting...' : 'Credit Points'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
