@@ -88,8 +88,8 @@ export declare class WarehouseService {
     } & {
         id: string;
         createdAt: Date;
-        purchaseOrderId: string;
         receivedDate: Date;
+        purchaseOrderId: string;
     }>;
     generatePickList(dto: GeneratePickListDto): Promise<{
         orderIds: string[];

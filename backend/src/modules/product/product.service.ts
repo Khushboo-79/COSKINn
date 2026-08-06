@@ -391,6 +391,11 @@ export class ProductService {
           name: 'Default',
           mrp: data.mrp,
           price: data.discountPrice || data.mrp,
+          stockQuantity: data.stockQuantity || 0,
+          mfgDate: data.mfgDate ? new Date(data.mfgDate) : null,
+          expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
+          shadeName: data.shadeName || null,
+          shadeHex: data.shadeHex || null,
         },
       });
 
@@ -399,35 +404,55 @@ export class ProductService {
   }
 
   async update(id: string, data: UpdateProductDto) {
-    await this.findOne(id); // Ensure exists
+    try {
+      await this.findOne(id); // Ensure exists
 
-    const updated = await this.prisma.product.update({
-      where: { id },
-      data: { ...data, status: data.status as any },
-    });
+      const { stockQuantity, mfgDate, expiryDate, shadeName, shadeHex, ...productData } = data;
 
-    // Also update the default variant price if mrp/discountPrice changed
-    if (data.mrp !== undefined || data.discountPrice !== undefined) {
-      const firstVariant = await this.prisma.productVariant.findFirst({
-        where: { productId: id },
+      const updated = await this.prisma.product.update({
+        where: { id },
+        data: { ...productData, status: data.status as any },
       });
-      if (firstVariant) {
-        await this.prisma.productVariant.update({
-          where: { id: firstVariant.id },
-          data: {
-            mrp: data.mrp !== undefined ? data.mrp : undefined,
-            price:
-              data.discountPrice !== undefined
-                ? data.discountPrice
-                : data.mrp !== undefined
-                  ? data.mrp
-                  : undefined,
-          },
-        });
-      }
-    }
 
-    return this.findOne(id);
+      // Also update the default variant
+      if (
+        data.mrp !== undefined || 
+        data.discountPrice !== undefined ||
+        stockQuantity !== undefined ||
+        mfgDate !== undefined ||
+        expiryDate !== undefined ||
+        shadeName !== undefined ||
+        shadeHex !== undefined
+      ) {
+        const firstVariant = await this.prisma.productVariant.findFirst({
+          where: { productId: id },
+        });
+        if (firstVariant) {
+          await this.prisma.productVariant.update({
+            where: { id: firstVariant.id },
+            data: {
+              mrp: data.mrp !== undefined ? data.mrp : undefined,
+              price:
+                data.discountPrice !== undefined
+                  ? data.discountPrice
+                  : data.mrp !== undefined
+                    ? data.mrp
+                    : undefined,
+              stockQuantity: stockQuantity !== undefined ? stockQuantity : undefined,
+              mfgDate: mfgDate ? new Date(mfgDate) : mfgDate === null ? null : undefined,
+              expiryDate: expiryDate ? new Date(expiryDate) : expiryDate === null ? null : undefined,
+              shadeName: shadeName !== undefined ? shadeName : undefined,
+              shadeHex: shadeHex !== undefined ? shadeHex : undefined,
+            },
+          });
+        }
+      }
+
+      return this.findOne(id);
+    } catch (e) {
+      require('fs').writeFileSync('C:\\Users\\Reshma Kushwaha\\OneDrive\\Desktop\\COSKINn\\backend\\error-log.txt', String(e) + '\n\n' + e.stack + '\n\nData: ' + JSON.stringify(data));
+      throw e;
+    }
   }
 
   async remove(id: string) {

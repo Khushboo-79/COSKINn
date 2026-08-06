@@ -287,6 +287,11 @@ export declare class CatalogService {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -374,8 +379,8 @@ export declare class CatalogService {
         updatedAt: Date;
         productId: string;
         userId: string;
-        title: string | null;
         isApproved: boolean;
+        title: string | null;
         content: string | null;
         rating: number;
     })[]>;
@@ -389,8 +394,8 @@ export declare class CatalogService {
         updatedAt: Date;
         productId: string;
         userId: string;
-        title: string | null;
         isApproved: boolean;
+        title: string | null;
         content: string | null;
         rating: number;
     }>;

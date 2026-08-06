@@ -109,6 +109,11 @@ export declare class OrderController {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;
@@ -254,6 +259,11 @@ export declare class OrderController {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;
@@ -352,6 +362,11 @@ export declare class OrderController {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;
@@ -457,6 +472,11 @@ export declare class OrderController {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;
@@ -555,6 +575,11 @@ export declare class OrderController {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;

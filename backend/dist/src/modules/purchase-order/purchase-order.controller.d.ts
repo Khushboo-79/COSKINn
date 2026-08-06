@@ -37,8 +37,8 @@ export declare class PurchaseOrderController {
         grns: {
             id: string;
             createdAt: Date;
-            purchaseOrderId: string;
             receivedDate: Date;
+            purchaseOrderId: string;
         }[];
     } & {
         id: string;
@@ -74,8 +74,8 @@ export declare class PurchaseOrderController {
         grns: {
             id: string;
             createdAt: Date;
-            purchaseOrderId: string;
             receivedDate: Date;
+            purchaseOrderId: string;
         }[];
     } & {
         id: string;
@@ -88,7 +88,7 @@ export declare class PurchaseOrderController {
     createGrn(id: string, dto: Omit<CreateGrnDto, 'purchaseOrderId'>): Promise<{
         id: string;
         createdAt: Date;
-        purchaseOrderId: string;
         receivedDate: Date;
+        purchaseOrderId: string;
     }>;
 }

@@ -282,9 +282,9 @@ export declare class InventoryController {
         id: string;
         createdAt: Date;
         sku: string;
-        batchNumber: string;
-        expiryDate: Date | null;
         mfgDate: Date | null;
+        expiryDate: Date | null;
+        batchNumber: string;
     }[]>;
     getPurchaseOrders(): Promise<({
         warehouse: {

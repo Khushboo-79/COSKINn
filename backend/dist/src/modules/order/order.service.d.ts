@@ -121,6 +121,11 @@ export declare class OrderService {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;
@@ -240,6 +245,11 @@ export declare class OrderService {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;
@@ -351,6 +361,11 @@ export declare class OrderService {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;
@@ -449,6 +464,11 @@ export declare class OrderService {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             };
         } & {
             id: string;

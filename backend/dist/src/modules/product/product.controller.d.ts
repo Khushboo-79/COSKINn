@@ -29,6 +29,11 @@ export declare class ProductController {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -237,9 +242,9 @@ export declare class ProductController {
             id: string;
             createdAt: Date;
             sku: string;
-            batchNumber: string;
             mfgDate: Date | null;
             expiryDate: Date | null;
+            batchNumber: string;
         };
         stockAdded: number;
     }>;
