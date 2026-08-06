@@ -21,7 +21,7 @@ export const HrDashboardScreen = () => {
   if (!overview) return null;
 
   const statCards = [
-    { label: 'Total Employees', value: overview.totalEmployees, icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50', link: '/hr/employees' },
+    { label: 'Total Employees', value: overview.totalEmployees, icon: Users, color: 'text-[#FF7F50]', bg: 'bg-[#FF7F50]/10', link: '/hr/employees' },
     { label: 'Total Departments', value: overview.departments, icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50', link: '/hr/departments' },
     { label: 'On Leave Today', value: overview.onLeave, icon: UserMinus, color: 'text-amber-600', bg: 'bg-amber-50', link: '/hr/attendance' },
     { label: 'Pending Leaves', value: overview.pendingLeaveRequests, icon: CalendarClock, color: 'text-rose-600', bg: 'bg-rose-50', link: '/hr/leaves' }
@@ -57,7 +57,7 @@ export const HrDashboardScreen = () => {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-slate-900">Monthly Payroll Estimate</h3>
-            <Link to="/hr/payroll" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">Details</Link>
+            <Link to="/hr/payroll" className="text-sm font-medium text-[#FF7F50] hover:text-[#FF7F50]">Details</Link>
           </div>
           <div className="flex items-center justify-center p-8 bg-slate-50 rounded-xl border border-slate-100">
             <div className="text-center">
@@ -75,12 +75,12 @@ export const HrDashboardScreen = () => {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 mb-6">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-4">
-            <Link to="/hr/employees" className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 transition-colors text-center group">
-              <Users className="h-8 w-8 text-slate-400 group-hover:text-indigo-600 mb-3" />
+            <Link to="/hr/employees" className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-xl hover:border-[#FF7F50]/40 hover:bg-[#FF7F50]/10 transition-colors text-center group">
+              <Users className="h-8 w-8 text-slate-400 group-hover:text-[#FF7F50] mb-3" />
               <span className="font-medium text-slate-900 text-sm">Add Employee</span>
             </Link>
-            <Link to="/hr/leaves" className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 transition-colors text-center group">
-              <CalendarClock className="h-8 w-8 text-slate-400 group-hover:text-indigo-600 mb-3" />
+            <Link to="/hr/leaves" className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-xl hover:border-[#FF7F50]/40 hover:bg-[#FF7F50]/10 transition-colors text-center group">
+              <CalendarClock className="h-8 w-8 text-slate-400 group-hover:text-[#FF7F50] mb-3" />
               <span className="font-medium text-slate-900 text-sm">Approve Leaves</span>
               {overview.pendingLeaveRequests > 0 && (
                 <span className="mt-2 text-xs font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">{overview.pendingLeaveRequests} Pending</span>

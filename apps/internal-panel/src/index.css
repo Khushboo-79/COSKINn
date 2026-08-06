@@ -29,3 +29,21 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* Custom Sidebar Scrollbar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 127, 80, 0.2);
+  border-radius: 10px;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 127, 80, 0.5);
+}

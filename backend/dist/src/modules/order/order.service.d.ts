@@ -19,8 +19,9 @@ export declare class OrderService {
     createOrderFromCart(userId: string, addressId: string, paymentMode: string, pointsToRedeem?: number, couponCode?: string, useWalletBalance?: boolean): Promise<{
         address: {
             id: string;
-            phone: string;
             createdAt: Date;
+            orderId: string;
+            phone: string;
             fullName: string;
             addressLine1: string;
             addressLine2: string | null;
@@ -28,28 +29,27 @@ export declare class OrderService {
             state: string;
             pincode: string;
             country: string;
-            orderId: string;
             sourceAddressId: string | null;
         } | null;
         items: {
-            id: string;
-            createdAt: Date;
             name: string;
-            variantId: string;
-            quantity: number;
             sku: string;
             price: number;
+            id: string;
+            quantity: number;
+            createdAt: Date;
             total: number;
-            taxAmount: number;
             orderId: string;
+            variantId: string;
+            taxAmount: number;
         }[];
     } & {
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -63,8 +63,9 @@ export declare class OrderService {
     getOrders(userId: string): Promise<({
         address: {
             id: string;
-            phone: string;
             createdAt: Date;
+            orderId: string;
+            phone: string;
             fullName: string;
             addressLine1: string;
             addressLine2: string | null;
@@ -72,82 +73,81 @@ export declare class OrderService {
             state: string;
             pincode: string;
             country: string;
-            orderId: string;
             sourceAddressId: string | null;
         } | null;
         items: ({
             variant: {
                 product: {
-                    id: string;
-                    isDeleted: boolean;
-                    deletedAt: Date | null;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    name: string;
-                    categoryId: string;
-                    subcategoryId: string | null;
-                    slug: string;
-                    description: string | null;
                     howToUse: string | null;
                     warnings: string | null;
                     claims: string | null;
+                    storageInstructions: string | null;
+                    isReturnable: boolean;
+                    isCodAvailable: boolean;
+                    returnPolicy: string | null;
+                    name: string;
+                    slug: string;
+                    categoryId: string;
+                    subcategoryId: string | null;
+                    description: string | null;
                     mrp: number;
                     discountPrice: number | null;
+                    status: import("@prisma/client").$Enums.ProductStatus;
+                    id: string;
                     gstRate: number;
                     hsnCode: string | null;
                     manufacturerName: string | null;
                     manufacturerAddress: string | null;
                     countryOfOrigin: string | null;
-                    storageInstructions: string | null;
-                    isReturnable: boolean;
-                    isCodAvailable: boolean;
-                    returnPolicy: string | null;
                     testReportRef: string | null;
-                    status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
                     rejectionReason: string | null;
+                    isDeleted: boolean;
+                    deletedAt: Date | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
                     seoKeywords: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
                 };
             } & {
+                name: string;
+                sku: string;
+                mrp: number;
+                price: number;
                 id: string;
+                netQuantity: string | null;
                 createdAt: Date;
                 updatedAt: Date;
-                name: string;
-                mrp: number;
                 productId: string;
-                sku: string;
-                netQuantity: string | null;
-                price: number;
             };
         } & {
-            id: string;
-            createdAt: Date;
             name: string;
-            variantId: string;
-            quantity: number;
             sku: string;
             price: number;
+            id: string;
+            quantity: number;
+            createdAt: Date;
             total: number;
-            taxAmount: number;
             orderId: string;
+            variantId: string;
+            taxAmount: number;
         })[];
         statusHistory: {
+            status: string;
             id: string;
             createdAt: Date;
-            status: string;
             orderId: string;
             notes: string | null;
         }[];
     } & {
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -161,17 +161,17 @@ export declare class OrderService {
     trackOrder(orderId: string, userId: string): Promise<{
         status: string;
         history: {
+            status: string;
             id: string;
             createdAt: Date;
-            status: string;
             orderId: string;
             notes: string | null;
         }[];
         shipment: {
+            status: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: string;
             orderId: string;
             awbNumber: string | null;
             courierPartner: string | null;
@@ -182,8 +182,9 @@ export declare class OrderService {
     getOrderByIdForCustomer(userId: string, id: string): Promise<{
         address: {
             id: string;
-            phone: string;
             createdAt: Date;
+            orderId: string;
+            phone: string;
             fullName: string;
             addressLine1: string;
             addressLine2: string | null;
@@ -191,82 +192,81 @@ export declare class OrderService {
             state: string;
             pincode: string;
             country: string;
-            orderId: string;
             sourceAddressId: string | null;
         } | null;
         items: ({
             variant: {
                 product: {
-                    id: string;
-                    isDeleted: boolean;
-                    deletedAt: Date | null;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    name: string;
-                    categoryId: string;
-                    subcategoryId: string | null;
-                    slug: string;
-                    description: string | null;
                     howToUse: string | null;
                     warnings: string | null;
                     claims: string | null;
+                    storageInstructions: string | null;
+                    isReturnable: boolean;
+                    isCodAvailable: boolean;
+                    returnPolicy: string | null;
+                    name: string;
+                    slug: string;
+                    categoryId: string;
+                    subcategoryId: string | null;
+                    description: string | null;
                     mrp: number;
                     discountPrice: number | null;
+                    status: import("@prisma/client").$Enums.ProductStatus;
+                    id: string;
                     gstRate: number;
                     hsnCode: string | null;
                     manufacturerName: string | null;
                     manufacturerAddress: string | null;
                     countryOfOrigin: string | null;
-                    storageInstructions: string | null;
-                    isReturnable: boolean;
-                    isCodAvailable: boolean;
-                    returnPolicy: string | null;
                     testReportRef: string | null;
-                    status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
                     rejectionReason: string | null;
+                    isDeleted: boolean;
+                    deletedAt: Date | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
                     seoKeywords: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
                 };
             } & {
+                name: string;
+                sku: string;
+                mrp: number;
+                price: number;
                 id: string;
+                netQuantity: string | null;
                 createdAt: Date;
                 updatedAt: Date;
-                name: string;
-                mrp: number;
                 productId: string;
-                sku: string;
-                netQuantity: string | null;
-                price: number;
             };
         } & {
-            id: string;
-            createdAt: Date;
             name: string;
-            variantId: string;
-            quantity: number;
             sku: string;
             price: number;
+            id: string;
+            quantity: number;
+            createdAt: Date;
             total: number;
-            taxAmount: number;
             orderId: string;
+            variantId: string;
+            taxAmount: number;
         })[];
         statusHistory: {
+            status: string;
             id: string;
             createdAt: Date;
-            status: string;
             orderId: string;
             notes: string | null;
         }[];
     } & {
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -293,8 +293,9 @@ export declare class OrderService {
         };
         address: {
             id: string;
-            phone: string;
             createdAt: Date;
+            orderId: string;
+            phone: string;
             fullName: string;
             addressLine1: string;
             addressLine2: string | null;
@@ -302,75 +303,74 @@ export declare class OrderService {
             state: string;
             pincode: string;
             country: string;
-            orderId: string;
             sourceAddressId: string | null;
         } | null;
         items: ({
             variant: {
                 product: {
-                    id: string;
-                    isDeleted: boolean;
-                    deletedAt: Date | null;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    name: string;
-                    categoryId: string;
-                    subcategoryId: string | null;
-                    slug: string;
-                    description: string | null;
                     howToUse: string | null;
                     warnings: string | null;
                     claims: string | null;
+                    storageInstructions: string | null;
+                    isReturnable: boolean;
+                    isCodAvailable: boolean;
+                    returnPolicy: string | null;
+                    name: string;
+                    slug: string;
+                    categoryId: string;
+                    subcategoryId: string | null;
+                    description: string | null;
                     mrp: number;
                     discountPrice: number | null;
+                    status: import("@prisma/client").$Enums.ProductStatus;
+                    id: string;
                     gstRate: number;
                     hsnCode: string | null;
                     manufacturerName: string | null;
                     manufacturerAddress: string | null;
                     countryOfOrigin: string | null;
-                    storageInstructions: string | null;
-                    isReturnable: boolean;
-                    isCodAvailable: boolean;
-                    returnPolicy: string | null;
                     testReportRef: string | null;
-                    status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
                     rejectionReason: string | null;
+                    isDeleted: boolean;
+                    deletedAt: Date | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
                     seoKeywords: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
                 };
             } & {
+                name: string;
+                sku: string;
+                mrp: number;
+                price: number;
                 id: string;
+                netQuantity: string | null;
                 createdAt: Date;
                 updatedAt: Date;
-                name: string;
-                mrp: number;
                 productId: string;
-                sku: string;
-                netQuantity: string | null;
-                price: number;
             };
         } & {
-            id: string;
-            createdAt: Date;
             name: string;
-            variantId: string;
-            quantity: number;
             sku: string;
             price: number;
+            id: string;
+            quantity: number;
+            createdAt: Date;
             total: number;
-            taxAmount: number;
             orderId: string;
+            variantId: string;
+            taxAmount: number;
         })[];
     } & {
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -391,8 +391,9 @@ export declare class OrderService {
         };
         address: {
             id: string;
-            phone: string;
             createdAt: Date;
+            orderId: string;
+            phone: string;
             fullName: string;
             addressLine1: string;
             addressLine2: string | null;
@@ -400,89 +401,90 @@ export declare class OrderService {
             state: string;
             pincode: string;
             country: string;
-            orderId: string;
             sourceAddressId: string | null;
         } | null;
         items: ({
             variant: {
                 product: {
-                    id: string;
-                    isDeleted: boolean;
-                    deletedAt: Date | null;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    name: string;
-                    categoryId: string;
-                    subcategoryId: string | null;
-                    slug: string;
-                    description: string | null;
                     howToUse: string | null;
                     warnings: string | null;
                     claims: string | null;
+                    storageInstructions: string | null;
+                    isReturnable: boolean;
+                    isCodAvailable: boolean;
+                    returnPolicy: string | null;
+                    name: string;
+                    slug: string;
+                    categoryId: string;
+                    subcategoryId: string | null;
+                    description: string | null;
                     mrp: number;
                     discountPrice: number | null;
+                    status: import("@prisma/client").$Enums.ProductStatus;
+                    id: string;
                     gstRate: number;
                     hsnCode: string | null;
                     manufacturerName: string | null;
                     manufacturerAddress: string | null;
                     countryOfOrigin: string | null;
-                    storageInstructions: string | null;
-                    isReturnable: boolean;
-                    isCodAvailable: boolean;
-                    returnPolicy: string | null;
                     testReportRef: string | null;
-                    status: import("@prisma/client").$Enums.ProductStatus;
                     productLine: import("@prisma/client").$Enums.ProductLine;
                     isCrossSegment: boolean;
                     rejectionReason: string | null;
+                    isDeleted: boolean;
+                    deletedAt: Date | null;
                     seoTitle: string | null;
                     seoDesc: string | null;
                     seoKeywords: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
                 };
             } & {
+                name: string;
+                sku: string;
+                mrp: number;
+                price: number;
                 id: string;
+                netQuantity: string | null;
                 createdAt: Date;
                 updatedAt: Date;
-                name: string;
-                mrp: number;
                 productId: string;
-                sku: string;
-                netQuantity: string | null;
-                price: number;
             };
         } & {
-            id: string;
-            createdAt: Date;
             name: string;
-            variantId: string;
-            quantity: number;
             sku: string;
             price: number;
+            id: string;
+            quantity: number;
+            createdAt: Date;
             total: number;
-            taxAmount: number;
             orderId: string;
+            variantId: string;
+            taxAmount: number;
         })[];
         statusHistory: {
+            status: string;
             id: string;
             createdAt: Date;
-            status: string;
             orderId: string;
             notes: string | null;
         }[];
         payments: {
+            status: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            orderId: string;
             status: string;
             amount: number;
             orderId: string;
             method: string | null;
         }[];
         shipments: {
+            status: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: string;
             orderId: string;
             awbNumber: string | null;
             courierPartner: string | null;
@@ -496,12 +498,12 @@ export declare class OrderService {
             orderId: string;
         }[];
     } & {
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -513,12 +515,12 @@ export declare class OrderService {
         couponId: string | null;
     }>;
     updateOrderStatus(orderId: string, status: string, adminId: string, notes?: string): Promise<{
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -530,12 +532,12 @@ export declare class OrderService {
         couponId: string | null;
     }>;
     adminCancelOrder(orderId: string, adminId: string, reason: string): Promise<{
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -547,12 +549,12 @@ export declare class OrderService {
         couponId: string | null;
     }>;
     cancelOrder(orderId: string, userId: string, reason: string): Promise<{
+        status: string;
         id: string;
         isDeleted: boolean;
         deletedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
         platform: import("@prisma/client").$Enums.PlatformType;
         userId: string;
         totalAmount: number;
@@ -571,6 +573,16 @@ export declare class OrderService {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
     getCancellations(): Promise<{
         id: string;
@@ -593,5 +605,15 @@ export declare class OrderService {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
 }

@@ -45,14 +45,23 @@ let AdminController = class AdminController {
     getUsers() {
         return this.adminService.getUsers();
     }
+    deleteUser(id) {
+        return this.adminService.deleteUser(id);
+    }
     createStaffUser(body) {
         return this.adminService.createStaffUser(body);
     }
     updateUserRole(id, body) {
-        return this.adminService.updateUserRole(id, body.roleId);
+        return this.adminService.updateUserRole(id, body);
     }
     assignRole(body) {
         return this.adminService.assignRole(body.userId, body.roleName);
+    }
+    getStaff2FAStatus() {
+        return this.adminService.getStaff2FAStatus();
+    }
+    resetStaff2FA(userId) {
+        return this.adminService.resetStaff2FA(userId);
     }
     getSettings() {
         return this.adminService.getSettings();
@@ -111,6 +120,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "getUsers", null);
 __decorate([
+    (0, common_1.Delete)('users/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "deleteUser", null);
+__decorate([
     (0, common_1.Post)('users'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -132,6 +148,19 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "assignRole", null);
+__decorate([
+    (0, common_1.Get)('staff/2fa'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getStaff2FAStatus", null);
+__decorate([
+    (0, common_1.Post)('staff/:userId/2fa/reset'),
+    __param(0, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "resetStaff2FA", null);
 __decorate([
     (0, common_1.Get)('settings'),
     __metadata("design:type", Function),

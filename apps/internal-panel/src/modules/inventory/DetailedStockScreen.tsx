@@ -20,8 +20,8 @@ export const DetailedStockScreen = () => {
 
   // Simple client-side filter
   const filteredStock = stockList?.filter((item: any) => 
-    item.sku.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    item.sku?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    item.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

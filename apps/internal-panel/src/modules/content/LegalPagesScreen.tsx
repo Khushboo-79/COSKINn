@@ -150,7 +150,7 @@ export const LegalPagesScreen = () => {
               </div>
               <button 
                 onClick={startEditing}
-                className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg font-medium text-sm flex items-center transition-colors"
+                className="bg-[#FF7F50]/10 text-[#FF7F50] hover:bg-[#FF7F50]/20 px-4 py-2 rounded-lg font-medium text-sm flex items-center transition-colors"
               >
                 <Edit className="h-4 w-4 mr-2" /> Edit Page
               </button>
