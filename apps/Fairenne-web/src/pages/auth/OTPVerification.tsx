@@ -55,7 +55,7 @@ const OTPVerification: React.FC = () => {
     if (otp.join('').length === 4) {
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:3000/api/auth/verify-otp`, {
+        const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/verify-otp`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone, otp: otp.join('') })
