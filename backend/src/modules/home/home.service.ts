@@ -26,7 +26,7 @@ export class HomeService {
       ];
     }
 
-    const [categories, newestProducts, allIngredients] = await Promise.all([
+    const [categories, newestProducts, bestSellerProducts, allIngredients, heroBanners] = await Promise.all([
       this.prisma.category.findMany({
         where: categoryWhere,
         select: { id: true, name: true, slug: true, imageUrl: true },
@@ -41,9 +41,20 @@ export class HomeService {
         orderBy: { createdAt: 'desc' },
         take: 6
       }),
+      this.prisma.product.findMany({
+        where: { ...productWhere, isBestseller: true },
+        include: {
+          variants: true,
+          images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+        },
+        take: 4
+      }),
       this.prisma.productIngredient.findMany({
         where: { product: productWhere },
         select: { name: true }
+      }),
+      this.prisma.banner.findMany({
+        where: { position: 'hero' }
       })
     ]);
 
@@ -57,21 +68,12 @@ export class HomeService {
       .sort((a, b) => b.productCount - a.productCount)
       .slice(0, 6);
 
-    // Stub for hero banners until Day 62
-    const heroBanners = [
-      {
-        id: 'banner_1',
-        imageUrl: 'https://fairenne-assets.s3.amazonaws.com/banners/summer-sale.jpg',
-        linkUrl: '/products?minPrice=500',
-        altText: 'Summer Skincare Sale'
-      }
-    ];
-
     return {
       heroBanners,
       categoryRail: categories,
       fruitIngredientRail: fruitIngredients,
-      newArrivals: newestProducts
+      newArrivals: newestProducts,
+      bestSellers: bestSellerProducts
     };
   }
 }

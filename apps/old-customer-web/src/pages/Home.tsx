@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Hero from '../components/home/Hero';
 import Promotions from '../components/home/Promotions';
 import ShopByCategory from '../components/home/ShopByCategory';
@@ -8,11 +8,23 @@ import Philosophy from '../components/home/Philosophy';
 import { ScrollSection } from '../components/ui/ScrollSection';
 
 const Home: React.FC = () => {
+  const [heroBanners, setHeroBanners] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/api/home')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.heroBanners) {
+          setHeroBanners(data.heroBanners);
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
-      <ScrollSection index={0}>
-        <Hero />
-      </ScrollSection>
+      {/* Hero is always full-bleed — no 3-D on first section */}
+      <Hero banners={heroBanners} />
 
       <ScrollSection index={1}>
         <Promotions />
