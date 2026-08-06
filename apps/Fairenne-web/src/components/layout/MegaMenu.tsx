@@ -27,10 +27,11 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, onMouseEnter, onMo
         // Transform the backend categories into the MegaMenu layout format
         const formatted = data.map((cat: any) => ({
           title: cat.name,
-          links: cat.subcategories.map((sub: any) => ({
+          slug: cat.slug,
+          links: cat.subcategories ? cat.subcategories.map((sub: any) => ({
             name: sub.name,
             path: `/collections/${sub.slug}`
-          }))
+          })) : []
         }));
         
         setCategories(formatted);
@@ -64,9 +65,9 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, onMouseEnter, onMo
                 <div className="col-span-12 lg:col-span-7 grid grid-cols-2 gap-8">
                   {categories.map((category, idx) => (
                     <div key={idx} className="flex flex-col">
-                      <h3 className={`text-sm font-bold uppercase tracking-widest mb-6 ${isGlam ? 'text-[#cfa473] font-serif' : 'text-[#ff9aa8]'}`}>
+                      <Link to={`/collections/${category.slug}`} onClick={onClose} className={`text-sm font-bold uppercase tracking-widest mb-6 block hover:opacity-80 ${isGlam ? 'text-[#cfa473] font-serif' : 'text-[#ff9aa8]'}`}>
                         {category.title}
-                      </h3>
+                      </Link>
                       <ul className="space-y-4">
                         {category.links.map((link: any, linkIdx: number) => (
                           <li key={linkIdx}>
