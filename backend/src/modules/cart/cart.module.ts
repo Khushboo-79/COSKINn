@@ -10,6 +10,6 @@ import { RewardPointModule } from '../reward-point/reward-point.module';
   imports: [PrismaModule, OfferModule, WalletModule, RewardPointModule],
   controllers: [CartController],
   providers: [CartService],
-  exports: [CartService]
+  exports: [CartService],
 })
 export class CartModule {}

@@ -30,7 +30,10 @@ export class PurchaseOrderController {
 
   @Post(':id/grn')
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF')
-  createGrn(@Param('id') id: string, @Body() dto: Omit<CreateGrnDto, 'purchaseOrderId'>) {
+  createGrn(
+    @Param('id') id: string,
+    @Body() dto: Omit<CreateGrnDto, 'purchaseOrderId'>,
+  ) {
     return this.purchaseOrderService.createGrn({ ...dto, purchaseOrderId: id });
   }
 }

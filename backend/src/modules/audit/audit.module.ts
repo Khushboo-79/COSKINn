@@ -8,7 +8,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [AuditController],
   providers: [AuditService],
-  exports: [AuditService]
+  exports: [AuditService],
 })
 export class AuditModule implements OnModuleInit {
   constructor(private readonly auditService: AuditService) {}

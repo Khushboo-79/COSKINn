@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { MarketingService } from './marketing.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -83,7 +93,15 @@ export class MarketingController {
   @Post('campaigns')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'MARKETING_MANAGER')
-  createCampaign(@Body() data: { name: string; type: string; audience?: string; scheduledAt?: Date }) {
+  createCampaign(
+    @Body()
+    data: {
+      name: string;
+      type: string;
+      audience?: string;
+      scheduledAt?: Date;
+    },
+  ) {
     return this.marketingService.createCampaign(data);
   }
 
@@ -104,4 +122,3 @@ export class MarketingController {
     return this.marketingService.getDashboardOverview();
   }
 }
-

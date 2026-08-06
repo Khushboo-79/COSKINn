@@ -29,7 +29,8 @@ export class CategoryService {
       where: { id },
       include: { subcategories: true },
     });
-    if (!cat || cat.isDeleted) throw new NotFoundException('Category not found');
+    if (!cat || cat.isDeleted)
+      throw new NotFoundException('Category not found');
     return cat;
   }
 
@@ -73,4 +74,3 @@ export class CategoryService {
     return this.prisma.subcategory.delete({ where: { id } });
   }
 }
-

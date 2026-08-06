@@ -26,10 +26,21 @@ export class HrController {
   }
 
   @Post('employees')
-  createEmployee(@Body() data: { name: string; email: string; role: string; department: string; salary: number; phone?: string; joinDate?: string }) {
+  createEmployee(
+    @Body()
+    data: {
+      name: string;
+      email: string;
+      role: string;
+      department: string;
+      salary: number;
+      phone?: string;
+      joinDate?: string;
+    },
+  ) {
     return this.hrService.createEmployee({
       ...data,
-      joinDate: data.joinDate ? new Date(data.joinDate) : undefined
+      joinDate: data.joinDate ? new Date(data.joinDate) : undefined,
     });
   }
 
@@ -39,7 +50,10 @@ export class HrController {
   }
 
   @Post('leaves/:id/status')
-  updateLeaveStatus(@Param('id') id: string, @Body() body: { status: 'Approved' | 'Rejected' }) {
+  updateLeaveStatus(
+    @Param('id') id: string,
+    @Body() body: { status: 'Approved' | 'Rejected' },
+  ) {
     return this.hrService.updateLeaveStatus(id, body.status);
   }
 
@@ -49,7 +63,13 @@ export class HrController {
   }
 
   @Post('attendance')
-  markAttendance(@Body() body: { employeeId: string; status: 'PRESENT' | 'ABSENT' | 'LEAVE' }) {
+  markAttendance(
+    @Body()
+    body: {
+      employeeId: string;
+      status: 'PRESENT' | 'ABSENT' | 'LEAVE';
+    },
+  ) {
     return this.hrService.markAttendance(body.employeeId, body.status);
   }
 
@@ -58,4 +78,3 @@ export class HrController {
     return this.hrService.seedHrData();
   }
 }
-

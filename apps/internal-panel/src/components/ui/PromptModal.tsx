@@ -42,14 +42,14 @@ export const PromptModal: React.FC<PromptModalProps> = ({
             <div className="p-3 rounded-2xl bg-slate-100 text-slate-800">
               <MessageSquare className="h-6 w-6" />
             </div>
-            <button 
+            <button
               onClick={onCancel}
               className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
-          
+
           <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
           <p className="text-slate-500 mb-6 leading-relaxed">
             {message}
@@ -68,7 +68,7 @@ export const PromptModal: React.FC<PromptModalProps> = ({
               }
             }}
           />
-          
+
           <div className="flex items-center gap-3 w-full">
             <button
               onClick={onCancel}

@@ -1,4 +1,10 @@
-import { Controller, Get, Query, Req, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Req,
+  BadRequestException,
+} from '@nestjs/common';
 import { LocationService } from './location.service';
 import type { Request } from 'express';
 
@@ -9,9 +15,13 @@ export class LocationController {
   @Get('ip')
   getIpLocation(@Req() req: Request) {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    
+
     // x-forwarded-for can be a comma separated list if multiple proxies exist
-    const clientIp = Array.isArray(ip) ? ip[0] : (typeof ip === 'string' ? ip.split(',')[0] : ip);
+    const clientIp = Array.isArray(ip)
+      ? ip[0]
+      : typeof ip === 'string'
+        ? ip.split(',')[0]
+        : ip;
 
     return this.locationService.getIpLocation(clientIp || '');
   }

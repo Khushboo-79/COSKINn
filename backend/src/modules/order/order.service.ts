@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  Inject,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { RewardPointService } from '../reward-point/reward-point.service';
@@ -18,25 +23,25 @@ export class OrderService {
     private referralService: ReferralService,
     private offerService: OfferService,
     private couponService: CouponService,
-    private walletService: WalletService
+    private walletService: WalletService,
   ) {}
 
   async createOrderFromCart(
-    userId: string, 
-    addressId: string, 
-    paymentMode: string, 
+    userId: string,
+    addressId: string,
+    paymentMode: string,
     pointsToRedeem: number = 0,
     couponCode?: string,
-    useWalletBalance: boolean = false
+    useWalletBalance: boolean = false,
   ) {
     // 1. Fetch the user's cart and address
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
       include: {
         items: {
-          include: { product: true }
-        }
-      }
+          include: { product: true },
+        },
+      },
     });
 
     if (!cart || cart.items.length === 0) {
@@ -44,7 +49,7 @@ export class OrderService {
     }
 
     const address = await this.prisma.customerAddress.findUnique({
-      where: { id: addressId, userId }
+      where: { id: addressId, userId },
     });
 
     if (!address) {
@@ -54,19 +59,22 @@ export class OrderService {
     // 2. Calculate totals
     let totalAmount = 0; // MRP sum
     let finalAmount = 0; // Discounted sum
-    let taxAmount = 0; // Placeholder for now
-    let shippingFee = 0; // Placeholder for now
+    const taxAmount = 0; // Placeholder for now
+    const shippingFee = 0; // Placeholder for now
 
-    cart.items.forEach(item => {
+    cart.items.forEach((item) => {
       const mrp = Number(item.product.mrp);
       const discountPrice = Number(item.product.discountPrice || mrp);
-      
-      totalAmount += (mrp * item.quantity);
-      finalAmount += (discountPrice * item.quantity);
+
+      totalAmount += mrp * item.quantity;
+      finalAmount += discountPrice * item.quantity;
     });
 
-    const offerData = await this.offerService.evaluateBestOffer(cart.items, finalAmount);
-    
+    const offerData = await this.offerService.evaluateBestOffer(
+      cart.items,
+      finalAmount,
+    );
+
     // Deduct offer discount
     finalAmount -= offerData.discount;
     if (finalAmount < 0) finalAmount = 0;
@@ -89,11 +97,16 @@ export class OrderService {
 
     // Validate Coupon
     if (couponCode) {
-      const couponResult = await this.couponService.applyCoupon(userId, couponCode);
+      const couponResult = await this.couponService.applyCoupon(
+        userId,
+        couponCode,
+      );
       finalAmount -= couponResult.discountAmount;
       if (finalAmount < 0) finalAmount = 0;
-      
-      const coupon = await this.prisma.coupon.findUnique({ where: { code: couponCode } });
+
+      const coupon = await this.prisma.coupon.findUnique({
+        where: { code: couponCode },
+      });
       if (coupon) appliedCouponId = coupon.id;
     }
 
@@ -125,7 +138,7 @@ export class OrderService {
           finalAmount,
           paymentMode: finalAmount === 0 ? 'WALLET' : paymentMode,
           couponId: appliedCouponId,
-          
+
           // Create the order address snapshot
           address: {
             create: {
@@ -137,51 +150,57 @@ export class OrderService {
               city: address.city,
               state: address.state,
               pincode: address.pincode,
-              country: address.country
-            }
+              country: address.country,
+            },
           },
 
           // Create the order items
           items: {
-            create: await Promise.all(cart.items.map(async (item) => {
-              const mrp = Number(item.product.mrp);
-              const discountPrice = Number(item.product.discountPrice || mrp);
-              let variantId = item.variantId;
-              let sku = 'UNKNOWN_SKU';
-              
-              let variant: any = null;
-              if (variantId) {
-                variant = await tx.productVariant.findUnique({ where: { id: variantId } });
-              } else {
-                variant = await tx.productVariant.findFirst({ where: { productId: item.productId } });
-              }
+            create: await Promise.all(
+              cart.items.map(async (item) => {
+                const mrp = Number(item.product.mrp);
+                const discountPrice = Number(item.product.discountPrice || mrp);
+                let variantId = item.variantId;
+                let sku = 'UNKNOWN_SKU';
 
-              if (variant) {
-                variantId = variant.id;
-                sku = variant.sku;
-              }
+                let variant: any = null;
+                if (variantId) {
+                  variant = await tx.productVariant.findUnique({
+                    where: { id: variantId },
+                  });
+                } else {
+                  variant = await tx.productVariant.findFirst({
+                    where: { productId: item.productId },
+                  });
+                }
 
-              return {
-                variantId: variantId as string, // Cast to string assuming we found one, otherwise it'll throw a db error
-                sku: sku,
-                name: item.product.name,
-                quantity: item.quantity,
-                price: discountPrice,
-                total: discountPrice * item.quantity,
-                taxAmount: 0
-              };
-            }))
-          }
+                if (variant) {
+                  variantId = variant.id;
+                  sku = variant.sku;
+                }
+
+                return {
+                  variantId: variantId as string, // Cast to string assuming we found one, otherwise it'll throw a db error
+                  sku: sku,
+                  name: item.product.name,
+                  quantity: item.quantity,
+                  price: discountPrice,
+                  total: discountPrice * item.quantity,
+                  taxAmount: 0,
+                };
+              }),
+            ),
+          },
         },
         include: {
           address: true,
-          items: true
-        }
+          items: true,
+        },
       });
 
       // 4. Clear the cart
       await tx.cartItem.deleteMany({
-        where: { cartId: cart.id }
+        where: { cartId: cart.id },
       });
 
       // 5. Reserve stock for all items
@@ -193,7 +212,7 @@ export class OrderService {
       if (appliedCouponId) {
         await tx.coupon.update({
           where: { id: appliedCouponId },
-          data: { usedCount: { increment: 1 } }
+          data: { usedCount: { increment: 1 } },
         });
       }
 
@@ -201,11 +220,19 @@ export class OrderService {
     });
 
     if (pointsToRedeem > 0) {
-      await this.rewardPointService.redeemPoints(userId, pointsToRedeem, orderData.id);
+      await this.rewardPointService.redeemPoints(
+        userId,
+        pointsToRedeem,
+        orderData.id,
+      );
     }
 
     if (walletDeduction > 0) {
-      await this.walletService.debitWallet(userId, walletDeduction, `Paid for Order ${orderData.id}`);
+      await this.walletService.debitWallet(
+        userId,
+        walletDeduction,
+        `Paid for Order ${orderData.id}`,
+      );
     }
 
     return orderData;
@@ -219,7 +246,7 @@ export class OrderService {
         address: true,
         statusHistory: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -228,17 +255,18 @@ export class OrderService {
       where: { id: orderId },
       include: {
         statusHistory: { orderBy: { createdAt: 'desc' } },
-        shipments: { orderBy: { createdAt: 'desc' } }
-      }
+        shipments: { orderBy: { createdAt: 'desc' } },
+      },
     });
 
     if (!order) throw new NotFoundException('Order not found');
-    if (order.userId !== userId) throw new BadRequestException('Not authorized to track this order');
+    if (order.userId !== userId)
+      throw new BadRequestException('Not authorized to track this order');
 
     return {
       status: order.status,
       history: order.statusHistory,
-      shipment: order.shipments.length > 0 ? order.shipments[0] : null
+      shipment: order.shipments.length > 0 ? order.shipments[0] : null,
     };
   }
 
@@ -249,9 +277,9 @@ export class OrderService {
         items: { include: { variant: { include: { product: true } } } },
         address: true,
         statusHistory: {
-          orderBy: { createdAt: 'asc' }
-        }
-      }
+          orderBy: { createdAt: 'asc' },
+        },
+      },
     });
 
     if (!order || order.userId !== userId) {
@@ -263,7 +291,13 @@ export class OrderService {
 
   // --- ADMIN METHODS ---
 
-  async getAdminOrders(filters: { status?: string; paymentMode?: string; email?: string; mobile?: string; platform?: 'COSMETICS' | 'SKINCARE' }) {
+  async getAdminOrders(filters: {
+    status?: string;
+    paymentMode?: string;
+    email?: string;
+    mobile?: string;
+    platform?: 'COSMETICS' | 'SKINCARE';
+  }) {
     const where: any = {};
     if (filters.status) {
       if (filters.status === 'PENDING') {
@@ -277,7 +311,8 @@ export class OrderService {
 
     if (filters.email || filters.mobile) {
       where.user = {};
-      if (filters.email) where.user.email = { contains: filters.email, mode: 'insensitive' };
+      if (filters.email)
+        where.user.email = { contains: filters.email, mode: 'insensitive' };
       if (filters.mobile) where.user.phone = { contains: filters.mobile };
     }
 
@@ -285,10 +320,18 @@ export class OrderService {
       where,
       include: {
         address: true,
-        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
-        items: { include: { variant: { include: { product: true } } } }
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+          },
+        },
+        items: { include: { variant: { include: { product: true } } } },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -297,44 +340,65 @@ export class OrderService {
       where: { id: orderId },
       include: {
         address: true,
-        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+          },
+        },
         items: { include: { variant: { include: { product: true } } } },
         payments: true,
         shipments: true,
         cancellations: true,
-        statusHistory: { orderBy: { createdAt: 'desc' } }
-      }
+        statusHistory: { orderBy: { createdAt: 'desc' } },
+      },
     });
 
     if (!order) throw new NotFoundException('Order not found');
     return order;
   }
 
-  async updateOrderStatus(orderId: string, status: string, adminId: string, notes?: string) {
-    const order = await this.prisma.order.findUnique({ 
+  async updateOrderStatus(
+    orderId: string,
+    status: string,
+    adminId: string,
+    notes?: string,
+  ) {
+    const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { items: true }
+      include: { items: true },
     });
     if (!order) throw new NotFoundException('Order not found');
 
     const res = await this.prisma.$transaction(async (tx) => {
       const updatedOrder = await tx.order.update({
         where: { id: orderId },
-        data: { status }
+        data: { status },
       });
 
       await tx.orderStatusHistory.create({
         data: {
           orderId,
           status,
-          notes: notes || `Status updated by Admin ${adminId}`
-        }
+          notes: notes || `Status updated by Admin ${adminId}`,
+        },
       });
 
       // If status changes to SHIPPED, deduct reserved stock
-      if (status === 'SHIPPED' && order.status !== 'SHIPPED' && order.status !== 'DELIVERED') {
+      if (
+        status === 'SHIPPED' &&
+        order.status !== 'SHIPPED' &&
+        order.status !== 'DELIVERED'
+      ) {
         for (const item of order.items) {
-          await this.inventoryService.deductReservedStock(item.sku, item.quantity, tx);
+          await this.inventoryService.deductReservedStock(
+            item.sku,
+            item.quantity,
+            tx,
+          );
         }
       }
 
@@ -344,13 +408,17 @@ export class OrderService {
     // Post-transaction triggers for DELIVERED
     if (status === 'DELIVERED' && order.status !== 'DELIVERED') {
       try {
-        await this.rewardPointService.earnPoints(order.userId, order.totalAmount, orderId);
+        await this.rewardPointService.earnPoints(
+          order.userId,
+          order.totalAmount,
+          orderId,
+        );
         await this.bonusService.awardFirstOrderBonus(order.userId);
-        
+
         // Check if user was referred, and award bonus if this is their first order?
         // For simplicity, we can trigger referral bonus on first delivered order
         const referral = await this.prisma.referral.findUnique({
-          where: { refereeId: order.userId }
+          where: { refereeId: order.userId },
         });
         if (referral && !referral.bonusAwarded) {
           await this.referralService.awardReferralBonus(referral.id);
@@ -367,35 +435,49 @@ export class OrderService {
   async adminCancelOrder(orderId: string, adminId: string, reason: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { items: true }
+      include: { items: true },
     });
 
     if (!order) throw new NotFoundException('Order not found');
 
-    if (order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELLED') {
-      throw new BadRequestException(`Cannot cancel order in ${order.status} state`);
+    if (
+      order.status === 'SHIPPED' ||
+      order.status === 'DELIVERED' ||
+      order.status === 'CANCELLED'
+    ) {
+      throw new BadRequestException(
+        `Cannot cancel order in ${order.status} state`,
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {
       // 1. Mark as cancelled
       const updatedOrder = await tx.order.update({
         where: { id: orderId },
-        data: { status: 'CANCELLED' }
+        data: { status: 'CANCELLED' },
       });
 
       // 2. Add history and cancellation record
       await tx.orderStatusHistory.create({
-        data: { orderId, status: 'CANCELLED', notes: `Cancelled by Admin ${adminId}: ${reason}` }
+        data: {
+          orderId,
+          status: 'CANCELLED',
+          notes: `Cancelled by Admin ${adminId}: ${reason}`,
+        },
       });
 
       await tx.orderCancellation.create({
-        data: { orderId, reason }
+        data: { orderId, reason },
       });
 
       // 3. Release reserved stock if it was PACKED or PLACED
       if (order.status === 'PACKED' || order.status === 'PLACED') {
         for (const item of order.items) {
-          await this.inventoryService.releaseReservedStock(item.sku, item.quantity, tx);
+          await this.inventoryService.releaseReservedStock(
+            item.sku,
+            item.quantity,
+            tx,
+          );
         }
       }
 
@@ -406,35 +488,50 @@ export class OrderService {
   async cancelOrder(orderId: string, userId: string, reason: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
-      include: { items: true }
+      include: { items: true },
     });
 
     if (!order) throw new NotFoundException('Order not found');
-    if (order.userId !== userId) throw new BadRequestException('Not authorized to cancel this order');
+    if (order.userId !== userId)
+      throw new BadRequestException('Not authorized to cancel this order');
 
-    if (order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'CANCELLED') {
-      throw new BadRequestException(`Cannot cancel order in ${order.status} state`);
+    if (
+      order.status === 'SHIPPED' ||
+      order.status === 'DELIVERED' ||
+      order.status === 'CANCELLED'
+    ) {
+      throw new BadRequestException(
+        `Cannot cancel order in ${order.status} state`,
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {
       // 1. Mark as cancelled
       const updatedOrder = await tx.order.update({
         where: { id: orderId },
-        data: { status: 'CANCELLED' }
+        data: { status: 'CANCELLED' },
       });
 
       // 2. Add history and cancellation record
       await tx.orderStatusHistory.create({
-        data: { orderId, status: 'CANCELLED', notes: `Cancelled by user: ${reason}` }
+        data: {
+          orderId,
+          status: 'CANCELLED',
+          notes: `Cancelled by user: ${reason}`,
+        },
       });
 
       await tx.orderCancellation.create({
-        data: { orderId, reason }
+        data: { orderId, reason },
       });
 
       // 3. Release reserved stock
       for (const item of order.items) {
-        await this.inventoryService.releaseReservedStock(item.sku, item.quantity, tx);
+        await this.inventoryService.releaseReservedStock(
+          item.sku,
+          item.quantity,
+          tx,
+        );
       }
 
       // 4. (Optional) Trigger refund if payment was online & successful
@@ -454,8 +551,8 @@ export class OrderService {
           returnWindowDays: 7,
           autoCancelHours: 24,
           codEnabled: true,
-          maxCodAmount: 5000
-        }
+          maxCodAmount: 5000,
+        },
       });
     }
     return settings;
@@ -470,19 +567,19 @@ export class OrderService {
             id: true,
             totalAmount: true,
             status: true,
-            user: { select: { email: true } }
-          }
-        }
-      }
+            user: { select: { email: true } },
+          },
+        },
+      },
     });
 
-    return cancellations.map(c => ({
+    return cancellations.map((c) => ({
       id: c.id,
       date: c.createdAt.toISOString().split('T')[0],
       orderId: c.orderId.split('-')[0].toUpperCase(),
       customer: c.order.user ? c.order.user.email : 'Guest',
       reason: c.reason,
-      refundStatus: c.order.status === 'CANCELLED' ? 'PROCESSED' : 'PENDING'
+      refundStatus: c.order.status === 'CANCELLED' ? 'PROCESSED' : 'PENDING',
     }));
   }
 
@@ -495,7 +592,7 @@ export class OrderService {
     const settings = await this.getSettings();
     return this.prisma.orderSettings.update({
       where: { id: settings.id },
-      data
+      data,
     });
   }
 }

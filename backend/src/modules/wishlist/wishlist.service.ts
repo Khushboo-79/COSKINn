@@ -13,18 +13,20 @@ export class WishlistService {
           include: {
             product: {
               include: {
-                images: { where: { isPrimary: true }, take: 1 }
-              }
-            }
-          }
-        }
-      }
+                images: { where: { isPrimary: true }, take: 1 },
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!wishlist) {
       wishlist = await this.prisma.wishlist.create({
         data: { userId },
-        include: { items: { include: { product: { include: { images: true } } } } }
+        include: {
+          items: { include: { product: { include: { images: true } } } },
+        },
       });
     }
 
@@ -33,17 +35,19 @@ export class WishlistService {
 
   async addToWishlist(userId: string, productId: string) {
     let wishlist = await this.prisma.wishlist.findUnique({
-      where: { userId }
+      where: { userId },
     });
 
     if (!wishlist) {
       wishlist = await this.prisma.wishlist.create({
-        data: { userId }
+        data: { userId },
       });
     }
 
     // Check if product exists
-    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
     if (!product) throw new NotFoundException('Product not found');
 
     // Add to wishlist (upsert ignores if it already exists because of unique constraint)
@@ -51,14 +55,14 @@ export class WishlistService {
       where: {
         wishlistId_productId: {
           wishlistId: wishlist.id,
-          productId: productId
-        }
+          productId: productId,
+        },
       },
       update: {},
       create: {
         wishlistId: wishlist.id,
-        productId: productId
-      }
+        productId: productId,
+      },
     });
 
     return this.getWishlist(userId);
@@ -66,7 +70,7 @@ export class WishlistService {
 
   async removeFromWishlist(userId: string, productId: string) {
     const wishlist = await this.prisma.wishlist.findUnique({
-      where: { userId }
+      where: { userId },
     });
 
     if (!wishlist) return { success: true };
@@ -76,9 +80,9 @@ export class WishlistService {
         where: {
           wishlistId_productId: {
             wishlistId: wishlist.id,
-            productId: productId
-          }
-        }
+            productId: productId,
+          },
+        },
       });
     } catch (e) {
       console.error('Error in removeFromWishlist:', e);

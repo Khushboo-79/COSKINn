@@ -1,9 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { ServiceablePincodeService } from './serviceable-pincode.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { CreateServiceablePincodeDto, UpdateServiceablePincodeDto } from './dto/serviceable-pincode.dto';
+import {
+  CreateServiceablePincodeDto,
+  UpdateServiceablePincodeDto,
+} from './dto/serviceable-pincode.dto';
 
 @Controller('serviceable-pincode')
 export class ServiceablePincodeController {
@@ -36,7 +49,10 @@ export class ServiceablePincodeController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'OPERATIONS_MANAGER')
-  update(@Param('id') id: string, @Body() updateDto: UpdateServiceablePincodeDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateServiceablePincodeDto,
+  ) {
     return this.pincodeService.update(id, updateDto);
   }
 

@@ -10,12 +10,18 @@ export class EngagementService {
   async getProductReviews(productId: string) {
     return this.prisma.productReview.findMany({
       where: { productId, isApproved: true },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  async addReview(userId: string, productId: string, data: { rating: number, title?: string, content?: string }) {
-    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+  async addReview(
+    userId: string,
+    productId: string,
+    data: { rating: number; title?: string; content?: string },
+  ) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
     if (!product) throw new NotFoundException('Product not found');
 
     return this.prisma.productReview.create({
@@ -25,8 +31,8 @@ export class EngagementService {
         rating: data.rating,
         title: data.title,
         content: data.content,
-        isApproved: false // Requires admin approval before going live
-      }
+        isApproved: false, // Requires admin approval before going live
+      },
     });
   }
 
@@ -37,13 +43,15 @@ export class EngagementService {
       where: { productId, isApproved: true },
       orderBy: { createdAt: 'desc' },
       include: {
-        answers: { where: { isApproved: true } }
-      }
+        answers: { where: { isApproved: true } },
+      },
     });
   }
 
   async addQuestion(userId: string, productId: string, content: string) {
-    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
     if (!product) throw new NotFoundException('Product not found');
 
     return this.prisma.productQuestion.create({
@@ -51,8 +59,8 @@ export class EngagementService {
         userId,
         productId,
         content,
-        isApproved: false
-      }
+        isApproved: false,
+      },
     });
   }
 }

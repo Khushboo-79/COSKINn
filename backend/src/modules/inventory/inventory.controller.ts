@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { StockMovementDto } from './dto/inventory.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -131,7 +139,7 @@ export class InventoryController {
   @Post('purchase-orders')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF')
-  createPurchaseOrder(@Body() dto: { warehouseId: string, status: string }) {
+  createPurchaseOrder(@Body() dto: { warehouseId: string; status: string }) {
     return this.inventoryService.createPurchaseOrder(dto);
   }
 
@@ -140,7 +148,8 @@ export class InventoryController {
   @Roles('SUPER_ADMIN', 'INVENTORY_STAFF', 'WAREHOUSE_STAFF')
   updatePurchaseOrder(
     @Param('id') id: string,
-    @Body() dto: { status: string, items?: { sku: string, quantity: number }[] }
+    @Body()
+    dto: { status: string; items?: { sku: string; quantity: number }[] },
   ) {
     return this.inventoryService.updatePurchaseOrder(id, dto);
   }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StockMovementDto } from './dto/inventory.dto';
 import { AuditService } from '../audit/audit.service';
@@ -7,7 +11,7 @@ import { AuditService } from '../audit/audit.service';
 export class InventoryService {
   constructor(
     private prisma: PrismaService,
-    private auditService: AuditService
+    private auditService: AuditService,
   ) {}
 
   async getWarehouses() {
@@ -22,33 +26,37 @@ export class InventoryService {
     return this.prisma.warehouse.create({
       data: {
         name: dto.name,
-        code: dto.name.toUpperCase().replace(/\s+/g, '-').substring(0, 10) + '-' + Math.floor(Math.random() * 1000),
+        code:
+          dto.name.toUpperCase().replace(/\s+/g, '-').substring(0, 10) +
+          '-' +
+          Math.floor(Math.random() * 1000),
         address: dto.location || 'Unknown',
-        isActive: true
-      }
+        isActive: true,
+      },
     });
   }
 
   async getMovementLogs(sku?: string) {
-    const where = sku ? { sku: { contains: sku, mode: 'insensitive' as any } } : {};
+    const where = sku
+      ? { sku: { contains: sku, mode: 'insensitive' as any } }
+      : {};
     return this.prisma.stockMovement.findMany({
       where,
       include: {
-        warehouse: true
+        warehouse: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
-
 
   async getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE') {
     // 1. Fetch all real product variants to serve as the source of truth for the ledger
     const variants = await this.prisma.productVariant.findMany({
       where: platform ? { product: { category: { platform } } } : undefined,
-      include: { product: true }
+      include: { product: true },
     });
 
-    const skuList = variants.map(v => v.sku);
+    const skuList = variants.map((v) => v.sku);
 
     // 2. Fetch stock only for these real SKUs
     const stocks = await this.prisma.inventoryStock.findMany({
@@ -61,20 +69,28 @@ export class InventoryService {
       by: ['sku'],
       _sum: { quantity: true },
     });
-    const damagedMap = new Map(damagedTotals.map(d => [d.sku, d._sum.quantity || 0]));
+    const damagedMap = new Map(
+      damagedTotals.map((d) => [d.sku, d._sum.quantity || 0]),
+    );
 
     // Fetch expired totals
     const expiredTotals = await this.prisma.expiredStock.groupBy({
       by: ['sku'],
       _sum: { quantity: true },
     });
-    const expiredMap = new Map(expiredTotals.map(e => [e.sku, e._sum.quantity || 0]));
+    const expiredMap = new Map(
+      expiredTotals.map((e) => [e.sku, e._sum.quantity || 0]),
+    );
 
     // 3. Group stock by SKU
     const stockBySku = new Map();
     for (const stock of stocks) {
       if (!stockBySku.has(stock.sku)) {
-        stockBySku.set(stock.sku, { totalQuantity: 0, totalReservedQty: 0, warehouses: [] });
+        stockBySku.set(stock.sku, {
+          totalQuantity: 0,
+          totalReservedQty: 0,
+          warehouses: [],
+        });
       }
       const gStock = stockBySku.get(stock.sku);
       gStock.totalQuantity += stock.quantity;
@@ -84,8 +100,12 @@ export class InventoryService {
 
     // 4. Map variants to global stock view
     // This ensures all products appear in the ledger, even if they have 0 stock
-    return variants.map(v => {
-      const stock = stockBySku.get(v.sku) || { totalQuantity: 0, totalReservedQty: 0, warehouses: [] };
+    return variants.map((v) => {
+      const stock = stockBySku.get(v.sku) || {
+        totalQuantity: 0,
+        totalReservedQty: 0,
+        warehouses: [],
+      };
       return {
         sku: v.sku,
         name: v.product?.name || 'Unknown Product',
@@ -93,7 +113,7 @@ export class InventoryService {
         totalReservedQty: stock.totalReservedQty,
         damaged: damagedMap.get(v.sku) || 0,
         expired: expiredMap.get(v.sku) || 0,
-        warehouses: stock.warehouses
+        warehouses: stock.warehouses,
       };
     });
   }
@@ -101,35 +121,55 @@ export class InventoryService {
   async getStockForSku(sku: string) {
     const variant = await this.prisma.productVariant.findUnique({
       where: { sku },
-      include: { product: { include: { bundleItems: true } } }
+      include: { product: { include: { bundleItems: true } } },
     });
 
-    if (variant && variant.product && variant.product.bundleItems && variant.product.bundleItems.length > 0) {
+    if (
+      variant &&
+      variant.product &&
+      variant.product.bundleItems &&
+      variant.product.bundleItems.length > 0
+    ) {
       let minAvailable = Infinity;
       for (const item of variant.product.bundleItems) {
-        const componentStocks = await this.prisma.inventoryStock.findMany({ where: { sku: item.componentSku } });
-        const totalAvail = componentStocks.reduce((sum, s) => sum + s.quantity - s.reservedQty, 0);
+        const componentStocks = await this.prisma.inventoryStock.findMany({
+          where: { sku: item.componentSku },
+        });
+        const totalAvail = componentStocks.reduce(
+          (sum, s) => sum + s.quantity - s.reservedQty,
+          0,
+        );
         const possibleBundles = Math.floor(totalAvail / item.quantity);
         if (possibleBundles < minAvailable) {
-           minAvailable = possibleBundles;
+          minAvailable = possibleBundles;
         }
       }
-      
-      return [{
-         id: 'virtual-bundle',
-         warehouseId: 'virtual',
-         sku,
-         quantity: minAvailable === Infinity ? 0 : minAvailable,
-         reservedQty: 0,
-         createdAt: new Date(),
-         updatedAt: new Date(),
-         warehouse: { id: 'virtual', name: 'Virtual Bundle Warehouse', code: 'VIRTUAL', address: 'N/A', isActive: true, createdAt: new Date(), updatedAt: new Date() }
-      }];
+
+      return [
+        {
+          id: 'virtual-bundle',
+          warehouseId: 'virtual',
+          sku,
+          quantity: minAvailable === Infinity ? 0 : minAvailable,
+          reservedQty: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          warehouse: {
+            id: 'virtual',
+            name: 'Virtual Bundle Warehouse',
+            code: 'VIRTUAL',
+            address: 'N/A',
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        },
+      ];
     }
 
     return this.prisma.inventoryStock.findMany({
       where: { sku },
-      include: { warehouse: true }
+      include: { warehouse: true },
     });
   }
 
@@ -138,25 +178,38 @@ export class InventoryService {
     const warehouse = await this.prisma.warehouse.findUnique({
       where: { id: dto.warehouseId },
     });
-    
+
     if (!warehouse) {
       throw new NotFoundException('Warehouse not found');
     }
 
     // Wrap in a transaction to ensure ledger and stock stay in sync
     const prismaClient = txClient || this.prisma;
-    
+
     // If we're already in a transaction (txClient is provided), we might not want to nest a $transaction call if Prisma throws.
-    // However, Prisma handles nested $transactions by just executing them if using interactive transactions, 
+    // However, Prisma handles nested $transactions by just executing them if using interactive transactions,
     // or we can just skip wrapping if txClient is provided.
     if (txClient) {
       const movement = await txClient.stockMovement.create({
-        data: { warehouseId: dto.warehouseId, sku: dto.sku, type: 'IN', quantity: dto.quantity, reference: dto.reference || 'Manual Stock In' }
+        data: {
+          warehouseId: dto.warehouseId,
+          sku: dto.sku,
+          type: 'IN',
+          quantity: dto.quantity,
+          reference: dto.reference || 'Manual Stock In',
+        },
       });
       const stock = await txClient.inventoryStock.upsert({
-        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
-        create: { warehouseId: dto.warehouseId, sku: dto.sku, quantity: dto.quantity, reservedQty: 0 },
-        update: { quantity: { increment: dto.quantity } }
+        where: {
+          warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku },
+        },
+        create: {
+          warehouseId: dto.warehouseId,
+          sku: dto.sku,
+          quantity: dto.quantity,
+          reservedQty: 0,
+        },
+        update: { quantity: { increment: dto.quantity } },
       });
       return { movement, stock };
     }
@@ -202,12 +255,14 @@ export class InventoryService {
     const warehouse = await this.prisma.warehouse.findUnique({
       where: { id: dto.warehouseId },
     });
-    
+
     if (!warehouse) throw new NotFoundException('Warehouse not found');
 
     return this.prisma.$transaction(async (prisma) => {
       const stock = await prisma.inventoryStock.findUnique({
-        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } }
+        where: {
+          warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku },
+        },
       });
 
       if (!stock || stock.quantity < dto.quantity) {
@@ -237,16 +292,23 @@ export class InventoryService {
     const warehouse = await this.prisma.warehouse.findUnique({
       where: { id: dto.warehouseId },
     });
-    
+
     if (!warehouse) throw new NotFoundException('Warehouse not found');
 
     return this.prisma.$transaction(async (prisma) => {
       const stock = await prisma.inventoryStock.findUnique({
-        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } }
+        where: {
+          warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku },
+        },
       });
 
-      if (dto.quantity < 0 && (!stock || stock.quantity < Math.abs(dto.quantity))) {
-        throw new BadRequestException(`Insufficient stock for adjustment of SKU ${dto.sku}`);
+      if (
+        dto.quantity < 0 &&
+        (!stock || stock.quantity < Math.abs(dto.quantity))
+      ) {
+        throw new BadRequestException(
+          `Insufficient stock for adjustment of SKU ${dto.sku}`,
+        );
       }
 
       const adjustment = await prisma.stockAdjustment.create({
@@ -259,7 +321,9 @@ export class InventoryService {
       });
 
       const updatedStock = await prisma.inventoryStock.upsert({
-        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
+        where: {
+          warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku },
+        },
         create: {
           warehouseId: dto.warehouseId,
           sku: dto.sku,
@@ -278,7 +342,7 @@ export class InventoryService {
         updatedStock.id,
         'SYSTEM',
         { prevQuantity: stock?.quantity || 0 },
-        { newQuantity: updatedStock.quantity, reason: dto.reason }
+        { newQuantity: updatedStock.quantity, reason: dto.reason },
       );
 
       return { adjustment, stock: updatedStock };
@@ -290,16 +354,18 @@ export class InventoryService {
       include: {
         fromWarehouse: true,
         toWarehouse: true,
-        items: true
+        items: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
   async transferStock(dto: import('./dto/inventory.dto').StockTransferDto) {
     return this.prisma.$transaction(async (prisma) => {
       const fromStock = await prisma.inventoryStock.findUnique({
-        where: { warehouseId_sku: { warehouseId: dto.fromWarehouseId, sku: dto.sku } }
+        where: {
+          warehouseId_sku: { warehouseId: dto.fromWarehouseId, sku: dto.sku },
+        },
       });
 
       if (!fromStock || fromStock.quantity < dto.quantity) {
@@ -314,7 +380,9 @@ export class InventoryService {
 
       // Increment to destination
       await prisma.inventoryStock.upsert({
-        where: { warehouseId_sku: { warehouseId: dto.toWarehouseId, sku: dto.sku } },
+        where: {
+          warehouseId_sku: { warehouseId: dto.toWarehouseId, sku: dto.sku },
+        },
         create: {
           warehouseId: dto.toWarehouseId,
           sku: dto.sku,
@@ -329,9 +397,21 @@ export class InventoryService {
       // Log movements
       await prisma.stockMovement.createMany({
         data: [
-          { warehouseId: dto.fromWarehouseId, sku: dto.sku, type: 'OUT', quantity: dto.quantity, reference: `TRANSFER-TO-${dto.toWarehouseId}` },
-          { warehouseId: dto.toWarehouseId, sku: dto.sku, type: 'IN', quantity: dto.quantity, reference: `TRANSFER-FROM-${dto.fromWarehouseId}` },
-        ]
+          {
+            warehouseId: dto.fromWarehouseId,
+            sku: dto.sku,
+            type: 'OUT',
+            quantity: dto.quantity,
+            reference: `TRANSFER-TO-${dto.toWarehouseId}`,
+          },
+          {
+            warehouseId: dto.toWarehouseId,
+            sku: dto.sku,
+            type: 'IN',
+            quantity: dto.quantity,
+            reference: `TRANSFER-FROM-${dto.fromWarehouseId}`,
+          },
+        ],
       });
 
       // Create Stock Transfer Record
@@ -341,14 +421,16 @@ export class InventoryService {
           toWarehouseId: dto.toWarehouseId,
           status: 'COMPLETED',
           items: {
-            create: [
-              { sku: dto.sku, quantity: dto.quantity }
-            ]
-          }
-        }
+            create: [{ sku: dto.sku, quantity: dto.quantity }],
+          },
+        },
       });
 
-      return { success: true, message: 'Stock transferred successfully', transfer };
+      return {
+        success: true,
+        message: 'Stock transferred successfully',
+        transfer,
+      };
     });
   }
 
@@ -363,8 +445,10 @@ export class InventoryService {
       });
 
       await tx.inventoryStock.update({
-        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
-        data: { quantity: { decrement: dto.quantity } }
+        where: {
+          warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku },
+        },
+        data: { quantity: { decrement: dto.quantity } },
       });
 
       await tx.stockMovement.create({
@@ -373,8 +457,8 @@ export class InventoryService {
           sku: dto.sku,
           type: 'OUT',
           quantity: dto.quantity,
-          reference: `DAMAGED-${damaged.id}`
-        }
+          reference: `DAMAGED-${damaged.id}`,
+        },
       });
 
       return damaged;
@@ -392,8 +476,10 @@ export class InventoryService {
       });
 
       await tx.inventoryStock.update({
-        where: { warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku } },
-        data: { quantity: { decrement: dto.quantity } }
+        where: {
+          warehouseId_sku: { warehouseId: dto.warehouseId, sku: dto.sku },
+        },
+        data: { quantity: { decrement: dto.quantity } },
       });
 
       await tx.stockMovement.create({
@@ -402,8 +488,8 @@ export class InventoryService {
           sku: dto.sku,
           type: 'OUT',
           quantity: dto.quantity,
-          reference: `EXPIRED-${expired.id}`
-        }
+          reference: `EXPIRED-${expired.id}`,
+        },
       });
 
       return expired;
@@ -421,9 +507,9 @@ export class InventoryService {
   async getNearExpiry() {
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-    
+
     return this.prisma.inventoryBatch.findMany({
-      where: { 
+      where: {
         expiryDate: { lte: thirtyDaysFromNow },
       },
     });
@@ -432,7 +518,7 @@ export class InventoryService {
   async reserveStock(sku: string, quantity: number, tx: any = this.prisma) {
     const stocks = await tx.inventoryStock.findMany({
       where: { sku, quantity: { gte: quantity } },
-      orderBy: { quantity: 'desc' }
+      orderBy: { quantity: 'desc' },
     });
 
     if (stocks.length === 0) {
@@ -446,15 +532,19 @@ export class InventoryService {
       where: { id: stockToUse.id },
       data: {
         quantity: { decrement: quantity },
-        reservedQty: { increment: quantity }
-      }
+        reservedQty: { increment: quantity },
+      },
     });
   }
 
-  async deductReservedStock(sku: string, quantity: number, tx: any = this.prisma) {
+  async deductReservedStock(
+    sku: string,
+    quantity: number,
+    tx: any = this.prisma,
+  ) {
     // Find the stock where it's reserved
     const stocks = await tx.inventoryStock.findMany({
-      where: { sku, reservedQty: { gte: quantity } }
+      where: { sku, reservedQty: { gte: quantity } },
     });
 
     if (stocks.length === 0) return; // Silent return or throw error
@@ -464,15 +554,19 @@ export class InventoryService {
     return tx.inventoryStock.update({
       where: { id: stockToUse.id },
       data: {
-        reservedQty: { decrement: quantity }
+        reservedQty: { decrement: quantity },
         // We don't decrement quantity because it was already decremented during reservation!
-      }
+      },
     });
   }
 
-  async releaseReservedStock(sku: string, quantity: number, tx: any = this.prisma) {
+  async releaseReservedStock(
+    sku: string,
+    quantity: number,
+    tx: any = this.prisma,
+  ) {
     const stocks = await tx.inventoryStock.findMany({
-      where: { sku, reservedQty: { gte: quantity } }
+      where: { sku, reservedQty: { gte: quantity } },
     });
 
     if (stocks.length === 0) return;
@@ -483,69 +577,72 @@ export class InventoryService {
       where: { id: stockToUse.id },
       data: {
         quantity: { increment: quantity },
-        reservedQty: { decrement: quantity }
-      }
+        reservedQty: { decrement: quantity },
+      },
     });
   }
 
   async getDashboardStats() {
     // 1. KPIs
-    const uniqueSkusCount = await this.prisma.inventoryStock.groupBy({
-      by: ['sku'],
-    }).then(res => res.length);
+    const uniqueSkusCount = await this.prisma.inventoryStock
+      .groupBy({
+        by: ['sku'],
+      })
+      .then((res) => res.length);
 
     const stockSum = await this.prisma.inventoryStock.aggregate({
-      _sum: { quantity: true }
+      _sum: { quantity: true },
     });
     const totalInStock = stockSum._sum.quantity || 0;
 
     const lowStockThreshold = 100;
     const lowStockItems = await this.prisma.inventoryStock.findMany({
       where: { quantity: { gt: 0, lte: lowStockThreshold } },
-      select: { sku: true, quantity: true }
+      select: { sku: true, quantity: true },
     });
 
     const outOfStockItems = await this.prisma.inventoryStock.findMany({
       where: { quantity: 0 },
-      select: { sku: true }
+      select: { sku: true },
     });
 
     const pendingPos = await this.prisma.purchaseOrder.count({
-      where: { status: { in: ['DRAFT', 'ISSUED'] } }
+      where: { status: { in: ['DRAFT', 'ISSUED'] } },
     });
 
     // 2. Warehouses
     const warehouses = await this.prisma.warehouse.findMany({
       include: {
         stocks: {
-          select: { quantity: true }
-        }
-      }
+          select: { quantity: true },
+        },
+      },
     });
 
-    const warehouseSummary = warehouses.map(wh => ({
+    const warehouseSummary = warehouses.map((wh) => ({
       id: wh.code,
       name: wh.name,
-      items: wh.stocks.reduce((acc, curr) => acc + curr.quantity, 0)
+      items: wh.stocks.reduce((acc, curr) => acc + curr.quantity, 0),
     }));
 
     // 4. Recent Activity
     const recentActivityRaw = await this.prisma.stockMovement.findMany({
       take: 5,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
-    const recentActivity = recentActivityRaw.map(act => ({
+    const recentActivity = recentActivityRaw.map((act) => ({
       id: act.id,
       name: act.sku,
       desc: `${act.type === 'IN' ? 'Stock In' : act.type === 'OUT' ? 'Stock Out' : 'Transfer'} • ${act.reference || 'Manual'}`,
       qty: act.type === 'IN' ? `+${act.quantity}` : `-${act.quantity}`,
       time: act.createdAt.toISOString(),
-      type: act.type.toLowerCase()
+      type: act.type.toLowerCase(),
     }));
 
     // 5. Stock Status Donut Data
-    const inStockCount = uniqueSkusCount - lowStockItems.length - outOfStockItems.length;
+    const inStockCount =
+      uniqueSkusCount - lowStockItems.length - outOfStockItems.length;
     const stockStatusData = [
       { name: 'In Stock', value: Math.max(0, inStockCount), color: '#f43f5e' },
       { name: 'Low Stock', value: lowStockItems.length, color: '#f59e0b' },
@@ -555,11 +652,27 @@ export class InventoryService {
 
     return {
       kpis: {
-        totalSkus: { value: uniqueSkusCount, trend: '+0 this month', trendUp: true },
-        inStock: { value: totalInStock.toLocaleString(), trend: '+0% vs last month', trendUp: true },
-        lowStock: { value: lowStockItems.length, trend: '-0 vs last month', trendUp: true },
-        outOfStock: { value: outOfStockItems.length, trend: '-0 vs last month', trendUp: true },
-        pendingPos: { value: pendingPos, subtext: 'Pending arrival' }
+        totalSkus: {
+          value: uniqueSkusCount,
+          trend: '+0 this month',
+          trendUp: true,
+        },
+        inStock: {
+          value: totalInStock.toLocaleString(),
+          trend: '+0% vs last month',
+          trendUp: true,
+        },
+        lowStock: {
+          value: lowStockItems.length,
+          trend: '-0 vs last month',
+          trendUp: true,
+        },
+        outOfStock: {
+          value: outOfStockItems.length,
+          trend: '-0 vs last month',
+          trendUp: true,
+        },
+        pendingPos: { value: pendingPos, subtext: 'Pending arrival' },
       },
       stockStatusData,
       recentActivity,
@@ -567,56 +680,66 @@ export class InventoryService {
       suppliersData: {
         totalSuppliers: 0,
         openPos: pendingPos,
-        goodsInTransit: 0
-      }
+        goodsInTransit: 0,
+      },
     };
   }
 
   async getPurchaseOrders() {
     return this.prisma.purchaseOrder.findMany({
       include: {
-        warehouse: true
+        warehouse: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  async createPurchaseOrder(dto: { warehouseId: string, status: string }) {
+  async createPurchaseOrder(dto: { warehouseId: string; status: string }) {
     return this.prisma.purchaseOrder.create({
       data: {
         warehouseId: dto.warehouseId,
-        status: dto.status || 'DRAFT'
-      }
+        status: dto.status || 'DRAFT',
+      },
     });
   }
 
-  async updatePurchaseOrder(id: string, dto: { status: string, items?: { sku: string, quantity: number }[] }) {
+  async updatePurchaseOrder(
+    id: string,
+    dto: { status: string; items?: { sku: string; quantity: number }[] },
+  ) {
     const po = await this.prisma.purchaseOrder.findUnique({ where: { id } });
     if (!po) throw new NotFoundException('PO not found');
 
     // If status changing to RECEIVED, increment stock (Automatic Stock-in)
     if (po.status !== 'RECEIVED' && dto.status === 'RECEIVED' && dto.items) {
       await this.prisma.$transaction(async (tx) => {
-        for (const item of (dto.items || [])) {
+        for (const item of dto.items || []) {
           await tx.stockMovement.create({
             data: {
               warehouseId: po.warehouseId,
               sku: item.sku,
               type: 'IN',
               quantity: item.quantity,
-              reference: `PO Receipt: ${id}`
-            }
+              reference: `PO Receipt: ${id}`,
+            },
           });
 
           await tx.inventoryStock.upsert({
-            where: { warehouseId_sku: { warehouseId: po.warehouseId, sku: item.sku } },
-            create: { warehouseId: po.warehouseId, sku: item.sku, quantity: item.quantity, reservedQty: 0 },
-            update: { quantity: { increment: item.quantity } }
+            where: {
+              warehouseId_sku: { warehouseId: po.warehouseId, sku: item.sku },
+            },
+            create: {
+              warehouseId: po.warehouseId,
+              sku: item.sku,
+              quantity: item.quantity,
+              reservedQty: 0,
+            },
+            update: { quantity: { increment: item.quantity } },
           });
         }
         await tx.purchaseOrder.update({
           where: { id },
-          data: { status: 'RECEIVED' }
+          data: { status: 'RECEIVED' },
         });
       });
       return { success: true, message: 'PO Received and Stock Updated' };
@@ -624,33 +747,34 @@ export class InventoryService {
 
     return this.prisma.purchaseOrder.update({
       where: { id },
-      data: { status: dto.status }
+      data: { status: dto.status },
     });
   }
 
   async getReturns() {
     return this.prisma.return.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
   async getDetailedStock() {
     const variants = await this.prisma.productVariant.findMany({
-      include: { product: true }
+      include: { product: true },
     });
-    const skuNameMap = new Map(variants.map(v => [v.sku, v.product?.name || 'Unknown Product']));
+    const skuNameMap = new Map(
+      variants.map((v) => [v.sku, v.product?.name || 'Unknown Product']),
+    );
 
     const stocks = await this.prisma.inventoryStock.findMany({
-      where: { sku: { in: variants.map(v => v.sku) } },
-      include: { warehouse: true }
+      where: { sku: { in: variants.map((v) => v.sku) } },
+      include: { warehouse: true },
     });
 
-    return stocks.map(s => ({
+    return stocks.map((s) => ({
       sku: s.sku,
       name: skuNameMap.get(s.sku),
       warehouseName: s.warehouse.name,
       available: s.quantity,
-      reserved: s.reservedQty
+      reserved: s.reservedQty,
     }));
   }
-
 }

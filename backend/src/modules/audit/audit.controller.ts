@@ -14,7 +14,7 @@ export class AuditController {
   getLogs(
     @Query('page') page: string,
     @Query('limit') limit: string,
-    @Query('entity') entity?: string
+    @Query('entity') entity?: string,
   ) {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 50;
@@ -51,4 +51,3 @@ export class AuditController {
     return this.auditService.getPaymentReport();
   }
 }
-

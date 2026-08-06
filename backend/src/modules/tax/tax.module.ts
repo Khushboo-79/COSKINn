@@ -7,6 +7,6 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [TaxController],
   providers: [TaxService],
-  exports: [TaxService]
+  exports: [TaxService],
 })
 export class TaxModule {}
