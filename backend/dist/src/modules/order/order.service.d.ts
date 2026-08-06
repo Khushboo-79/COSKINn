@@ -78,6 +78,16 @@ export declare class OrderService {
         items: ({
             variant: {
                 product: {
+                    images: {
+                        id: string;
+                        createdAt: Date;
+                        productId: string;
+                        url: string;
+                        altText: string | null;
+                        isPrimary: boolean;
+                        sortOrder: number;
+                    }[];
+                } & {
                     id: string;
                     isDeleted: boolean;
                     deletedAt: Date | null;

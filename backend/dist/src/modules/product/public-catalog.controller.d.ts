@@ -6,23 +6,23 @@ export declare class PublicCatalogController {
         data: ({
             category: {
                 id: string;
+                isActive: boolean;
+                isDeleted: boolean;
+                createdAt: Date;
+                updatedAt: Date;
                 name: string;
                 slug: string;
                 description: string | null;
                 productLine: import("@prisma/client").$Enums.ProductLine;
-                isDeleted: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 platform: import("@prisma/client").$Enums.PlatformType;
                 imageUrl: string | null;
-                isActive: boolean;
             };
             variants: {
                 id: string;
-                name: string;
-                mrp: number;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                mrp: number;
                 productId: string;
                 sku: string;
                 netQuantity: string | null;
@@ -36,17 +36,21 @@ export declare class PublicCatalogController {
             images: {
                 id: string;
                 createdAt: Date;
-                sortOrder: number;
                 productId: string;
                 url: string;
                 altText: string | null;
                 isPrimary: boolean;
+                sortOrder: number;
             }[];
         } & {
             id: string;
+            isDeleted: boolean;
+            deletedAt: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
             categoryId: string;
             subcategoryId: string | null;
-            name: string;
             slug: string;
             description: string | null;
             howToUse: string | null;
@@ -69,13 +73,9 @@ export declare class PublicCatalogController {
             isCrossSegment: boolean;
             isBestseller: boolean;
             rejectionReason: string | null;
-            isDeleted: boolean;
-            deletedAt: Date | null;
             seoTitle: string | null;
             seoDesc: string | null;
             seoKeywords: string | null;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
         meta: {
             total: number;
@@ -87,10 +87,10 @@ export declare class PublicCatalogController {
     search(query: string, segment?: string): Promise<({
         variants: {
             id: string;
-            name: string;
-            mrp: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            mrp: number;
             productId: string;
             sku: string;
             netQuantity: string | null;
@@ -104,17 +104,21 @@ export declare class PublicCatalogController {
         images: {
             id: string;
             createdAt: Date;
-            sortOrder: number;
             productId: string;
             url: string;
             altText: string | null;
             isPrimary: boolean;
+            sortOrder: number;
         }[];
     } & {
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -137,21 +141,17 @@ export declare class PublicCatalogController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     findByCategory(categoryId: string, segment?: string): Promise<({
         variants: {
             id: string;
-            name: string;
-            mrp: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            mrp: number;
             productId: string;
             sku: string;
             netQuantity: string | null;
@@ -165,17 +165,21 @@ export declare class PublicCatalogController {
         images: {
             id: string;
             createdAt: Date;
-            sortOrder: number;
             productId: string;
             url: string;
             altText: string | null;
             isPrimary: boolean;
+            sortOrder: number;
         }[];
     } & {
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -198,21 +202,17 @@ export declare class PublicCatalogController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     findByConcern(concernId: string, segment?: string): Promise<({
         variants: {
             id: string;
-            name: string;
-            mrp: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            mrp: number;
             productId: string;
             sku: string;
             netQuantity: string | null;
@@ -226,17 +226,21 @@ export declare class PublicCatalogController {
         images: {
             id: string;
             createdAt: Date;
-            sortOrder: number;
             productId: string;
             url: string;
             altText: string | null;
             isPrimary: boolean;
+            sortOrder: number;
         }[];
     } & {
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -259,21 +263,17 @@ export declare class PublicCatalogController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     findByFruit(fruitName: string, segment?: string): Promise<({
         variants: {
             id: string;
-            name: string;
-            mrp: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            mrp: number;
             productId: string;
             sku: string;
             netQuantity: string | null;
@@ -287,17 +287,21 @@ export declare class PublicCatalogController {
         images: {
             id: string;
             createdAt: Date;
-            sortOrder: number;
             productId: string;
             url: string;
             altText: string | null;
             isPrimary: boolean;
+            sortOrder: number;
         }[];
     } & {
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -320,110 +324,110 @@ export declare class PublicCatalogController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     findOne(id: string): Promise<{
-        category: {
-            id: string;
-            name: string;
-            slug: string;
-            description: string | null;
-            productLine: import("@prisma/client").$Enums.ProductLine;
-            isDeleted: boolean;
-            createdAt: Date;
-            updatedAt: Date;
-            platform: import("@prisma/client").$Enums.PlatformType;
-            imageUrl: string | null;
-            isActive: boolean;
-        };
-        variants: {
-            id: string;
-            name: string;
-            mrp: number;
-            createdAt: Date;
-            updatedAt: Date;
-            productId: string;
-            sku: string;
-            netQuantity: string | null;
-            price: number;
-            stockQuantity: number | null;
-            mfgDate: Date | null;
-            expiryDate: Date | null;
-            shadeName: string | null;
-            shadeHex: string | null;
-        }[];
-        images: {
-            id: string;
-            createdAt: Date;
-            sortOrder: number;
-            productId: string;
-            url: string;
-            altText: string | null;
-            isPrimary: boolean;
-        }[];
-        videos: {
-            id: string;
-            createdAt: Date;
-            sortOrder: number;
-            productId: string;
-            url: string;
-            title: string | null;
-        }[];
-        ingredients: {
-            id: string;
-            name: string;
-            createdAt: Date;
-            productId: string;
-        }[];
-        benefits: {
-            id: string;
-            name: string;
-            createdAt: Date;
-            productId: string;
-        }[];
-        skinTypes: {
-            id: string;
-            name: string;
-            createdAt: Date;
-            productId: string;
-        }[];
-        concerns: {
-            id: string;
-            name: string;
-            createdAt: Date;
-            productId: string;
-        }[];
         reviews: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             productId: string;
-            title: string | null;
-            isApproved: boolean;
             userId: string;
-            rating: number;
+            isApproved: boolean;
+            title: string | null;
             content: string | null;
+            rating: number;
         }[];
         questions: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             productId: string;
-            isApproved: boolean;
             userId: string;
+            isApproved: boolean;
             content: string;
+        }[];
+        category: {
+            id: string;
+            isActive: boolean;
+            isDeleted: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            slug: string;
+            description: string | null;
+            productLine: import("@prisma/client").$Enums.ProductLine;
+            platform: import("@prisma/client").$Enums.PlatformType;
+            imageUrl: string | null;
+        };
+        variants: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+            mrp: number;
+            productId: string;
+            sku: string;
+            netQuantity: string | null;
+            price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
+        }[];
+        images: {
+            id: string;
+            createdAt: Date;
+            productId: string;
+            url: string;
+            altText: string | null;
+            isPrimary: boolean;
+            sortOrder: number;
+        }[];
+        videos: {
+            id: string;
+            createdAt: Date;
+            productId: string;
+            url: string;
+            sortOrder: number;
+            title: string | null;
+        }[];
+        ingredients: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            productId: string;
+        }[];
+        benefits: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            productId: string;
+        }[];
+        skinTypes: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            productId: string;
+        }[];
+        concerns: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            productId: string;
         }[];
     } & {
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -446,13 +450,9 @@ export declare class PublicCatalogController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     getProductVariants(id: string): Promise<{
         id: string;

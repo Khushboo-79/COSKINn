@@ -82,15 +82,30 @@ let ContentService = class ContentService {
         });
     }
     async getVideos() {
-        return this.prisma.tutorialVideo.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
     }
     async createVideo(data) {
-        return this.prisma.tutorialVideo.create({ data });
     }
     async deleteVideo(id) {
-        return this.prisma.tutorialVideo.delete({ where: { id } });
+    }
+    async getTestimonials(platform) {
+        const where = platform ? { platform } : {};
+        return this.prisma.testimonial.findMany({
+            where: { ...where, isActive: true },
+            orderBy: { sortOrder: 'asc' }
+        });
+    }
+    async createTestimonial(data) {
+        return this.prisma.testimonial.create({ data });
+    }
+    async getPromotions(platform) {
+        const where = platform ? { platform } : {};
+        return this.prisma.promotion.findMany({
+            where: { ...where, isActive: true },
+            orderBy: { sortOrder: 'asc' }
+        });
+    }
+    async createPromotion(data) {
+        return this.prisma.promotion.create({ data });
     }
 };
 exports.ContentService = ContentService;

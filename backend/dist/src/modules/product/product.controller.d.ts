@@ -8,23 +8,23 @@ export declare class ProductController {
     findAll(categoryId?: string, search?: string, platform?: 'COSMETICS' | 'SKINCARE', status?: string): Promise<({
         category: {
             id: string;
+            isActive: boolean;
+            isDeleted: boolean;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             slug: string;
             description: string | null;
             productLine: import("@prisma/client").$Enums.ProductLine;
-            isDeleted: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             platform: import("@prisma/client").$Enums.PlatformType;
             imageUrl: string | null;
-            isActive: boolean;
         };
         variants: {
             id: string;
-            name: string;
-            mrp: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            mrp: number;
             productId: string;
             sku: string;
             netQuantity: string | null;
@@ -38,49 +38,53 @@ export declare class ProductController {
         images: {
             id: string;
             createdAt: Date;
-            sortOrder: number;
             productId: string;
             url: string;
             altText: string | null;
             isPrimary: boolean;
+            sortOrder: number;
         }[];
         videos: {
             id: string;
             createdAt: Date;
-            sortOrder: number;
             productId: string;
             url: string;
+            sortOrder: number;
             title: string | null;
         }[];
         ingredients: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             productId: string;
         }[];
         benefits: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             productId: string;
         }[];
         skinTypes: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             productId: string;
         }[];
         concerns: {
             id: string;
-            name: string;
             createdAt: Date;
+            name: string;
             productId: string;
         }[];
     } & {
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -103,13 +107,9 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     getMarketingFeed(filters: any): Promise<{
         id: string;
@@ -170,9 +170,13 @@ export declare class ProductController {
     update(id: string, updateProductDto: UpdateProductDto): Promise<any>;
     remove(id: string): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -195,20 +199,20 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     updateTags(id: string, updateTagsDto: UpdateTagsDto): Promise<any>;
     updateCompliance(id: string, updateComplianceDto: UpdateComplianceDto): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -231,13 +235,9 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     initializeOpeningStock(id: string, variantId: string, openingStockDto: OpeningStockDto): Promise<{
         success: boolean;
@@ -253,9 +253,13 @@ export declare class ProductController {
     }>;
     updateContent(id: string, updateContentDto: any): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -278,19 +282,19 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     submitForApproval(id: string): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -313,19 +317,19 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     approveProduct(id: string): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -348,19 +352,19 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     rejectProduct(id: string, reason: string): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -383,19 +387,19 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     deactivateProduct(id: string): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -418,13 +422,9 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     updateSeo(id: string, seoData: {
         seoTitle?: string;
@@ -432,9 +432,13 @@ export declare class ProductController {
         seoKeywords?: string;
     }): Promise<{
         id: string;
+        isDeleted: boolean;
+        deletedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        name: string;
         categoryId: string;
         subcategoryId: string | null;
-        name: string;
         slug: string;
         description: string | null;
         howToUse: string | null;
@@ -457,13 +461,9 @@ export declare class ProductController {
         isCrossSegment: boolean;
         isBestseller: boolean;
         rejectionReason: string | null;
-        isDeleted: boolean;
-        deletedAt: Date | null;
         seoTitle: string | null;
         seoDesc: string | null;
         seoKeywords: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     addBundleItem(id: string, data: {
         componentSku: string;
@@ -472,16 +472,16 @@ export declare class ProductController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        quantity: number;
         bundleProductId: string;
         componentSku: string;
-        quantity: number;
     }>;
     removeBundleItem(id: string, sku: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        quantity: number;
         bundleProductId: string;
         componentSku: string;
-        quantity: number;
     }>;
 }

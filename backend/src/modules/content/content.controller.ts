@@ -34,6 +34,16 @@ export class ContentController {
     return this.contentService.getFaqs();
   }
 
+  @Get('testimonials')
+  getTestimonials(@Query('platform') platform?: 'SKINCARE' | 'COSMETICS') {
+    return this.contentService.getTestimonials(platform);
+  }
+
+  @Get('promotions')
+  getPromotions(@Query('platform') platform?: 'SKINCARE' | 'COSMETICS') {
+    return this.contentService.getPromotions(platform);
+  }
+
   // --- ADMIN ENDPOINTS ---
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
@@ -120,5 +130,19 @@ export class ContentController {
   @Delete('admin/videos/:id')
   deleteVideo(@Param('id') id: string) {
     return this.contentService.deleteVideo(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Post('admin/testimonials')
+  createTestimonial(@Body() data: any) {
+    return this.contentService.createTestimonial(data);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Post('admin/promotions')
+  createPromotion(@Body() data: any) {
+    return this.contentService.createPromotion(data);
   }
 }

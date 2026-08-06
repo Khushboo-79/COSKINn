@@ -1602,3 +1602,34 @@ model SupportSettings {
   @@map("support_settings")
 }
 
+
+
+model Testimonial {
+  id        String       @id @default(uuid())
+  platform  PlatformType
+  author    String
+  product   String
+  text      String
+  rating    Int          @default(5)
+  isActive  Boolean      @default(true)
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  @@map("testimonials")
+}
+
+model Promotion {
+  id        String       @id @default(uuid())
+  platform  PlatformType
+  title     String
+  sub       String
+  cta       String
+  bg        String
+  text      String
+  muted     String
+  isActive  Boolean      @default(true)
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  @@map("promotions")
+}

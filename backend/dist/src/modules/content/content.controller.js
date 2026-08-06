@@ -32,6 +32,12 @@ let ContentController = class ContentController {
     getFaqs() {
         return this.contentService.getFaqs();
     }
+    getTestimonials(platform) {
+        return this.contentService.getTestimonials(platform);
+    }
+    getPromotions(platform) {
+        return this.contentService.getPromotions(platform);
+    }
     getAdminArticles(type) {
         return this.contentService.getArticles(type, false);
     }
@@ -68,6 +74,12 @@ let ContentController = class ContentController {
     deleteVideo(id) {
         return this.contentService.deleteVideo(id);
     }
+    createTestimonial(data) {
+        return this.contentService.createTestimonial(data);
+    }
+    createPromotion(data) {
+        return this.contentService.createPromotion(data);
+    }
 };
 exports.ContentController = ContentController;
 __decorate([
@@ -90,6 +102,20 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ContentController.prototype, "getFaqs", null);
+__decorate([
+    (0, common_1.Get)('testimonials'),
+    __param(0, (0, common_1.Query)('platform')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "getTestimonials", null);
+__decorate([
+    (0, common_1.Get)('promotions'),
+    __param(0, (0, common_1.Query)('platform')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "getPromotions", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'CONTENT_MANAGER'),
@@ -198,6 +224,24 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ContentController.prototype, "deleteVideo", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'CONTENT_MANAGER'),
+    (0, common_1.Post)('admin/testimonials'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "createTestimonial", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('SUPER_ADMIN', 'CONTENT_MANAGER'),
+    (0, common_1.Post)('admin/promotions'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "createPromotion", null);
 exports.ContentController = ContentController = __decorate([
     (0, common_1.Controller)('content'),
     __metadata("design:paramtypes", [content_service_1.ContentService])

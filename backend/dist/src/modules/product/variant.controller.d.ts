@@ -5,10 +5,10 @@ export declare class VariantController {
     constructor(productService: ProductService);
     createVariant(productId: string, createVariantDto: CreateVariantDto): Promise<{
         id: string;
-        name: string;
-        mrp: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        mrp: number;
         productId: string;
         sku: string;
         netQuantity: string | null;
@@ -21,10 +21,10 @@ export declare class VariantController {
     }>;
     updateVariant(variantId: string, updateVariantDto: UpdateVariantDto): Promise<{
         id: string;
-        name: string;
-        mrp: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        mrp: number;
         productId: string;
         sku: string;
         netQuantity: string | null;
@@ -37,10 +37,10 @@ export declare class VariantController {
     }>;
     removeVariant(variantId: string): Promise<{
         id: string;
-        name: string;
-        mrp: number;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        mrp: number;
         productId: string;
         sku: string;
         netQuantity: string | null;

@@ -4,57 +4,26 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-const skinCategories = [
-  {
-    name: "Cleansers",
-    image: "https://www.dotandkey.com/cdn/shop/files/1-_175g.jpg"
-  },
-  {
-    name: "Serums",
-    image: "https://www.dotandkey.com/cdn/shop/files/VitaminCSunscreenListing1_24ade7b6-5667-43a8-8cbf-a750fae616a4.jpg"
-  },
-  {
-    name: "Moisturizers",
-    image: "https://www.dotandkey.com/cdn/shop/files/Artboard1_583ef82d-c136-490d-aab1-4780f12ee608.jpg"
-  },
-  {
-    name: "Masks",
-    image: "https://www.dotandkey.com/cdn/shop/files/1a_3ef32ac6-5192-495c-b4bb-dafb0e806260.jpg"
-  },
-  {
-    name: "Sun Care",
-    image: "https://www.dotandkey.com/cdn/shop/files/1-1_b4ae866f-e0a8-43d1-971f-1d143d76f01c.jpg"
-  }
-];
-
-const glamCategories = [
-  {
-    name: "Lips",
-    image: "https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_2db59608-095a-442a-afec-9c7aafeb7fab.jpg?v=1758249299"
-  },
-  {
-    name: "Eyes",
-    image: "https://cdn.shopify.com/s/files/1/0593/5418/5889/files/ec25942077e080c392d7cb4696caea57.jpg?v=1761982588"
-  },
-  {
-    name: "Face",
-    image: "https://cdn.shopify.com/s/files/1/0593/5418/5889/files/24c4ac61030646c83895aa1d3448017a_256e2b1a-3119-4a30-af27-4926c38103a2.jpg?v=1756201951"
-  },
-  {
-    name: "Sets",
-    image: "https://cdn.shopify.com/s/files/1/0593/5418/5889/files/20260722-162356.jpg?v=1784708678"
-  },
-  {
-    name: "Brushes",
-    image: "https://cdn.shopify.com/s/files/1/0593/5418/5889/files/01_-13588.jpg?v=1772596546"
-  }
-];
-
 const ShopByCategory: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
 
-  const categories = isGlam ? glamCategories : skinCategories;
+  const [categories, setCategories] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/categories`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          const platform = isGlam ? 'COSMETICS' : 'SKINCARE';
+          setCategories(data.filter((c: any) => c.platform === platform).slice(0, 5));
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, [isGlam]);
 
   return (
     <section id="shop-by-category" className={`pt-20 md:pt-28 pb-32 md:pb-48 relative overflow-hidden scroll-mt-32 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
@@ -135,7 +104,7 @@ const ShopByCategory: React.FC = () => {
                     className="w-full aspect-[2/3] rounded-t-full rounded-b-none overflow-hidden mb-3 border border-[#c9af7a] transition-all duration-300 relative bg-white"
                   >
                     <img 
-                      src={category.image} 
+                      src={category.imageUrl || (isGlam ? 'https://via.placeholder.com/300x450?text=Glam' : 'https://via.placeholder.com/300x375?text=Skin')} 
                       alt={category.name} 
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
@@ -147,7 +116,7 @@ const ShopByCategory: React.FC = () => {
                     className="w-full aspect-[4/5] rounded-[20px] sm:rounded-[28px] overflow-hidden mb-4 sm:mb-6 shadow-[0_8px_0px_rgba(0,0,0,0.1)] hover:shadow-[0_12px_0px_rgba(0,0,0,0.15)] transition-all duration-300 bg-white"
                   >
                     <img 
-                      src={category.image} 
+                      src={category.imageUrl || (isGlam ? 'https://via.placeholder.com/300x450?text=Glam' : 'https://via.placeholder.com/300x375?text=Skin')} 
                       alt={category.name} 
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 

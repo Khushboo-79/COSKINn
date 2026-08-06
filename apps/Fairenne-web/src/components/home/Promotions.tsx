@@ -7,60 +7,23 @@ const Promotions: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
 
-  const skinPromotions = [
-    {
-      title: "Free 3-piece juicy set",
-      sub: "On orders over $60",
-      cta: "Shop the treat",
-      bg: '#ffe4e1',
-      text: '#2a2a2a',
-      muted: '#6b7280'
-    },
-    {
-      title: "Loyalty × 2 points",
-      sub: "This weekend only",
-      cta: "Join the Glow Club",
-      bg: '#e0f5ea',
-      text: '#2a2a2a',
-      muted: '#6b7280'
-    },
-    {
-      title: "Free 2-day shipping",
-      sub: "Over $40 · everywhere",
-      cta: "Learn more",
-      bg: '#fff3b8',
-      text: '#2a2a2a',
-      muted: '#6b7280'
-    }
-  ];
+  const [promotions, setPromotions] = React.useState<any[]>([]);
 
-  const glamPromotions = [
-    {
-      offer: "OFFER 1",
-      title: "Complimentary engraving",
-      sub: "On lipsticks & compacts",
-      cta: "PERSONALISE YOURS",
-    },
-    {
-      offer: "OFFER 2",
-      title: "Velvet Atelier rewards",
-      sub: "Earn double this fortnight",
-      cta: "ENTER THE COURT",
-    },
-    {
-      offer: "OFFER 3",
-      title: "Signature gift wrap",
-      sub: "On every order over $80",
-      cta: "WRAP IT IN RIBBON",
-    }
-  ];
+  React.useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/content/promotions?platform=${isGlam ? 'COSMETICS' : 'SKINCARE'}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setPromotions(data);
+      })
+      .catch(console.error);
+  }, [isGlam]);
 
   return (
     <section className={`relative overflow-hidden ${isGlam ? 'py-8 bg-[#f4ebe1]' : 'py-16 bg-transparent'}`}>
       <div className={`relative z-10 max-w-[1400px] mx-auto px-4 lg:px-8 ${isGlam ? 'mt-4 md:mt-8' : 'mt-4 md:mt-8 lg:mt-[-20px] pt-8'}`}>
         <div className="grid md:grid-cols-3 gap-6">
           {isGlam ? (
-            glamPromotions.map((promo, idx) => (
+            promotions.map((promo, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -75,7 +38,7 @@ const Promotions: React.FC = () => {
                 <div className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-[#c9af7a]" />
                 
                 <span className="text-[10px] font-bold tracking-[0.25em] text-[#c9af7a] mb-2 uppercase mt-1">
-                  {promo.offer}
+                  OFFER {idx + 1}
                 </span>
                 <h4 className="font-serif text-[20px] xl:text-[22px] text-[#2c3338] mb-1 whitespace-nowrap">
                   {promo.title}
@@ -94,7 +57,7 @@ const Promotions: React.FC = () => {
               </motion.div>
             ))
           ) : (
-            skinPromotions.map((promo, idx) => (
+            promotions.map((promo, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}

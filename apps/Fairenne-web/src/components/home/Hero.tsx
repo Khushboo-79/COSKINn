@@ -49,7 +49,7 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
   }, []);
 
   return (
-    <section className={`relative w-full h-[calc(100vh-80px)] min-h-[600px] flex flex-col transition-colors duration-700 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9] overflow-hidden'}`}>
+    <section className={`relative w-full min-h-[calc(100vh-80px)] flex flex-col transition-colors duration-700 ${isGlam ? 'bg-[#faf9f6]' : 'bg-[#fcfaf9]'}`}>
       
       {/* Background Glows for SKIN Mode */}
       {!isGlam && (
@@ -197,12 +197,12 @@ const Hero: React.FC<HeroProps> = ({ banners = [] }) => {
         </div>
       )}
 
-      <div className={`relative z-10 w-full min-h-screen mx-auto flex flex-col md:flex-row items-center justify-between pt-16 md:pt-0 ${
+      <div className={`relative z-10 w-full h-full flex-1 mx-auto flex flex-col md:flex-row items-center justify-between py-10 md:py-16 ${
         isGlam ? 'max-w-full pl-4 sm:pl-8 lg:pl-12 pr-0 pb-40 lg:pb-48 md:pb-0' : 'max-w-[1400px] px-4 sm:px-6 lg:px-12'
       }`}>
         
         {/* Left: Content */}
-        <div className={`w-full ${isGlam ? 'md:w-[50%]' : 'md:w-[55%] lg:w-[50%]'} flex flex-col justify-center z-20 px-4 sm:px-0 ${isGlam ? 'pt-16 md:pt-24' : 'pb-16'}`}>
+        <div className={`w-full ${isGlam ? 'md:w-[50%]' : 'md:w-[55%] lg:w-[50%]'} flex flex-col justify-center z-20 px-4 sm:px-0`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={isGlam ? 'glam-content' : 'skin-content'}

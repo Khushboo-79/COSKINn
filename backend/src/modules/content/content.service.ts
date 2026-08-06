@@ -101,4 +101,30 @@ export class ContentService {
   async deleteVideo(id: string) {
     /* return this.prisma.tutorialVideo.delete({ where: { id } }); */
   }
+
+  // --- TESTIMONIALS ---
+  async getTestimonials(platform?: 'SKINCARE' | 'COSMETICS') {
+    const where = platform ? { platform } : {};
+    return this.prisma.testimonial.findMany({
+      where: { ...where, isActive: true },
+      orderBy: { sortOrder: 'asc' }
+    });
+  }
+
+  async createTestimonial(data: any) {
+    return this.prisma.testimonial.create({ data });
+  }
+
+  // --- PROMOTIONS ---
+  async getPromotions(platform?: 'SKINCARE' | 'COSMETICS') {
+    const where = platform ? { platform } : {};
+    return this.prisma.promotion.findMany({
+      where: { ...where, isActive: true },
+      orderBy: { sortOrder: 'asc' }
+    });
+  }
+
+  async createPromotion(data: any) {
+    return this.prisma.promotion.create({ data });
+  }
 }
