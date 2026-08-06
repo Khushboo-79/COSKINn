@@ -78,7 +78,7 @@ const Checkout: React.FC = () => {
     if (step === 1) {
       setIsProcessingPayment(true);
       try {
-        const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/customer/addresses`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/customer/addresses`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ const Checkout: React.FC = () => {
       setIsProcessingPayment(true);
       try {
         // 1. Create Order in Backend
-        const orderRes = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/orders`, {
+        const orderRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/orders`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ const Checkout: React.FC = () => {
           const isScriptLoaded = await loadRazorpay();
           if (!isScriptLoaded) throw new Error('Razorpay SDK failed to load');
 
-          const rzpRes = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/payments/create-order`, {
+          const rzpRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/payments/create-order`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

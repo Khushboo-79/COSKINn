@@ -64,7 +64,7 @@ export const ProductApprovalScreen = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 w-full">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
           <CheckCircle className="h-6 w-6 text-primary-500" />
@@ -116,6 +116,33 @@ export const ProductApprovalScreen = () => {
                   <div>
                     <span className="block text-xs text-slate-500 font-medium">Batch Number</span>
                     <span className="block text-sm text-slate-900">{item.cosmeticsRules.batchNumber}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Stock & Validity Details */}
+            {item.variants && item.variants.length > 0 && (
+              <div className="p-6 bg-blue-50 border-t border-slate-100">
+                <div className="flex items-center gap-2 mb-4">
+                  <h4 className="text-sm font-semibold text-slate-800">Stock & Validity Details</h4>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <span className="block text-xs text-slate-500 font-medium">Initial Quantity</span>
+                    <span className="block text-sm text-slate-900">{item.variants[0].stockQuantity || 0} Units</span>
+                  </div>
+                  <div>
+                    <span className="block text-xs text-slate-500 font-medium">Mfg Date</span>
+                    <span className="block text-sm text-slate-900">
+                      {item.variants[0].mfgDate ? new Date(item.variants[0].mfgDate).toLocaleDateString() : 'N/A'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-xs text-slate-500 font-medium">Expiry Date</span>
+                    <span className="block text-sm text-slate-900">
+                      {item.variants[0].expiryDate ? new Date(item.variants[0].expiryDate).toLocaleDateString() : 'N/A'}
+                    </span>
                   </div>
                 </div>
               </div>

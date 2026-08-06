@@ -13,6 +13,11 @@ export declare class VariantController {
         sku: string;
         netQuantity: string | null;
         price: number;
+        stockQuantity: number | null;
+        mfgDate: Date | null;
+        expiryDate: Date | null;
+        shadeName: string | null;
+        shadeHex: string | null;
     }>;
     updateVariant(variantId: string, updateVariantDto: UpdateVariantDto): Promise<{
         id: string;
@@ -24,6 +29,11 @@ export declare class VariantController {
         sku: string;
         netQuantity: string | null;
         price: number;
+        stockQuantity: number | null;
+        mfgDate: Date | null;
+        expiryDate: Date | null;
+        shadeName: string | null;
+        shadeHex: string | null;
     }>;
     removeVariant(variantId: string): Promise<{
         id: string;
@@ -35,5 +45,10 @@ export declare class VariantController {
         sku: string;
         netQuantity: string | null;
         price: number;
+        stockQuantity: number | null;
+        mfgDate: Date | null;
+        expiryDate: Date | null;
+        shadeName: string | null;
+        shadeHex: string | null;
     }>;
 }

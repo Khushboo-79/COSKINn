@@ -38,6 +38,11 @@ export declare class HomeService {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             }[];
             images: {
                 id: string;

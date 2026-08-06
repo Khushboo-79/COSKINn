@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   const [heroBanners, setHeroBanners] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/home`)
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/home`)
       .then(res => res.json())
       .then(data => {
         if (data && data.heroBanners) {

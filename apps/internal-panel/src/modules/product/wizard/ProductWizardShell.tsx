@@ -32,6 +32,9 @@ const productWizardSchema = z.object({
     price: z.coerce.number().min(0),
     shadeName: z.string().optional(),
     shadeHex: z.string().optional(),
+    stockQuantity: z.coerce.number().min(0).optional(),
+    mfgDate: z.string().optional(),
+    expiryDate: z.string().optional(),
   })).optional(),
 });
 
@@ -51,11 +54,19 @@ export const ProductWizardShell = () => {
   const { id } = useParams<{ id: string }>();
   const [currentStep, setCurrentStep] = useState(1);
 
-  const methods = useForm<any>({
+  const methods = useForm<ProductFormValues>({
     resolver: zodResolver(productWizardSchema),
     mode: 'onChange',
     defaultValues: {
+      name: '',
+      categoryId: '',
+      brandId: '',
+      description: '',
+      hsnCode: '',
       gstRate: 18,
+      claims: '',
+      warnings: '',
+      variants: [{ sku: '', size: '', price: 0, mrp: 0, shadeName: '', shadeHex: '', stockQuantity: 0, mfgDate: '', expiryDate: '' }]
     }
   });
 
@@ -85,6 +96,9 @@ export const ProductWizardShell = () => {
           price: v.price,
           shadeName: v.shadeName || '',
           shadeHex: v.shadeHex || '',
+          stockQuantity: v.stockQuantity || 0,
+          mfgDate: v.mfgDate ? new Date(v.mfgDate).toISOString().split('T')[0] : '',
+          expiryDate: v.expiryDate ? new Date(v.expiryDate).toISOString().split('T')[0] : '',
         })) || []
       });
     }
@@ -157,6 +171,11 @@ export const ProductWizardShell = () => {
       description: data.description,
       mrp: primaryVariant?.mrp || 0,
       discountPrice: primaryVariant?.price || 0,
+      stockQuantity: primaryVariant?.stockQuantity || 0,
+      mfgDate: primaryVariant?.mfgDate || undefined,
+      expiryDate: primaryVariant?.expiryDate || undefined,
+      shadeName: primaryVariant?.shadeName || undefined,
+      shadeHex: primaryVariant?.shadeHex || undefined,
       gstRate: data.gstRate,
       status: 'LIVE',
       productLine: 'BOTH'

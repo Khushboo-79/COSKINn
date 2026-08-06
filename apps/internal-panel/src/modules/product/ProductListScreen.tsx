@@ -5,7 +5,7 @@ import { productApi } from '../../core/api/product';
 import { resolveImageUrl } from '../../core/api/client';
 import { DataTable } from '../../components/ui/DataTable';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { Edit2, Package, Tag, Filter, Search, Trash2, Star } from 'lucide-react';
+import { Edit2, Package, Tag, Filter, Search, Trash2, Eye, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const ProductListScreen = () => {
@@ -20,6 +20,7 @@ export const ProductListScreen = () => {
   });
 
   const [productToDelete, setProductToDelete] = useState<{id: string, name: string} | null>(null);
+  const [productToView, setProductToView] = useState<any | null>(null);
 
   const deleteMutation = useMutation({
     mutationFn: productApi.deleteProduct,
@@ -115,6 +116,14 @@ export const ProductListScreen = () => {
       )
     },
     {
+      key: 'qty',
+      header: 'Qty',
+      render: (product: any) => {
+        const qty = product.variants?.[0]?.stockQuantity || 0;
+        return <span className="font-medium text-slate-700">{qty}</span>;
+      }
+    },
+    {
       key: 'status',
       header: 'Status',
       render: (product: any) => {
@@ -133,12 +142,11 @@ export const ProductListScreen = () => {
       render: (product: any) => (
         <div className="flex items-center gap-2">
           <button 
-            onClick={() => bestsellerMutation.mutate({ id: product.id, isBestseller: !product.isBestseller })}
-            className={`p-1.5 rounded-lg transition-colors inline-flex ${product.isBestseller ? 'text-amber-500 bg-amber-50 hover:bg-amber-100' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50'}`}
-            title={product.isBestseller ? "Remove from Bestsellers" : "Mark as Bestseller"}
-            disabled={bestsellerMutation.isPending}
+            onClick={() => setProductToView(product)}
+            className="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors inline-flex"
+            title="View Product"
           >
-            <Star className={`h-4 w-4 ${product.isBestseller ? 'fill-current' : ''}`} />
+            <Eye className="h-4 w-4" />
           </button>
           <Link 
             to={`/product/edit/${product.id}`}
@@ -233,6 +241,84 @@ export const ProductListScreen = () => {
               >
                 Apply Filters
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Product Modal */}
+      {productToView && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl border border-slate-100">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Package className="h-5 w-5 text-primary-500" />
+                Product Details
+              </h3>
+              <button onClick={() => setProductToView(null)} className="text-slate-400 hover:text-slate-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-slate-500">Name</p>
+                  <p className="font-medium text-slate-900">{productToView.name}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">SKU</p>
+                  <p className="font-medium text-slate-900">{productToView.sku || productToView.variants?.[0]?.sku || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">Category</p>
+                  <p className="font-medium text-slate-900">{productToView.category?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">Status</p>
+                  <StatusBadge status={productToView.status === 'LIVE' ? 'Active' : 'Draft'} variant={productToView.status === 'LIVE' ? 'success' : 'warning'} />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">Shade</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    {productToView.variants?.[0]?.shadeHex ? (
+                      <>
+                        <span 
+                          className="h-4 w-4 rounded-full border border-slate-200" 
+                          style={{ backgroundColor: productToView.variants[0].shadeHex }}
+                        ></span>
+                        <span className="font-medium text-slate-900 uppercase">
+                          {productToView.variants[0].shadeName || productToView.variants[0].shadeHex}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-medium text-slate-900">N/A</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <h4 className="text-sm font-semibold text-slate-900 mb-3">Inventory & Validity</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-xs text-slate-500">Quantity</p>
+                    <p className="font-semibold text-slate-900">{productToView.variants?.[0]?.stockQuantity || 0} Units</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Mfg Date</p>
+                    <p className="font-medium text-slate-900">
+                      {productToView.variants?.[0]?.mfgDate ? new Date(productToView.variants[0].mfgDate).toLocaleDateString() : 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Expiry Date</p>
+                    <p className="font-medium text-slate-900">
+                      {productToView.variants?.[0]?.expiryDate ? new Date(productToView.variants[0].expiryDate).toLocaleDateString() : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

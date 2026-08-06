@@ -8,8 +8,8 @@ export declare class EngagementService {
         updatedAt: Date;
         productId: string;
         userId: string;
-        title: string | null;
         isApproved: boolean;
+        title: string | null;
         content: string | null;
         rating: number;
     }[]>;
@@ -23,8 +23,8 @@ export declare class EngagementService {
         updatedAt: Date;
         productId: string;
         userId: string;
-        title: string | null;
         isApproved: boolean;
+        title: string | null;
         content: string | null;
         rating: number;
     }>;

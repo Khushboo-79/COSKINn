@@ -20,7 +20,7 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, onMouseEnter, onMo
     const fetchCategories = async () => {
       try {
         const platform = isGlam ? 'COSMETICS' : 'SKINCARE';
-        const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/categories?platform=${platform}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/categories?platform=${platform}`);
         if (!res.ok) throw new Error('Failed to fetch categories');
         const data = await res.json();
         
