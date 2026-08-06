@@ -27,6 +27,11 @@ export declare class ProductService {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -147,6 +152,11 @@ export declare class ProductService {
                 sku: string;
                 netQuantity: string | null;
                 price: number;
+                stockQuantity: number | null;
+                mfgDate: Date | null;
+                expiryDate: Date | null;
+                shadeName: string | null;
+                shadeHex: string | null;
             }[];
             images: {
                 id: string;
@@ -210,6 +220,11 @@ export declare class ProductService {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -266,6 +281,11 @@ export declare class ProductService {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -322,6 +342,11 @@ export declare class ProductService {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -378,6 +403,11 @@ export declare class ProductService {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -447,6 +477,11 @@ export declare class ProductService {
             sku: string;
             netQuantity: string | null;
             price: number;
+            stockQuantity: number | null;
+            mfgDate: Date | null;
+            expiryDate: Date | null;
+            shadeName: string | null;
+            shadeHex: string | null;
         }[];
         images: {
             id: string;
@@ -600,6 +635,11 @@ export declare class ProductService {
         sku: string;
         netQuantity: string | null;
         price: number;
+        stockQuantity: number | null;
+        mfgDate: Date | null;
+        expiryDate: Date | null;
+        shadeName: string | null;
+        shadeHex: string | null;
     }>;
     updateVariant(variantId: string, data: import('./dto/product.dto').UpdateVariantDto): Promise<{
         id: string;
@@ -611,6 +651,11 @@ export declare class ProductService {
         sku: string;
         netQuantity: string | null;
         price: number;
+        stockQuantity: number | null;
+        mfgDate: Date | null;
+        expiryDate: Date | null;
+        shadeName: string | null;
+        shadeHex: string | null;
     }>;
     removeVariant(variantId: string): Promise<{
         id: string;
@@ -622,6 +667,11 @@ export declare class ProductService {
         sku: string;
         netQuantity: string | null;
         price: number;
+        stockQuantity: number | null;
+        mfgDate: Date | null;
+        expiryDate: Date | null;
+        shadeName: string | null;
+        shadeHex: string | null;
     }>;
     updateTags(productId: string, data: import('./dto/product.dto').UpdateTagsDto): Promise<any>;
     addImage(productId: string, url: string): Promise<any>;
@@ -670,9 +720,9 @@ export declare class ProductService {
             id: string;
             createdAt: Date;
             sku: string;
-            batchNumber: string;
             mfgDate: Date | null;
             expiryDate: Date | null;
+            batchNumber: string;
         };
         stockAdded: number;
     }>;

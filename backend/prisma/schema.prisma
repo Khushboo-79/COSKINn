@@ -369,6 +369,11 @@ model ProductVariant {
   netQuantity String? // e.g., "50ml", "100g"
   mrp         Float
   price       Float
+  stockQuantity Int?     @default(0)
+  mfgDate       DateTime?
+  expiryDate    DateTime?
+  shadeName     String?
+  shadeHex      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

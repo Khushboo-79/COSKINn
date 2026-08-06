@@ -227,9 +227,9 @@ export declare class InventoryService {
         id: string;
         createdAt: Date;
         sku: string;
-        batchNumber: string;
-        expiryDate: Date | null;
         mfgDate: Date | null;
+        expiryDate: Date | null;
+        batchNumber: string;
     }[]>;
     reserveStock(sku: string, quantity: number, tx?: any): Promise<any>;
     deductReservedStock(sku: string, quantity: number, tx?: any): Promise<any>;

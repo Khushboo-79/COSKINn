@@ -11,8 +11,8 @@ export declare class ContentController {
         seoDesc: string | null;
         seoKeywords: string | null;
         type: string;
-        title: string;
         segment: import("@prisma/client").$Enums.ProductLine;
+        title: string;
         contentJson: string;
         heroImageUrl: string | null;
         published: boolean;
@@ -26,8 +26,8 @@ export declare class ContentController {
         seoDesc: string | null;
         seoKeywords: string | null;
         type: string;
-        title: string;
         segment: import("@prisma/client").$Enums.ProductLine;
+        title: string;
         contentJson: string;
         heroImageUrl: string | null;
         published: boolean;
@@ -51,8 +51,8 @@ export declare class ContentController {
         seoDesc: string | null;
         seoKeywords: string | null;
         type: string;
-        title: string;
         segment: import("@prisma/client").$Enums.ProductLine;
+        title: string;
         contentJson: string;
         heroImageUrl: string | null;
         published: boolean;
@@ -66,8 +66,8 @@ export declare class ContentController {
         seoDesc: string | null;
         seoKeywords: string | null;
         type: string;
-        title: string;
         segment: import("@prisma/client").$Enums.ProductLine;
+        title: string;
         contentJson: string;
         heroImageUrl: string | null;
         published: boolean;
@@ -81,8 +81,8 @@ export declare class ContentController {
         seoDesc: string | null;
         seoKeywords: string | null;
         type: string;
-        title: string;
         segment: import("@prisma/client").$Enums.ProductLine;
+        title: string;
         contentJson: string;
         heroImageUrl: string | null;
         published: boolean;
@@ -96,8 +96,8 @@ export declare class ContentController {
         seoDesc: string | null;
         seoKeywords: string | null;
         type: string;
-        title: string;
         segment: import("@prisma/client").$Enums.ProductLine;
+        title: string;
         contentJson: string;
         heroImageUrl: string | null;
         published: boolean;
