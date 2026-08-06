@@ -86,8 +86,7 @@ const Checkout: React.FC = () => {
           },
           body: JSON.stringify({
             label: 'Home',
-            firstName,
-            lastName,
+            fullName: `${firstName} ${lastName}`,
             addressLine1,
             addressLine2,
             city,
