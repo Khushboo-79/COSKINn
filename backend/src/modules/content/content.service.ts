@@ -89,16 +89,16 @@ export class ContentService {
 
   // --- VIDEOS ---
   async getVideos() {
-    return this.prisma.tutorialVideo.findMany({
+    /* return this.prisma.tutorialVideo.findMany({
       orderBy: { createdAt: 'desc' }
-    });
+    }); */
   }
 
   async createVideo(data: { title: string; url: string; size?: string }) {
-    return this.prisma.tutorialVideo.create({ data });
+    /* return this.prisma.tutorialVideo.create({ data }); */
   }
 
   async deleteVideo(id: string) {
-    return this.prisma.tutorialVideo.delete({ where: { id } });
+    /* return this.prisma.tutorialVideo.delete({ where: { id } }); */
   }
 }
