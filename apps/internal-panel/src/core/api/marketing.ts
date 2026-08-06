@@ -3,43 +3,43 @@ import { apiClient as client } from './client';
 export const marketingApi = {
   // Banners
   getBanners: async () => {
-    const res = await client.get('/marketing/banners');
+    const res = await client.get('/home/admin/banners');
     return res.data;
   },
 
   createBanner: async (data: any) => {
-    const res = await client.post('/marketing/banners', data);
+    const res = await client.post('/home/admin/banners', data);
     return res.data;
   },
 
   updateBanner: async (id: string, data: any) => {
-    const res = await client.put(`/marketing/banners/${id}`, data);
+    const res = await client.put(`/home/admin/banners/${id}`, data);
     return res.data;
   },
 
   deleteBanner: async (id: string) => {
-    const res = await client.delete(`/marketing/banners/${id}`);
+    const res = await client.delete(`/home/admin/banners/${id}`);
     return res.data;
   },
 
   // Coupons
   getCoupons: async () => {
-    const res = await client.get('/marketing/coupons');
+    const res = await client.get('/admin/coupons');
     return res.data;
   },
 
   createCoupon: async (data: any) => {
-    const res = await client.post('/marketing/coupons', data);
+    const res = await client.post('/admin/coupons', data);
     return res.data;
   },
 
   updateCoupon: async (id: string, data: any) => {
-    const res = await client.put(`/marketing/coupons/${id}`, data);
+    const res = await client.put(`/admin/coupons/${id}`, data);
     return res.data;
   },
 
   deleteCoupon: async (id: string) => {
-    const res = await client.delete(`/marketing/coupons/${id}`);
+    const res = await client.delete(`/admin/coupons/${id}`);
     return res.data;
   },
 

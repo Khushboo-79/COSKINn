@@ -76,4 +76,34 @@ export class HomeService {
       bestSellers: bestSellerProducts
     };
   }
+
+  // --- ADMIN METHODS ---
+
+  async createBanner(data: { title: string, position: string, imageUrl: string, linkUrl?: string, sortOrder?: number }) {
+    return this.prisma.banner.create({
+      data: {
+        title: data.title || 'New Banner',
+        position: data.position || 'hero',
+        imageUrl: data.imageUrl,
+        linkUrl: data.linkUrl || '',
+        sortOrder: data.sortOrder || 0,
+        isActive: true,
+      }
+    });
+  }
+
+  async deleteBanner(id: string) {
+    const banner = await this.prisma.banner.findUnique({ where: { id } });
+    if (!banner) throw new NotFoundException('Banner not found');
+    return this.prisma.banner.delete({ where: { id } });
+  }
+
+  async setBestseller(productId: string, isBestseller: boolean) {
+    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    if (!product) throw new NotFoundException('Product not found');
+    return this.prisma.product.update({
+      where: { id: productId },
+      data: { isBestseller }
+    });
+  }
 }
