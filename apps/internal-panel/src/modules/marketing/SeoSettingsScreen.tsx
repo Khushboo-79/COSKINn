@@ -42,7 +42,7 @@ export const SeoSettingsScreen = () => {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         {isLoading ? (
           <div className="py-12 text-center text-slate-500">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-indigo-500 mb-2" />
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-[#FF7F50] mb-2" />
             Loading SEO settings...
           </div>
         ) : (

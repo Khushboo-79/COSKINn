@@ -580,8 +580,8 @@ export declare class OrderController {
             createdAt: Date;
             updatedAt: Date;
             status: string;
-            amount: number;
             orderId: string;
+            amount: number;
             method: string | null;
         }[];
         shipments: {
@@ -598,8 +598,8 @@ export declare class OrderController {
         cancellations: {
             id: string;
             createdAt: Date;
-            reason: string;
             orderId: string;
+            reason: string;
         }[];
     } & {
         id: string;

@@ -53,7 +53,7 @@ Total Gross: ₹${emp.salary.toLocaleString()}
           type="month" 
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(e.target.value)}
-          className="border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto"
+          className="border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-[#FF7F50] w-full sm:w-auto"
         />
       </div>
 
@@ -71,7 +71,7 @@ Total Gross: ₹${emp.salary.toLocaleString()}
             summary?.map((dept: any) => (
               <div key={dept.department} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <div className="flex items-center mb-3">
-                  <div className="h-8 w-8 bg-indigo-50 text-indigo-600 rounded-md flex items-center justify-center mr-3">
+                  <div className="h-8 w-8 bg-[#FF7F50]/10 text-[#FF7F50] rounded-md flex items-center justify-center mr-3">
                     <Building2 className="h-4 w-4" />
                   </div>
                   <h3 className="font-bold text-slate-900">{dept.department}</h3>
@@ -134,7 +134,7 @@ Total Gross: ₹${emp.salary.toLocaleString()}
                       <td className="py-3 px-6 text-right">
                         <button 
                           onClick={() => generateSlip(emp)}
-                          className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-[#FF7F50] bg-[#FF7F50]/10 border border-[#FF7F50]/30 rounded-lg hover:bg-[#FF7F50]/20 transition-colors"
                         >
                           <Download className="h-3 w-3 mr-1.5" />
                           Slip

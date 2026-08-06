@@ -15,17 +15,17 @@ export declare class ReviewController {
                 createdAt: Date;
                 productId: string;
                 url: string;
-                sortOrder: number;
                 altText: string | null;
                 isPrimary: boolean;
+                sortOrder: number;
             }[];
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
         title: string | null;
         isApproved: boolean;
         rating: number;
@@ -35,8 +35,8 @@ export declare class ReviewController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
         title: string | null;
         isApproved: boolean;
         rating: number;
@@ -46,8 +46,8 @@ export declare class ReviewController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
         title: string | null;
         isApproved: boolean;
         rating: number;

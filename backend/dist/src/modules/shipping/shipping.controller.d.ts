@@ -33,7 +33,6 @@ export declare class ShippingController {
                 id: string;
                 phone: string;
                 createdAt: Date;
-                orderId: string;
                 fullName: string;
                 addressLine1: string;
                 addressLine2: string | null;
@@ -41,6 +40,7 @@ export declare class ShippingController {
                 state: string;
                 pincode: string;
                 country: string;
+                orderId: string;
                 sourceAddressId: string | null;
             } | null;
         } & {
@@ -49,9 +49,9 @@ export declare class ShippingController {
             deletedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
-            platform: import("@prisma/client").$Enums.PlatformType;
             status: string;
+            platform: import("@prisma/client").$Enums.PlatformType;
+            userId: string;
             totalAmount: number;
             discountAmt: number;
             taxAmount: number;

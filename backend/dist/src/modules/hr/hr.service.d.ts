@@ -2,22 +2,30 @@ import { PrismaService } from '../../prisma/prisma.service';
 export declare class HrService {
     private prisma;
     constructor(prisma: PrismaService);
-    getEmployees(): Promise<{
-        role: string;
+    getEmployees(): Promise<({
+        attendance: {
+            id: string;
+            createdAt: Date;
+            status: string;
+            employeeId: string;
+            date: Date;
+        }[];
+    } & {
         id: string;
         email: string;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        avatar: string | null;
         status: string;
+        role: string;
+        avatar: string | null;
         employeeId: string;
         department: string | null;
         salary: number;
         joinDate: Date;
         leaveBalance: number;
-    }[]>;
+    })[]>;
     getEmployeeById(id: string): Promise<{
         attendance: {
             id: string;
@@ -29,10 +37,10 @@ export declare class HrService {
         payrolls: {
             id: string;
             createdAt: Date;
+            year: number;
             pdfUrl: string | null;
             month: number;
             employeeId: string;
-            year: number;
             basic: number;
             deductions: number;
             netPay: number;
@@ -44,21 +52,21 @@ export declare class HrService {
             status: string;
             type: string;
             reason: string | null;
+            days: number;
             employeeId: string;
             fromDate: Date;
             toDate: Date;
-            days: number;
         }[];
     } & {
-        role: string;
         id: string;
         email: string;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        avatar: string | null;
         status: string;
+        role: string;
+        avatar: string | null;
         employeeId: string;
         department: string | null;
         salary: number;
@@ -74,15 +82,15 @@ export declare class HrService {
         phone?: string;
         joinDate?: Date;
     }): Promise<{
-        role: string;
         id: string;
         email: string;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        avatar: string | null;
         status: string;
+        role: string;
+        avatar: string | null;
         employeeId: string;
         department: string | null;
         salary: number;
@@ -101,15 +109,15 @@ export declare class HrService {
     }>;
     getLeaveRequests(): Promise<({
         employee: {
-            role: string;
             id: string;
             email: string;
             phone: string | null;
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            avatar: string | null;
             status: string;
+            role: string;
+            avatar: string | null;
             employeeId: string;
             department: string | null;
             salary: number;
@@ -123,10 +131,10 @@ export declare class HrService {
         status: string;
         type: string;
         reason: string | null;
+        days: number;
         employeeId: string;
         fromDate: Date;
         toDate: Date;
-        days: number;
     })[]>;
     updateLeaveStatus(id: string, status: 'Approved' | 'Rejected'): Promise<{
         id: string;
@@ -135,10 +143,10 @@ export declare class HrService {
         status: string;
         type: string;
         reason: string | null;
+        days: number;
         employeeId: string;
         fromDate: Date;
         toDate: Date;
-        days: number;
     }>;
     getPayrollSummary(): Promise<any[]>;
     markAttendance(employeeId: string, status: 'PRESENT' | 'ABSENT' | 'LEAVE'): Promise<{

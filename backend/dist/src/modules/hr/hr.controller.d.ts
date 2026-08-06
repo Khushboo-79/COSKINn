@@ -12,22 +12,30 @@ export declare class HrController {
         departments: number;
         avgTenure: string;
     }>;
-    getEmployees(): Promise<{
-        role: string;
+    getEmployees(): Promise<({
+        attendance: {
+            id: string;
+            createdAt: Date;
+            status: string;
+            employeeId: string;
+            date: Date;
+        }[];
+    } & {
         id: string;
         email: string;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        avatar: string | null;
         status: string;
+        role: string;
+        avatar: string | null;
         employeeId: string;
         department: string | null;
         salary: number;
         joinDate: Date;
         leaveBalance: number;
-    }[]>;
+    })[]>;
     getEmployee(id: string): Promise<{
         attendance: {
             id: string;
@@ -39,10 +47,10 @@ export declare class HrController {
         payrolls: {
             id: string;
             createdAt: Date;
+            year: number;
             pdfUrl: string | null;
             month: number;
             employeeId: string;
-            year: number;
             basic: number;
             deductions: number;
             netPay: number;
@@ -54,21 +62,21 @@ export declare class HrController {
             status: string;
             type: string;
             reason: string | null;
+            days: number;
             employeeId: string;
             fromDate: Date;
             toDate: Date;
-            days: number;
         }[];
     } & {
-        role: string;
         id: string;
         email: string;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        avatar: string | null;
         status: string;
+        role: string;
+        avatar: string | null;
         employeeId: string;
         department: string | null;
         salary: number;
@@ -84,15 +92,15 @@ export declare class HrController {
         phone?: string;
         joinDate?: string;
     }): Promise<{
-        role: string;
         id: string;
         email: string;
         phone: string | null;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        avatar: string | null;
         status: string;
+        role: string;
+        avatar: string | null;
         employeeId: string;
         department: string | null;
         salary: number;
@@ -101,15 +109,15 @@ export declare class HrController {
     }>;
     getLeaveRequests(): Promise<({
         employee: {
-            role: string;
             id: string;
             email: string;
             phone: string | null;
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            avatar: string | null;
             status: string;
+            role: string;
+            avatar: string | null;
             employeeId: string;
             department: string | null;
             salary: number;
@@ -123,10 +131,10 @@ export declare class HrController {
         status: string;
         type: string;
         reason: string | null;
+        days: number;
         employeeId: string;
         fromDate: Date;
         toDate: Date;
-        days: number;
     })[]>;
     updateLeaveStatus(id: string, body: {
         status: 'Approved' | 'Rejected';
@@ -137,10 +145,10 @@ export declare class HrController {
         status: string;
         type: string;
         reason: string | null;
+        days: number;
         employeeId: string;
         fromDate: Date;
         toDate: Date;
-        days: number;
     }>;
     getPayrollSummary(): Promise<any[]>;
     markAttendance(body: {

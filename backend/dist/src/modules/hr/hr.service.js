@@ -20,7 +20,8 @@ let HrService = class HrService {
     }
     async getEmployees() {
         return this.prisma.employee.findMany({
-            orderBy: { createdAt: 'desc' },
+            include: { attendance: true },
+            orderBy: { createdAt: 'desc' }
         });
     }
     async getEmployeeById(id) {
@@ -61,20 +62,22 @@ let HrService = class HrService {
                 status: 'PRESENT',
             },
         });
-        const onLeave = await this.prisma.employee.count({
-            where: { status: 'On Leave' },
-        });
-        const pendingLeaveRequests = await this.prisma.leaveRequest.count({
-            where: { status: 'Pending' },
-        });
-        const allEmps = await this.prisma.employee.findMany({
-            select: { salary: true },
-        });
-        const totalPayroll = allEmps.reduce((acc, e) => acc + e.salary, 0) / 12;
-        const totalMonthlyPayroll = allEmps.reduce((acc, e) => acc + e.salary, 0);
+        const onLeave = await this.prisma.employee.count({ where: { status: 'On Leave' } });
+        const pendingLeaveRequests = await this.prisma.leaveRequest.count({ where: { status: 'Pending' } });
+        const allEmps = await this.prisma.employee.findMany({ select: { salary: true, joinDate: true } });
+        const totalMonthlyPayroll = allEmps.reduce((acc, e) => acc + (e.salary || 0), 0);
         const departments = await this.prisma.employee.groupBy({
             by: ['department'],
         });
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const newHiresThisMonth = allEmps.filter(e => new Date(e.joinDate) >= thirtyDaysAgo).length;
+        let totalTenureMs = 0;
+        const now = new Date().getTime();
+        allEmps.forEach(e => {
+            totalTenureMs += (now - new Date(e.joinDate).getTime());
+        });
+        const avgTenureYears = allEmps.length > 0 ? (totalTenureMs / allEmps.length) / (1000 * 60 * 60 * 24 * 365.25) : 0;
         return {
             totalEmployees,
             activeToday: totalEmployees > 0 && activeToday === 0
@@ -82,10 +85,10 @@ let HrService = class HrService {
                 : activeToday,
             onLeave,
             pendingLeaveRequests,
-            newHiresThisMonth: 3,
-            totalPayroll: totalMonthlyPayroll || 1850000,
+            newHiresThisMonth,
+            totalPayroll: totalMonthlyPayroll,
             departments: departments.length,
-            avgTenure: '2.4 years',
+            avgTenure: avgTenureYears.toFixed(1) + ' years'
         };
     }
     async getLeaveRequests() {

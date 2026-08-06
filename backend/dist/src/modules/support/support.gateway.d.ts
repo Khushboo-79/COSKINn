@@ -22,8 +22,8 @@ export declare class SupportGateway implements OnGatewayConnection, OnGatewayDis
         id: string;
         createdAt: Date;
         message: string;
-        ticketId: string;
         senderId: string;
         senderRole: string;
+        ticketId: string;
     }>;
 }

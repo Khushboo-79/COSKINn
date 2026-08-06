@@ -6,6 +6,14 @@ export declare class WarehouseService {
     private inventoryService;
     constructor(prisma: PrismaService, inventoryService: InventoryService);
     createPurchaseOrder(dto: CreatePurchaseOrderDto): Promise<{
+        items: {
+            id: string;
+            createdAt: Date;
+            sku: string;
+            purchaseOrderId: string;
+            requestedQty: number;
+            unitPrice: number;
+        }[];
         supplier: {
             id: string;
             email: string | null;
@@ -19,14 +27,6 @@ export declare class WarehouseService {
             contactPerson: string | null;
             paymentTerms: string | null;
         } | null;
-        items: {
-            id: string;
-            createdAt: Date;
-            sku: string;
-            purchaseOrderId: string;
-            requestedQty: number;
-            unitPrice: number;
-        }[];
     } & {
         id: string;
         createdAt: Date;
@@ -42,9 +42,17 @@ export declare class WarehouseService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
+        items: {
+            id: string;
+            createdAt: Date;
+            sku: string;
+            purchaseOrderId: string;
+            requestedQty: number;
+            unitPrice: number;
+        }[];
         supplier: {
             id: string;
             email: string | null;
@@ -58,14 +66,6 @@ export declare class WarehouseService {
             contactPerson: string | null;
             paymentTerms: string | null;
         } | null;
-        items: {
-            id: string;
-            createdAt: Date;
-            sku: string;
-            purchaseOrderId: string;
-            requestedQty: number;
-            unitPrice: number;
-        }[];
     } & {
         id: string;
         createdAt: Date;
@@ -105,15 +105,15 @@ export declare class WarehouseService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
         stocks: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            sku: string;
             quantity: number;
+            sku: string;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
@@ -136,8 +136,8 @@ export declare class WarehouseService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
     } & {
         id: string;

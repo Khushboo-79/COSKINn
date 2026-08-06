@@ -18,8 +18,8 @@ export declare class PurchaseOrderController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
         supplier: {
             id: string;
@@ -55,8 +55,8 @@ export declare class PurchaseOrderController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
         supplier: {
             id: string;

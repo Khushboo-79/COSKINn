@@ -49,5 +49,21 @@ export const contentApi = {
   deleteFaq: async (id: string) => {
     const res = await client.delete(`/content/admin/faqs/${id}`);
     return res.data;
+  },
+
+  // Videos
+  getVideos: async () => {
+    const res = await client.get('/content/admin/videos');
+    return res.data;
+  },
+
+  createVideo: async (data: any) => {
+    const res = await client.post('/content/admin/videos', data);
+    return res.data;
+  },
+
+  deleteVideo: async (id: string) => {
+    const res = await client.delete(`/content/admin/videos/${id}`);
+    return res.data;
   }
 };

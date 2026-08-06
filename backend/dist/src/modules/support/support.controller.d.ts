@@ -7,12 +7,12 @@ export declare class SupportController {
         message: string;
         priority?: string;
     }): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -26,12 +26,12 @@ export declare class SupportController {
         subject: string;
         priority?: string;
     }): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -45,9 +45,9 @@ export declare class SupportController {
         id: string;
         createdAt: Date;
         message: string;
-        ticketId: string;
         senderId: string;
         senderRole: string;
+        ticketId: string;
     }[]>;
     getTickets(status?: string): Promise<({
         user: {
@@ -79,12 +79,12 @@ export declare class SupportController {
             membershipTierId: string | null;
         } | null;
     } & {
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -95,12 +95,12 @@ export declare class SupportController {
         assignedToId: string | null;
     })[]>;
     closeTicket(ticketId: string): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -117,17 +117,17 @@ export declare class SupportController {
         id: string;
         createdAt: Date;
         message: string;
-        ticketId: string;
         senderId: string;
         senderRole: string;
+        ticketId: string;
     }>;
     escalateTicket(ticketId: string): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -140,12 +140,12 @@ export declare class SupportController {
     assignTicket(ticketId: string, body: {
         adminId: string;
     }): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;

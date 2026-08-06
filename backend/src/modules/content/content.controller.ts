@@ -99,4 +99,26 @@ export class ContentController {
   updateGlobalSeo(@Body() data: any) {
     return this.contentService.updateGlobalSeo(data);
   }
+
+  // --- VIDEOS ---
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Get('admin/videos')
+  getVideos() {
+    return this.contentService.getVideos();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Post('admin/videos')
+  createVideo(@Body() data: any) {
+    return this.contentService.createVideo(data);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')
+  @Delete('admin/videos/:id')
+  deleteVideo(@Param('id') id: string) {
+    return this.contentService.deleteVideo(id);
+  }
 }

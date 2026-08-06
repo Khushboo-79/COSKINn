@@ -54,7 +54,15 @@ export const AttendanceScreen = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {employees.filter((e: any) => e.status !== 'Terminated').map((emp: any) => (
+              {employees.filter((e: any) => e.status !== 'Terminated').map((emp: any) => {
+                const todayRecord = emp.attendance?.find((a: any) => {
+                  const aDate = new Date(a.date);
+                  return aDate.getDate() === selectedDate.getDate() &&
+                         aDate.getMonth() === selectedDate.getMonth() &&
+                         aDate.getFullYear() === selectedDate.getFullYear();
+                });
+
+                return (
                 <tr key={emp.id} className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center">
@@ -63,7 +71,7 @@ export const AttendanceScreen = () => {
                       </div>
                       <div className="ml-3">
                         <div className="font-bold text-slate-900 text-sm">{emp.name}</div>
-                        <div className="text-xs text-slate-500 font-mono mt-0.5">{emp.employeeId}</div>
+                        <div className="text-xs text-slate-500 font-mono mt-0.5">{emp.employeeId || emp.id.substring(0,8)}</div>
                       </div>
                     </div>
                   </td>
@@ -71,32 +79,44 @@ export const AttendanceScreen = () => {
                     <div className="text-sm font-medium text-slate-700">{emp.department}</div>
                   </td>
                   <td className="py-4 px-6 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button 
-                        onClick={() => markMutation.mutate({ employeeId: emp.id, status: 'PRESENT' })}
-                        className="p-2 border border-slate-200 rounded-lg text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition-colors tooltip-trigger"
-                        title="Mark Present"
-                      >
-                        <CheckCircle2 className="h-5 w-5" />
-                      </button>
-                      <button 
-                        onClick={() => markMutation.mutate({ employeeId: emp.id, status: 'ABSENT' })}
-                        className="p-2 border border-slate-200 rounded-lg text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors tooltip-trigger"
-                        title="Mark Absent"
-                      >
-                        <XCircle className="h-5 w-5" />
-                      </button>
-                      <button 
-                        onClick={() => markMutation.mutate({ employeeId: emp.id, status: 'LEAVE' })}
-                        className="p-2 border border-slate-200 rounded-lg text-amber-600 hover:bg-amber-50 hover:border-amber-200 transition-colors tooltip-trigger"
-                        title="Mark on Leave"
-                      >
-                        <AlertCircle className="h-5 w-5" />
-                      </button>
-                    </div>
+                    {todayRecord ? (
+                      <div className="flex justify-end">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
+                          todayRecord.status === 'PRESENT' ? 'bg-emerald-100 text-emerald-800' :
+                          todayRecord.status === 'ABSENT' ? 'bg-rose-100 text-rose-800' :
+                          'bg-amber-100 text-amber-800'
+                        }`}>
+                          {todayRecord.status}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => markMutation.mutate({ employeeId: emp.id, status: 'PRESENT' })}
+                          className="p-2 border border-slate-200 rounded-lg text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition-colors tooltip-trigger"
+                          title="Mark Present"
+                        >
+                          <CheckCircle2 className="h-5 w-5" />
+                        </button>
+                        <button 
+                          onClick={() => markMutation.mutate({ employeeId: emp.id, status: 'ABSENT' })}
+                          className="p-2 border border-slate-200 rounded-lg text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors tooltip-trigger"
+                          title="Mark Absent"
+                        >
+                          <XCircle className="h-5 w-5" />
+                        </button>
+                        <button 
+                          onClick={() => markMutation.mutate({ employeeId: emp.id, status: 'LEAVE' })}
+                          className="p-2 border border-slate-200 rounded-lg text-amber-600 hover:bg-amber-50 hover:border-amber-200 transition-colors tooltip-trigger"
+                          title="Mark on Leave"
+                        >
+                          <AlertCircle className="h-5 w-5" />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         )}

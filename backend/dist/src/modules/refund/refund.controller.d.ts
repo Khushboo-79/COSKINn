@@ -5,11 +5,11 @@ export declare class RefundController {
     constructor(refundService: RefundService);
     getAllRefunds(): Promise<({
         order: {
+            id: string;
             user: {
                 email: string | null;
                 firstName: string | null;
             };
-            id: string;
         };
     } & {
         id: string;

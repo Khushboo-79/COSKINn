@@ -47,7 +47,7 @@ export const ProductFeedScreen = () => {
   const uniqueSkinTypes = Array.from(new Set(feed.flatMap((p: any) => p.skinTypes || []))).filter(Boolean) as string[];
 
   const filteredFeed = feed.filter((product: any) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           product.variants?.[0]?.sku?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !filters.category || product.category === filters.category;
     const matchesIngredient = !filters.ingredient || product.ingredients?.includes(filters.ingredient);

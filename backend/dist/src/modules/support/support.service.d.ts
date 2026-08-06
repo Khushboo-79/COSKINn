@@ -3,12 +3,12 @@ export declare class SupportService {
     private prisma;
     constructor(prisma: PrismaService);
     createTicket(userId: string, subject: string, priority?: string, category?: string): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -19,12 +19,12 @@ export declare class SupportService {
         assignedToId: string | null;
     }>;
     createContactTicket(userId: string, subject: string, message: string, priority?: string): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -64,12 +64,12 @@ export declare class SupportService {
             membershipTierId: string | null;
         } | null;
     } & {
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -83,25 +83,25 @@ export declare class SupportService {
         id: string;
         createdAt: Date;
         message: string;
-        ticketId: string;
         senderId: string;
         senderRole: string;
+        ticketId: string;
     }[]>;
     addMessage(ticketId: string, senderId: string, senderRole: 'USER' | 'ADMIN', message: string): Promise<{
         id: string;
         createdAt: Date;
         message: string;
-        ticketId: string;
         senderId: string;
         senderRole: string;
+        ticketId: string;
     }>;
     closeTicket(ticketId: string): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -112,12 +112,12 @@ export declare class SupportService {
         assignedToId: string | null;
     }>;
     assignTicket(ticketId: string, adminId: string): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;
@@ -128,12 +128,12 @@ export declare class SupportService {
         assignedToId: string | null;
     }>;
     escalateTicket(ticketId: string): Promise<{
-        category: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         status: string;
+        category: string | null;
+        userId: string;
         subject: string;
         priority: string;
         slaFirstResponseDeadline: Date | null;

@@ -19,8 +19,8 @@ export declare class InventoryService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        address: string | null;
         code: string;
+        address: string | null;
     })[]>;
     createWarehouse(dto: any): Promise<{
         id: string;
@@ -28,8 +28,8 @@ export declare class InventoryService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        address: string | null;
         code: string;
+        address: string | null;
     }>;
     getMovementLogs(sku?: string): Promise<({
         warehouse: {
@@ -38,16 +38,16 @@ export declare class InventoryService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
     } & {
         id: string;
         createdAt: Date;
-        sku: string;
         quantity: number;
-        type: string;
+        sku: string;
         warehouseId: string;
+        type: string;
         reference: string | null;
     })[]>;
     getGlobalStock(platform?: 'COSMETICS' | 'SKINCARE'): Promise<{
@@ -66,15 +66,15 @@ export declare class InventoryService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        sku: string;
         quantity: number;
+        sku: string;
         warehouseId: string;
         reservedQty: number;
         binLocationId: string | null;
@@ -104,18 +104,18 @@ export declare class InventoryService {
         movement: {
             id: string;
             createdAt: Date;
-            sku: string;
             quantity: number;
-            type: string;
+            sku: string;
             warehouseId: string;
+            type: string;
             reference: string | null;
         };
         stock: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            sku: string;
             quantity: number;
+            sku: string;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
@@ -125,8 +125,8 @@ export declare class InventoryService {
         adjustment: {
             id: string;
             createdAt: Date;
-            sku: string;
             quantity: number;
+            sku: string;
             warehouseId: string;
             reason: string;
         };
@@ -134,8 +134,8 @@ export declare class InventoryService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            sku: string;
             quantity: number;
+            sku: string;
             warehouseId: string;
             reservedQty: number;
             binLocationId: string | null;
@@ -145,8 +145,8 @@ export declare class InventoryService {
         items: {
             id: string;
             createdAt: Date;
-            sku: string;
             quantity: number;
+            sku: string;
             transferId: string;
         }[];
         fromWarehouse: {
@@ -155,8 +155,8 @@ export declare class InventoryService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
         toWarehouse: {
             id: string;
@@ -164,8 +164,8 @@ export declare class InventoryService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
     } & {
         id: string;
@@ -192,15 +192,15 @@ export declare class InventoryService {
     reportDamaged(dto: import('./dto/inventory.dto').DamagedStockDto): Promise<{
         id: string;
         createdAt: Date;
-        sku: string;
         quantity: number;
+        sku: string;
         reason: string | null;
     }>;
     reportExpired(dto: import('./dto/inventory.dto').ExpiredStockDto): Promise<{
         id: string;
         createdAt: Date;
-        sku: string;
         quantity: number;
+        sku: string;
         batchNo: string;
     }>;
     getLowStock(): Promise<({
@@ -210,15 +210,15 @@ export declare class InventoryService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        sku: string;
         quantity: number;
+        sku: string;
         warehouseId: string;
         reservedQty: number;
         binLocationId: string | null;
@@ -292,8 +292,8 @@ export declare class InventoryService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            address: string | null;
             code: string;
+            address: string | null;
         };
     } & {
         id: string;

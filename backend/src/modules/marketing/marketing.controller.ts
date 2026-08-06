@@ -113,4 +113,12 @@ export class MarketingController {
     const isRecovered = recovered ? recovered === 'true' : undefined;
     return this.marketingService.getAbandonedCarts(isRecovered);
   }
+
+  // --- DASHBOARD ---
+  @Get('dashboard')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN', 'MARKETING_MANAGER')
+  getDashboard() {
+    return this.marketingService.getDashboardOverview();
+  }
 }

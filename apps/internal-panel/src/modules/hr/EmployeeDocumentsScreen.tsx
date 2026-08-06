@@ -67,7 +67,7 @@ export const EmployeeDocumentsScreen = () => {
         <div className="lg:col-span-1">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
             <h2 className="font-bold text-slate-800 flex items-center">
-              <UploadCloud className="h-5 w-5 mr-2 text-indigo-600" />
+              <UploadCloud className="h-5 w-5 mr-2 text-[#FF7F50]" />
               Upload Document
             </h2>
 
@@ -76,7 +76,7 @@ export const EmployeeDocumentsScreen = () => {
               <select 
                 value={selectedEmp}
                 onChange={e => setSelectedEmp(e.target.value)}
-                className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
               >
                 <option value="">-- Choose Employee --</option>
                 {employees?.map((emp: any) => (
@@ -90,7 +90,7 @@ export const EmployeeDocumentsScreen = () => {
               <select 
                 value={docType}
                 onChange={e => setDocType(e.target.value)}
-                className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500"
+                className="w-full border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-[#FF7F50]"
               >
                 <option>Contract</option>
                 <option>Identity Proof</option>
@@ -111,7 +111,7 @@ export const EmployeeDocumentsScreen = () => {
               <button 
                 onClick={() => fileInputRef.current?.click()}
                 disabled={!selectedEmp || isUploading}
-                className="w-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-medium py-3 rounded-lg hover:bg-indigo-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full bg-[#FF7F50]/10 border border-[#FF7F50]/30 text-[#FF7F50] font-medium py-3 rounded-lg hover:bg-[#FF7F50]/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isUploading ? (
                   <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Uploading to S3...</>
@@ -149,7 +149,7 @@ export const EmployeeDocumentsScreen = () => {
                     <tr key={doc.id} className="hover:bg-slate-50 transition-colors">
                       <td className="py-4 px-6">
                         <div className="flex items-center">
-                          <FileCheck className="h-5 w-5 text-indigo-500 mr-3" />
+                          <FileCheck className="h-5 w-5 text-[#FF7F50] mr-3" />
                           <div>
                             <div className="font-medium text-slate-900 text-sm">{doc.type}</div>
                             <div className="text-xs text-slate-500 mt-0.5">{doc.date.toLocaleString()}</div>
@@ -164,7 +164,7 @@ export const EmployeeDocumentsScreen = () => {
                           href={doc.url} 
                           target="_blank" 
                           rel="noreferrer"
-                          className="inline-flex items-center text-xs font-medium text-indigo-600 hover:text-indigo-800"
+                          className="inline-flex items-center text-xs font-medium text-[#FF7F50] hover:text-[#FF7F50]"
                         >
                           <LinkIcon className="h-3 w-3 mr-1" /> View File
                         </a>

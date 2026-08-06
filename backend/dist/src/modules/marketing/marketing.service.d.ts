@@ -8,10 +8,10 @@ export declare class MarketingService {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -22,10 +22,10 @@ export declare class MarketingService {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -36,10 +36,10 @@ export declare class MarketingService {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -50,10 +50,10 @@ export declare class MarketingService {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -64,10 +64,10 @@ export declare class MarketingService {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -178,8 +178,8 @@ export declare class MarketingService {
     logAbandonedCart(userId: string, cartId: string): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         cartId: string;
+        userId: string;
         recovered: boolean;
         emailSentAt: Date | null;
     }>;
@@ -201,9 +201,23 @@ export declare class MarketingService {
     } & {
         id: string;
         createdAt: Date;
-        userId: string;
         cartId: string;
+        userId: string;
         recovered: boolean;
         emailSentAt: Date | null;
     })[]>;
+    getDashboardOverview(): Promise<{
+        metrics: {
+            label: string;
+            value: string;
+            change: string;
+            icon: string;
+            color: string;
+            bg: string;
+        }[];
+        topCampaigns: {
+            name: string;
+            performance: number;
+        }[];
+    }>;
 }

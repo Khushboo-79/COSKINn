@@ -28,16 +28,16 @@ export declare class CustomerProfileService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             skinType: string | null;
             skinConcerns: string[];
+            profileId: string;
         } | null;
         makeupPreference: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             makeupStyle: string | null;
+            profileId: string;
         } | null;
         id: string;
         createdAt: Date;
@@ -62,16 +62,16 @@ export declare class CustomerProfileService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             skinType: string | null;
             skinConcerns: string[];
+            profileId: string;
         } | null;
         makeupPreference: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             makeupStyle: string | null;
+            profileId: string;
         } | null;
         id: string;
         createdAt: Date;
@@ -88,9 +88,9 @@ export declare class CustomerProfileService {
                     id: string;
                     createdAt: Date;
                     updatedAt: Date;
-                    profileId: string;
                     skinType: string | null;
                     skinConcerns: string[];
+                    profileId: string;
                 } | null;
             } & {
                 id: string;
@@ -128,16 +128,16 @@ export declare class CustomerProfileService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                profileId: string;
                 skinType: string | null;
                 skinConcerns: string[];
+                profileId: string;
             } | null;
             makeupPreference: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                profileId: string;
                 makeupStyle: string | null;
+                profileId: string;
             } | null;
         } & {
             id: string;
@@ -148,26 +148,56 @@ export declare class CustomerProfileService {
             gender: string | null;
             avatar: string | null;
         }) | null;
+        orders: ({
+            items: {
+                id: string;
+                createdAt: Date;
+                name: string;
+                variantId: string;
+                quantity: number;
+                sku: string;
+                price: number;
+                total: number;
+                taxAmount: number;
+                orderId: string;
+            }[];
+        } & {
+            id: string;
+            isDeleted: boolean;
+            deletedAt: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            platform: import("@prisma/client").$Enums.PlatformType;
+            userId: string;
+            totalAmount: number;
+            discountAmt: number;
+            taxAmount: number;
+            shippingFee: number;
+            finalAmount: number;
+            paymentMode: string;
+            couponId: string | null;
+        })[];
         wishlist: ({
             items: ({
                 product: {
-                    hsnCode: string | null;
                     id: string;
                     isDeleted: boolean;
                     deletedAt: Date | null;
                     createdAt: Date;
                     updatedAt: Date;
                     name: string;
-                    description: string | null;
                     categoryId: string;
                     subcategoryId: string | null;
                     slug: string;
+                    description: string | null;
                     howToUse: string | null;
                     warnings: string | null;
                     claims: string | null;
                     mrp: number;
                     discountPrice: number | null;
                     gstRate: number;
+                    hsnCode: string | null;
                     manufacturerName: string | null;
                     manufacturerAddress: string | null;
                     countryOfOrigin: string | null;
@@ -187,8 +217,8 @@ export declare class CustomerProfileService {
             } & {
                 id: string;
                 createdAt: Date;
-                wishlistId: string;
                 productId: string;
+                wishlistId: string;
             })[];
         } & {
             id: string;
@@ -196,36 +226,6 @@ export declare class CustomerProfileService {
             updatedAt: Date;
             userId: string;
         }) | null;
-        orders: ({
-            items: {
-                id: string;
-                createdAt: Date;
-                name: string;
-                taxAmount: number;
-                orderId: string;
-                variantId: string;
-                sku: string;
-                quantity: number;
-                price: number;
-                total: number;
-            }[];
-        } & {
-            id: string;
-            isDeleted: boolean;
-            deletedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            platform: import("@prisma/client").$Enums.PlatformType;
-            status: string;
-            totalAmount: number;
-            discountAmt: number;
-            taxAmount: number;
-            shippingFee: number;
-            finalAmount: number;
-            paymentMode: string;
-            couponId: string | null;
-        })[];
     } & {
         id: string;
         email: string | null;

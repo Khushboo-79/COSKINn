@@ -6,8 +6,8 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
         title: string | null;
         isApproved: boolean;
         rating: number;
@@ -21,8 +21,8 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
         title: string | null;
         isApproved: boolean;
         rating: number;
@@ -42,8 +42,8 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
         isApproved: boolean;
         content: string;
     })[]>;
@@ -51,8 +51,8 @@ export declare class EngagementService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
         isApproved: boolean;
         content: string;
     }>;

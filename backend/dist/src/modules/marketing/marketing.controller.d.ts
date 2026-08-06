@@ -8,10 +8,10 @@ export declare class MarketingController {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -22,10 +22,10 @@ export declare class MarketingController {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -36,10 +36,10 @@ export declare class MarketingController {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -50,10 +50,10 @@ export declare class MarketingController {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -64,10 +64,10 @@ export declare class MarketingController {
         createdAt: Date;
         updatedAt: Date;
         imageUrl: string;
-        title: string;
         sortOrder: number;
         startDate: Date | null;
         endDate: Date | null;
+        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -183,9 +183,23 @@ export declare class MarketingController {
     } & {
         id: string;
         createdAt: Date;
-        userId: string;
         cartId: string;
+        userId: string;
         recovered: boolean;
         emailSentAt: Date | null;
     })[]>;
+    getDashboard(): Promise<{
+        metrics: {
+            label: string;
+            value: string;
+            change: string;
+            icon: string;
+            color: string;
+            bg: string;
+        }[];
+        topCampaigns: {
+            name: string;
+            performance: number;
+        }[];
+    }>;
 }

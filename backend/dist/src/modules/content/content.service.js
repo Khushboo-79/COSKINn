@@ -81,6 +81,17 @@ let ContentService = class ContentService {
             },
         });
     }
+    async getVideos() {
+        return this.prisma.tutorialVideo.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+    async createVideo(data) {
+        return this.prisma.tutorialVideo.create({ data });
+    }
+    async deleteVideo(id) {
+        return this.prisma.tutorialVideo.delete({ where: { id } });
+    }
 };
 exports.ContentService = ContentService;
 exports.ContentService = ContentService = __decorate([
