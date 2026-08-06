@@ -16,7 +16,7 @@ exports.CustomerProfileModule = CustomerProfileModule;
 exports.CustomerProfileModule = CustomerProfileModule = __decorate([
     (0, common_1.Module)({
         controllers: [customer_profile_controller_1.CustomerProfileController],
-        providers: [customer_profile_service_1.CustomerProfileService]
+        providers: [customer_profile_service_1.CustomerProfileService],
     })
 ], CustomerProfileModule);
 //# sourceMappingURL=customer-profile.module.js.map

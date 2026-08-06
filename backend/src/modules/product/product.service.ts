@@ -276,9 +276,14 @@ export class ProductService {
     });
   }
 
-  async findOnePublic(id: string) {
+  async findOnePublic(identifier: string) {
+    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
     const product = await this.prisma.product.findFirst({
-      where: { id, isDeleted: false, status: 'LIVE' },
+      where: {
+        isDeleted: false,
+        status: 'LIVE',
+        OR: isUuid ? [{ id: identifier }] : [{ slug: identifier }]
+      },
       include: {
         category: true,
         variants: true,
@@ -294,7 +299,7 @@ export class ProductService {
     });
 
     if (!product) {
-      throw new NotFoundException(`Published product #${id} not found`);
+      throw new NotFoundException(`Published product #${identifier} not found`);
     }
 
     return product;

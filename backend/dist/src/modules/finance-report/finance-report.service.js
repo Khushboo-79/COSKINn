@@ -26,7 +26,7 @@ let FinanceReportService = class FinanceReportService {
     async addJournalEntry(ledgerId, type, amount, reference) {
         return this.prisma.$transaction(async (tx) => {
             const entry = await tx.journalEntry.create({
-                data: { ledgerId, type, amount, reference }
+                data: { ledgerId, type, amount, reference },
             });
             const ledger = await tx.ledger.findUnique({ where: { id: ledgerId } });
             if (!ledger)
@@ -38,13 +38,13 @@ let FinanceReportService = class FinanceReportService {
                 newBalance -= amount;
             await tx.ledger.update({
                 where: { id: ledgerId },
-                data: { balance: newBalance }
+                data: { balance: newBalance },
             });
             return entry;
         });
     }
     async syncSettlements(settlementData) {
-        return Promise.all(settlementData.map(data => this.prisma.razorpaySettlement.upsert({
+        return Promise.all(settlementData.map((data) => this.prisma.razorpaySettlement.upsert({
             where: { settlementId: data.id },
             update: { status: data.status, utr: data.utr },
             create: {
@@ -53,27 +53,27 @@ let FinanceReportService = class FinanceReportService {
                 fees: data.fees,
                 tax: data.tax,
                 status: data.status,
-                utr: data.utr
-            }
+                utr: data.utr,
+            },
         })));
     }
     async getOverview() {
         const [orders, entries, returns] = await Promise.all([
             this.prisma.order.findMany({
-                where: { status: { not: 'CANCELLED' } }
+                where: { status: { not: 'CANCELLED' } },
             }),
             this.prisma.journalEntry.findMany({
-                where: { type: 'DEBIT' }
+                where: { type: 'DEBIT' },
             }),
             this.prisma.return.findMany({
                 where: { status: 'RECEIVED' },
-                include: { order: true }
-            })
+                include: { order: true },
+            }),
         ]);
         const revenue = orders.reduce((sum, order) => sum + order.finalAmount, 0);
         const expenses = entries.reduce((sum, entry) => sum + entry.amount, 0);
         const profit = revenue - expenses;
-        const pendingOrders = orders.filter(o => o.status !== 'DELIVERED');
+        const pendingOrders = orders.filter((o) => o.status !== 'DELIVERED');
         const pendingPayments = pendingOrders.reduce((sum, order) => sum + order.finalAmount, 0);
         const refunds = returns.reduce((sum, ret) => sum + ret.order.finalAmount, 0);
         const taxes = orders.reduce((sum, order) => sum + order.taxAmount, 0);
@@ -87,12 +87,12 @@ let FinanceReportService = class FinanceReportService {
             const sign = percent > 0 ? '+' : '';
             return `${sign}${percent.toFixed(1)}%`;
         };
-        const currentOrders = orders.filter(o => o.createdAt >= thirtyDaysAgo);
-        const prevOrders = orders.filter(o => o.createdAt >= sixtyDaysAgo && o.createdAt < thirtyDaysAgo);
+        const currentOrders = orders.filter((o) => o.createdAt >= thirtyDaysAgo);
+        const prevOrders = orders.filter((o) => o.createdAt >= sixtyDaysAgo && o.createdAt < thirtyDaysAgo);
         const currentRevenue = currentOrders.reduce((sum, order) => sum + order.finalAmount, 0);
         const prevRevenue = prevOrders.reduce((sum, order) => sum + order.finalAmount, 0);
-        const currentEntries = entries.filter(e => e.createdAt >= thirtyDaysAgo);
-        const prevEntries = entries.filter(e => e.createdAt >= sixtyDaysAgo && e.createdAt < thirtyDaysAgo);
+        const currentEntries = entries.filter((e) => e.createdAt >= thirtyDaysAgo);
+        const prevEntries = entries.filter((e) => e.createdAt >= sixtyDaysAgo && e.createdAt < thirtyDaysAgo);
         const currentExpenses = currentEntries.reduce((sum, entry) => sum + entry.amount, 0);
         const prevExpenses = prevEntries.reduce((sum, entry) => sum + entry.amount, 0);
         const currentProfit = currentRevenue - currentExpenses;
@@ -109,22 +109,22 @@ let FinanceReportService = class FinanceReportService {
             taxes,
             revenueTrend,
             expenseTrend,
-            profitTrend
+            profitTrend,
         };
     }
     async getTransactions() {
         const orders = await this.prisma.order.findMany({
             take: 20,
             orderBy: { createdAt: 'desc' },
-            include: { user: true }
+            include: { user: true },
         });
-        return orders.map(order => ({
+        return orders.map((order) => ({
             id: order.id.split('-')[0].toUpperCase(),
             date: order.createdAt.toISOString().split('T')[0],
             type: 'Sale',
             customer: `${order.user.firstName} ${order.user.lastName}`,
             amount: order.finalAmount,
-            status: order.status === 'DELIVERED' ? 'Completed' : 'Pending'
+            status: order.status === 'DELIVERED' ? 'Completed' : 'Pending',
         }));
     }
     async getMonthlyBreakdown() {
@@ -134,36 +134,49 @@ let FinanceReportService = class FinanceReportService {
                 where: {
                     createdAt: {
                         gte: new Date(`${currentYear}-01-01`),
-                        lte: new Date(`${currentYear}-12-31`)
+                        lte: new Date(`${currentYear}-12-31`),
                     },
-                    status: { not: 'CANCELLED' }
-                }
+                    status: { not: 'CANCELLED' },
+                },
             }),
             this.prisma.journalEntry.findMany({
                 where: {
                     createdAt: {
                         gte: new Date(`${currentYear}-01-01`),
-                        lte: new Date(`${currentYear}-12-31`)
+                        lte: new Date(`${currentYear}-12-31`),
                     },
-                    type: 'DEBIT'
-                }
+                    type: 'DEBIT',
+                },
             }),
             this.prisma.return.findMany({
                 where: {
                     createdAt: {
                         gte: new Date(`${currentYear}-01-01`),
-                        lte: new Date(`${currentYear}-12-31`)
+                        lte: new Date(`${currentYear}-12-31`),
                     },
-                    status: 'RECEIVED'
+                    status: 'RECEIVED',
                 },
-                include: { order: true }
-            })
+                include: { order: true },
+            }),
         ]);
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthNames = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
         const breakdown = monthNames.map((month, index) => {
-            const monthOrders = orders.filter(o => o.createdAt.getMonth() === index);
-            const monthEntries = entries.filter(e => e.createdAt.getMonth() === index);
-            const monthReturns = returns.filter(r => r.createdAt.getMonth() === index);
+            const monthOrders = orders.filter((o) => o.createdAt.getMonth() === index);
+            const monthEntries = entries.filter((e) => e.createdAt.getMonth() === index);
+            const monthReturns = returns.filter((r) => r.createdAt.getMonth() === index);
             const revenue = monthOrders.reduce((sum, order) => sum + order.finalAmount, 0);
             const tax = monthOrders.reduce((sum, order) => sum + order.taxAmount, 0);
             const expenses = monthEntries.reduce((sum, entry) => sum + entry.amount, 0);
@@ -175,7 +188,7 @@ let FinanceReportService = class FinanceReportService {
                 expenses,
                 tax,
                 refunds,
-                net
+                net,
             };
         });
         const currentMonth = new Date().getMonth();
@@ -183,7 +196,7 @@ let FinanceReportService = class FinanceReportService {
     }
     async getNotes() {
         return this.prisma.financialNote.findMany({
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async createNote(type, referenceType, referenceId, amount, reason) {
@@ -194,14 +207,14 @@ let FinanceReportService = class FinanceReportService {
                 referenceId,
                 amount,
                 reason,
-                status: 'DRAFT'
-            }
+                status: 'DRAFT',
+            },
         });
     }
     async updateNoteStatus(id, status) {
         return this.prisma.financialNote.update({
             where: { id },
-            data: { status }
+            data: { status },
         });
     }
 };

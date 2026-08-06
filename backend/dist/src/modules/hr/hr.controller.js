@@ -35,7 +35,7 @@ let HrController = class HrController {
     createEmployee(data) {
         return this.hrService.createEmployee({
             ...data,
-            joinDate: data.joinDate ? new Date(data.joinDate) : undefined
+            joinDate: data.joinDate ? new Date(data.joinDate) : undefined,
         });
     }
     getLeaveRequests() {

@@ -19,7 +19,7 @@ exports.TaxModule = TaxModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [tax_controller_1.TaxController],
         providers: [tax_service_1.TaxService],
-        exports: [tax_service_1.TaxService]
+        exports: [tax_service_1.TaxService],
     })
 ], TaxModule);
 //# sourceMappingURL=tax.module.js.map

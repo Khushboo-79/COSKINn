@@ -1,6 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SendOtpDto } from './dto/send-otp.dto';
+import { RegisterDto } from './dto/register.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { LoginDto } from './dto/login.dto';
 import { BonusService } from '../bonus/bonus.service';
@@ -12,6 +13,29 @@ export declare class AuthService {
     private adminTwilioClient;
     private customerTwilioClient?;
     constructor(prisma: PrismaService, jwtService: JwtService, bonusService: BonusService);
+    register(dto: RegisterDto): Promise<{
+        access_token: string;
+        refresh_token: any;
+        user: {
+            id: string;
+            email: string | null;
+            firstName: string | null;
+            lastName: string | null;
+            roles: string[];
+        };
+    }>;
+    customerLogin(dto: LoginDto): Promise<{
+        access_token: string;
+        refresh_token: any;
+        user: {
+            id: string;
+            email: string | null;
+            phone: string | null;
+            firstName: string | null;
+            lastName: string | null;
+            roles: string[];
+        };
+    }>;
     login(loginDto: LoginDto): Promise<{
         message: string;
         nextStep: string;

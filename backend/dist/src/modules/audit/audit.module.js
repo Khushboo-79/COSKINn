@@ -30,7 +30,7 @@ exports.AuditModule = AuditModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [audit_controller_1.AuditController],
         providers: [audit_service_1.AuditService],
-        exports: [audit_service_1.AuditService]
+        exports: [audit_service_1.AuditService],
     }),
     __metadata("design:paramtypes", [audit_service_1.AuditService])
 ], AuditModule);

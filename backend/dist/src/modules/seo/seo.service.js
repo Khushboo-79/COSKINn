@@ -20,7 +20,15 @@ let SeoService = class SeoService {
     async getProductSeo(slug) {
         const product = await this.prisma.product.findUnique({
             where: { slug },
-            select: { seoTitle: true, seoDesc: true, seoKeywords: true, name: true, description: true, productLine: true, isCrossSegment: true }
+            select: {
+                seoTitle: true,
+                seoDesc: true,
+                seoKeywords: true,
+                name: true,
+                description: true,
+                productLine: true,
+                isCrossSegment: true,
+            },
         });
         if (!product)
             throw new common_1.NotFoundException('Product not found');
@@ -29,13 +37,13 @@ let SeoService = class SeoService {
             description: product.seoDesc || product.description?.substring(0, 160),
             keywords: product.seoKeywords || '',
             segment: product.productLine,
-            isCrossSegment: product.isCrossSegment
+            isCrossSegment: product.isCrossSegment,
         };
     }
     async getCategorySeo(slug) {
         const category = await this.prisma.category.findUnique({
             where: { slug },
-            select: { name: true, description: true, productLine: true }
+            select: { name: true, description: true, productLine: true },
         });
         if (!category)
             throw new common_1.NotFoundException('Category not found');
@@ -43,7 +51,7 @@ let SeoService = class SeoService {
             title: `${category.name} | Fairenne`,
             description: category.description || `Browse our collection of ${category.name}`,
             keywords: category.name.toLowerCase(),
-            segment: category.productLine
+            segment: category.productLine,
         };
     }
     async getFruitSeo(name) {
@@ -51,7 +59,7 @@ let SeoService = class SeoService {
         return {
             title: `${fruitName} Infused Skincare | Fairenne`,
             description: `Discover the benefits of ${fruitName} for your skin. Shop our exclusive ${fruitName} collection.`,
-            keywords: `${fruitName.toLowerCase()}, skincare, fairenne`
+            keywords: `${fruitName.toLowerCase()}, skincare, fairenne`,
         };
     }
     async getGlobalSeo() {
@@ -61,8 +69,8 @@ let SeoService = class SeoService {
                 data: {
                     title: 'Fairenne - Premium Skincare & Cosmetics',
                     description: 'Discover our premium range of fruit-infused skincare and cosmetics.',
-                    keywords: 'skincare, cosmetics, fruit, natural'
-                }
+                    keywords: 'skincare, cosmetics, fruit, natural',
+                },
             });
         }
         return seo;
@@ -71,7 +79,7 @@ let SeoService = class SeoService {
         const seo = await this.getGlobalSeo();
         return this.prisma.globalSeo.update({
             where: { id: seo.id },
-            data
+            data,
         });
     }
 };

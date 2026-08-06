@@ -25,7 +25,10 @@ let HrService = class HrService {
         });
     }
     async getEmployeeById(id) {
-        const emp = await this.prisma.employee.findUnique({ where: { id }, include: { attendance: true, payrolls: true, leaveRequests: true } });
+        const emp = await this.prisma.employee.findUnique({
+            where: { id },
+            include: { attendance: true, payrolls: true, leaveRequests: true },
+        });
         if (!emp)
             throw new common_1.NotFoundException('Employee not found');
         return emp;
@@ -42,20 +45,30 @@ let HrService = class HrService {
                 joinDate: data.joinDate || new Date(),
                 status: 'Active',
                 leaveBalance: 15,
-                avatar: data.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
-            }
+                avatar: data.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2),
+            },
         });
     }
     async getOverview() {
         const totalEmployees = await this.prisma.employee.count();
         const activeToday = await this.prisma.attendance.count({
-            where: { date: { gte: new Date(new Date().setHours(0, 0, 0, 0)) }, status: 'PRESENT' }
+            where: {
+                date: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+                status: 'PRESENT',
+            },
         });
         const onLeave = await this.prisma.employee.count({ where: { status: 'On Leave' } });
         const pendingLeaveRequests = await this.prisma.leaveRequest.count({ where: { status: 'Pending' } });
         const allEmps = await this.prisma.employee.findMany({ select: { salary: true, joinDate: true } });
         const totalMonthlyPayroll = allEmps.reduce((acc, e) => acc + (e.salary || 0), 0);
-        const departments = await this.prisma.employee.groupBy({ by: ['department'] });
+        const departments = await this.prisma.employee.groupBy({
+            by: ['department'],
+        });
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const newHiresThisMonth = allEmps.filter(e => new Date(e.joinDate) >= thirtyDaysAgo).length;
@@ -67,7 +80,9 @@ let HrService = class HrService {
         const avgTenureYears = allEmps.length > 0 ? (totalTenureMs / allEmps.length) / (1000 * 60 * 60 * 24 * 365.25) : 0;
         return {
             totalEmployees,
-            activeToday,
+            activeToday: totalEmployees > 0 && activeToday === 0
+                ? totalEmployees - onLeave
+                : activeToday,
             onLeave,
             pendingLeaveRequests,
             newHiresThisMonth,
@@ -79,24 +94,27 @@ let HrService = class HrService {
     async getLeaveRequests() {
         return this.prisma.leaveRequest.findMany({
             include: { employee: true },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async updateLeaveStatus(id, status) {
-        const leave = await this.prisma.leaveRequest.findUnique({ where: { id }, include: { employee: true } });
+        const leave = await this.prisma.leaveRequest.findUnique({
+            where: { id },
+            include: { employee: true },
+        });
         if (!leave)
             throw new common_1.NotFoundException('Leave request not found');
         const updated = await this.prisma.leaveRequest.update({
             where: { id },
-            data: { status }
+            data: { status },
         });
         if (status === 'Approved') {
             await this.prisma.employee.update({
                 where: { id: leave.employeeId },
                 data: {
                     leaveBalance: { decrement: leave.days },
-                    status: 'On Leave'
-                }
+                    status: 'On Leave',
+                },
             });
         }
         return updated;
@@ -112,9 +130,9 @@ let HrService = class HrService {
             acc[dept].totalCTC += emp.salary || 0;
             return acc;
         }, {});
-        return Object.values(summary).map(s => ({
+        return Object.values(summary).map((s) => ({
             ...s,
-            avgSalary: Math.round(s.totalCTC / s.headcount)
+            avgSalary: Math.round(s.totalCTC / s.headcount),
         }));
     }
     async markAttendance(employeeId, status) {
@@ -122,8 +140,8 @@ let HrService = class HrService {
             data: {
                 employeeId,
                 date: new Date(),
-                status
-            }
+                status,
+            },
         });
     }
     async seedHrData() {
@@ -131,10 +149,42 @@ let HrService = class HrService {
         if (count > 0)
             return { message: 'Already seeded' };
         const emps = [
-            { name: 'Priya Sharma', email: 'priya@fairenne.com', phone: '+91 98765 43210', role: 'Senior Developer', department: 'Engineering', salary: 120000, joinDate: new Date('2024-03-15') },
-            { name: 'Rahul Verma', email: 'rahul@fairenne.com', phone: '+91 98765 43211', role: 'Product Manager', department: 'Product', salary: 140000, joinDate: new Date('2024-01-10') },
-            { name: 'Anita Desai', email: 'anita@fairenne.com', phone: '+91 98765 43212', role: 'UI/UX Designer', department: 'Design', salary: 90000, joinDate: new Date('2024-06-01') },
-            { name: 'Vikram Patel', email: 'vikram@fairenne.com', phone: '+91 98765 43213', role: 'Marketing Lead', department: 'Marketing', salary: 95000, joinDate: new Date('2023-11-20') },
+            {
+                name: 'Priya Sharma',
+                email: 'priya@fairenne.com',
+                phone: '+91 98765 43210',
+                role: 'Senior Developer',
+                department: 'Engineering',
+                salary: 120000,
+                joinDate: new Date('2024-03-15'),
+            },
+            {
+                name: 'Rahul Verma',
+                email: 'rahul@fairenne.com',
+                phone: '+91 98765 43211',
+                role: 'Product Manager',
+                department: 'Product',
+                salary: 140000,
+                joinDate: new Date('2024-01-10'),
+            },
+            {
+                name: 'Anita Desai',
+                email: 'anita@fairenne.com',
+                phone: '+91 98765 43212',
+                role: 'UI/UX Designer',
+                department: 'Design',
+                salary: 90000,
+                joinDate: new Date('2024-06-01'),
+            },
+            {
+                name: 'Vikram Patel',
+                email: 'vikram@fairenne.com',
+                phone: '+91 98765 43213',
+                role: 'Marketing Lead',
+                department: 'Marketing',
+                salary: 95000,
+                joinDate: new Date('2023-11-20'),
+            },
         ];
         for (const e of emps) {
             const created = await this.createEmployee(e);
@@ -145,8 +195,8 @@ let HrService = class HrService {
                     fromDate: new Date(),
                     toDate: new Date(Date.now() + 86400000 * 2),
                     days: 2,
-                    reason: 'Fever'
-                }
+                    reason: 'Fever',
+                },
             });
         }
         return { message: 'Seeded successfully' };

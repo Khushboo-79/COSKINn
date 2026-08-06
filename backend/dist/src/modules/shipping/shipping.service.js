@@ -22,20 +22,22 @@ let ShippingService = class ShippingService {
     }
     async checkServiceability(dto) {
         const isServiceable = !dto.pincode.startsWith('999');
-        const estimatedDays = isServiceable ? Math.floor(Math.random() * 5) + 2 : null;
+        const estimatedDays = isServiceable
+            ? Math.floor(Math.random() * 5) + 2
+            : null;
         const shippingFee = isServiceable ? 50 : null;
         return {
             pincode: dto.pincode,
             serviceable: isServiceable,
             estimatedDeliveryDays: estimatedDays,
             shippingFee,
-            provider: 'ShadowFox'
+            provider: 'ShadowFox',
         };
     }
     async createShipment(dto, adminId) {
         const order = await this.prisma.order.findUnique({
             where: { id: dto.orderId },
-            include: { address: true }
+            include: { address: true },
         });
         if (!order)
             throw new common_1.NotFoundException('Order not found');
@@ -50,31 +52,31 @@ let ShippingService = class ShippingService {
                 awbNumber: awb,
                 courierPartner: 'ShadowFox',
                 status: 'MANIFESTED',
-                shippedAt: new Date()
-            }
+                shippedAt: new Date(),
+            },
         });
         await this.orderService.updateOrderStatus(dto.orderId, 'SHIPPED', adminId, `Order shipped via ShadowFox. AWB: ${awb}`);
         return {
             success: true,
             orderId: dto.orderId,
             awb,
-            labelUrl
+            labelUrl,
         };
     }
     async getOrderShipments(orderId) {
         return this.prisma.orderShipment.findMany({
             where: { orderId },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async getAllShipments() {
         return this.prisma.orderShipment.findMany({
             include: {
                 order: {
-                    include: { address: true }
-                }
+                    include: { address: true },
+                },
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
 };

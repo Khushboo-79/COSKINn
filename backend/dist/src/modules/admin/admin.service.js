@@ -22,8 +22,14 @@ let AdminService = class AdminService {
         if (roleCount === 0) {
             const roles = [
                 { name: 'SUPER_ADMIN', description: 'Full access to all systems' },
-                { name: 'PRODUCT_MANAGER', description: 'Can manage catalog and approvals' },
-                { name: 'SUPPORT_AGENT', description: 'Can read orders and manage tickets' },
+                {
+                    name: 'PRODUCT_MANAGER',
+                    description: 'Can manage catalog and approvals',
+                },
+                {
+                    name: 'SUPPORT_AGENT',
+                    description: 'Can read orders and manage tickets',
+                },
             ];
             await this.prisma.role.createMany({ data: roles });
         }
@@ -52,33 +58,61 @@ let AdminService = class AdminService {
     async getOverview(platform) {
         const platformWhere = platform ? { platform } : {};
         const productWhere = platform ? { category: { platform } } : {};
-        const totalProducts = await this.prisma.product.count({ where: { isDeleted: false, ...productWhere } });
-        const totalOrders = await this.prisma.order.count({ where: { isDeleted: false, ...platformWhere } });
+        const totalProducts = await this.prisma.product.count({
+            where: { isDeleted: false, ...productWhere },
+        });
+        const totalOrders = await this.prisma.order.count({
+            where: { isDeleted: false, ...platformWhere },
+        });
         const activeUsers = await this.prisma.user.count();
         const payments = await this.prisma.paymentTransaction.aggregate({
             _sum: { amount: true },
-            where: { status: 'SUCCESS', ...platformWhere }
+            where: { status: 'SUCCESS', ...platformWhere },
         });
         const totalRevenue = payments._sum.amount || 0;
         const now = new Date();
         const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
-        const currentOrders = await this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: thirtyDaysAgo }, ...platformWhere } });
-        const prevOrders = await this.prisma.order.count({ where: { isDeleted: false, createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, ...platformWhere } });
+        const currentOrders = await this.prisma.order.count({
+            where: {
+                isDeleted: false,
+                createdAt: { gte: thirtyDaysAgo },
+                ...platformWhere,
+            },
+        });
+        const prevOrders = await this.prisma.order.count({
+            where: {
+                isDeleted: false,
+                createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+                ...platformWhere,
+            },
+        });
         const ordersTrend = this.calculateTrend(currentOrders, prevOrders);
-        const currentUsers = await this.prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } });
-        const prevUsers = await this.prisma.user.count({ where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } });
+        const currentUsers = await this.prisma.user.count({
+            where: { createdAt: { gte: thirtyDaysAgo } },
+        });
+        const prevUsers = await this.prisma.user.count({
+            where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
+        });
         const usersTrend = this.calculateTrend(currentUsers, prevUsers);
         const currentPayments = await this.prisma.paymentTransaction.aggregate({
             _sum: { amount: true },
-            where: { status: 'SUCCESS', createdAt: { gte: thirtyDaysAgo }, ...platformWhere }
+            where: {
+                status: 'SUCCESS',
+                createdAt: { gte: thirtyDaysAgo },
+                ...platformWhere,
+            },
         });
         const prevPayments = await this.prisma.paymentTransaction.aggregate({
             _sum: { amount: true },
-            where: { status: 'SUCCESS', createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, ...platformWhere }
+            where: {
+                status: 'SUCCESS',
+                createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo },
+                ...platformWhere,
+            },
         });
         const revenueTrend = this.calculateTrend(currentPayments._sum.amount || 0, prevPayments._sum.amount || 0);
-        const systemHealth = (activeUsers > 0) ? '100%' : '95%';
+        const systemHealth = activeUsers > 0 ? '100%' : '95%';
         return {
             totalRevenue,
             activeUsers,
@@ -101,13 +135,13 @@ let AdminService = class AdminService {
         const roles = await this.prisma.role.findMany({
             include: {
                 createdBy: {
-                    select: { firstName: true, lastName: true, email: true }
+                    select: { firstName: true, lastName: true, email: true },
                 },
                 updatedBy: {
-                    select: { firstName: true, lastName: true, email: true }
+                    select: { firstName: true, lastName: true, email: true },
                 },
                 _count: {
-                    select: { users: true }
+                    select: { users: true },
                 },
                 users: {
                     include: {
@@ -115,19 +149,19 @@ let AdminService = class AdminService {
                             include: {
                                 devices: {
                                     orderBy: { lastActiveAt: 'desc' },
-                                    take: 1
+                                    take: 1,
                                 },
                                 sessions: {
-                                    where: { isRevoked: false, expiresAt: { gt: new Date() } }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                                    where: { isRevoked: false, expiresAt: { gt: new Date() } },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         });
         const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000);
-        return roles.map(role => {
+        return roles.map((role) => {
             let isOnline = false;
             let lastActiveAt = null;
             let lastLoginAt = null;
@@ -157,8 +191,14 @@ let AdminService = class AdminService {
                 isOnline,
                 lastActiveAt,
                 lastLoginAt,
-                createdByName: createdBy ? `${createdBy.firstName || ''} ${createdBy.lastName || ''}`.trim() || createdBy.email : null,
-                updatedByName: updatedBy ? `${updatedBy.firstName || ''} ${updatedBy.lastName || ''}`.trim() || updatedBy.email : null,
+                createdByName: createdBy
+                    ? `${createdBy.firstName || ''} ${createdBy.lastName || ''}`.trim() ||
+                        createdBy.email
+                    : null,
+                updatedByName: updatedBy
+                    ? `${updatedBy.firstName || ''} ${updatedBy.lastName || ''}`.trim() ||
+                        updatedBy.email
+                    : null,
             };
         });
     }
@@ -168,8 +208,8 @@ let AdminService = class AdminService {
                 name: data.name,
                 description: data.description,
                 panelAccess: data.panelAccess,
-                ...(userId ? { createdById: userId, updatedById: userId } : {})
-            }
+                ...(userId ? { createdById: userId, updatedById: userId } : {}),
+            },
         });
     }
     async updateRole(id, data, userId) {
@@ -179,8 +219,8 @@ let AdminService = class AdminService {
                 where: { id },
                 data: {
                     ...data,
-                    ...(userId ? { updatedById: userId } : {})
-                }
+                    ...(userId ? { updatedById: userId } : {}),
+                },
             });
         }
         catch (e) {
@@ -194,8 +234,8 @@ let AdminService = class AdminService {
             where: { id: roleId },
             data: {
                 panelAccess,
-                ...(userId ? { updatedById: userId } : {})
-            }
+                ...(userId ? { updatedById: userId } : {}),
+            },
         });
     }
     async getUsers() {
@@ -250,22 +290,26 @@ let AdminService = class AdminService {
         });
     }
     async createStaffUser(data) {
-        const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
+        const existingUser = await this.prisma.user.findUnique({
+            where: { email: data.email },
+        });
         if (existingUser) {
             const existingRole = await this.prisma.userRole.findFirst({
-                where: { userId: existingUser.id, roleId: data.roleId }
+                where: { userId: existingUser.id, roleId: data.roleId },
             });
             if (existingRole) {
                 throw new common_1.ConflictException('A user with this email already exists and is already assigned to this role.');
             }
-            await this.prisma.userRole.deleteMany({ where: { userId: existingUser.id } });
+            await this.prisma.userRole.deleteMany({
+                where: { userId: existingUser.id },
+            });
             return this.prisma.user.update({
                 where: { id: existingUser.id },
                 data: {
                     roles: {
-                        create: { roleId: data.roleId }
-                    }
-                }
+                        create: { roleId: data.roleId },
+                    },
+                },
             });
         }
         const passwordHash = await require('bcrypt').hash('password123', 10);
@@ -278,10 +322,10 @@ let AdminService = class AdminService {
                 passwordHash,
                 roles: {
                     create: {
-                        roleId: data.roleId
-                    }
-                }
-            }
+                        roleId: data.roleId,
+                    },
+                },
+            },
         });
     }
     async getStaff2FAStatus() {
@@ -324,7 +368,7 @@ let AdminService = class AdminService {
     }
     async updateUserRole(userId, data) {
         await this.prisma.userRole.deleteMany({
-            where: { userId }
+            where: { userId },
         });
         return this.prisma.userRole.create({
             data: {
@@ -334,24 +378,23 @@ let AdminService = class AdminService {
         });
     }
     async assignRole(userIdentifier, roleName) {
-        const role = await this.prisma.role.findUnique({ where: { name: roleName } });
+        const role = await this.prisma.role.findUnique({
+            where: { name: roleName },
+        });
         if (!role)
             throw new Error('Role not found');
         const user = await this.prisma.user.findFirst({
             where: {
-                OR: [
-                    { id: userIdentifier },
-                    { email: userIdentifier }
-                ]
-            }
+                OR: [{ id: userIdentifier }, { email: userIdentifier }],
+            },
         });
         if (!user)
             throw new Error('User not found');
         return this.prisma.userRole.create({
             data: {
                 userId: user.id,
-                roleId: role.id
-            }
+                roleId: role.id,
+            },
         });
     }
     async getSettings() {
@@ -363,13 +406,13 @@ let AdminService = class AdminService {
             throw new Error('Settings not found');
         return this.prisma.orderSettings.update({
             where: { id: settings.id },
-            data
+            data,
         });
     }
     async getNotifications() {
         const notifications = [];
         const unassignedTickets = await this.prisma.supportTicket.count({
-            where: { status: 'OPEN', assignedToId: null }
+            where: { status: 'OPEN', assignedToId: null },
         });
         if (unassignedTickets > 0) {
             notifications.push({
@@ -381,12 +424,12 @@ let AdminService = class AdminService {
                 read: false,
                 iconType: 'AlertCircle',
                 color: 'text-rose-500',
-                bg: 'bg-rose-50'
+                bg: 'bg-rose-50',
             });
         }
         const lowStockThreshold = 100;
         const lowStockItems = await this.prisma.inventoryStock.count({
-            where: { quantity: { gt: 0, lte: lowStockThreshold } }
+            where: { quantity: { gt: 0, lte: lowStockThreshold } },
         });
         if (lowStockItems > 0) {
             notifications.push({
@@ -398,11 +441,11 @@ let AdminService = class AdminService {
                 read: false,
                 iconType: 'PackageCheck',
                 color: 'text-amber-500',
-                bg: 'bg-amber-50'
+                bg: 'bg-amber-50',
             });
         }
         const pendingOrders = await this.prisma.order.count({
-            where: { status: 'PLACED' }
+            where: { status: 'PLACED' },
         });
         if (pendingOrders > 0) {
             notifications.push({
@@ -414,7 +457,7 @@ let AdminService = class AdminService {
                 read: false,
                 iconType: 'Bell',
                 color: 'text-emerald-500',
-                bg: 'bg-emerald-50'
+                bg: 'bg-emerald-50',
             });
         }
         if (notifications.length === 0) {
@@ -427,7 +470,7 @@ let AdminService = class AdminService {
                 read: true,
                 iconType: 'CheckCircle2',
                 color: 'text-blue-500',
-                bg: 'bg-blue-50'
+                bg: 'bg-blue-50',
             });
         }
         return notifications;

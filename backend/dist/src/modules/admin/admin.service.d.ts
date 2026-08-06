@@ -92,18 +92,18 @@ export declare class AdminService implements OnModuleInit {
         } & {
             id: string;
             createdAt: Date;
-            userId: string;
             roleId: string;
+            userId: string;
         })[];
         sessions: {
             id: string;
             createdAt: Date;
-            isRevoked: boolean;
             userId: string;
             refreshToken: string;
             deviceInfo: string | null;
             ipAddress: string | null;
             expiresAt: Date;
+            isRevoked: boolean;
         }[];
         customerProfile: {
             id: string;
@@ -120,7 +120,6 @@ export declare class AdminService implements OnModuleInit {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            isDefault: boolean;
             type: string;
             fullName: string;
             addressLine1: string;
@@ -129,6 +128,7 @@ export declare class AdminService implements OnModuleInit {
             state: string;
             pincode: string;
             country: string;
+            isDefault: boolean;
         }[];
         orders: {
             id: string;
@@ -151,8 +151,8 @@ export declare class AdminService implements OnModuleInit {
             items: {
                 id: string;
                 createdAt: Date;
-                wishlistId: string;
                 productId: string;
+                wishlistId: string;
             }[];
         } & {
             id: string;
@@ -182,8 +182,8 @@ export declare class AdminService implements OnModuleInit {
             createdAt: Date;
             userId: string;
             type: string;
-            points: number;
             reference: string | null;
+            points: number;
         }[];
         membershipTier: {
             id: string;
@@ -256,14 +256,14 @@ export declare class AdminService implements OnModuleInit {
     }): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         roleId: string;
+        userId: string;
     }>;
     assignRole(userIdentifier: string, roleName: string): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         roleId: string;
+        userId: string;
     }>;
     getSettings(): Promise<{
         id: string;
@@ -273,6 +273,16 @@ export declare class AdminService implements OnModuleInit {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     } | null>;
     updateSettings(data: any): Promise<{
         id: string;
@@ -282,6 +292,16 @@ export declare class AdminService implements OnModuleInit {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
     getNotifications(): Promise<any[]>;
 }

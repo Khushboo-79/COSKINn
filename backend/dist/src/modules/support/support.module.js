@@ -20,7 +20,7 @@ exports.SupportModule = SupportModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [support_controller_1.SupportController],
         providers: [support_service_1.SupportService, support_gateway_1.SupportGateway],
-        exports: [support_service_1.SupportService]
+        exports: [support_service_1.SupportService],
     })
 ], SupportModule);
 //# sourceMappingURL=support.module.js.map

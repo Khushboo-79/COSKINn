@@ -24,7 +24,7 @@ let ReferralService = ReferralService_1 = class ReferralService {
     }
     async getOrCreateMyReferralCode(userId) {
         let referral = await this.prisma.referral.findFirst({
-            where: { referrerId: userId, refereeId: null }
+            where: { referrerId: userId, refereeId: null },
         });
         if (!referral) {
             const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -32,7 +32,7 @@ let ReferralService = ReferralService_1 = class ReferralService {
                 data: {
                     referrerId: userId,
                     referralCode: code,
-                }
+                },
             });
         }
         return referral;
@@ -43,26 +43,30 @@ let ReferralService = ReferralService_1 = class ReferralService {
             data: {
                 referrerId: userId,
                 referralCode: code,
-            }
+            },
         });
     }
     async getMyReferrals(userId) {
         return this.prisma.referral.findMany({
-            where: { referrerId: userId }
+            where: { referrerId: userId },
         });
     }
     async getAllReferrals() {
         return this.prisma.referral.findMany({
             include: {
-                referrer: { select: { id: true, firstName: true, lastName: true, email: true } },
-                referee: { select: { id: true, firstName: true, lastName: true, email: true } }
+                referrer: {
+                    select: { id: true, firstName: true, lastName: true, email: true },
+                },
+                referee: {
+                    select: { id: true, firstName: true, lastName: true, email: true },
+                },
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async processReferralSignup(referralCode, newUserId) {
         const referral = await this.prisma.referral.findUnique({
-            where: { referralCode }
+            where: { referralCode },
         });
         if (!referral)
             throw new common_1.NotFoundException('Invalid referral code');
@@ -72,13 +76,13 @@ let ReferralService = ReferralService_1 = class ReferralService {
             where: { id: referral.id },
             data: {
                 refereeId: newUserId,
-                status: 'CONVERTED'
-            }
+                status: 'CONVERTED',
+            },
         });
     }
     async awardReferralBonus(referralId) {
         const referral = await this.prisma.referral.findUnique({
-            where: { id: referralId }
+            where: { id: referralId },
         });
         if (!referral || referral.bonusAwarded)
             return;
@@ -89,7 +93,7 @@ let ReferralService = ReferralService_1 = class ReferralService {
         }
         await this.prisma.referral.update({
             where: { id: referral.id },
-            data: { bonusAwarded: true }
+            data: { bonusAwarded: true },
         });
         this.logger.log(`Awarded referral bonuses for referral ${referral.id}`);
     }

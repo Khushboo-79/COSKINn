@@ -87,18 +87,18 @@ export declare class AdminController {
         } & {
             id: string;
             createdAt: Date;
-            userId: string;
             roleId: string;
+            userId: string;
         })[];
         sessions: {
             id: string;
             createdAt: Date;
-            isRevoked: boolean;
             userId: string;
             refreshToken: string;
             deviceInfo: string | null;
             ipAddress: string | null;
             expiresAt: Date;
+            isRevoked: boolean;
         }[];
         customerProfile: {
             id: string;
@@ -115,7 +115,6 @@ export declare class AdminController {
             createdAt: Date;
             updatedAt: Date;
             userId: string;
-            isDefault: boolean;
             type: string;
             fullName: string;
             addressLine1: string;
@@ -124,6 +123,7 @@ export declare class AdminController {
             state: string;
             pincode: string;
             country: string;
+            isDefault: boolean;
         }[];
         orders: {
             id: string;
@@ -146,8 +146,8 @@ export declare class AdminController {
             items: {
                 id: string;
                 createdAt: Date;
-                wishlistId: string;
                 productId: string;
+                wishlistId: string;
             }[];
         } & {
             id: string;
@@ -177,8 +177,8 @@ export declare class AdminController {
             createdAt: Date;
             userId: string;
             type: string;
-            points: number;
             reference: string | null;
+            points: number;
         }[];
         membershipTier: {
             id: string;
@@ -240,8 +240,8 @@ export declare class AdminController {
     }): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         roleId: string;
+        userId: string;
     }>;
     assignRole(body: {
         userId: string;
@@ -249,8 +249,8 @@ export declare class AdminController {
     }): Promise<{
         id: string;
         createdAt: Date;
-        userId: string;
         roleId: string;
+        userId: string;
     }>;
     getStaff2FAStatus(): Promise<{
         id: string;
@@ -271,6 +271,16 @@ export declare class AdminController {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     } | null>;
     updateSettings(body: any): Promise<{
         id: string;
@@ -280,6 +290,16 @@ export declare class AdminController {
         autoCancelHours: number;
         codEnabled: boolean;
         maxCodAmount: number;
+        maintenanceMode: boolean;
+        debugMode: boolean;
+        walletExpiryDays: number;
+        minOrderForCod: number;
+        membershipMemberThreshold: number;
+        membershipGoldThreshold: number;
+        membershipPlatinumThreshold: number;
+        signUpBonusAmount: number;
+        maxRewardPointRedemptionPercent: number;
+        rewardPointEarningRate: number;
     }>;
     getNotifications(): Promise<any[]>;
 }

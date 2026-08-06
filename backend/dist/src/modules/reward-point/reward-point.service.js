@@ -22,24 +22,24 @@ let RewardPointService = RewardPointService_1 = class RewardPointService {
     async getBalance(userId) {
         const agg = await this.prisma.rewardPointsLedger.aggregate({
             _sum: { points: true },
-            where: { userId }
+            where: { userId },
         });
         return agg._sum.points || 0;
     }
     async getMyLedger(userId) {
         return this.prisma.rewardPointsLedger.findMany({
             where: { userId },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async getAdminLedger() {
         return this.prisma.rewardPointsLedger.findMany({
             include: { user: { select: { id: true, firstName: true, email: true } } },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
     }
     async earnPoints(userId, amountSpent, orderId) {
-        const pointsToEarn = Math.floor(amountSpent / 150);
+        const pointsToEarn = Math.floor(amountSpent / 100);
         if (pointsToEarn <= 0)
             return;
         await this.prisma.rewardPointsLedger.create({
@@ -47,8 +47,8 @@ let RewardPointService = RewardPointService_1 = class RewardPointService {
                 userId,
                 points: pointsToEarn,
                 type: 'EARN',
-                reference: `Earned from Order ${orderId}`
-            }
+                reference: `Earned from Order ${orderId}`,
+            },
         });
         this.logger.log(`Awarded ${pointsToEarn} points to user ${userId}`);
     }
@@ -62,8 +62,8 @@ let RewardPointService = RewardPointService_1 = class RewardPointService {
                 userId,
                 points: -pointsToRedeem,
                 type: 'REDEEM',
-                reference: `Redeemed on Order ${orderId}`
-            }
+                reference: `Redeemed on Order ${orderId}`,
+            },
         });
         return { success: true, redeemedPoints: pointsToRedeem };
     }

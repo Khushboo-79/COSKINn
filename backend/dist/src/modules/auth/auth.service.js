@@ -68,12 +68,103 @@ let AuthService = AuthService_1 = class AuthService {
             this.customerTwilioClient = new twilio_1.Twilio(process.env.TWILIO_CUSTOMER_ACCOUNT_SID, process.env.TWILIO_CUSTOMER_AUTH_TOKEN);
         }
     }
+    async register(dto) {
+        const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+        if (existing) {
+            throw new common_1.BadRequestException('Email is already registered');
+        }
+        const passwordHash = await bcrypt.hash(dto.password, 10);
+        const user = await this.prisma.user.create({
+            data: {
+                email: dto.email,
+                passwordHash,
+                firstName: dto.firstName,
+                lastName: dto.lastName,
+                roles: {
+                    create: {
+                        role: {
+                            connectOrCreate: {
+                                where: { name: 'CUSTOMER' },
+                                create: { name: 'CUSTOMER', description: 'Default customer role' }
+                            }
+                        }
+                    }
+                }
+            },
+            include: { roles: { include: { role: true } } }
+        });
+        const roles = user.roles.map(ur => ur.role.name);
+        const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+        const payload = { sub: user.id, email: user.email, roles, panelAccess };
+        const refreshToken = require('crypto').randomBytes(40).toString('hex');
+        const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.prisma.loginSession.create({
+            data: {
+                userId: user.id,
+                refreshToken,
+                expiresAt: refreshExpiresAt,
+            }
+        });
+        await this.bonusService.awardSignupBonus(user.id);
+        return {
+            access_token: this.jwtService.sign(payload),
+            refresh_token: refreshToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                roles
+            }
+        };
+    }
+    async customerLogin(dto) {
+        const user = await this.prisma.user.findUnique({
+            where: { email: dto.email },
+            include: { roles: { include: { role: true } } }
+        });
+        if (!user || !user.passwordHash) {
+            throw new common_1.UnauthorizedException('Invalid credentials');
+        }
+        const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+        if (!isPasswordValid) {
+            throw new common_1.UnauthorizedException('Invalid credentials');
+        }
+        const isCustomer = user.roles.some(ur => ur.role.name === 'CUSTOMER');
+        if (!isCustomer) {
+            throw new common_1.UnauthorizedException('This endpoint is for customers only. Use admin login.');
+        }
+        const roles = user.roles.map(ur => ur.role.name);
+        const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+        const payload = { sub: user.id, email: user.email, roles, panelAccess };
+        const refreshToken = require('crypto').randomBytes(40).toString('hex');
+        const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.prisma.loginSession.create({
+            data: {
+                userId: user.id,
+                refreshToken,
+                expiresAt: refreshExpiresAt,
+            }
+        });
+        return {
+            access_token: this.jwtService.sign(payload),
+            refresh_token: refreshToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                phone: user.phone,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                roles
+            }
+        };
+    }
     async login(loginDto) {
         const user = await this.prisma.user.findUnique({
             where: { email: loginDto.email },
             include: {
-                roles: { include: { role: true } }
-            }
+                roles: { include: { role: true } },
+            },
         });
         if (!user || !user.passwordHash) {
             throw new common_1.UnauthorizedException('Invalid credentials');
@@ -85,32 +176,34 @@ let AuthService = AuthService_1 = class AuthService {
         if (!user.phone) {
             throw new common_1.BadRequestException('Admin account does not have a registered phone number for 2FA.');
         }
-        const staff2fa = await this.prisma.staff2fa.findUnique({ where: { userId: user.id } });
+        const staff2fa = await this.prisma.staff2fa.findUnique({
+            where: { userId: user.id },
+        });
         if (staff2fa && staff2fa.isVerified) {
             return {
                 message: 'Password accepted. Please provide your Authenticator App TOTP code.',
                 nextStep: 'verify-totp',
-                userId: user.id
+                userId: user.id,
             };
         }
         await this.sendOtp({ phone: user.phone, isAdminLogin: true });
         return {
             message: 'Password accepted. OTP sent to registered phone number.',
             nextStep: 'verify-otp',
-            phone: user.phone
+            phone: user.phone,
         };
     }
     async sendOtp(sendOtpDto) {
         const { phone, isAdminLogin } = sendOtpDto;
         let user = await this.prisma.user.findUnique({
             where: { phone },
-            include: { roles: { include: { role: true } } }
+            include: { roles: { include: { role: true } } },
         });
         if (isAdminLogin && !user) {
             throw new common_1.UnauthorizedException('Admin account not found for this phone number');
         }
         if (isAdminLogin && user) {
-            const isSuperadminOrAdmin = user.roles.some(ur => ur.role.name !== 'CUSTOMER');
+            const isSuperadminOrAdmin = user.roles.some((ur) => ur.role.name !== 'CUSTOMER');
             if (!isSuperadminOrAdmin) {
                 throw new common_1.UnauthorizedException('Access denied. Not an admin account.');
             }
@@ -124,21 +217,28 @@ let AuthService = AuthService_1 = class AuthService {
                             role: {
                                 connectOrCreate: {
                                     where: { name: 'CUSTOMER' },
-                                    create: { name: 'CUSTOMER', description: 'Default customer role' }
-                                }
-                            }
-                        }
-                    }
+                                    create: {
+                                        name: 'CUSTOMER',
+                                        description: 'Default customer role',
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
-                include: { roles: { include: { role: true } } }
+                include: { roles: { include: { role: true } } },
             });
         }
         const isCustomerAccount = !isAdminLogin;
-        const client = isCustomerAccount && this.customerTwilioClient ? this.customerTwilioClient : this.adminTwilioClient;
-        const serviceSid = isCustomerAccount && process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID : process.env.TWILIO_VERIFY_SERVICE_SID;
+        const client = isCustomerAccount && this.customerTwilioClient
+            ? this.customerTwilioClient
+            : this.adminTwilioClient;
+        const serviceSid = isCustomerAccount && process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID
+            ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID
+            : process.env.TWILIO_VERIFY_SERVICE_SID;
         try {
             if (process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') {
-                this.logger.debug(`[DEV MODE] Skipped Twilio SMS for ${phone}. Use master OTP: 123456`);
+                this.logger.debug(`[DEV MODE] Skipped Twilio SMS for ${phone}. Use master OTP: 1234`);
                 return { message: 'OTP sent successfully (Dev Mode)', expires_in_minutes: 10 };
             }
             await client.verify.v2
@@ -158,18 +258,22 @@ let AuthService = AuthService_1 = class AuthService {
             where: { phone },
             include: {
                 roles: {
-                    include: { role: true }
-                }
-            }
+                    include: { role: true },
+                },
+            },
         });
         if (!user) {
             throw new common_1.UnauthorizedException('User not found');
         }
-        const isAdmin = user.roles.some(ur => ur.role.name !== 'CUSTOMER');
-        const client = !isAdmin && this.customerTwilioClient ? this.customerTwilioClient : this.adminTwilioClient;
-        const serviceSid = !isAdmin && process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID : process.env.TWILIO_VERIFY_SERVICE_SID;
+        const isAdmin = user.roles.some((ur) => ur.role.name !== 'CUSTOMER');
+        const client = !isAdmin && this.customerTwilioClient
+            ? this.customerTwilioClient
+            : this.adminTwilioClient;
+        const serviceSid = !isAdmin && process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID
+            ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID
+            : process.env.TWILIO_VERIFY_SERVICE_SID;
         try {
-            if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '123456') {
+            if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '1234') {
                 this.logger.debug(`[DEV MODE] Master OTP accepted for ${phone}`);
             }
             else {
@@ -188,8 +292,8 @@ let AuthService = AuthService_1 = class AuthService {
             this.logger.error(`Failed to verify OTP with Twilio for ${phone}`, error);
             throw new common_1.BadRequestException('Invalid or expired OTP');
         }
-        const roles = user.roles.map(ur => ur.role.name);
-        const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+        const roles = user.roles.map((ur) => ur.role.name);
+        const panelAccess = Array.from(new Set(user.roles.flatMap((ur) => ur.role.panelAccess || [])));
         const payload = { sub: user.id, email: user.email, roles, panelAccess };
         const refreshToken = require('crypto').randomBytes(40).toString('hex');
         const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -198,7 +302,7 @@ let AuthService = AuthService_1 = class AuthService {
                 userId: user.id,
                 refreshToken,
                 expiresAt: refreshExpiresAt,
-            }
+            },
         });
         await this.bonusService.awardSignupBonus(user.id);
         return {
@@ -210,8 +314,8 @@ let AuthService = AuthService_1 = class AuthService {
                 email: user.email,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                roles
-            }
+                roles,
+            },
         };
     }
     async verifyTotp(userId, totp) {
@@ -219,18 +323,23 @@ let AuthService = AuthService_1 = class AuthService {
             where: { id: userId },
             include: {
                 roles: { include: { role: true } },
-                staff2fa: true
-            }
+                staff2fa: true,
+            },
         });
         if (!user || !user.staff2fa || !user.staff2fa.isVerified) {
             throw new common_1.UnauthorizedException('User not enrolled in TOTP 2FA');
         }
-        const isValid = speakeasy.totp.verify({ secret: user.staff2fa.totpSecret, encoding: 'base32', token: totp, window: 1 });
+        const isValid = speakeasy.totp.verify({
+            secret: user.staff2fa.totpSecret,
+            encoding: 'base32',
+            token: totp,
+            window: 1,
+        });
         if (!isValid) {
             throw new common_1.UnauthorizedException('Invalid TOTP code');
         }
-        const roles = user.roles.map(ur => ur.role.name);
-        const panelAccess = Array.from(new Set(user.roles.flatMap(ur => ur.role.panelAccess || [])));
+        const roles = user.roles.map((ur) => ur.role.name);
+        const panelAccess = Array.from(new Set(user.roles.flatMap((ur) => ur.role.panelAccess || [])));
         const payload = { sub: user.id, email: user.email, roles, panelAccess };
         const refreshToken = require('crypto').randomBytes(40).toString('hex');
         const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -239,7 +348,7 @@ let AuthService = AuthService_1 = class AuthService {
                 userId: user.id,
                 refreshToken,
                 expiresAt: refreshExpiresAt,
-            }
+            },
         });
         return {
             access_token: this.jwtService.sign(payload),
@@ -251,49 +360,62 @@ let AuthService = AuthService_1 = class AuthService {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 roles,
-                panelAccess
-            }
+                panelAccess,
+            },
         };
     }
     async generateTotp(userId) {
         const user = await this.prisma.user.findUnique({ where: { id: userId } });
         if (!user || !user.email)
             throw new common_1.BadRequestException('User missing email');
-        const secretObj = speakeasy.generateSecret({ name: 'Fairenne Admin (' + user.email + ')' });
+        const secretObj = speakeasy.generateSecret({
+            name: 'Fairenne Admin (' + user.email + ')',
+        });
         const secret = secretObj.base32;
         const otpauthUrl = secretObj.otpauth_url || '';
         const qrCodeUrl = await QRCode.toDataURL(otpauthUrl);
         await this.prisma.staff2fa.upsert({
             where: { userId },
             update: { totpSecret: secret, isVerified: false },
-            create: { userId, totpSecret: secret, isVerified: false }
+            create: { userId, totpSecret: secret, isVerified: false },
         });
         return {
             secret,
-            qrCodeUrl
+            qrCodeUrl,
         };
     }
     async verifyAndEnableTotp(userId, totp) {
-        const staff2fa = await this.prisma.staff2fa.findUnique({ where: { userId } });
+        const staff2fa = await this.prisma.staff2fa.findUnique({
+            where: { userId },
+        });
         if (!staff2fa)
             throw new common_1.BadRequestException('No TOTP secret found');
-        const isValid = speakeasy.totp.verify({ secret: staff2fa.totpSecret, encoding: 'base32', token: totp, window: 1 });
+        const isValid = speakeasy.totp.verify({
+            secret: staff2fa.totpSecret,
+            encoding: 'base32',
+            token: totp,
+            window: 1,
+        });
         if (!isValid)
             throw new common_1.BadRequestException('Invalid TOTP code');
         await this.prisma.staff2fa.update({
             where: { userId },
-            data: { isVerified: true }
+            data: { isVerified: true },
         });
         return { success: true, message: 'TOTP 2FA enabled successfully' };
     }
     async requestPasswordReset(email) {
         const user = await this.prisma.user.findUnique({
-            where: { email }
+            where: { email },
         });
         if (!user) {
-            return { message: 'If an account with that email exists, a password reset link has been sent.' };
+            return {
+                message: 'If an account with that email exists, a password reset link has been sent.',
+            };
         }
-        const otp = process.env.NODE_ENV !== 'production' ? '123456' : Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = process.env.NODE_ENV !== 'production'
+            ? '123456'
+            : Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
         await this.prisma.otpLog.create({
             data: {
@@ -301,11 +423,13 @@ let AuthService = AuthService_1 = class AuthService {
                 email: user.email,
                 otpHash: otp,
                 expiresAt,
-                isUsed: false
-            }
+                isUsed: false,
+            },
         });
         this.logger.debug(`[DEV MODE] Password Reset OTP for ${email}: ${otp}`);
-        return { message: 'If an account with that email exists, a password reset link has been sent.' };
+        return {
+            message: 'If an account with that email exists, a password reset link has been sent.',
+        };
     }
     async resetPassword(email, otp, newPassword) {
         const user = await this.prisma.user.findUnique({ where: { email } });
@@ -318,9 +442,9 @@ let AuthService = AuthService_1 = class AuthService {
                 email,
                 otpHash: otp,
                 isUsed: false,
-                expiresAt: { gt: new Date() }
+                expiresAt: { gt: new Date() },
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
         });
         if (!validOtp) {
             throw new common_1.BadRequestException('Invalid or expired OTP');
@@ -328,11 +452,11 @@ let AuthService = AuthService_1 = class AuthService {
         const passwordHash = await bcrypt.hash(newPassword, 10);
         await this.prisma.user.update({
             where: { id: user.id },
-            data: { passwordHash }
+            data: { passwordHash },
         });
         await this.prisma.otpLog.update({
             where: { id: validOtp.id },
-            data: { isUsed: true }
+            data: { isUsed: true },
         });
         return { success: true, message: 'Password has been reset successfully' };
     }
@@ -348,7 +472,7 @@ let AuthService = AuthService_1 = class AuthService {
         const passwordHash = await bcrypt.hash(newPassword, 10);
         await this.prisma.user.update({
             where: { id: userId },
-            data: { passwordHash }
+            data: { passwordHash },
         });
         return { success: true, message: 'Password updated successfully' };
     }
@@ -360,9 +484,9 @@ let AuthService = AuthService_1 = class AuthService {
             where: { refreshToken },
             include: {
                 user: {
-                    include: { roles: { include: { role: true } } }
-                }
-            }
+                    include: { roles: { include: { role: true } } },
+                },
+            },
         });
         if (!session) {
             throw new common_1.UnauthorizedException('Invalid refresh token');
@@ -373,22 +497,30 @@ let AuthService = AuthService_1 = class AuthService {
         if (new Date() > session.expiresAt) {
             throw new common_1.UnauthorizedException('Refresh token expired');
         }
-        const roles = session.user.roles.map(ur => ur.role.name);
-        const panelAccess = Array.from(new Set(session.user.roles.flatMap(ur => ur.role.panelAccess || [])));
-        const payload = { sub: session.user.id, email: session.user.email, roles, panelAccess };
+        const roles = session.user.roles.map((ur) => ur.role.name);
+        const panelAccess = Array.from(new Set(session.user.roles.flatMap((ur) => ur.role.panelAccess || [])));
+        const payload = {
+            sub: session.user.id,
+            email: session.user.email,
+            roles,
+            panelAccess,
+        };
         return {
             access_token: this.jwtService.sign(payload),
-            refresh_token: refreshToken
+            refresh_token: refreshToken,
         };
     }
     async logout(refreshToken) {
         if (refreshToken) {
             await this.prisma.loginSession.updateMany({
                 where: { refreshToken },
-                data: { isRevoked: true }
+                data: { isRevoked: true },
             });
         }
-        return { success: true, message: 'Logged out successfully. Please clear your local token.' };
+        return {
+            success: true,
+            message: 'Logged out successfully. Please clear your local token.',
+        };
     }
 };
 exports.AuthService = AuthService;

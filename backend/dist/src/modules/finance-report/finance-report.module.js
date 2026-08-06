@@ -19,7 +19,7 @@ exports.FinanceReportModule = FinanceReportModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         controllers: [finance_report_controller_1.FinanceReportController],
         providers: [finance_report_service_1.FinanceReportService],
-        exports: [finance_report_service_1.FinanceReportService]
+        exports: [finance_report_service_1.FinanceReportService],
     })
 ], FinanceReportModule);
 //# sourceMappingURL=finance-report.module.js.map

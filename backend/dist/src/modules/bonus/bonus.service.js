@@ -24,15 +24,15 @@ let BonusService = BonusService_1 = class BonusService {
     }
     async awardSignupBonus(userId) {
         const rule = await this.prisma.bonusRule.findFirst({
-            where: { type: 'SIGNUP', isActive: true }
+            where: { type: 'SIGNUP', isActive: true },
         });
         if (!rule || rule.amount <= 0)
             return;
         const existingBonus = await this.prisma.walletTransaction.findFirst({
             where: {
                 wallet: { userId },
-                reference: 'Sign-up Bonus'
-            }
+                reference: 'Sign-up Bonus',
+            },
         });
         if (existingBonus)
             return;
@@ -41,15 +41,15 @@ let BonusService = BonusService_1 = class BonusService {
     }
     async awardFirstOrderBonus(userId) {
         const rule = await this.prisma.bonusRule.findFirst({
-            where: { type: 'FIRST_ORDER', isActive: true }
+            where: { type: 'FIRST_ORDER', isActive: true },
         });
         if (!rule || rule.amount <= 0)
             return;
         const existingBonus = await this.prisma.walletTransaction.findFirst({
             where: {
                 wallet: { userId },
-                reference: 'First Order Bonus'
-            }
+                reference: 'First Order Bonus',
+            },
         });
         if (existingBonus)
             return;

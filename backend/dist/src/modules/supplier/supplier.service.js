@@ -32,7 +32,7 @@ let SupplierService = class SupplierService {
             where: { id },
             include: {
                 purchaseOrders: true,
-            }
+            },
         });
         if (!supplier)
             throw new common_1.NotFoundException('Supplier not found');

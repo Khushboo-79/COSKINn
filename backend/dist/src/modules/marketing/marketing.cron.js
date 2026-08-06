@@ -28,16 +28,18 @@ let MarketingCron = MarketingCron_1 = class MarketingCron {
         try {
             const twentyFourHoursAgo = new Date();
             twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-            const existingLogs = await this.prisma.abandonedCartLog.findMany({ select: { cartId: true } });
-            const loggedCartIds = existingLogs.map(l => l.cartId);
+            const existingLogs = await this.prisma.abandonedCartLog.findMany({
+                select: { cartId: true },
+            });
+            const loggedCartIds = existingLogs.map((l) => l.cartId);
             const abandonedCarts = await this.prisma.cart.findMany({
                 where: {
                     updatedAt: { lte: twentyFourHoursAgo },
                     userId: { not: null },
                     items: { some: {} },
-                    id: { notIn: loggedCartIds }
+                    id: { notIn: loggedCartIds },
                 },
-                include: { user: true }
+                include: { user: true },
             });
             if (abandonedCarts.length > 0) {
                 this.logger.log(`Found ${abandonedCarts.length} abandoned cart(s). Sending recovery notifications.`);
@@ -45,8 +47,8 @@ let MarketingCron = MarketingCron_1 = class MarketingCron {
                     await this.prisma.abandonedCartLog.create({
                         data: {
                             userId: cart.userId,
-                            cartId: cart.id
-                        }
+                            cartId: cart.id,
+                        },
                     });
                     await this.notificationService.sendPushNotification(cart.userId, 'You left something behind!', 'Your items are waiting for you in your cart. Checkout now before they sell out!', undefined);
                 }
@@ -63,8 +65,8 @@ let MarketingCron = MarketingCron_1 = class MarketingCron {
             const pendingCampaigns = await this.prisma.marketingCampaign.findMany({
                 where: {
                     status: 'SCHEDULED',
-                    scheduledAt: { lte: now }
-                }
+                    scheduledAt: { lte: now },
+                },
             });
             if (pendingCampaigns.length > 0) {
                 this.logger.log(`Found ${pendingCampaigns.length} campaigns to execute.`);
@@ -73,7 +75,7 @@ let MarketingCron = MarketingCron_1 = class MarketingCron {
                     await this.notificationService.sendPushNotification('TARGET_SEGMENT', campaign.name, `Special offers for ${campaign.targetSegment}! Tap to see.`, undefined);
                     await this.prisma.marketingCampaign.update({
                         where: { id: campaign.id },
-                        data: { status: 'SENT' }
+                        data: { status: 'SENT' },
                     });
                 }
             }
