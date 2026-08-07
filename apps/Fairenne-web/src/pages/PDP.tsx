@@ -49,7 +49,10 @@ const PDP: React.FC = () => {
       setIsLoading(true);
       // Fetch product details
       fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/products/${id}`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error('Product not found');
+          return res.json();
+        })
         .then(p => {
           if (p) {
             const mappedProduct: DummyProduct = {

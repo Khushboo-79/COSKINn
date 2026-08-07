@@ -7,25 +7,19 @@ const Reviews: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
 
-  const reviews = [
-    { text: "My skin is bouncing back to life.", author: "Priya", product: "Peach Serum" },
-    { text: "Sorbet cleanser = actual joy.", author: "Amelia", product: "Strawberry Cleanser" },
-    { text: "The glow is unreal.", author: "Sarah", product: "Watermelon Mask" },
-    { text: "My skin is bouncing back to life.", author: "Priya", product: "Peach Serum" },
-    { text: "Sorbet cleanser = actual joy.", author: "Amelia", product: "Strawberry Cleanser" },
-    { text: "The glow is unreal.", author: "Sarah", product: "Watermelon Mask" }
-  ];
+  const [reviews, setReviews] = React.useState<any[]>([]);
 
-  const glamReviews = [
-    { text: "The pigment is out of this world.", author: "Elena", product: "Scarlet Kiss" },
-    { text: "Flawless finish that lasts all day.", author: "Sofia", product: "Velvet Foundation" },
-    { text: "I feel like a movie star.", author: "Chloe", product: "Golden Hour" },
-    { text: "The pigment is out of this world.", author: "Elena", product: "Scarlet Kiss" },
-    { text: "Flawless finish that lasts all day.", author: "Sofia", product: "Velvet Foundation" },
-    { text: "I feel like a movie star.", author: "Chloe", product: "Golden Hour" }
-  ];
-
-  const displayReviews = isGlam ? glamReviews : reviews;
+  React.useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/content/testimonials?platform=${isGlam ? 'COSMETICS' : 'SKINCARE'}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // duplicate for seamless scrolling
+          setReviews([...data, ...data]);
+        }
+      })
+      .catch(console.error);
+  }, [isGlam]);
 
   return (
     <section className={`py-10 overflow-hidden ${isGlam ? 'bg-[#faf9f6]' : 'bg-white'}`}>
@@ -35,7 +29,7 @@ const Reviews: React.FC = () => {
           transition={{ ease: "linear", duration: 20, repeat: Infinity }}
           className="flex whitespace-nowrap gap-6 py-4 px-4"
         >
-          {displayReviews.map((review, idx) => (
+          {reviews.map((review, idx) => (
             <div 
               key={idx} 
               className={`inline-block min-w-[300px] p-6 rounded-[24px] transition-all duration-300 transform hover:-translate-y-1 ${
