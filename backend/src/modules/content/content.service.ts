@@ -127,4 +127,63 @@ export class ContentService {
   async createPromotion(data: any) {
     return this.prisma.promotion.create({ data });
   }
+
+  // --- FOOTER DATA ---
+  async getFooterData(platform?: 'SKINCARE' | 'COSMETICS') {
+    // 1. Fetch Global SEO for brand description
+    const globalSeo = await this.prisma.globalSeo.findFirst();
+    const brandDescription = globalSeo?.description || 'Juicy, hydrating, mood-lifting skincare — squeezed from real fruit science.';
+
+    // 2. Fetch top categories for Shop links
+    const categoryWhere: any = { isActive: true, isDeleted: false };
+    if (platform) {
+      categoryWhere.OR = [{ productLine: platform }, { productLine: 'BOTH' }];
+    }
+    
+    const topCategories = await this.prisma.category.findMany({
+      where: categoryWhere,
+      select: { name: true, slug: true },
+      take: 4,
+    });
+
+    const shopLinks = topCategories.map(cat => ({
+      label: cat.name,
+      path: `/collections/${cat.slug}`,
+    }));
+    
+    // Always append Gift Cards
+    shopLinks.push({ label: 'Gift Cards', path: '/gift-cards' });
+
+    // 3. Static / Hardcoded CMS sections for Journal & Support
+    // (These could be fetched from ContentArticle and Faq in the future)
+    const journalLinks = [
+      { label: 'Skin School', path: '/journal' },
+      { label: 'Ingredient Guide', path: '/journal' },
+      { label: 'Behind the Brand', path: '/about' },
+      { label: 'Rituals', path: '/journal' },
+    ];
+
+    const supportLinks = [
+      { label: 'Contact', path: '/contact' },
+      { label: 'Shipping', path: '/shipping' },
+      { label: 'Returns', path: '/returns' },
+      { label: 'FAQ', path: '/faq' },
+      { label: 'Track Order', path: '/track-order' },
+    ];
+
+    return {
+      brand: {
+        description: brandDescription,
+        socials: [
+          { platform: 'instagram', url: 'https://instagram.com/fairenne' },
+          { platform: 'youtube', url: 'https://youtube.com/@fairenne' },
+          { platform: 'twitter', url: 'https://twitter.com/fairenne' },
+          { platform: 'tiktok', url: 'https://tiktok.com/@fairenne' },
+        ]
+      },
+      shopLinks,
+      journalLinks,
+      supportLinks,
+    };
+  }
 }

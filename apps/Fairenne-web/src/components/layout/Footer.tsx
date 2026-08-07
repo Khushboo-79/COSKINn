@@ -1,10 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Footer: React.FC = () => {
   const { mode } = useTheme();
   const isGlam = mode === 'glam';
+
+  const [footerData, setFooterData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchFooter = async () => {
+      try {
+        const platform = isGlam ? 'COSMETICS' : 'SKINCARE';
+        const res = await axios.get(`http://localhost:3000/api/content/footer?platform=${platform}`);
+        setFooterData(res.data);
+      } catch (err) {
+        console.error('Error fetching footer data', err);
+      }
+    };
+    fetchFooter();
+  }, [isGlam]);
+
+  const shopLinks = footerData?.shopLinks || [
+    { label: 'All Products', path: '/collections' },
+    { label: 'New In', path: '/collections/new' },
+    { label: 'Bestsellers', path: '/collections/bestsellers' },
+    { label: 'Sets', path: '/collections/sets' },
+    { label: 'Gift Cards', path: '/gift-cards' },
+  ];
+
+  const journalLinks = footerData?.journalLinks || [
+    { label: 'Skin School', path: '/journal' },
+    { label: 'Ingredient Guide', path: '/journal' },
+    { label: 'Behind the Brand', path: '/about' },
+    { label: 'Rituals', path: '/journal' },
+  ];
+
+  const supportLinks = footerData?.supportLinks || [
+    { label: 'Contact', path: '/contact' },
+    { label: 'Shipping', path: '/shipping' },
+    { label: 'Returns', path: '/returns' },
+    { label: 'FAQ', path: '/faq' },
+    { label: 'Track Order', path: '/track-order' },
+  ];
+
+  const brandDesc = footerData?.brand?.description || (isGlam 
+    ? 'A house of ornate, hand-crafted cosmetics. Made slowly, worn poetically.' 
+    : 'Juicy, hydrating, mood-lifting skincare — squeezed from real fruit science.');
+
 
   return (
     <footer className={`flex flex-col transition-colors duration-500 ${isGlam ? 'bg-[#e8dcc7] text-[#141824]' : 'bg-[#fff5f7] text-[#2a2022]'}`}>
@@ -55,9 +99,7 @@ const Footer: React.FC = () => {
               className={`w-[160px] md:w-[200px] h-auto mb-6 object-contain mix-blend-multiply transition-all duration-300 mx-auto lg:mx-0 ${isGlam ? 'contrast-125 saturate-150' : 'opacity-90'}`}
             />
             <p className={`mb-6 text-[14px] max-w-[280px] leading-relaxed mx-auto lg:mx-0 ${isGlam ? 'font-sans text-[#5c5c5c]' : 'text-[#7d7d7d]'}`}>
-              {isGlam 
-                ? 'A house of ornate, hand-crafted cosmetics. Made slowly, worn poetically.' 
-                : 'Juicy, hydrating, mood-lifting skincare — squeezed from real fruit science.'}
+              {brandDesc}
             </p>
             <div className="flex gap-3 justify-center lg:justify-start">
               <a href="https://instagram.com/fairenne" target="_blank" rel="noopener noreferrer" className={`w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 ${isGlam ? 'bg-white rounded-sm text-[#141824]' : 'bg-white rounded-full text-[#2a2a2a] shadow-sm hover:text-[#ff9aa8]'}`}>
@@ -79,32 +121,27 @@ const Footer: React.FC = () => {
             <div>
               <h4 className={`text-[11px] font-bold mb-6 tracking-[0.2em] uppercase ${isGlam ? 'text-[#8b8581] font-sans' : 'text-[#a1999b] font-serif'}`}>Shop</h4>
               <ul className={`space-y-4 text-[13.5px] font-medium ${isGlam ? 'text-[#5c5c5c] font-sans' : 'text-[#504a4b]'}`}>
-                <li><Link to="/collections" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>All Products</Link></li>
-                <li><Link to="/collections/new" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>New In</Link></li>
-                <li><Link to="/collections/bestsellers" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Bestsellers</Link></li>
-                <li><Link to="/collections/sets" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Sets</Link></li>
-                <li><Link to="/gift-cards" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Gift Cards</Link></li>
+                {shopLinks.map((link: any, idx: number) => (
+                  <li key={idx}><Link to={link.path} className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>{link.label}</Link></li>
+                ))}
               </ul>
             </div>
 
             <div>
               <h4 className={`text-[11px] font-bold mb-6 tracking-[0.2em] uppercase ${isGlam ? 'text-[#8b8581] font-sans' : 'text-[#a1999b] font-serif'}`}>Journal</h4>
               <ul className={`space-y-4 text-[13.5px] font-medium ${isGlam ? 'text-[#5c5c5c] font-sans' : 'text-[#504a4b]'}`}>
-                <li><Link to="/journal" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Skin School</Link></li>
-                <li><Link to="/journal" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Ingredient Guide</Link></li>
-                <li><Link to="/about" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Behind the Brand</Link></li>
-                <li><Link to="/journal" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Rituals</Link></li>
+                {journalLinks.map((link: any, idx: number) => (
+                  <li key={idx}><Link to={link.path} className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>{link.label}</Link></li>
+                ))}
               </ul>
             </div>
             
             <div className="col-span-1 md:col-span-1">
               <h4 className={`text-[11px] font-bold mb-6 tracking-[0.2em] uppercase ${isGlam ? 'text-[#8b8581] font-sans' : 'text-[#a1999b] font-serif'}`}>Support</h4>
               <ul className={`space-y-4 text-[13.5px] font-medium ${isGlam ? 'text-[#5c5c5c] font-sans' : 'text-[#504a4b]'}`}>
-                <li><Link to="/contact" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Contact</Link></li>
-                <li><Link to="/shipping" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Shipping</Link></li>
-                <li><Link to="/returns" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Returns</Link></li>
-                <li><Link to="/faq" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>FAQ</Link></li>
-                <li><Link to="/track-order" className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>Track Order</Link></li>
+                {supportLinks.map((link: any, idx: number) => (
+                  <li key={idx}><Link to={link.path} className={`transition-colors ${isGlam ? 'hover:text-[#141824]' : 'hover:text-[#ff9aa8]'}`}>{link.label}</Link></li>
+                ))}
               </ul>
             </div>
           </div>
