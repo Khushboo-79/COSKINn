@@ -28,16 +28,16 @@ export declare class CustomerProfileService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             skinType: string | null;
             skinConcerns: string[];
+            profileId: string;
         } | null;
         makeupPreference: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             makeupStyle: string | null;
+            profileId: string;
         } | null;
         id: string;
         createdAt: Date;
@@ -62,16 +62,16 @@ export declare class CustomerProfileService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             skinType: string | null;
             skinConcerns: string[];
+            profileId: string;
         } | null;
         makeupPreference: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            profileId: string;
             makeupStyle: string | null;
+            profileId: string;
         } | null;
         id: string;
         createdAt: Date;
@@ -88,9 +88,9 @@ export declare class CustomerProfileService {
                     id: string;
                     createdAt: Date;
                     updatedAt: Date;
-                    profileId: string;
                     skinType: string | null;
                     skinConcerns: string[];
+                    profileId: string;
                 } | null;
             } & {
                 id: string;
@@ -128,16 +128,16 @@ export declare class CustomerProfileService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                profileId: string;
                 skinType: string | null;
                 skinConcerns: string[];
+                profileId: string;
             } | null;
             makeupPreference: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                profileId: string;
                 makeupStyle: string | null;
+                profileId: string;
             } | null;
         } & {
             id: string;

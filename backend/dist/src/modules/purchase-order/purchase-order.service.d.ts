@@ -39,8 +39,8 @@ export declare class PurchaseOrderService {
         grns: {
             id: string;
             createdAt: Date;
-            receivedDate: Date;
             purchaseOrderId: string;
+            receivedDate: Date;
         }[];
     } & {
         id: string;
@@ -76,8 +76,8 @@ export declare class PurchaseOrderService {
         grns: {
             id: string;
             createdAt: Date;
-            receivedDate: Date;
             purchaseOrderId: string;
+            receivedDate: Date;
         }[];
     } & {
         id: string;
@@ -90,7 +90,7 @@ export declare class PurchaseOrderService {
     createGrn(dto: CreateGrnDto): Promise<{
         id: string;
         createdAt: Date;
-        receivedDate: Date;
         purchaseOrderId: string;
+        receivedDate: Date;
     }>;
 }

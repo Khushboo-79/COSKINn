@@ -134,8 +134,8 @@ export declare class WarehouseController {
     } & {
         id: string;
         createdAt: Date;
-        receivedDate: Date;
         purchaseOrderId: string;
+        receivedDate: Date;
     }>;
     generatePickList(dto: GeneratePickListDto): Promise<{
         orderIds: string[];

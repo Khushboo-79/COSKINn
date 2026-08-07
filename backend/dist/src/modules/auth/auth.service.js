@@ -273,7 +273,7 @@ let AuthService = AuthService_1 = class AuthService {
             ? process.env.TWILIO_CUSTOMER_VERIFY_SERVICE_SID
             : process.env.TWILIO_VERIFY_SERVICE_SID;
         try {
-            if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '1234') {
+            if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '123456') {
                 this.logger.debug(`[DEV MODE] Master OTP accepted for ${phone}`);
             }
             else {
@@ -291,6 +291,15 @@ let AuthService = AuthService_1 = class AuthService {
             }
             this.logger.error(`Failed to verify OTP with Twilio for ${phone}`, error);
             throw new common_1.BadRequestException('Invalid or expired OTP');
+        }
+        if (user.isDeleted || !user.isActive) {
+            await this.prisma.user.update({
+                where: { id: user.id },
+                data: { isDeleted: false, isActive: true, deletedAt: null },
+            });
+            user.isDeleted = false;
+            user.isActive = true;
+            this.logger.log(`Account restored for user: ${phone}`);
         }
         const roles = user.roles.map((ur) => ur.role.name);
         const panelAccess = Array.from(new Set(user.roles.flatMap((ur) => ur.role.panelAccess || [])));

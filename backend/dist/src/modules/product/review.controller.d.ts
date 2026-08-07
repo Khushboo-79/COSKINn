@@ -25,32 +25,32 @@ export declare class ReviewController {
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     })[]>;
     approveReview(id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     }>;
     deleteReview(id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     }>;
 }

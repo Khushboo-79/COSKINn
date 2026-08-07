@@ -10,9 +10,9 @@ export declare class HomeController {
             updatedAt: Date;
             imageUrl: string;
             sortOrder: number;
+            title: string;
             startDate: Date | null;
             endDate: Date | null;
-            title: string;
             linkUrl: string | null;
             position: string;
             targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -157,9 +157,9 @@ export declare class HomeController {
         updatedAt: Date;
         imageUrl: string;
         sortOrder: number;
+        title: string;
         startDate: Date | null;
         endDate: Date | null;
-        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;
@@ -171,9 +171,9 @@ export declare class HomeController {
         updatedAt: Date;
         imageUrl: string;
         sortOrder: number;
+        title: string;
         startDate: Date | null;
         endDate: Date | null;
-        title: string;
         linkUrl: string | null;
         position: string;
         targetSegment: import("@prisma/client").$Enums.ProductLine;

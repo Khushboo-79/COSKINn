@@ -7,11 +7,11 @@ export declare class EngagementService {
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     }[]>;
     addReview(userId: string, productId: string, data: {
         rating: number;
@@ -22,11 +22,11 @@ export declare class EngagementService {
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     }>;
     getProductQuestions(productId: string): Promise<({
         answers: {

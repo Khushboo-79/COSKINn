@@ -309,7 +309,7 @@ export class AuthService {
     // Call Twilio Verify API to check the code
     try {
       // Developer Bypass: Accept master OTP in local testing or when mocked
-      if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '1234') {
+      if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '123456') {
         this.logger.debug(`[DEV MODE] Master OTP accepted for ${phone}`);
       } else {
         const verificationCheck = await client.verify.v2
@@ -326,6 +326,17 @@ export class AuthService {
       }
       this.logger.error(`Failed to verify OTP with Twilio for ${phone}`, error);
       throw new BadRequestException('Invalid or expired OTP');
+    }
+
+    // Automatically restore account if they were deleted/deactivated
+    if (user.isDeleted || !user.isActive) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { isDeleted: false, isActive: true, deletedAt: null },
+      });
+      user.isDeleted = false;
+      user.isActive = true;
+      this.logger.log(`Account restored for user: ${phone}`);
     }
 
     const roles = user.roles.map((ur) => ur.role.name);

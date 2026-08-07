@@ -383,11 +383,11 @@ export declare class CatalogController {
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     })[]>;
     submitProductReview(req: any, id: string, dto: {
         rating: number;
@@ -398,11 +398,11 @@ export declare class CatalogController {
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     }>;
     getSimilarProducts(id: string): Promise<({
         category: {

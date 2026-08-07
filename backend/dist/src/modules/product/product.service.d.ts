@@ -459,11 +459,11 @@ export declare class ProductService {
             createdAt: Date;
             updatedAt: Date;
             productId: string;
+            rating: number;
+            title: string | null;
             userId: string;
             isApproved: boolean;
-            title: string | null;
             content: string | null;
-            rating: number;
         }[];
         questions: {
             id: string;

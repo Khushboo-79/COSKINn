@@ -7,11 +7,11 @@ export declare class EngagementController {
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     }[]>;
     addReview(id: string, body: {
         rating: number;
@@ -22,11 +22,11 @@ export declare class EngagementController {
         createdAt: Date;
         updatedAt: Date;
         productId: string;
+        rating: number;
+        title: string | null;
         userId: string;
         isApproved: boolean;
-        title: string | null;
         content: string | null;
-        rating: number;
     }>;
     getQuestions(id: string): Promise<({
         answers: {
