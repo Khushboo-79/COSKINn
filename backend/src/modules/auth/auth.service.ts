@@ -328,6 +328,17 @@ export class AuthService {
       throw new BadRequestException('Invalid or expired OTP');
     }
 
+    // Automatically restore account if they were deleted/deactivated
+    if (user.isDeleted || !user.isActive) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { isDeleted: false, isActive: true, deletedAt: null },
+      });
+      user.isDeleted = false;
+      user.isActive = true;
+      this.logger.log(`Account restored for user: ${phone}`);
+    }
+
     const roles = user.roles.map((ur) => ur.role.name);
     // Include panelAccess in the JWT payload for the PanelsGuard
     const panelAccess = Array.from(
