@@ -297,7 +297,7 @@ export const AdminDashboardScreen = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Total Products</span><span className="font-bold text-slate-800">{productStats?.totalProducts || 0}</span></div>
                 <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Out of Stock</span><span className="font-bold text-rose-600">{productStats?.outOfStockCount || 0}</span></div>
-                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Low Stock</span><span className="font-bold text-orange-600">{productStats?.lowStockCount || 0}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Low Stock</span><span className="font-bold text-orange-600">{productStats?.lowStockSkus || 0}</span></div>
                 <div className="flex justify-between items-center"><span className="text-sm font-medium text-slate-600">Draft / Hidden</span><span className="font-bold text-slate-400">{productStats?.draftCount || 0}</span></div>
               </div>
             </Section>

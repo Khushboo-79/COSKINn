@@ -39,11 +39,12 @@ export class HomeService {
         take: 6,
       }),
       this.prisma.product.findMany({
-        where: { ...productWhere, isBestseller: true },
+        where: { ...productWhere },
         include: {
           variants: true,
           images: { orderBy: { sortOrder: 'asc' }, take: 1 },
         },
+        orderBy: { createdAt: 'desc' },
         take: 4
       }),
       this.prisma.productIngredient.findMany({
@@ -98,9 +99,7 @@ export class HomeService {
   async setBestseller(productId: string, isBestseller: boolean) {
     const product = await this.prisma.product.findUnique({ where: { id: productId } });
     if (!product) throw new NotFoundException('Product not found');
-    return this.prisma.product.update({
-      where: { id: productId },
-      data: { isBestseller }
-    });
+    // isBestseller field removed from schema - this is now a no-op
+    return product;
   }
 }
