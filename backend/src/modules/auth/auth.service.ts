@@ -309,7 +309,7 @@ export class AuthService {
     // Call Twilio Verify API to check the code
     try {
       // Developer Bypass: Accept master OTP in local testing or when mocked
-      if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '1234') {
+      if ((process.env.NODE_ENV !== 'production' || process.env.USE_MOCK_OTP === 'true') && otp === '123456') {
         this.logger.debug(`[DEV MODE] Master OTP accepted for ${phone}`);
       } else {
         const verificationCheck = await client.verify.v2
