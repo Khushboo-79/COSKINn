@@ -44,6 +44,11 @@ export class ContentController {
     return this.contentService.getPromotions(platform);
   }
 
+  @Get('footer')
+  getFooterData(@Query('platform') platform?: 'SKINCARE' | 'COSMETICS') {
+    return this.contentService.getFooterData(platform);
+  }
+
   // --- ADMIN ENDPOINTS ---
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('SUPER_ADMIN', 'CONTENT_MANAGER')

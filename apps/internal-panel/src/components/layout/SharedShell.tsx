@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../core/rbac/AuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { adminApi } from '../../core/api/admin';
+import { supportApi } from '../../core/api/support';
 import {
-  Menu, X, Search, Bell, Mail, LogOut, User,
+  Menu, X, Search, Bell, Mail, LogOut,
   LayoutDashboard, ShoppingBag, Package, ShoppingCart,
   Truck, HeadphonesIcon, FileText, Megaphone,
   Briefcase, ShieldCheck, DollarSign, ShieldAlert, Boxes, Box,
-  RefreshCw, MessageSquare
+  RefreshCw, MessageSquare, AlertCircle, PackageCheck, CheckCircle2
 } from 'lucide-react';
 import { GlobalSearch } from '../ui/GlobalSearch';
 
@@ -32,6 +35,31 @@ export const SharedShell = () => {
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isMailOpen, setMailOpen] = useState(false);
   const location = useLocation();
+
+  // Fetch real notifications from backend
+  const { data: notifications = [] } = useQuery({
+    queryKey: ['admin', 'notifications'],
+    queryFn: adminApi.getNotifications,
+    refetchInterval: 60000,
+  });
+
+  // Fetch real support tickets for messages
+  const { data: tickets = [] } = useQuery({
+    queryKey: ['support', 'open-tickets'],
+    queryFn: () => supportApi.getTickets('OPEN'),
+    refetchInterval: 60000,
+  });
+
+  const openTickets = (tickets as any[]).slice(0, 5);
+
+  const unreadCount = notifications.filter((n: any) => !n.read).length;
+
+  const NOTIF_ICONS: Record<string, React.ElementType> = {
+    AlertCircle,
+    PackageCheck,
+    Bell,
+    CheckCircle2,
+  };
 
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
@@ -140,21 +168,53 @@ export const SharedShell = () => {
                 className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative"
               >
                 <Mail className="h-5 w-5" />
+                {openTickets.length > 0 && (
+                  <span className="absolute top-1 right-1 h-4 w-4 bg-blue-500 rounded-full text-white text-[9px] font-bold flex items-center justify-center">
+                    {openTickets.length > 9 ? '9+' : openTickets.length}
+                  </span>
+                )}
               </button>
 
               {/* Messages Dropdown */}
               {isMailOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMailOpen(false)}></div>
-                  <div className="absolute right-0 top-12 w-72 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
+                  <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
                     <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
-                      <h3 className="font-bold text-sm text-slate-800">Messages</h3>
-                      <span className="text-xs text-primary-600 cursor-pointer hover:underline">Mark all read</span>
+                      <h3 className="font-bold text-sm text-slate-800">Support Messages</h3>
+                      {openTickets.length > 0 && <span className="text-xs bg-blue-100 text-blue-600 font-bold px-2 py-0.5 rounded-full">{openTickets.length} open</span>}
                     </div>
-                    <div className="p-6 text-center">
-                      <Mail className="h-8 w-8 text-slate-200 mx-auto mb-2" />
-                      <p className="text-sm font-medium text-slate-600">No new messages</p>
-                      <p className="text-xs text-slate-400 mt-1">You're all caught up!</p>
+                    <div className="max-h-72 overflow-y-auto">
+                      {openTickets.length === 0 ? (
+                        <div className="p-6 text-center">
+                          <Mail className="h-8 w-8 text-slate-200 mx-auto mb-2" />
+                          <p className="text-sm font-medium text-slate-600">No open tickets</p>
+                          <p className="text-xs text-slate-400 mt-1">You're all caught up!</p>
+                        </div>
+                      ) : (
+                        openTickets.map((ticket: any) => (
+                          <Link
+                            key={ticket.id}
+                            to="/support"
+                            onClick={() => setMailOpen(false)}
+                            className="px-4 py-3 hover:bg-slate-100 cursor-pointer border-b border-slate-50 block transition-colors"
+                          >
+                            <div className="flex items-start gap-2">
+                              <div className="h-7 w-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                                {ticket.user?.firstName?.charAt(0) || ticket.customerName?.charAt(0) || 'C'}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-slate-800 truncate">{ticket.subject}</p>
+                                <p className="text-xs text-slate-500 mt-0.5">{ticket.user?.firstName || ticket.customerName || 'Customer'}</p>
+                              </div>
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 flex-shrink-0">OPEN</span>
+                            </div>
+                          </Link>
+                        ))
+                      )}
+                    </div>
+                    <div className="px-4 py-2 border-t border-slate-100 text-center">
+                      <Link to="/support" onClick={() => setMailOpen(false)} className="text-xs font-semibold text-primary-600 hover:text-primary-700">View All Tickets</Link>
                     </div>
                   </div>
                 </>
@@ -171,27 +231,58 @@ export const SharedShell = () => {
                 className="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-50 transition-colors relative"
               >
                 <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 h-4 w-4 bg-red-500 rounded-full text-white text-[9px] font-bold flex items-center justify-center">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </button>
 
               {/* Notifications Dropdown */}
               {isNotificationOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setNotificationOpen(false)}></div>
-                  <div className="absolute right-0 top-12 w-64 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
-                    <div className="px-4 py-2 border-b border-slate-100">
+                  <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
                       <h3 className="font-bold text-sm text-slate-800">Notifications</h3>
+                      {unreadCount > 0 && <span className="text-xs bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded-full">{unreadCount} new</span>}
                     </div>
-                    <div className="px-4 py-3 hover:bg-slate-50 cursor-pointer">
-                      <p className="text-sm font-medium text-slate-800">New Product Approval</p>
-                      <p className="text-xs text-slate-500 mt-1">Vitamin C Face Wash is awaiting review.</p>
-                    </div>
-                    <div className="px-4 py-3 hover:bg-slate-50 cursor-pointer border-t border-slate-50">
-                      <p className="text-sm font-medium text-slate-800">System Update</p>
-                      <p className="text-xs text-slate-500 mt-1">Version 1.2 deployed successfully.</p>
+                    <div className="max-h-72 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-6 text-center">
+                          <CheckCircle2 className="h-8 w-8 text-slate-200 mx-auto mb-2" />
+                          <p className="text-sm text-slate-500">All clear! No alerts.</p>
+                        </div>
+                      ) : (
+                        notifications.map((notif: any) => {
+                          const Icon = NOTIF_ICONS[notif.iconType] || Bell;
+                          const navTo = notif.id === 'notif-stock' ? '/inventory'
+                            : notif.id === 'notif-tickets' ? '/support'
+                            : notif.id === 'notif-orders' ? '/orders'
+                            : '/admin';
+                          return (
+                            <Link
+                              key={notif.id}
+                              to={navTo}
+                              onClick={() => setNotificationOpen(false)}
+                              className={`px-4 py-3 hover:bg-slate-100 border-b border-slate-50 flex items-start gap-3 transition-colors ${!notif.read ? 'bg-orange-50/40' : ''}`}
+                            >
+                              <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${notif.bg}`}>
+                                <Icon className={`h-4 w-4 ${notif.color}`} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-slate-800">{notif.title}</p>
+                                <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{notif.message}</p>
+                                <p className="text-[10px] text-slate-400 mt-1">{notif.time}</p>
+                              </div>
+                              {!notif.read && <div className="h-2 w-2 bg-red-400 rounded-full flex-shrink-0 mt-1"></div>}
+                            </Link>
+                          );
+                        })
+                      )}
                     </div>
                     <div className="px-4 py-2 border-t border-slate-100 text-center">
-                      <span className="text-xs font-semibold text-primary-600 hover:text-primary-700 cursor-pointer">View All</span>
+                      <Link to="/admin" onClick={() => setNotificationOpen(false)} className="text-xs font-semibold text-primary-600 hover:text-primary-700">View Dashboard</Link>
                     </div>
                   </div>
                 </>
