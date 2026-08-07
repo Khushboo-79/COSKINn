@@ -5,7 +5,7 @@ import { productApi } from '../../core/api/product';
 import { resolveImageUrl } from '../../core/api/client';
 import { DataTable } from '../../components/ui/DataTable';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { Edit2, Package, Tag, Filter, Search, Trash2, Eye, X } from 'lucide-react';
+import { Edit2, Package, Tag, Filter, Search, Trash2, Eye, X, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const ProductListScreen = () => {

@@ -59,8 +59,10 @@ export const LoginScreen = () => {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4"><img src="/logo.png" alt="Fairenne Logo" className="h-12 w-auto" /></div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Fairenne Panel</h1>
+          <div className="flex justify-center mb-4">
+            <img src="/logo-full.png" alt="Fairenne Logo" className="w-[220px] h-auto object-contain -ml-4" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2 mt-4">Fairenne Panel</h1>
           <p className="text-slate-500">Sign in to your internal account</p>
         </div>
 
